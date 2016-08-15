@@ -8,11 +8,16 @@
 -- 
 -- Make sure you COPY this file to the same location as the Export.lua as well.
 -- If an Export.lua doesn't exist, just create one add add the single line in
-SR = {}
+local SR = {}
 
 SR.unicast = true --DONT CHANGE THIS
 
 SR.dbg = {}
+SR.clientList = {} --stores current clients
+SR.lineOfSightQueue = {} -- stores LOS queue
+
+SR.lastKnownPos = {x=0,y=0,z=0}
+
 SR.logFile = io.open(lfs.writedir()..[[Logs\DCS-SimpleRadioStandalone.log]], "w")
 function SR.log(str)
     if SR.logFile then
@@ -48,7 +53,7 @@ local JSON = loadfile("Scripts\\JSON.lua")()
 SR.JSON = JSON
 
 SR.UDPSendSocket = socket.udp()
-SR.UDPSendSocket:settimeout(0)
+SR.UDPSendSocket:settimeout(.0001) --receive timer
 
 local terrain = require('terrain')
 
@@ -59,6 +64,8 @@ end
 -- Prev Export functions.
 local _prevExport = {}
 _prevExport.LuaExportActivityNextEvent = LuaExportActivityNextEvent
+_prevExport.LuaExportBeforeNextFrame = LuaExportBeforeNextFrame
+
 
 local _send  = false
 
@@ -101,6 +108,8 @@ LuaExportActivityNextEvent = function(tCurrent)
                 _update.unit = _data.Name
                 _update.unitId = LoGetPlayerPlaneId()
                 _update.pos = SR.exportPlayerLocation(_data)
+
+                 SR.lastKnownPos = _update.pos
 
                 if _update.unit == "UH-1H" then
                     _update = SR.exportRadioUH1H(_update)
@@ -169,6 +178,8 @@ LuaExportActivityNextEvent = function(tCurrent)
                     _update.selected = 1
                 end
             else
+                -- save last pos
+                SR.lastKnownPos ={x=0,y=0,z=0 }
 
                 --Ground Commander or spectator
                  _update  =
@@ -208,7 +219,7 @@ LuaExportActivityNextEvent = function(tCurrent)
 
 
     -- call
-    _status,_result = pcall(function()
+    local _status,_result = pcall(function()
        	-- Call original function if it exists
 		if _prevExport.LuaExportActivityNextEvent then
 			_prevExport.LuaExportActivityNextEvent(tCurrent)
@@ -227,6 +238,41 @@ LuaExportActivityNextEvent = function(tCurrent)
 
     return tNext
 end
+
+LuaExportBeforeNextFrame = function()
+
+    -- read from socket
+    local _status,_result = pcall(function()
+
+        local _received = SR.UDPSendSocket:receive()
+
+        if _received then
+            local _decoded = SR.JSON:decode(_received)
+
+            if _decoded then
+            end
+
+        end
+    end)
+
+    if not _status then
+        SR.log('ERROR LuaExportBeforeNextFrame SRS: ' .. _result)
+    end
+
+    -- call original
+    _status,_result = pcall(function()
+        -- Call original function if it exists
+        if _prevExport.LuaExportBeforeNextFrame then
+            _prevExport.LuaExportBeforeNextFrame()
+        end
+    end)
+
+    if not _status then
+        SR.log('ERROR Calling other LuaExportBeforeNextFrame from another script: ' .. _result)
+    end
+
+end
+
 
 function SR.exportPlayerLocation(_data)
 
@@ -661,7 +707,7 @@ function SR.exportRadioA10C(_data)
         end
     end
 
-    _data.selected = 0
+    _data.selected = 1
 
     _data.radioType = 2; -- Partial Radio (switched from FUll due to HOTAS controls)
 
@@ -726,7 +772,7 @@ function SR.exportRadioMIG21(_data)
     _data.radios[2].modulation = 0
     _data.radios[2].volume = SR.getRadioVolume(0, 210,{0.0,1.0},false)
 
-    _data.selected = 0
+    _data.selected = 1
 
     if(SR.getButtonPosition(315)) > 0.5 then
         _data.ptt = true

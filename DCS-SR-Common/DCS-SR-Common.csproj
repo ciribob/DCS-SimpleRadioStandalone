@@ -80,8 +80,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DCSLosCheckRequest.cs" />
+    <Compile Include="DCSLosCheckResult.cs" />
     <Compile Include="DCSPlayerSideInfo.cs" />
     <Compile Include="DCSPosition.cs" />
+    <Compile Include="ListHelper.cs" />
     <Compile Include="NetworkMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DCSPlayerRadioInfo.cs" />

@@ -43,7 +43,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
 
         private void Connect()
         {
-            var radioSync = new RadioSyncServer(ClientRadioUpdated, ClientCoalitionUpdate);
+            var radioSync = new RadioDCSSyncServer(ClientRadioUpdated, ClientCoalitionUpdate, _clients);
             using (_tcpClient = new TcpClient())
             {
                 _tcpClient.SendTimeout = 10;
@@ -80,11 +80,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             {
                 Client = new SRClient
                 {
-                    Coalition = RadioSyncServer.DcsPlayerSideInfo.side,
-                    Name = RadioSyncServer.DcsPlayerSideInfo.name,
+                    Coalition = RadioDCSSyncServer.DcsPlayerSideInfo.side,
+                    Name = RadioDCSSyncServer.DcsPlayerSideInfo.name,
                     ClientGuid = _guid,
-                    RadioInfo = RadioSyncServer.DcsPlayerRadioInfo,
-                    Position = RadioSyncServer.DcsPlayerRadioInfo.pos
+                    RadioInfo = RadioDCSSyncServer.DcsPlayerRadioInfo,
+                    Position = RadioDCSSyncServer.DcsPlayerRadioInfo.pos
                 },
                 MsgType = NetworkMessage.MessageType.RADIO_UPDATE
             });
@@ -97,9 +97,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             {
                 Client = new SRClient
                 {
-                    Coalition = RadioSyncServer.DcsPlayerSideInfo.side,
-                    Name = RadioSyncServer.DcsPlayerSideInfo.name,
-                    Position = RadioSyncServer.DcsPlayerSideInfo.Position,
+                    Coalition = RadioDCSSyncServer.DcsPlayerSideInfo.side,
+                    Name = RadioDCSSyncServer.DcsPlayerSideInfo.name,
+                    Position = RadioDCSSyncServer.DcsPlayerSideInfo.Position,
                     ClientGuid = _guid
                 },
                 MsgType = NetworkMessage.MessageType.UPDATE
@@ -132,9 +132,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                     {
                         Client = new SRClient
                         {
-                            Coalition = RadioSyncServer.DcsPlayerSideInfo.side,
-                            Name = RadioSyncServer.DcsPlayerSideInfo.name,
-                            Position = RadioSyncServer.DcsPlayerSideInfo.Position,
+                            Coalition = RadioDCSSyncServer.DcsPlayerSideInfo.side,
+                            Name = RadioDCSSyncServer.DcsPlayerSideInfo.name,
+                            Position = RadioDCSSyncServer.DcsPlayerSideInfo.Position,
                             ClientGuid = _guid
                         },
                         MsgType = NetworkMessage.MessageType.SYNC

@@ -88,12 +88,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
         private void SendFrequencyChange(double frequency)
         {
 
-            if (RadioSyncServer.DcsPlayerRadioInfo.radioType == DCSPlayerRadioInfo.AircraftRadioType.NO_COCKPIT_INTEGRATION
+            if (RadioDCSSyncServer.DcsPlayerRadioInfo.radioType == DCSPlayerRadioInfo.AircraftRadioType.NO_COCKPIT_INTEGRATION
                && RadioId >= 0
-               && RadioId < RadioSyncServer.DcsPlayerRadioInfo.radios.Length)
+               && RadioId < RadioDCSSyncServer.DcsPlayerRadioInfo.radios.Length)
             {
                 //sort out the frequencies
-                var clientRadio = RadioSyncServer.DcsPlayerRadioInfo.radios[RadioId];
+                var clientRadio = RadioDCSSyncServer.DcsPlayerRadioInfo.radios[RadioId];
                 clientRadio.frequency += frequency;
 
                 //make sure we're not over or under a limit
@@ -107,16 +107,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
                 }
 
                 //make radio data stale to force resysnc
-                RadioSyncServer.LastSent = 0;
+                RadioDCSSyncServer.LastSent = 0;
 
             }
         }
 
         private void RadioSelectSwitch(object sender, RoutedEventArgs e)
         {
-            if (RadioSyncServer.DcsPlayerRadioInfo.radioType != DCSPlayerRadioInfo.AircraftRadioType.FULL_COCKPIT_INTEGRATION)
+            if (RadioDCSSyncServer.DcsPlayerRadioInfo.radioType != DCSPlayerRadioInfo.AircraftRadioType.FULL_COCKPIT_INTEGRATION)
             {
-                RadioSyncServer.DcsPlayerRadioInfo.selected = (short)RadioId;
+                RadioDCSSyncServer.DcsPlayerRadioInfo.selected = (short)RadioId;
             }
 
             FocusDCS();
@@ -124,9 +124,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
 
         private void RadioFrequencyText_Click(object sender, MouseButtonEventArgs e)
         {
-            if (RadioSyncServer.DcsPlayerRadioInfo.radioType != DCSPlayerRadioInfo.AircraftRadioType.FULL_COCKPIT_INTEGRATION)
+            if (RadioDCSSyncServer.DcsPlayerRadioInfo.radioType != DCSPlayerRadioInfo.AircraftRadioType.FULL_COCKPIT_INTEGRATION)
             {
-                RadioSyncServer.DcsPlayerRadioInfo.selected = (short)RadioId;
+                RadioDCSSyncServer.DcsPlayerRadioInfo.selected = (short)RadioId;
             }
 
             FocusDCS();
@@ -135,10 +135,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
         private void RadioFrequencyText_RightClick(object sender, MouseButtonEventArgs e)
         {
 
-            if (RadioSyncServer.DcsPlayerRadioInfo.radioType == DCSPlayerRadioInfo.AircraftRadioType.NO_COCKPIT_INTEGRATION)
+            if (RadioDCSSyncServer.DcsPlayerRadioInfo.radioType == DCSPlayerRadioInfo.AircraftRadioType.NO_COCKPIT_INTEGRATION)
             {
                 //sort out the frequencies
-                var clientRadio = RadioSyncServer.DcsPlayerRadioInfo.radios[RadioId];
+                var clientRadio = RadioDCSSyncServer.DcsPlayerRadioInfo.radios[RadioId];
                 if (clientRadio.secondaryFrequency > 0)
                 {
                     clientRadio.secondaryFrequency = 0; // 0 indicates we want it overridden + disabled
@@ -149,7 +149,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
                 }
 
                 //make radio data stale to force resysnc
-                RadioSyncServer.LastSent = 0;
+                RadioDCSSyncServer.LastSent = 0;
             }
             FocusDCS();
         }
@@ -163,9 +163,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
         private void RadioVolume_DragCompleted(object sender, RoutedEventArgs e)
         {
 
-            if (RadioSyncServer.DcsPlayerRadioInfo.radioType == DCSPlayerRadioInfo.AircraftRadioType.NO_COCKPIT_INTEGRATION)
+            if (RadioDCSSyncServer.DcsPlayerRadioInfo.radioType == DCSPlayerRadioInfo.AircraftRadioType.NO_COCKPIT_INTEGRATION)
             {
-                var clientRadio = RadioSyncServer.DcsPlayerRadioInfo.radios[RadioId];
+                var clientRadio = RadioDCSSyncServer.DcsPlayerRadioInfo.radios[RadioId];
 
                 clientRadio.volume = (float)radioVolume.Value / 100.0f;
             }
@@ -219,7 +219,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
         {
             SetupEncryption();
 
-            var dcsPlayerRadioInfo = RadioSyncServer.DcsPlayerRadioInfo;
+            var dcsPlayerRadioInfo = RadioDCSSyncServer.DcsPlayerRadioInfo;
 
             if (dcsPlayerRadioInfo  == null || !dcsPlayerRadioInfo.IsCurrent())
             {
@@ -321,7 +321,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
 
         private void SetupEncryption()
         {
-            var dcsPlayerRadioInfo = RadioSyncServer.DcsPlayerRadioInfo;
+            var dcsPlayerRadioInfo = RadioDCSSyncServer.DcsPlayerRadioInfo;
 
             if (dcsPlayerRadioInfo != null || dcsPlayerRadioInfo.IsCurrent())
             {
@@ -379,7 +379,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
 
         internal void RepaintRadioReceive()
         {
-            var dcsPlayerRadioInfo = RadioSyncServer.DcsPlayerRadioInfo;
+            var dcsPlayerRadioInfo = RadioDCSSyncServer.DcsPlayerRadioInfo;
             if (dcsPlayerRadioInfo == null)
             {
                 radioFrequency.Foreground = new SolidColorBrush((Color) ColorConverter.ConvertFromString("#00FF00"));
@@ -415,7 +415,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
 
         private void Encryption_ButtonClick(object sender, RoutedEventArgs e)
         {
-            var dcsPlayerRadioInfo = RadioSyncServer.DcsPlayerRadioInfo;
+            var dcsPlayerRadioInfo = RadioDCSSyncServer.DcsPlayerRadioInfo;
 
             if (dcsPlayerRadioInfo != null || dcsPlayerRadioInfo.IsCurrent())
             {
@@ -443,7 +443,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
 
         private void EncryptionKeySpinner_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            var dcsPlayerRadioInfo = RadioSyncServer.DcsPlayerRadioInfo;
+            var dcsPlayerRadioInfo = RadioDCSSyncServer.DcsPlayerRadioInfo;
 
             if (dcsPlayerRadioInfo != null || dcsPlayerRadioInfo.IsCurrent())
             {

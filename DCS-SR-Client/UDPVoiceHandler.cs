@@ -93,7 +93,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             var settings = Settings.Instance;
             _inputManager.StartDetectPtt((pressed) =>
             {
-                var radios = RadioSyncServer.DcsPlayerRadioInfo;
+                var radios = RadioDCSSyncServer.DcsPlayerRadioInfo;
 
                 //can be overriden by PTT Settings
                 var ptt = pressed[(int)InputBinding.ModifierPtt] && pressed[(int) InputBinding.Ptt];
@@ -246,14 +246,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
 
                             var myClient = IsClientMetaDataValid(_guid);
 
-                            if (myClient != null && RadioSyncServer.DcsPlayerRadioInfo.IsCurrent())
+                            if (myClient != null && RadioDCSSyncServer.DcsPlayerRadioInfo.IsCurrent())
                             {
                                 //Decode bytes
                                 var udpVoicePacket = UDPVoicePacket.DecodeVoicePacket(encodedOpusAudio);
 
                                 // check the radio
                                 RadioReceivingState receivingState = null;
-                                var receivingRadio = RadioSyncServer.DcsPlayerRadioInfo.CanHearTransmission(udpVoicePacket.Frequency,
+                                var receivingRadio = RadioDCSSyncServer.DcsPlayerRadioInfo.CanHearTransmission(udpVoicePacket.Frequency,
                                     udpVoicePacket.Modulation,
                                     udpVoicePacket.UnitId, out receivingState);
                                 if (receivingRadio != null && receivingState !=null)
@@ -343,19 +343,19 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             }
             
             //if either PTT is true
-            if ((_ptt || RadioSyncServer.DcsPlayerRadioInfo.ptt)
-                && RadioSyncServer.DcsPlayerRadioInfo.IsCurrent() && part1 != null && part2 != null)
+            if ((_ptt || RadioDCSSyncServer.DcsPlayerRadioInfo.ptt)
+                && RadioDCSSyncServer.DcsPlayerRadioInfo.IsCurrent() && part1 != null && part2 != null)
                 //can only send if DCS is connected
             {
              
                 try
                 {
-                    var currentSelected = RadioSyncServer.DcsPlayerRadioInfo.selected;
+                    var currentSelected = RadioDCSSyncServer.DcsPlayerRadioInfo.selected;
                     //removes race condition by assigning here with the current selected changing
                     if (currentSelected >= 0 
-                        && currentSelected < RadioSyncServer.DcsPlayerRadioInfo.radios.Length)
+                        && currentSelected < RadioDCSSyncServer.DcsPlayerRadioInfo.radios.Length)
                     {
-                        var radio = RadioSyncServer.DcsPlayerRadioInfo.radios[currentSelected];
+                        var radio = RadioDCSSyncServer.DcsPlayerRadioInfo.radios[currentSelected];
 
                         if (radio != null && (radio.frequency > 100 && radio.modulation != 3)
                             || radio.modulation == 2)
@@ -369,7 +369,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                                 AudioPart2Bytes = part2,
                                 AudioPart2Length = (ushort) part2.Length,
                                 Frequency = radio.frequency,
-                                UnitId = RadioSyncServer.DcsPlayerRadioInfo.unitId,
+                                UnitId = RadioDCSSyncServer.DcsPlayerRadioInfo.unitId,
                                 Encryption = radio.enc?radio.encKey:(byte)0,
                                 Modulation = radio.modulation
                             }.EncodePacket();

@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Newtonsoft.Json;
@@ -14,7 +18,7 @@ Keeps radio information in Sync Between DCS and
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Server
 {
-    public class RadioSyncServer
+    public class RadioDCSSyncServer
     {
         public delegate void ClientSideUpdate();
 
@@ -30,18 +34,23 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
 
         private readonly SendRadioUpdate _clientRadioUpdate;
         private readonly ClientSideUpdate _clientSideUpdate;
-        private UdpClient _dcsGameGuiudpListener;
 
+        private UdpClient _dcsGameGuiudpListener;
         private UdpClient _dcsUdpListener;
+
+        private UdpClient _dcsLOSListener;
+        private ConcurrentDictionary<string, SRClient> _clients;
 
         public static long LastSent { get; set; }
 
-        public RadioSyncServer(SendRadioUpdate clientRadioUpdate, ClientSideUpdate clientSideUpdate)
+        public RadioDCSSyncServer(SendRadioUpdate clientRadioUpdate, ClientSideUpdate clientSideUpdate, ConcurrentDictionary<string, SRClient> _clients)
         {
             this._clientRadioUpdate = clientRadioUpdate;
             this._clientSideUpdate = clientSideUpdate;
+            this._clients = _clients;
         }
 
+       
         public void Listen()
         {
             DcsListener();
@@ -51,6 +60,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
         {
             StartDcsBroadcastListener();
             StartDcsGameGuiBroadcastListener();
+            StartDCSLOSBroadcastListener();
         }
 
         private void StartDcsBroadcastListener()
@@ -171,6 +181,130 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
                 }
             });
         }
+
+        //used for the result
+        private void StartDCSLOSBroadcastListener()
+        {
+            _dcsLOSListener = new UdpClient();
+            _dcsLOSListener.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress,
+                true);
+            _dcsLOSListener.ExclusiveAddressUse = false; // only if you want to send/receive on same machine.
+
+            var localEp = new IPEndPoint(IPAddress.Any, 9085);
+            _dcsLOSListener.Client.Bind(localEp);
+
+            Task.Factory.StartNew(() =>
+            {
+                using (_dcsLOSListener)
+                {
+                    //    var count = 0;
+                    while (!_stop)
+                    {
+                        var groupEp = new IPEndPoint(IPAddress.Any, 9085);
+                        var bytes = _dcsLOSListener.Receive(ref groupEp);
+
+                        try
+                        {
+                            var playerInfo =
+                                JsonConvert.DeserializeObject<DCSPlayerSideInfo>(Encoding.UTF8.GetString(
+                                    bytes, 0, bytes.Length));
+
+                          
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.Error(e, "Exception Handling DCS GameGUI Message");
+                        }
+                    }
+
+                    try
+                    {
+                        _dcsLOSListener.Close();
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e, "Exception stoping DCS listener ");
+                    }
+                }
+            });
+        }
+
+        private void StartDCSLOSSender()
+        {
+            var _udpSocket = new UdpClient();
+            var _host = new IPEndPoint(IPAddress.Loopback, 9086);
+
+
+            Task.Factory.StartNew(() =>
+            {
+                using (_dcsLOSListener)
+                {
+                    while (!_stop)
+                    {
+                        try
+                        {
+                            //Chunk client list into blocks of 10 to stay below 8000 ish UDP socket limit
+                            var clientsList = GenerateDcsLosCheckRequests();
+
+                            if (clientsList.Count > 0)
+                            {
+                                var splitList =  clientsList.ChunkBy(10);
+                                foreach (var clientSubList in splitList)
+                                {
+                                    var byteData = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(clientSubList) + "\n");
+                                    
+                                    _udpSocket.Send(byteData,byteData.Length, _host);
+                                }
+                            }
+                           
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.Error(e, "Exception Sending DCS LOS Request Message");
+                        }
+
+                        Thread.Sleep(200);
+                    }
+
+                    try
+                    {
+                        _dcsLOSListener.Close();
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error(e, "Exception stoping DCS listener ");
+                    }
+                }
+            });
+        }
+
+        private List<DCSLosCheckRequest> GenerateDcsLosCheckRequests()
+        {
+            var clients = _clients.Values.ToList();
+
+            var requests = new List<DCSLosCheckRequest>();
+
+            foreach (var client in clients)
+            {
+                //only check if its worth it
+                if (client.Position.x !=0 && client.Position.z != 0)
+                {
+                    requests.Add(new DCSLosCheckRequest()
+                    {
+                        id = client.ClientGuid,
+                        x = client.Position.x,
+                        y = client.Position.y,
+                        z = client.Position.z
+                    });
+                }
+              
+            }
+
+            return requests;
+           
+        }
+       
+
 
         private bool UpdateRadio(DCSPlayerRadioInfo message)
         {
@@ -328,9 +462,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
             catch (Exception ex)
             {
             }
+            
             try
             {
                 _dcsGameGuiudpListener.Close();
+            }
+            catch (Exception ex)
+            {
+            }
+
+            try
+            {
+                _dcsLOSListener.Close();
             }
             catch (Exception ex)
             {

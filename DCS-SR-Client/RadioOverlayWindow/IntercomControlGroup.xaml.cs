@@ -29,9 +29,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
         }
         private void RadioSelectSwitch(object sender, RoutedEventArgs e)
         {
-            if (RadioSyncServer.DcsPlayerRadioInfo.radioType != DCSPlayerRadioInfo.AircraftRadioType.FULL_COCKPIT_INTEGRATION)
+            if (RadioDCSSyncServer.DcsPlayerRadioInfo.radioType != DCSPlayerRadioInfo.AircraftRadioType.FULL_COCKPIT_INTEGRATION)
             {
-                RadioSyncServer.DcsPlayerRadioInfo.selected = (short)RadioId;
+                RadioDCSSyncServer.DcsPlayerRadioInfo.selected = (short)RadioId;
             }
         }
 
@@ -44,9 +44,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
         private void RadioVolume_DragCompleted(object sender, RoutedEventArgs e)
         {
 
-            if (RadioSyncServer.DcsPlayerRadioInfo.radioType == DCSPlayerRadioInfo.AircraftRadioType.NO_COCKPIT_INTEGRATION)
+            if (RadioDCSSyncServer.DcsPlayerRadioInfo.radioType == DCSPlayerRadioInfo.AircraftRadioType.NO_COCKPIT_INTEGRATION)
             {
-                var clientRadio = RadioSyncServer.DcsPlayerRadioInfo.radios[RadioId];
+                var clientRadio = RadioDCSSyncServer.DcsPlayerRadioInfo.radios[RadioId];
 
                 clientRadio.volume = (float)radioVolume.Value / 100.0f;
             }
@@ -56,7 +56,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
 
         internal void RepaintRadioStatus()
         {
-            var dcsPlayerRadioInfo = RadioSyncServer.DcsPlayerRadioInfo;
+            var dcsPlayerRadioInfo = RadioDCSSyncServer.DcsPlayerRadioInfo;
 
             if (dcsPlayerRadioInfo  == null || !dcsPlayerRadioInfo.IsCurrent())
             {

@@ -104,6 +104,7 @@
 
         <TabItem Header="Settings">
             <GroupBox Header="Settings">
+              
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*" />
@@ -117,7 +118,8 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
-                    </Grid.RowDefinitions>
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
 
                     <Label Grid.Column="0" Grid.Row="0" Content="Radio Effects" HorizontalContentAlignment="Center"
                            VerticalContentAlignment="Center" />
@@ -155,10 +157,15 @@
                     <local:RadioChannelConfigUi Grid.Column="1" Grid.Row="3" x:Name="Radio3Config"
                                                 SettingConfig="{x:Static local:SettingType.Radio3Channel}" />
 
-                    <Label Grid.Column="0" Grid.Row="4" Content="Radio Switch works as PTT" HorizontalContentAlignment="Center"
+                    <Label Grid.Column="0" Grid.Row="4" Content="Intercom Audio Channel"
+                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                    <local:RadioChannelConfigUi Grid.Column="1" Grid.Row="4" x:Name="IntercomConfig"
+                                                SettingConfig="{x:Static local:SettingType.IntercomChannel}" />
+
+                    <Label Grid.Column="0" Grid.Row="5" Content="Radio Switch works as PTT" HorizontalContentAlignment="Center"
                            VerticalContentAlignment="Center" />
 
-                    <ToggleButton Grid.Column="1" Grid.Row="4" HorizontalContentAlignment="Center"
+                    <ToggleButton Grid.Column="1" Grid.Row="5" HorizontalContentAlignment="Center"
                                   VerticalContentAlignment="Center" Name="RadioSwitchIsPTT"
                                   Click="RadioSwitchPTT_Click">
                         <ToggleButton.Style>
@@ -177,10 +184,10 @@
                     </ToggleButton>
 
 
-                    <Label Grid.Column="0" Grid.Row="5" Content="Reset Radio Overlay" HorizontalContentAlignment="Center"
+                    <Label Grid.Column="0" Grid.Row="6" Content="Reset Radio Overlay" HorizontalContentAlignment="Center"
                            VerticalContentAlignment="Center" />
 
-                    <Button Grid.Column="1" Grid.Row="5" HorizontalContentAlignment="Center"
+                    <Button Grid.Column="1" Grid.Row="6" HorizontalContentAlignment="Center"
                                   VerticalContentAlignment="Center" 
                                     Content="Reset"
                                   Click="ResetRadioWindow_Click" />
@@ -188,6 +195,7 @@
 
 
                 </Grid>
+           
             </GroupBox>
             
 

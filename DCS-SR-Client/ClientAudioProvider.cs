@@ -39,23 +39,33 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
         {
             //convert to Stereo Mix
             var settingType = SettingType.Radio1Channel;
-
+            byte[] stereoMix;
             if (audio.ReceivedRadio == 0)
             {
-                settingType = SettingType.Radio1Channel;
+                settingType = SettingType.IntercomChannel;
             }
             else if (audio.ReceivedRadio == 1)
             {
+                settingType = SettingType.Radio1Channel;
+            }
+            else if (audio.ReceivedRadio == 2)
+            {
                 settingType = SettingType.Radio2Channel;
             }
-            else
+            else if (audio.ReceivedRadio == 3)
             {
                 settingType = SettingType.Radio3Channel;
             }
+            else
+            {
+                //different radio
+                stereoMix = CreateBothMix(audio);
+                BufferedWaveProvider.AddSamples(stereoMix, 0, stereoMix.Length);
+
+                return;
+            }
 
             var setting = _settings.UserSettings[(int) settingType];
-
-            byte[] stereoMix;
 
             if (setting == "Left")
             {

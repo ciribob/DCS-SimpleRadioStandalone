@@ -14,7 +14,7 @@ using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client
 {
-    internal class ClientSync
+    public class ClientSync
     {
         public delegate void ConnectCallback(bool result);
 
@@ -24,6 +24,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
         private readonly string _guid;
         private IPEndPoint _serverEndpoint;
         private TcpClient _tcpClient;
+
+        public static string[] ServerSettings = new string[Enum.GetValues(typeof(Server.ServerSettingType)).Length];
 
         public ClientSync(ConcurrentDictionary<string, SRClient> clients, string guid)
         {
@@ -146,11 +148,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                     {
                         try
                         {
-                            var lastRadioTransmit = JsonConvert.DeserializeObject<NetworkMessage>(line);
-                            //TODO: test malformed JSON
-                            if (lastRadioTransmit != null)
+                            var serverMessage = JsonConvert.DeserializeObject<NetworkMessage>(line);
+                            if (serverMessage != null)
                             {
-                                switch (lastRadioTransmit.MsgType)
+                                switch (serverMessage.MsgType)
                                 {
                                     case NetworkMessage.MessageType.PING:
                                         // Do nothing for now
@@ -159,10 +160,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
 
 
 
-                                        if (_clients.ContainsKey(lastRadioTransmit.Client.ClientGuid))
+                                        if (_clients.ContainsKey(serverMessage.Client.ClientGuid))
                                         {
-                                            var srClient = _clients[lastRadioTransmit.Client.ClientGuid];
-                                            var updatedSrClient = lastRadioTransmit.Client;
+                                            var srClient = _clients[serverMessage.Client.ClientGuid];
+                                            var updatedSrClient = serverMessage.Client;
                                             if (srClient != null)
                                             {
                                                 srClient.LastUpdate = Environment.TickCount;
@@ -178,21 +179,21 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                                         }
                                         else
                                         {
-                                            var connectedClient = lastRadioTransmit.Client;
+                                            var connectedClient = serverMessage.Client;
                                             connectedClient.LastUpdate = Environment.TickCount;
-                                            _clients[lastRadioTransmit.Client.ClientGuid] = connectedClient;
+                                            _clients[serverMessage.Client.ClientGuid] = connectedClient;
 
                                             Logger.Info("Recevied New Client: " + NetworkMessage.MessageType.UPDATE + " From: " +
-                                                   lastRadioTransmit.Client.Name + " Coalition: " +
-                                                   lastRadioTransmit.Client.Coalition+" Pos: "+ connectedClient.Position);
+                                                   serverMessage.Client.Name + " Coalition: " +
+                                                   serverMessage.Client.Coalition+" Pos: "+ connectedClient.Position);
                                         }
                                         break;
                                     case NetworkMessage.MessageType.SYNC:
                                         Logger.Info("Recevied: " + NetworkMessage.MessageType.SYNC);
 
-                                        if (lastRadioTransmit.Clients != null)
+                                        if (serverMessage.Clients != null)
                                         {
-                                            foreach (var client in lastRadioTransmit.Clients)
+                                            foreach (var client in serverMessage.Clients)
                                             {
                                                 client.LastUpdate = Environment.TickCount;
                                                 _clients[client.ClientGuid] = client;
@@ -204,6 +205,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                                     case NetworkMessage.MessageType.SERVER_SETTINGS:
 
                                         Logger.Info("Recevied: " + NetworkMessage.MessageType.SERVER_SETTINGS);
+                                        ServerSettings = serverMessage.ServerSettings;
                                         break;
                                     default:
                                         Logger.Warn("Recevied unknown " + line);

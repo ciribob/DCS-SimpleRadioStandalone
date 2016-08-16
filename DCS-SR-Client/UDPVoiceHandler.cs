@@ -256,7 +256,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                                 var receivingRadio = RadioDCSSyncServer.DcsPlayerRadioInfo.CanHearTransmission(udpVoicePacket.Frequency,
                                     udpVoicePacket.Modulation,
                                     udpVoicePacket.UnitId, out receivingState);
-                                if (receivingRadio != null && receivingState !=null)
+
+                                if (receivingRadio != null && receivingState !=null 
+                                    && 
+                                   ( receivingRadio.modulation == 2 // INTERCOM Modulation is 2 so if its two dont bother checking LOS and Range
+                                    ||
+                                    (HasLineOfSight(udpVoicePacket) 
+                                    && InRange(udpVoicePacket))))
                                 {
                                     RadioReceivingState[receivingState.ReceivedOn] = receivingState;
 
@@ -315,6 +321,40 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             {
                 Logger.Info("Stopped DeJitter Buffer");
             }
+        }
+
+        private bool HasLineOfSight(UDPVoicePacket udpVoicePacket)
+        {
+            if (ClientSync.ServerSettings[(int) ServerSettingType.LOS_ENABLED] == null || ClientSync.ServerSettings[(int)ServerSettingType.LOS_ENABLED] == "OFF")
+            {
+                return true;
+            }
+
+            SRClient transmittingClient;
+            if (_clientsList.TryGetValue(udpVoicePacket.Guid, out transmittingClient))
+            {
+                return transmittingClient.HasLineOfSight;
+            }
+            return false;
+
+        }
+
+        private bool InRange(UDPVoicePacket udpVoicePacket)
+        {
+
+            if (ClientSync.ServerSettings[(int)ServerSettingType.DISTANCE_ENABLED] == null || ClientSync.ServerSettings[(int)ServerSettingType.DISTANCE_ENABLED] == "OFF")
+            {
+                return true;
+            }
+
+            SRClient transmittingClient;
+            if (_clientsList.TryGetValue(udpVoicePacket.Guid, out transmittingClient))
+            {
+                //TODO calculate distance
+                return true;
+            }
+            return false;
+
         }
 
 

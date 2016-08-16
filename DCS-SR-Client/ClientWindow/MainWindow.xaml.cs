@@ -39,6 +39,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         public delegate void ToggleOverlayCallback(bool uiButton);
 
         private ToggleOverlayCallback _toggleOverlayCallback;
+        private UI.ServerSettingsWindow _serverSettingsWindow;
 
         public MainWindow()
         {
@@ -418,6 +419,23 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             AppConfiguration.Instance.RadioHeight = 270;
 
             AppConfiguration.Instance.RadioOpacity = 1.0;
+        }
+
+        private void ToggleServerSettings_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_serverSettingsWindow == null || !_serverSettingsWindow.IsVisible || _serverSettingsWindow.WindowState == WindowState.Minimized)
+            {
+                _serverSettingsWindow?.Close();
+
+                _serverSettingsWindow = new ServerSettingsWindow();
+                _serverSettingsWindow.ShowDialog();
+              
+            }
+            else
+            {
+                _serverSettingsWindow?.Close();
+                _serverSettingsWindow = null;
+            }
         }
     }
 

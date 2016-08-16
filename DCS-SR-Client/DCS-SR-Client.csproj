@@ -169,6 +169,9 @@
     </Compile>
     <Compile Include="RadioSendingState.cs" />
     <Compile Include="RadioDCSSyncServer.cs" />
+    <Compile Include="ServerSettingsWindow\ServerSettingsWindow.xaml.cs">
+      <DependentUpon>ServerSettingsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="UDPVoiceHandler.cs" />
     <Compile Include="RadioOverlayWindow\WindowHelper.cs" />
@@ -204,6 +207,10 @@
     <Page Include="RadioOverlayWindow\RadioOverlay.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ServerSettingsWindow\ServerSettingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\Styles.xaml">
       <Generator>MSBuild:Compile</Generator>

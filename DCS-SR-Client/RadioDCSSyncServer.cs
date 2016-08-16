@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Ciribob.DCS.SimpleRadio.Standalone.Client;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Newtonsoft.Json;
 using NLog;
@@ -304,28 +305,27 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
 
             var requests = new List<DCSLosCheckRequest>();
 
-            foreach (var client in clients)
+            if (ClientSync.ServerSettings[(int) ServerSettingType.LOS_ENABLED] != null &&
+                ClientSync.ServerSettings[(int) ServerSettingType.LOS_ENABLED] == "ON")
             {
-                //only check if its worth it
-                if (client.Position.x !=0 && client.Position.z != 0&& client.ClientGuid != _guid)
+                foreach (var client in clients)
                 {
-                    requests.Add(new DCSLosCheckRequest()
+                    //only check if its worth it
+                    if (client.Position.x != 0 && client.Position.z != 0 && client.ClientGuid != _guid)
                     {
-                        id = client.ClientGuid,
-                        x = client.Position.x,
-                        y = client.Position.y,
-                        z = client.Position.z
-                    });
+                        requests.Add(new DCSLosCheckRequest()
+                        {
+                            id = client.ClientGuid,
+                            x = client.Position.x,
+                            y = client.Position.y,
+                            z = client.Position.z
+                        });
+                    }
                 }
-              
             }
-
             return requests;
-           
         }
        
-
-
         private bool UpdateRadio(DCSPlayerRadioInfo message)
         {
 

@@ -91,6 +91,7 @@
     <Compile Include="RadioInformation.cs" />
     <Compile Include="RadioReceivingState.cs" />
     <Compile Include="RadioTransmit.cs" />
+    <Compile Include="ServerSettings.cs" />
     <Compile Include="ShortGuid.cs" />
     <Compile Include="SRClient.cs" />
     <Compile Include="Timers\ITimer.cs" />

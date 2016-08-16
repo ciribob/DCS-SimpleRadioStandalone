@@ -133,7 +133,6 @@
     <Compile Include="ClientViewModel.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="ServerLifecycleMessage.cs" />
-    <Compile Include="ServerSettings.cs" />
     <Compile Include="ServerState.cs" />
     <Compile Include="UDPVoiceRouter.cs" />
     <Compile Include="ServerSync.cs" />

@@ -8,7 +8,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 {
     public struct DCSLosCheckResult
     {
-        string id;
-        bool los;
+        public string id;
+        public bool los;
+
+        public override string ToString()
+        {
+            return $"[id {id} LOS {los}]";
+        }
     }
 }

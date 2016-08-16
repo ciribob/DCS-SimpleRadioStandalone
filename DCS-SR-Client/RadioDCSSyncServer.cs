@@ -61,6 +61,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
             StartDcsBroadcastListener();
             StartDcsGameGuiBroadcastListener();
             StartDCSLOSBroadcastListener();
+            StartDCSLOSSender();
         }
 
         private void StartDcsBroadcastListener()
@@ -205,11 +206,19 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
 
                         try
                         {
+                            Logger.Debug(Encoding.UTF8.GetString(
+                                    bytes, 0, bytes.Length));
                             var playerInfo =
-                                JsonConvert.DeserializeObject<DCSPlayerSideInfo>(Encoding.UTF8.GetString(
+                                JsonConvert.DeserializeObject<DCSLosCheckResult[]>(Encoding.UTF8.GetString(
                                     bytes, 0, bytes.Length));
 
-                          
+                            foreach (var player in playerInfo)
+                            {
+                                Logger.Info(player);
+
+                            }
+
+
                         }
                         catch (Exception e)
                         {
@@ -251,9 +260,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
                                 var splitList =  clientsList.ChunkBy(10);
                                 foreach (var clientSubList in splitList)
                                 {
+                                    Logger.Info( "Sending LOS Request: "+ JsonConvert.SerializeObject(clientSubList));
                                     var byteData = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(clientSubList) + "\n");
                                     
                                     _udpSocket.Send(byteData,byteData.Length, _host);
+
+                                    //every 300 - Wait for the queue
+                                    Thread.Sleep(300);
                                 }
                             }
                            
@@ -262,8 +275,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
                         {
                             Logger.Error(e, "Exception Sending DCS LOS Request Message");
                         }
-
-                        Thread.Sleep(200);
+                        //every 300 - Wait for the queue
+                        Thread.Sleep(300);
                     }
 
                     try

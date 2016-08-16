@@ -29,7 +29,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
         public Socket workSocket;
     }
 
-    internal class ServerSync
+    internal class ServerSync: IHandle<ServerSettingsChangedMessage>
     {
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         // Thread signal.
@@ -41,12 +41,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
 
         private Socket listener;
 
+        private ServerSettings _serverSettings;
+
         public ServerSync(ConcurrentDictionary<string, SRClient> connectedClients, HashSet<IPAddress> _bannedIps, IEventAggregator eventAggregator)
         {
             _clients = connectedClients;
             this._bannedIps = _bannedIps;
             _eventAggregator = eventAggregator;
             _eventAggregator.Subscribe(this);
+            _serverSettings = ServerSettings.Instance;;
         }
 
         public void StartListening()
@@ -217,7 +220,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
 
                 switch (message.MsgType)
                 {
-                    //synonymous for now
+
+                 
                     case NetworkMessage.MessageType.PING:
                         // Do nothing for now
                         break;
@@ -245,6 +249,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
 
                         HandleRadioClientsSync(clientIp, state.workSocket, message);
 
+                        //send server settings as well
+                        HandleServerSettingsMessage(state.workSocket);
+
+                        break;
+                    case NetworkMessage.MessageType.SERVER_SETTINGS:
+                        HandleServerSettingsMessage(state.workSocket);
                         break;
                     default:
                         _logger.Warn("Recevied unknown message type");
@@ -255,6 +265,19 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
             {
                 _logger.Error(ex, "Exception Handling Message " + ex.Message);
             }
+        }
+
+        private void HandleServerSettingsMessage(Socket socket)
+        {
+            //send server settings
+            var replyMessage = new NetworkMessage
+            {
+                MsgType = NetworkMessage.MessageType.SERVER_SETTINGS,
+                ServerSettings = _serverSettings.ServerSetting
+
+            };
+            Send(socket, replyMessage);
+
         }
 
         private void HandleClientMetaDataUpdate(NetworkMessage message)
@@ -391,6 +414,22 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
             }
             catch (Exception ex)
             {
+            }
+        }
+
+        public void Handle(ServerSettingsChangedMessage message)
+        {
+            foreach (var clientToSent in _clients)
+            {
+                try
+                {
+                    HandleServerSettingsMessage(clientToSent.Value.ClientSocket);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(ex, "Exception Sending Server Settings ");
+                }
+               
             }
         }
     }

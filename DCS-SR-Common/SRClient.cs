@@ -16,6 +16,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
       //  public DcsPosition Position { get; set; }
 
         private int _coalition;
+    
+
         public int Coalition
         {
             get { return _coalition; }
@@ -39,6 +41,34 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 
         public DCSPlayerRadioInfo RadioInfo { get; set; }
         public DcsPosition Position { get; set; }
+
+        [JsonIgnore]
+        private bool _hasLineOfSight;
+        [JsonIgnore]
+        public bool HasLineOfSight
+        {
+            get
+            {
+                if (_hasLineOfSight)
+                {
+                    return true;
+                }
+                else
+                {
+                    if (Position.x == 0 && Position.z == 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+               
+            }
+            set { _hasLineOfSight = value; }
+        }
+
 
         public bool isCurrent()
         {
@@ -71,7 +101,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             {
                 side = "Spectator";
             }
-            return Name == "" ? "Unknown" : Name + " - " + side;
+            return Name == "" ? "Unknown" : Name + " - " + side + " LOS "+_hasLineOfSight+" Pos"+ Position.ToString();
         }
     }
 }

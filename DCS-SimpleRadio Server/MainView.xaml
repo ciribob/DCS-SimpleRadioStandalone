@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.UI"
              mc:Ignorable="d" 
-             Height="180" Width="330">
+             Height="200" Width="330">
     <Grid Margin="0,0,-6,0">
         <Button x:Name="ServerStartStop" Content="{Binding ServerButtonText}"  HorizontalAlignment="Left" Margin="18,18,0,0"
                 VerticalAlignment="Top" Width="75"  />
@@ -15,18 +15,30 @@
                Width="35" />
         <Button x:Name="ShowClientList" Content="Client Admin" HorizontalAlignment="Left" Margin="206,18,0,0"
                 VerticalAlignment="Top" Width="75" />
-        <Button x:Name="RadioSecurityToggle"  Content="{Binding RadioSecurityText}" HorizontalAlignment="Left" Margin="206,55,0,0" VerticalAlignment="Top"
+        <Button x:Name="RadioSecurityToggle"  Content="{Binding RadioSecurityText}" HorizontalAlignment="Left" Margin="206,60,0,0" VerticalAlignment="Top"
                       Width="75" />
-        <Button x:Name="SpectatorAudioToggle" Content="{Binding SpectatorAudioText}" HorizontalAlignment="Left" Margin="206,90,0,0" VerticalAlignment="Top"
+        <Button x:Name="SpectatorAudioToggle" Content="{Binding SpectatorAudioText}" HorizontalAlignment="Left" Margin="206,88,0,0" VerticalAlignment="Top"
                       Width="75" />
         <Label Content="Secure Coalition Radios" HorizontalAlignment="Left" Margin="18,55,0,0"
                VerticalAlignment="Top" Width="143" />
-        <Label Content="Spectator Audio" HorizontalAlignment="Left" Margin="18,90,0,0"
+        <Label Content="Spectator Audio" HorizontalAlignment="Left" Margin="18,81,0,0"
                VerticalAlignment="Top" Width="143" />
-        <Label Content="Auto Export List" HorizontalAlignment="Left" Margin="18,126,0,0"
+        <Label Content="Auto Export List" HorizontalAlignment="Left" Margin="18,107,0,0"
         	VerticalAlignment="Top" Width="143" />
 
-        <Button x:Name="ExportListToggle" Content="{Binding ExportListText}" HorizontalAlignment="Left" Margin="206,130,0,0" VerticalAlignment="Top"
+        <Button x:Name="ExportListToggle" Content="{Binding ExportListText}" HorizontalAlignment="Left" Margin="206,114,0,0" VerticalAlignment="Top"
+                      Width="75" />
+
+        <Label Content="Line of Sight" HorizontalAlignment="Left" Margin="18,133,0,0"
+        	VerticalAlignment="Top" Width="143" />
+
+        <Button x:Name="LOSToggle" Content="{Binding LOSText}" HorizontalAlignment="Left" Margin="206,139,0,0" VerticalAlignment="Top"
+                      Width="75" />
+
+        <Label Content="Distance Limit" HorizontalAlignment="Left" Margin="18,159,0,0"
+        	VerticalAlignment="Top" Width="143" />
+
+        <Button x:Name="DistanceLimitToggle" Content="{Binding DistanceLimitText}" HorizontalAlignment="Left" Margin="206,165,0,0" VerticalAlignment="Top"
                       Width="75" />
     </Grid>
 </UserControl>

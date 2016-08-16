@@ -51,4 +51,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.UI
 
         public SRClient Client { get; }
     }
+
+    public class ServerSettingsChangedMessage
+    {
+    }
 }

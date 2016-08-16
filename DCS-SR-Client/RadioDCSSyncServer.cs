@@ -40,14 +40,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
 
         private UdpClient _dcsLOSListener;
         private ConcurrentDictionary<string, SRClient> _clients;
+        private string _guid;
 
         public static long LastSent { get; set; }
 
-        public RadioDCSSyncServer(SendRadioUpdate clientRadioUpdate, ClientSideUpdate clientSideUpdate, ConcurrentDictionary<string, SRClient> _clients)
+        public RadioDCSSyncServer(SendRadioUpdate clientRadioUpdate, ClientSideUpdate clientSideUpdate, ConcurrentDictionary<string, SRClient> _clients,String guid)
         {
             this._clientRadioUpdate = clientRadioUpdate;
             this._clientSideUpdate = clientSideUpdate;
             this._clients = _clients;
+            this._guid = guid;
         }
 
        
@@ -206,23 +208,28 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
 
                         try
                         {
-                            Logger.Debug(Encoding.UTF8.GetString(
-                                    bytes, 0, bytes.Length));
+                         /*   Logger.Debug(Encoding.UTF8.GetString(
+                                    bytes, 0, bytes.Length));*/
                             var playerInfo =
                                 JsonConvert.DeserializeObject<DCSLosCheckResult[]>(Encoding.UTF8.GetString(
                                     bytes, 0, bytes.Length));
 
                             foreach (var player in playerInfo)
                             {
-                                Logger.Info(player);
+                               
+                                SRClient client;
+                                
+                                if (_clients.TryGetValue(player.id, out client))
+                                {
+                                    client.HasLineOfSight = player.los;
 
+                                    Logger.Debug(client.ToString());
+                                }
                             }
-
-
                         }
                         catch (Exception e)
                         {
-                            Logger.Error(e, "Exception Handling DCS GameGUI Message");
+                            Logger.Error(e, "Exception Handling DCS Los Result Message");
                         }
                     }
 
@@ -232,7 +239,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
                     }
                     catch (Exception e)
                     {
-                        Logger.Error(e, "Exception stoping DCS listener ");
+                        Logger.Error(e, "Exception stoping DCS LOS Result listener ");
                     }
                 }
             });
@@ -260,13 +267,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
                                 var splitList =  clientsList.ChunkBy(10);
                                 foreach (var clientSubList in splitList)
                                 {
-                                    Logger.Info( "Sending LOS Request: "+ JsonConvert.SerializeObject(clientSubList));
+                                   // Logger.Info( "Sending LOS Request: "+ JsonConvert.SerializeObject(clientSubList));
                                     var byteData = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(clientSubList) + "\n");
                                     
                                     _udpSocket.Send(byteData,byteData.Length, _host);
 
-                                    //every 300 - Wait for the queue
-                                    Thread.Sleep(300);
+                                    //every 250 - Wait for the queue
+                                    Thread.Sleep(250);
                                 }
                             }
                            
@@ -276,7 +283,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
                             Logger.Error(e, "Exception Sending DCS LOS Request Message");
                         }
                         //every 300 - Wait for the queue
-                        Thread.Sleep(300);
+                        Thread.Sleep(250);
                     }
 
                     try
@@ -300,7 +307,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
             foreach (var client in clients)
             {
                 //only check if its worth it
-                if (client.Position.x !=0 && client.Position.z != 0)
+                if (client.Position.x !=0 && client.Position.z != 0&& client.ClientGuid != _guid)
                 {
                     requests.Add(new DCSLosCheckRequest()
                     {

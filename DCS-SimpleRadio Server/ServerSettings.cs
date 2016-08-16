@@ -7,7 +7,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
     {
         COALITION_AUDIO_SECURITY = 0,
         SPECTATORS_AUDIO_DISABLED = 1,
-        CLIENT_EXPORT_ENABLED = 2
+        CLIENT_EXPORT_ENABLED = 2,
+        LOS_ENABLED = 3,
+        DISTANCE_ENABLED = 4
     }
 
     public class ServerSettings
@@ -18,7 +20,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
 
         public ServerSettings()
         {
-            ServerSetting = new string[4];
+            ServerSetting = new string[Enum.GetValues(typeof(ServerSettingType)).Length];
 
             foreach (ServerSettingType set in Enum.GetValues(typeof(ServerSettingType)))
             {

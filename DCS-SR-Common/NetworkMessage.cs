@@ -9,7 +9,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             UPDATE, //META Data update - No Radio Information
             PING,
             SYNC,
-            RADIO_UPDATE //Only received server side
+            RADIO_UPDATE, //Only received server side
+            SERVER_SETTINGS
         }
 
         public SRClient Client { get; set; }
@@ -17,5 +18,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
         public MessageType MsgType { get; set; }
 
         public List<SRClient> Clients { get; set; }
+
+        public string[] ServerSettings { get; set; }
+
     }
 }

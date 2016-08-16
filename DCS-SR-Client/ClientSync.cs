@@ -43,7 +43,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
 
         private void Connect()
         {
-            var radioSync = new RadioDCSSyncServer(ClientRadioUpdated, ClientCoalitionUpdate, _clients);
+            var radioSync = new RadioDCSSyncServer(ClientRadioUpdated, ClientCoalitionUpdate, _clients, _guid);
             using (_tcpClient = new TcpClient())
             {
                 _tcpClient.SendTimeout = 10;
@@ -199,6 +199,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                                             }
                                         }
 
+                                        break;
+
+                                    case NetworkMessage.MessageType.SERVER_SETTINGS:
+
+                                        Logger.Info("Recevied: " + NetworkMessage.MessageType.SERVER_SETTINGS);
                                         break;
                                     default:
                                         Logger.Warn("Recevied unknown " + line);

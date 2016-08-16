@@ -64,7 +64,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.UI
         {
             var newSetting = RadioSecurityText == "ON"?"OFF" : "ON";
             ServerSettings.Instance.WriteSetting(ServerSettingType.COALITION_AUDIO_SECURITY, newSetting);
-            NotifyOfPropertyChange(()=>RadioSecurityText);
+            NotifyOfPropertyChange(() => RadioSecurityText);
+
+            _eventAggregator.PublishOnBackgroundThread(new ServerSettingsChangedMessage());
+
         }
 
         public string SpectatorAudioText => ServerSettings.Instance.ServerSetting[(int)ServerSettingType.SPECTATORS_AUDIO_DISABLED] == "DISABLED" ? "DISABLED" : "ENABLED";
@@ -74,6 +77,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.UI
             var newSetting = SpectatorAudioText == "ENABLED" ? "DISABLED" : "ENABLED";
             ServerSettings.Instance.WriteSetting(ServerSettingType.SPECTATORS_AUDIO_DISABLED, newSetting);
             NotifyOfPropertyChange(() => SpectatorAudioText);
+
+            _eventAggregator.PublishOnBackgroundThread(new ServerSettingsChangedMessage());
+
         }
 
         public string ExportListText => ServerSettings.Instance.ServerSetting[(int)ServerSettingType.CLIENT_EXPORT_ENABLED] == "ON" ? "ON" : "OFF";
@@ -83,6 +89,30 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.UI
             var newSetting = ExportListText == "ON" ? "OFF" : "ON";
             ServerSettings.Instance.WriteSetting(ServerSettingType.CLIENT_EXPORT_ENABLED, newSetting);
             NotifyOfPropertyChange(() => ExportListText);
+
+            _eventAggregator.PublishOnBackgroundThread(new ServerSettingsChangedMessage());
+        }
+
+        public string LOSText => ServerSettings.Instance.ServerSetting[(int)ServerSettingType.LOS_ENABLED] == "ON" ? "ON" : "OFF";
+
+        public void LOSToggle()
+        {
+            var newSetting = LOSText == "ON" ? "OFF" : "ON";
+            ServerSettings.Instance.WriteSetting(ServerSettingType.LOS_ENABLED, newSetting);
+            NotifyOfPropertyChange(() => LOSText);
+
+            _eventAggregator.PublishOnBackgroundThread(new ServerSettingsChangedMessage());
+        }
+
+        public string DistanceLimitText => ServerSettings.Instance.ServerSetting[(int)ServerSettingType.DISTANCE_ENABLED] == "ON" ? "ON" : "OFF";
+
+        public void DistanceLimitToggle()
+        {
+            var newSetting = DistanceLimitText == "ON" ? "OFF" : "ON";
+            ServerSettings.Instance.WriteSetting(ServerSettingType.DISTANCE_ENABLED, newSetting);
+            NotifyOfPropertyChange(() => DistanceLimitText);
+
+            _eventAggregator.PublishOnBackgroundThread(new ServerSettingsChangedMessage());
         }
 
         public void Handle(ServerStateMessage message)

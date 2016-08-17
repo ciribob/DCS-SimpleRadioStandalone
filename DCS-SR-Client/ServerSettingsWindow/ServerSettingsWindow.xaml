@@ -8,8 +8,48 @@
                         ResizeMode="NoResize"
    
         mc:Ignorable="d"
-        Title="Server Settings" Height="100" Width="200">
+        Title="Server Settings" Height="215" Width="250">
     <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2*" />
+
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+
+
+        </Grid.RowDefinitions>
+            <Label Grid.Column="0" Grid.Row="0" Content="Coalition Security" HorizontalContentAlignment="Center"
+                           VerticalContentAlignment="Center" />
+
+            <Label Grid.Column="1" Name="CoalitionSecurity" Grid.Row="0" Content="Unknown" HorizontalContentAlignment="Center"
+                           VerticalContentAlignment="Center" />
+
+        <Label Grid.Column="0" Grid.Row="1" Content="Spectator Audio" HorizontalContentAlignment="Center"
+                           VerticalContentAlignment="Center" />
+
+        <Label Grid.Column="1" Name="SpectatorAudio" Grid.Row="1" Content="Unknown" HorizontalContentAlignment="Center"
+                           VerticalContentAlignment="Center" />
+
+        <Label Grid.Column="0" Grid.Row="2" Content="Line Of Sight" HorizontalContentAlignment="Center"
+                           VerticalContentAlignment="Center" />
+
+        <Label Grid.Column="1" Name="LineOfSight" Grid.Row="2" Content="Unknown" HorizontalContentAlignment="Center"
+                           VerticalContentAlignment="Center" />
+
+        <Label Grid.Column="0" Grid.Row="3" Content="Distance Limitations" HorizontalContentAlignment="Center"
+                           VerticalContentAlignment="Center" />
+
+        <Label Grid.Column="1" Name="Distance" Grid.Row="3" Content="Unknown" HorizontalContentAlignment="Center"
+                           VerticalContentAlignment="Center" />
+
+        <Button Margin="5" Width="80"  Grid.Column="0" Grid.ColumnSpan="2" Click="CloseButton_OnClick" Content="Close" Grid.Row="4"/>
+
 
     </Grid>
 </controls:MetroWindow>

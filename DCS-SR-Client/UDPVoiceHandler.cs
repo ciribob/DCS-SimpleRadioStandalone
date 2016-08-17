@@ -342,7 +342,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
         private bool InRange(UDPVoicePacket udpVoicePacket)
         {
 
-            if (ClientSync.ServerSettings[(int)ServerSettingType.DISTANCE_ENABLED] == null || ClientSync.ServerSettings[(int)ServerSettingType.DISTANCE_ENABLED] == "OFF")
+            if (ClientSync.ServerSettings[(int)ServerSettingType.DISTANCE_ENABLED] == null 
+                || ClientSync.ServerSettings[(int)ServerSettingType.DISTANCE_ENABLED] == "OFF" 
+                 )
             {
                 return true;
             }
@@ -350,8 +352,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             SRClient transmittingClient;
             if (_clientsList.TryGetValue(udpVoicePacket.Guid, out transmittingClient))
             {
-                //TODO calculate distance
-                return true;
+                var myPosition = RadioDCSSyncServer.DcsPlayerRadioInfo.pos;
+
+                var clientPos = transmittingClient.Position;
+
+                if ((myPosition.x == 0 && myPosition.z == 0) || (clientPos.x == 0 && clientPos.z == 0))
+                {
+                    //no real position
+                    return true;
+                }
+               
+                return RadioCalculator.CanHearTransmission(RadioCalculator.CalculateDistance(myPosition,clientPos),udpVoicePacket.Frequency);
             }
             return false;
 

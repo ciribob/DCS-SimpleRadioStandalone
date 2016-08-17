@@ -5,10 +5,8 @@
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     
-                        ResizeMode="NoResize"
-   
-        mc:Ignorable="d"
-        Title="Server Settings" Height="215" Width="250">
+                      ResizeMode="NoResize"
+                      Title="Server Settings" Height="215" Width="250">
     <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*" />

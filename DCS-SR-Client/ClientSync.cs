@@ -158,8 +158,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                                         break;
                                     case NetworkMessage.MessageType.UPDATE:
 
-
-
                                         if (_clients.ContainsKey(serverMessage.Client.ClientGuid))
                                         {
                                             var srClient = _clients[serverMessage.Client.ClientGuid];
@@ -181,11 +179,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                                         {
                                             var connectedClient = serverMessage.Client;
                                             connectedClient.LastUpdate = Environment.TickCount;
+
+                                            //init with LOS true so you can hear them incase of bad DCS install where
+                                            //LOS isnt working
+                                            connectedClient.HasLineOfSight = true;
+
                                             _clients[serverMessage.Client.ClientGuid] = connectedClient;
 
                                             Logger.Info("Recevied New Client: " + NetworkMessage.MessageType.UPDATE + " From: " +
                                                    serverMessage.Client.Name + " Coalition: " +
-                                                   serverMessage.Client.Coalition+" Pos: "+ connectedClient.Position);
+                                                   serverMessage.Client.Coalition);
                                         }
                                         break;
                                     case NetworkMessage.MessageType.SYNC:
@@ -196,7 +199,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                                             foreach (var client in serverMessage.Clients)
                                             {
                                                 client.LastUpdate = Environment.TickCount;
+                                                //init with LOS true so you can hear them incase of bad DCS install where
+                                                //LOS isnt working
+                                                client.HasLineOfSight = true;
                                                 _clients[client.ClientGuid] = client;
+
+                                                Logger.Info("Recevied New Client: " + NetworkMessage.MessageType.SYNC + " From: " +
+                                                   client.Name + " Coalition: " +
+                                                   client.Coalition);
                                             }
                                         }
 

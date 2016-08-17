@@ -88,6 +88,7 @@
     <Compile Include="NetworkMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DCSPlayerRadioInfo.cs" />
+    <Compile Include="RadioCalculator.cs" />
     <Compile Include="RadioInformation.cs" />
     <Compile Include="RadioReceivingState.cs" />
     <Compile Include="RadioTransmit.cs" />

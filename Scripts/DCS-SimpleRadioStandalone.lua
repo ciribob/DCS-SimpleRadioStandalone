@@ -299,7 +299,7 @@ function SR.checkLOS(_clientsList)
     for _,_client in pairs(_clientsList) do
         -- add 5 meter tolerance
        
-        table.insert(_result,{id = _client.id, los = terrain.isVisible(SR.lastKnownPos.x,SR.lastKnownPos.y+5.0,SR.lastKnownPos.z,_client.x,_client.y+5.0,_client.z) })
+        table.insert(_result,{id = _client.id, los = terrain.isVisible(SR.lastKnownPos.x,SR.lastKnownPos.y+3.0,SR.lastKnownPos.z,_client.x,_client.y+3.0,_client.z) })
     end
     return _result
 end

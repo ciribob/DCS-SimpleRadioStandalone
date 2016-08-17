@@ -203,10 +203,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                                                 //LOS isnt working
                                                 client.HasLineOfSight = true;
                                                 _clients[client.ClientGuid] = client;
-
-                                                Logger.Info("Recevied New Client: " + NetworkMessage.MessageType.SYNC + " From: " +
-                                                   client.Name + " Coalition: " +
-                                                   client.Coalition);
                                             }
                                         }
 

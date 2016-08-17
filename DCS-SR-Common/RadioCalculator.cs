@@ -14,7 +14,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 
         //From https://tsc-60.cellmail.com/tsc-60/TSC-118/rtn_ncs_products_arc164_pdf.pdf
         // AN/ARC-164 UHF Airborne Radio
-        public static readonly double RXSensivity = -100; // -100dBm
+        public static readonly double RXSensivity = -90; // -80dBm
 
         public static double FrequencyToWaveLength(double frequency)
         {
@@ -44,7 +44,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 
         public static double CalculateDistance(DcsPosition from, DcsPosition too)
         {
-            return Math.Abs(Math.Sqrt( Math.Pow((too.z - from.z),2) + Math.Pow((too.z - from.z), 2) + Math.Pow((too.z - from.z), 2)));
+            return Math.Abs(Math.Sqrt( Math.Pow((too.x - from.x),2) + Math.Pow((too.y - from.y), 2) + Math.Pow((too.z - from.z), 2)));
         }
     }
 }

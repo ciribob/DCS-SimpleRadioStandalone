@@ -158,6 +158,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                                         break;
                                     case NetworkMessage.MessageType.UPDATE:
 
+                                        ServerSettings = serverMessage.ServerSettings;
+
                                         if (_clients.ContainsKey(serverMessage.Client.ClientGuid))
                                         {
                                             var srClient = _clients[serverMessage.Client.ClientGuid];
@@ -205,6 +207,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                                                 _clients[client.ClientGuid] = client;
                                             }
                                         }
+                                        //add server settings
+                                        ServerSettings = serverMessage.ServerSettings;
 
                                         break;
 

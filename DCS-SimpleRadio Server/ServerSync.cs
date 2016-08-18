@@ -249,9 +249,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
 
                         HandleRadioClientsSync(clientIp, state.workSocket, message);
 
-                        //send server settings as well
-                        HandleServerSettingsMessage(state.workSocket);
-
+                    
                         break;
                     case NetworkMessage.MessageType.SERVER_SETTINGS:
                         HandleServerSettingsMessage(state.workSocket);
@@ -300,14 +298,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
                     var replyMessage = new NetworkMessage
                     {
                         MsgType = NetworkMessage.MessageType.UPDATE,
+                        ServerSettings = _serverSettings.ServerSetting,
+                    
                         Client = new SRClient()
                         {
                             ClientGuid = client.ClientGuid,
                             Coalition = client.Coalition,
                             Name = client.Name,
                             LastUpdate = client.LastUpdate,
-                            Position = client.Position
-                }
+                            Position = client.Position,
+                        }
                     };
 
                     foreach (var clientToSent in _clients)
@@ -349,7 +349,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
             var replyMessage = new NetworkMessage
             {
                 MsgType = NetworkMessage.MessageType.SYNC,
-                Clients = new List<SRClient>()
+                Clients = new List<SRClient>(),
+                ServerSettings = _serverSettings.ServerSetting
             };
 
             foreach (var clientToSent in _clients)

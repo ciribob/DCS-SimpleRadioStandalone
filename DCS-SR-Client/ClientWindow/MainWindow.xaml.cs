@@ -69,6 +69,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             PTT.ControlInputBinding = InputBinding.Ptt;
             PTT.InputDeviceManager = InputManager;
 
+            Intercom.InputName = "Intercom Select";
+            Intercom.ControlInputBinding = InputBinding.Intercom;
+            Intercom.InputDeviceManager = InputManager;
+
             RadioOverlay.InputName = "Overlay Toggle";
             RadioOverlay.ControlInputBinding = InputBinding.OverlayToggle;
             RadioOverlay.InputDeviceManager = InputManager;
@@ -104,7 +108,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             InitRadioEffectsToggle();
 
             InitRadioSwitchIsPTT();
-            
+
+            InitRadioClickEffectsToggle();
         }
 
 
@@ -155,6 +160,19 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             }
         }
 
+        private void InitRadioClickEffectsToggle()
+        {
+            var radioEffects = Settings.Instance.UserSettings[(int)SettingType.RadioClickEffects];
+            if (radioEffects == "ON")
+            {
+                RadioClicksToggle.IsChecked = true;
+            }
+            else
+            {
+                RadioClicksToggle.IsChecked = false;
+            }
+        }
+
         private void InitRadioSwitchIsPTT()
         {
             var switchIsPTT = Settings.Instance.UserSettings[(int)SettingType.RadioSwitchIsPTT];
@@ -195,9 +213,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             // Step 5. Activate the configuration
             LogManager.Configuration = config;
         }
-
-      
-
 
         private void startStop_Click(object sender, RoutedEventArgs e)
         {
@@ -369,6 +384,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             Settings.Instance.WriteSetting(SettingType.RadioEffects, (string) RadioEffectsToggle.Content);
         }
 
+        private void RadioClicks_Click(object sender, RoutedEventArgs e)
+        {
+            Settings.Instance.WriteSetting(SettingType.RadioClickEffects, (string)RadioClicksToggle.Content);
+        }
+
         private void RadioSwitchPTT_Click(object sender, RoutedEventArgs e)
         {
             Settings.Instance.WriteSetting(SettingType.RadioSwitchIsPTT, (string)RadioSwitchIsPTT.Content);
@@ -437,6 +457,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 _serverSettingsWindow = null;
             }
         }
+
+      
     }
 
 }

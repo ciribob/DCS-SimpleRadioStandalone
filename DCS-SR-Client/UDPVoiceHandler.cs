@@ -42,7 +42,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
 
         private Cabhishek.Timers.Timer _timer;
 
-        private readonly int JITTER_BUFFER = 150; //in milliseconds
+        private readonly int JITTER_BUFFER = 80; //in milliseconds
 
         private static object _lock = new object();
 
@@ -70,13 +70,61 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
         {
             lock (_lock)
             {
-                //Empty Jitterbuffer
-                foreach (var clientAudio in _jitterBuffer)
+                if (_jitterBuffer.Count > 0)
                 {
-                    //TODO Reorder list per client to sort out packets sent in the wrong order!
-                    _audioManager.AddClientAudio(clientAudio);
+                    //Empty Jitterbuffer
+                    foreach (var clientAudio in _jitterBuffer)
+                    {
+                        var lastState = RadioReceivingState[clientAudio.ReceivedRadio];
+
+                        if (lastState == null || !lastState.IsReceiving() && !IsCurrentlyTransmittingOn(clientAudio.ReceivedRadio))
+                        {
+                            this._audioManager.PlaySoundEffectStartTransmit(clientAudio.ReceivedRadio, false,
+                                clientAudio.Volume);
+                        }
+                        else
+                        {
+                            //do nothing
+                        }
+
+                        clientAudio.RadioReceivingState.PlayedEndOfTransmission = false;
+                        RadioReceivingState[clientAudio.ReceivedRadio] = clientAudio.RadioReceivingState;
+
+                   //     Logger.Debug("Received: " + clientAudio.ReceivedRadio + " - " + (Environment.TickCount - clientAudio.RadioReceivingState.LastReceviedAt));
+
+                        //TODO Reorder list per client to sort out packets sent in the wrong order!
+                        _audioManager.AddClientAudio(clientAudio);
+                    }
+                    _jitterBuffer.Clear();
                 }
-                _jitterBuffer.Clear();
+
+                //check all radios for playout sound
+                for (int i = 0; i < RadioReceivingState.Length; i++)
+                {
+                    var state = RadioReceivingState[i];
+                    if (state != null &&  (!RadioDCSSyncServer.DcsPlayerRadioInfo.IsCurrent() || IsCurrentlyTransmittingOn(i)))
+                    {
+                        state.PlayedEndOfTransmission = true;
+                    }
+                    else if (state != null && !state.PlayedEndOfTransmission && !state.IsReceiving())
+                    {
+                        state.PlayedEndOfTransmission = true;
+                        var radio = RadioDCSSyncServer.DcsPlayerRadioInfo.radios[i];
+
+
+                        this._audioManager.PlaySoundEffectEndTransmit(i, false,
+                            radio.volume);
+
+                  //      Logger.Debug("Last Received: " + i + " - " + (Environment.TickCount - state.LastReceviedAt));
+
+                    }
+                    else if(state!=null)
+                    {
+                //        Logger.Debug("Last Received: " + i + " - " + (Environment.TickCount - state.LastReceviedAt));
+                    }
+
+
+                }
             }
             
         }
@@ -113,13 +161,19 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                     {
                         radios.selected = 3;
                     }
+                    else if (pressed[(int) InputBinding.Intercom] && pressed[(int) InputBinding.ModifierIntercom])
+                    {
+                        radios.selected = 0;
+                    }
                 }
 
                 var radioSwitchPtt = settings.UserSettings[(int) SettingType.RadioSwitchIsPTT] == "ON";
 
                 if (radioSwitchPtt && ((pressed[(int)InputBinding.ModifierSwitch1] && pressed[(int)InputBinding.Switch1])
                                        || (pressed[(int)InputBinding.ModifierSwitch2] && pressed[(int)InputBinding.Switch2])
-                                       || (pressed[(int)InputBinding.ModifierSwitch3] && pressed[(int)InputBinding.Switch3])))
+                                       || (pressed[(int)InputBinding.ModifierSwitch3] && pressed[(int)InputBinding.Switch3]))
+                                       || (pressed[(int)InputBinding.Intercom] && pressed[(int)InputBinding.ModifierIntercom])
+                                       )
                 {
                     ptt = true;
                 }
@@ -257,14 +311,23 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                                     udpVoicePacket.Modulation,
                                     udpVoicePacket.UnitId, out receivingState);
 
+                                //Check that we're not transmitting on this radio
+
                                 if (receivingRadio != null && receivingState !=null 
-                                    && 
-                                   ( receivingRadio.modulation == 2 // INTERCOM Modulation is 2 so if its two dont bother checking LOS and Range
-                                    ||
-                                    (HasLineOfSight(udpVoicePacket) 
-                                    && InRange(udpVoicePacket))))
+                                        && 
+                                        ( receivingRadio.modulation == 2 // INTERCOM Modulation is 2 so if its two dont bother checking LOS and Range
+                                            ||
+                                            (
+                                                HasLineOfSight(udpVoicePacket) 
+                                                && 
+                                                InRange(udpVoicePacket)
+                                                &&
+                                                !IsCurrentlyTransmittingOn(receivingState.ReceivedOn)
+                                            )
+                                        )
+                                   )
                                 {
-                                    RadioReceivingState[receivingState.ReceivedOn] = receivingState;
+                                  //  RadioReceivingState[receivingState.ReceivedOn] = receivingState;
 
                                     //DECODE audio
                                     int len1;
@@ -296,7 +359,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                                             ReceivedRadio = receivingState.ReceivedOn,
                                             UnitId = udpVoicePacket.UnitId,
                                             Encryption = udpVoicePacket.Encryption,
-                                            Decryptable = udpVoicePacket.Encryption == receivingRadio.encKey && receivingRadio.enc // mark if we can decrypt it
+                                            Decryptable = udpVoicePacket.Encryption == receivingRadio.encKey && receivingRadio.enc, // mark if we can decrypt it
+                                            RadioReceivingState = receivingState
                                         };
 
                                         //add to JitterBuffer!
@@ -321,6 +385,21 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             {
                 Logger.Info("Stopped DeJitter Buffer");
             }
+        }
+
+        private bool IsCurrentlyTransmittingOn(int radioId)
+        {
+            //Return based on server settings as well
+            if (ClientSync.ServerSettings[(int) ServerSettingType.IRL_RADIO_TX] == null
+                || ClientSync.ServerSettings[(int) ServerSettingType.IRL_RADIO_TX] == "OFF")
+            {
+                
+                return false;
+            }
+
+            return (
+                (_ptt || RadioDCSSyncServer.DcsPlayerRadioInfo.ptt)
+                && RadioDCSSyncServer.DcsPlayerRadioInfo.selected == radioId);
         }
 
         private bool HasLineOfSight(UDPVoicePacket udpVoicePacket)
@@ -435,6 +514,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                             var ip = new IPEndPoint(_address, 5010);
                             _listener.Send(udpVoicePacket, udpVoicePacket.Length, ip);
 
+                            //sent more than 180ms ago
+                            if (RadioSendingState.LastSentAt < Environment.TickCount - 180)
+                            {
+                                _audioManager.PlaySoundEffectStartTransmit(currentSelected, radio.enc && radio.encKey >0, radio.volume);
+                            }
+
                             //set radio overlay state
                             RadioSendingState = new RadioSendingState()
                             {
@@ -452,7 +537,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             }
             else if (part1 != null && part2 != null)
             {
-                RadioSendingState.IsSending = false;
+                if (RadioSendingState.IsSending)
+                {
+                    RadioSendingState.IsSending = false;
+
+                    if (RadioSendingState.SendingOn >= 0)
+                    {
+                        var radio = RadioDCSSyncServer.DcsPlayerRadioInfo.radios[RadioSendingState.SendingOn];
+                    
+                        _audioManager.PlaySoundEffectEndTransmit(RadioSendingState.SendingOn,
+                            radio.enc && radio.encKey > 0, radio.volume);
+                    }
+                }
 
                 if (!hasSentVoicePacket)
                 {
@@ -484,6 +580,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                     }
                 }
             }
+           
         }
 
         private void StartPing()

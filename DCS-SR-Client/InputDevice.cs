@@ -17,6 +17,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         OverlayToggle = 8, //all buttons that are "main" buttons will be in hundreds
         ModifierOverlayToggle = 9,
 
+        Intercom = 10,
+        ModifierIntercom =11,
+
     }
 
     public class InputDevice

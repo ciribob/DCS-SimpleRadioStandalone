@@ -11,6 +11,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         Radio3Channel = 3,
         RadioSwitchIsPTT = 4,
         IntercomChannel = 5,
+        RadioClickEffects = 6,
     }
 
 

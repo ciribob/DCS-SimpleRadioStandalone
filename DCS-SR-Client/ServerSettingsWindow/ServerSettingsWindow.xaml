@@ -6,7 +6,7 @@
                       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     
                       ResizeMode="NoResize"
-                      Title="Server Settings" Height="215" Width="250">
+                      Title="Server Settings" Height="240" Width="280">
     <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*" />
@@ -17,6 +17,7 @@
                 <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
+            <RowDefinition />
             <RowDefinition />
             <RowDefinition />
 
@@ -46,7 +47,13 @@
         <Label Grid.Column="1" Name="Distance" Grid.Row="3" Content="Unknown" HorizontalContentAlignment="Center"
                            VerticalContentAlignment="Center" />
 
-        <Button Margin="5" Width="80"  Grid.Column="0" Grid.ColumnSpan="2" Click="CloseButton_OnClick" Content="Close" Grid.Row="4"/>
+        <Label Grid.Column="0" Grid.Row="4" Content="IRL Radio Tx Behaviour" HorizontalContentAlignment="Center"
+                           VerticalContentAlignment="Center" />
+
+        <Label Grid.Column="1" Name="RealRadio" Grid.Row="4" Content="Unknown" HorizontalContentAlignment="Center"
+                           VerticalContentAlignment="Center" />
+
+        <Button Margin="5" Width="80"  Grid.Column="0" Grid.ColumnSpan="2" Click="CloseButton_OnClick" Content="Close" Grid.Row="5"/>
 
 
     </Grid>

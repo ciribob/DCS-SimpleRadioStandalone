@@ -81,8 +81,8 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
-                        
-      
+                        <RowDefinition />
+
                     </Grid.RowDefinitions>
 
 
@@ -95,7 +95,9 @@
                     <local:InputBindingControl x:Name="Radio2" InputName="Radio 2" Grid.Row="2" Grid.ColumnSpan="5" ControlInputBinding="{x:Static local:InputBinding.Switch2}"  />
                     <local:InputBindingControl x:Name="Radio3" InputName="Radio 3" Grid.Row="3" Grid.ColumnSpan="5" ControlInputBinding="{x:Static local:InputBinding.Switch3}"  />
                     <local:InputBindingControl x:Name="PTT" InputName="Common PTT" Grid.Row="4" Grid.ColumnSpan="5" ControlInputBinding="{x:Static local:InputBinding.Ptt}"  />
-                    <local:InputBindingControl x:Name="RadioOverlay" InputName="Overlay Toggle" Grid.Row="5" Grid.ColumnSpan="5" ControlInputBinding="{x:Static local:InputBinding.OverlayToggle}"  />
+                    <local:InputBindingControl x:Name="Intercom" InputName="Intercom Select" Grid.Row="5" Grid.ColumnSpan="5" ControlInputBinding="{x:Static local:InputBinding.Intercom}"  />
+
+                    <local:InputBindingControl x:Name="RadioOverlay" InputName="Overlay Toggle" Grid.Row="6" Grid.ColumnSpan="6" ControlInputBinding="{x:Static local:InputBinding.OverlayToggle}"  />
 
                 </Grid>
                
@@ -121,10 +123,11 @@
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
 
-                    <Label Grid.Column="0" Grid.Row="0" Content="Radio Effects" HorizontalContentAlignment="Center"
+                    <Label Grid.Column="0" Grid.Row="0" Content="Radio Voice Effects" HorizontalContentAlignment="Center"
                            VerticalContentAlignment="Center" />
 
                     <ToggleButton Grid.Column="1" Grid.Row="0" HorizontalContentAlignment="Center"
@@ -145,30 +148,32 @@
                         </ToggleButton.Style>
                     </ToggleButton>
 
-                    <Label Grid.Column="0" Grid.Row="1" Content="Radio 1 Audio Channel"
-                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
-                    <local:RadioChannelConfigUi Grid.Column="1" Grid.Row="1" x:Name="Radio1Config"
-                                                SettingConfig="{x:Static local:SettingType.Radio1Channel}" />
-
-                    <Label Grid.Column="0" Grid.Row="2" Content="Radio 2 Audio Channel"
-                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
-                    <local:RadioChannelConfigUi Grid.Column="1" Grid.Row="2" x:Name="Radio2Config"
-                                                SettingConfig="{x:Static local:SettingType.Radio2Channel}" />
-
-                    <Label Grid.Column="0" Grid.Row="3" Content="Radio 3 Audio Channel"
-                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
-                    <local:RadioChannelConfigUi Grid.Column="1" Grid.Row="3" x:Name="Radio3Config"
-                                                SettingConfig="{x:Static local:SettingType.Radio3Channel}" />
-
-                    <Label Grid.Column="0" Grid.Row="4" Content="Intercom Audio Channel"
-                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
-                    <local:RadioChannelConfigUi Grid.Column="1" Grid.Row="4" x:Name="IntercomConfig"
-                                                SettingConfig="{x:Static local:SettingType.IntercomChannel}" />
-
-                    <Label Grid.Column="0" Grid.Row="5" Content="Radio Switch works as PTT" HorizontalContentAlignment="Center"
+                    <Label Grid.Column="0" Grid.Row="1" Content="Radio Tx/Rx Effects" HorizontalContentAlignment="Center"
                            VerticalContentAlignment="Center" />
 
-                    <ToggleButton Grid.Column="1" Grid.Row="5" HorizontalContentAlignment="Center"
+                    <ToggleButton Grid.Column="1" Grid.Row="1" HorizontalContentAlignment="Center"
+                                  VerticalContentAlignment="Center" Name="RadioClicksToggle"
+                                  Click="RadioClicks_Click">
+                        <ToggleButton.Style>
+                            <Style TargetType="{x:Type ToggleButton}">
+                                <Setter Property="Content" Value="ON" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter Property="Content" Value="ON" />
+                                    </Trigger>
+                                    <Trigger Property="IsChecked" Value="False">
+                                        <Setter Property="Content" Value="OFF" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ToggleButton.Style>
+                    </ToggleButton>
+
+
+                    <Label Grid.Column="0" Grid.Row="2" Content="Radio Switch works as PTT" HorizontalContentAlignment="Center"
+                           VerticalContentAlignment="Center" />
+
+                    <ToggleButton Grid.Column="1" Grid.Row="2" HorizontalContentAlignment="Center"
                                   VerticalContentAlignment="Center" Name="RadioSwitchIsPTT"
                                   Click="RadioSwitchPTT_Click">
                         <ToggleButton.Style>
@@ -186,11 +191,30 @@
                         </ToggleButton.Style>
                     </ToggleButton>
 
+                    <Label Grid.Column="0" Grid.Row="3" Content="Radio 1 Audio Channel"
+                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                    <local:RadioChannelConfigUi Grid.Column="1" Grid.Row="3" x:Name="Radio1Config"
+                                                SettingConfig="{x:Static local:SettingType.Radio1Channel}" />
 
-                    <Label Grid.Column="0" Grid.Row="6" Content="Reset Radio Overlay" HorizontalContentAlignment="Center"
+                    <Label Grid.Column="0" Grid.Row="4" Content="Radio 2 Audio Channel"
+                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                    <local:RadioChannelConfigUi Grid.Column="1" Grid.Row="4" x:Name="Radio2Config"
+                                                SettingConfig="{x:Static local:SettingType.Radio2Channel}" />
+
+                    <Label Grid.Column="0" Grid.Row="5" Content="Radio 3 Audio Channel"
+                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                    <local:RadioChannelConfigUi Grid.Column="1" Grid.Row="5" x:Name="Radio3Config"
+                                                SettingConfig="{x:Static local:SettingType.Radio3Channel}" />
+
+                    <Label Grid.Column="0" Grid.Row="6" Content="Intercom Audio Channel"
+                           HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                    <local:RadioChannelConfigUi Grid.Column="1" Grid.Row="6" x:Name="IntercomConfig"
+                                                SettingConfig="{x:Static local:SettingType.IntercomChannel}" />
+                    
+                    <Label Grid.Column="0" Grid.Row="7" Content="Reset Radio Overlay" HorizontalContentAlignment="Center"
                            VerticalContentAlignment="Center" />
 
-                    <Button Grid.Column="1" Grid.Row="6" HorizontalContentAlignment="Center"
+                    <Button Grid.Column="1" Grid.Row="7" HorizontalContentAlignment="Center"
                                   VerticalContentAlignment="Center" 
                                     Content="Reset"
                                   Click="ResetRadioWindow_Click" />

@@ -115,6 +115,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.UI
             _eventAggregator.PublishOnBackgroundThread(new ServerSettingsChangedMessage());
         }
 
+        public string RealRadioText => ServerSettings.Instance.ServerSetting[(int)ServerSettingType.IRL_RADIO_TX] == "ON" ? "ON" : "OFF";
+
+        public void RealRadioToggle()
+        {
+            var newSetting = RealRadioText == "ON" ? "OFF" : "ON";
+            ServerSettings.Instance.WriteSetting(ServerSettingType.IRL_RADIO_TX, newSetting);
+            NotifyOfPropertyChange(() => RealRadioText);
+
+            _eventAggregator.PublishOnBackgroundThread(new ServerSettingsChangedMessage());
+        }
+
         public void Handle(ServerStateMessage message)
         {
             IsServerRunning = message.IsRunning;

@@ -7,8 +7,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.DSP
     public class RadioFilter : ISampleProvider
     {
         private readonly ISampleProvider _source;
-        private readonly BiQuadFilter _highPassFilter = BiQuadFilter.HighPassFilter(24000, 520, 0.97f);
-        private readonly BiQuadFilter _lowPassFilter = BiQuadFilter.LowPassFilter(24000, 4130, 2.0f);
+        private readonly BiQuadFilter _highPassFilter = BiQuadFilter.HighPassFilter(AudioManager.SAMPLE_RATE, 520, 0.97f);
+        private readonly BiQuadFilter _lowPassFilter = BiQuadFilter.LowPassFilter(AudioManager.SAMPLE_RATE, 4130, 2.0f);
         private readonly Settings _settings;
 
         public RadioFilter(ISampleProvider sampleProvider)

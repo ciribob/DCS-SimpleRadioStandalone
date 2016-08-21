@@ -1,4 +1,5 @@
 ﻿using System;
+using Ciribob.DCS.SimpleRadio.Standalone.Common;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client
 {
@@ -14,5 +15,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
         public UInt32 UnitId { get;  set; }
         public short Encryption { get; internal set; }
         public bool Decryptable { get; internal set; }
+        public RadioReceivingState RadioReceivingState { get; set; }
     }
 }

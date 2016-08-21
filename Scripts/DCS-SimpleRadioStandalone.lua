@@ -14,6 +14,8 @@ SR.LOS_RECEIVE_PORT = 9086
 SR.LOS_SEND_TO_PORT = 9085
 SR.RADIO_SEND_TO_PORT = 9084
 
+SR.LOS_HEIGHT_OFFSET = 10.0 -- sets the line of sight offset to simulate radio waves bending
+
 SR.unicast = true --DONT CHANGE THIS
 
 SR.lastKnownPos = {x=0,y=0,z=0}
@@ -26,8 +28,8 @@ function SR.log(str)
     end
 end
 
-package.path  = package.path..";.\\LuaSocket\\?.lua"
-package.cpath = package.cpath..";.\\LuaSocket\\?.dll"
+package.path  = package.path..";.\\LuaSocket\\?.lua;"
+package.cpath = package.cpath..";.\\LuaSocket\\?.dll;"
 
 ---- DCS Search Paths - So we can load Terrain!
 local guiBindPath = './dxgui/bind/?.lua;' .. 
@@ -62,7 +64,7 @@ SR.UDPLosReceiveSocket:settimeout(.0001) --receive timer
 local terrain = require('terrain')
 
 if terrain ~= nil then
-  SR.log("Loaded Terrain!")
+  SR.log("Loaded Terrain - SimpleRadio Standalone!")
 end
 
 -- Prev Export functions.
@@ -297,9 +299,9 @@ function SR.checkLOS(_clientsList)
 
     local _result = {}
     for _,_client in pairs(_clientsList) do
-        -- add 5 meter tolerance
+        -- add 10 meter tolerance
        
-        table.insert(_result,{id = _client.id, los = terrain.isVisible(SR.lastKnownPos.x,SR.lastKnownPos.y+3.0,SR.lastKnownPos.z,_client.x,_client.y+3.0,_client.z) })
+        table.insert(_result,{id = _client.id, los = terrain.isVisible(SR.lastKnownPos.x,SR.lastKnownPos.y+SR.LOS_HEIGHT_OFFSET,SR.lastKnownPos.z,_client.x,_client.y+SR.LOS_HEIGHT_OFFSET,_client.z) })
     end
     return _result
 end
@@ -490,6 +492,11 @@ function SR.exportRadioUH1H(_data)
 end
 
 function SR.exportRadioSA342(_data)
+
+    _data.radios[1].name = "Intercom"
+    _data.radios[1].frequency =100.0
+    _data.radios[1].modulation = 2 --Special intercom modulation
+    _data.radios[1].volume =1.0
 
     _data.radios[2].name = "TRAP 138A"
     _data.radios[2].frequency = SR.getRadioFrequency(5)
@@ -881,10 +888,10 @@ end
 
 function SR.exportRadioBF109(_data)
 
-    _data.radios[1].name = "FuG 16ZY"
-    _data.radios[1].frequency =  SR.getRadioFrequency(14)
-    _data.radios[1].modulation = 0
-    _data.radios[1].volume = SR.getRadioVolume(0, 130,{0.0,1.0},false)
+    _data.radios[2].name = "FuG 16ZY"
+    _data.radios[2].frequency =  SR.getRadioFrequency(14)
+    _data.radios[2].modulation = 0
+    _data.radios[2].volume = SR.getRadioVolume(0, 130,{0.0,1.0},false)
 
     _data.selected = 1
 

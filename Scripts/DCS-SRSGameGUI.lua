@@ -1,7 +1,7 @@
 -- Version 1.2.0.0
 -- Make sure you COPY this file to the same location as the Export.lua as well! 
 -- Otherwise the Radio Might not work
-SRS = {}
+local SRS = {}
 
 SRS.unicast = true
 
@@ -14,8 +14,8 @@ function SRS.log(str)
     end
 end
 
-package.path  = package.path..";.\\LuaSocket\\?.lua"
-package.cpath = package.cpath..";.\\LuaSocket\\?.dll"
+package.path  = package.path..";.\\LuaSocket\\?.lua;"
+package.cpath = package.cpath..";.\\LuaSocket\\?.dll;"
 
 local socket = require("socket")
 

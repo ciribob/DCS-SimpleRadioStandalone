@@ -3,7 +3,9 @@ using System.Collections.Concurrent;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.UI;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
+using Ciribob.DCS.SimpleRadio.Standalone.Server;
 using FragLabs.Audio.Codecs;
 using FragLabs.Audio.Codecs.Opus;
 using NAudio.Wave;
@@ -38,9 +40,22 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
         private readonly ConcurrentDictionary<string, SRClient> _clientsList;
         private UdpVoiceHandler _udpVoiceHandler;
 
+        private RadioAudioProvider[] _effectsBuffer;
+
+        private CachedAudioEffect[] _cachedAudioEffects;
+
+        private byte[] _micClickOffBytes;
+
+
         public AudioManager(ConcurrentDictionary<string, SRClient> clientsList)
         {
             this._clientsList = clientsList;
+
+            _cachedAudioEffects = new CachedAudioEffect[Enum.GetNames(typeof(CachedAudioEffect.AudioEffectTypes)).Length];
+            for (int i = 0; i < _cachedAudioEffects.Length; i++)
+            {
+                _cachedAudioEffects[i] = new CachedAudioEffect((CachedAudioEffect.AudioEffectTypes) i);
+            }
         }
 
         public float MicBoost { get; set; } = 1.0f;
@@ -80,17 +95,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
 
             try
             {
-                //       _playBuffer = new BufferedWaveProvider(new NAudio.Wave.WaveFormat(48000, 16, 1));
-
                 _mixing = new MixingSampleProvider(WaveFormat.CreateIeeeFloatWaveFormat(SAMPLE_RATE, 2));
+                _mixing.ReadFully = true;
 
-                //add silence track?
-                var provider = new BufferedWaveProvider(WaveFormat.CreateIeeeFloatWaveFormat(SAMPLE_RATE, 2));
-                //  provider.BufferDuration = TimeSpan.FromMilliseconds(100);
 
-                _mixing.AddMixerInput(provider);
-
-                //TODO pass all this to the audio manager
+                _effectsBuffer = new RadioAudioProvider[RadioDCSSyncServer.DcsPlayerRadioInfo.radios.Length];
+             
+                for (int i = 0; i < RadioDCSSyncServer.DcsPlayerRadioInfo.radios.Length;i++)
+                {
+                    _effectsBuffer[i] = new RadioAudioProvider(false);
+                 
+                    _mixing.AddMixerInput(_effectsBuffer[i].VolumeSampleProvider);
+                }
 
                 //Audio manager should start / stop and cleanup based on connection successfull and disconnect
                 //Should use listeners to synchronise all the state
@@ -109,7 +125,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                 _bytesPerSegment = _encoder.FrameByteCount(_segmentFrames);
 
                 _waveIn = new WaveIn(WaveCallbackInfo.FunctionCallback());
-                _waveIn.BufferMilliseconds = 100;
+                _waveIn.BufferMilliseconds = 60;
                 _waveIn.DeviceNumber = mic;
                 _waveIn.DataAvailable += _waveIn_DataAvailable;
                 _waveIn.WaveFormat = new WaveFormat(SAMPLE_RATE, 16, 1); // should this be 44100??
@@ -120,6 +136,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                 voiceSenderThread.Start();
 
                 _waveIn.StartRecording();
+
+              //  _effectsBuffer.AddSamples(_micClickOffBytes, 0, _micClickOffBytes.Length);
+                //  _effectsBuffer.DiscardOnBufferOverflow = true;
             }
             catch (Exception ex)
             {
@@ -127,6 +146,54 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
 
 
                 Environment.Exit(1);
+            }
+        }
+
+        public void PlaySoundEffectStartTransmit( int transmitOnRadio, bool encrypted, float volume)
+        {
+            var radioEffects = Settings.Instance.UserSettings[(int)SettingType.RadioClickEffects];
+            if (radioEffects == "ON")
+            {
+                var _effectBuffer = _effectsBuffer[transmitOnRadio];
+                //TODO change volume here as well
+                if (encrypted)
+                {
+                    _effectBuffer.VolumeSampleProvider.Volume = volume;
+                    _effectBuffer.AddSamples(
+                        _cachedAudioEffects[(int) CachedAudioEffect.AudioEffectTypes.KY_58_TX].AudioEffectBytes, true, 0,
+                        transmitOnRadio);
+                }
+                else
+                {
+                    _effectBuffer.VolumeSampleProvider.Volume = volume;
+                    _effectBuffer.AddSamples(
+                        _cachedAudioEffects[(int) CachedAudioEffect.AudioEffectTypes.RADIO_TX].AudioEffectBytes, true, 0,
+                        transmitOnRadio);
+                }
+            }
+        }
+
+        public void PlaySoundEffectEndTransmit(int transmitOnRadio, bool encrypted, float volume)
+        {
+            var radioEffects = Settings.Instance.UserSettings[(int)SettingType.RadioClickEffects];
+            if (radioEffects == "ON")
+            {
+                var _effectBuffer = _effectsBuffer[transmitOnRadio];
+             
+                if (encrypted)
+                {
+                    _effectBuffer.VolumeSampleProvider.Volume = volume;
+                    _effectBuffer.AddSamples(
+                        _cachedAudioEffects[(int) CachedAudioEffect.AudioEffectTypes.KY_58_RX].AudioEffectBytes, true, 0,
+                        transmitOnRadio);
+                }
+                else
+                {
+                    _effectBuffer.VolumeSampleProvider.Volume = volume;
+                    _effectBuffer.AddSamples(
+                        _cachedAudioEffects[(int) CachedAudioEffect.AudioEffectTypes.RADIO_RX].AudioEffectBytes, true, 0,
+                        transmitOnRadio);
+                }
             }
         }
 
@@ -187,6 +254,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
         {
             if (_mixing != null)
             {
+                _effectsBuffer = null;
                 _mixing.RemoveAllMixerInputs();
             }
 

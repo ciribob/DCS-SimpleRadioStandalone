@@ -142,11 +142,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CachedAudioEffect.cs" />
     <Compile Include="AudioManager.cs" />
     <Compile Include="AudioPreview.cs" />
     <Compile Include="ClientAudio.cs" />
     <Compile Include="ClientAudioProvider.cs" />
-    <Compile Include="DejitterBuffer.cs" />
     <Compile Include="AppConfiguration.cs" />
     <Compile Include="ClientWindow\InputBindingControl.xaml.cs">
       <DependentUpon>InputBindingControl.xaml</DependentUpon>
@@ -157,6 +157,7 @@
     <Compile Include="ClientWindow\RadioChannelConfigUI.xaml.cs">
       <DependentUpon>RadioChannelConfigUI.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RadioAudioProvider.cs" />
     <Compile Include="RadioOverlayWindow\IntercomControlGroup.xaml.cs">
       <DependentUpon>IntercomControlGroup.xaml</DependentUpon>
     </Compile>
@@ -278,6 +279,30 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="audio-headset.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mic_click_on.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mic_click_off.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mic_click_off_16_1600.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mic_click_on_16_1600.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ARC-164_Rx_End_16_1600.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\KY-58 TX PREAMBLE SHORT 16 1600.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\KY-58 RX PREAMBLE SHORT 16 1600.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\mic_click_on_16_1600_reversed.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target AfterTargets="AfterBuild;NonWinFodyTarget" Name="CleanReferenceCopyLocalPaths">

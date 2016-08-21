@@ -24,7 +24,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                 {
                     BufferMilliseconds = 80,
                     DeviceNumber = mic,
-                    WaveFormat = new WaveFormat(24000, 16, 1)
+                    WaveFormat = new WaveFormat(8000, 16, 1)
                 };
 
                 var pcm = new WaveInProvider(_waveIn);

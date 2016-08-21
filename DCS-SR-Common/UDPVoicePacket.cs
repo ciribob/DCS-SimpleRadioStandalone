@@ -95,7 +95,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             return combinedBytes;
         }
 
-        public static UDPVoicePacket DecodeVoicePacket(byte[] encodedOpusAudio)
+        public static UDPVoicePacket DecodeVoicePacket(byte[] encodedOpusAudio, bool decode = true)
         {
             //last 22 bytes are guid!
             var recievingGuid = Encoding.ASCII.GetString(
@@ -104,12 +104,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             var ecnAudio1 = BitConverter.ToUInt16(encodedOpusAudio, 0);
             var ecnAudio2 = BitConverter.ToUInt16(encodedOpusAudio, 2);
 
-            var part1 = new byte[ecnAudio1];
-            Buffer.BlockCopy(encodedOpusAudio, 4, part1, 0, ecnAudio1);
+            byte[] part1 = null;
+            byte[] part2 = null;
 
-            var part2 = new byte[ecnAudio2];
-            Buffer.BlockCopy(encodedOpusAudio, 4 + ecnAudio1, part2, 0, ecnAudio2);
+            if (decode)
+            {
+                part1 = new byte[ecnAudio1];
+                Buffer.BlockCopy(encodedOpusAudio, 4, part1, 0, ecnAudio1);
 
+                part2 = new byte[ecnAudio2];
+                Buffer.BlockCopy(encodedOpusAudio, 4 + ecnAudio1, part2, 0, ecnAudio2);
+            }
+         
             var frequency = BitConverter.ToDouble(encodedOpusAudio,
                 ecnAudio1+ ecnAudio2+4);
 

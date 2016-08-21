@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.UI"
              mc:Ignorable="d" 
-             Height="200" Width="330">
+             Height="230" Width="330">
     <Grid Margin="0,0,-6,0">
         <Button x:Name="ServerStartStop" Content="{Binding ServerButtonText}"  HorizontalAlignment="Left" Margin="18,18,0,0"
                 VerticalAlignment="Top" Width="75"  />
@@ -39,6 +39,13 @@
         	VerticalAlignment="Top" Width="143" />
 
         <Button x:Name="DistanceLimitToggle" Content="{Binding DistanceLimitText}" HorizontalAlignment="Left" Margin="206,165,0,0" VerticalAlignment="Top"
+                      Width="75" />
+
+
+        <Label Content="IRL Radio Tx Behaviour" HorizontalAlignment="Left" Margin="18,185,0,0"
+        	VerticalAlignment="Top" Width="143" />
+
+        <Button x:Name="RealRadioToggle" Content="{Binding RealRadioText}" HorizontalAlignment="Left" Margin="206,192,0,0" VerticalAlignment="Top"
                       Width="75" />
     </Grid>
 </UserControl>

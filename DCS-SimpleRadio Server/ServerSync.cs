@@ -127,7 +127,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
                     _logger.Info("Removed Client " + state.guid);
                 }
 
-                _eventAggregator.PublishOnUIThread(new ServerStateMessage(true, new List<SRClient>(_clients.Values)));
+                try
+                {
+                    _eventAggregator.PublishOnUIThread(new ServerStateMessage(true, new List<SRClient>(_clients.Values)));
+                }
+                catch (Exception ex)
+                {
+                    _logger.Info(ex, "Exception Publishing Client Update After Disconnect");
+                }
             }
 
             try

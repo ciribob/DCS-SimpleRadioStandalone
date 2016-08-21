@@ -34,6 +34,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             LineOfSight.Content = settings[(int) ServerSettingType.LOS_ENABLED] == "ON" ? "ON" : "OFF";
 
             Distance.Content = settings[(int)ServerSettingType.DISTANCE_ENABLED] == "ON" ? "ON" : "OFF";
+
+            RealRadio.Content = settings[(int)ServerSettingType.IRL_RADIO_TX] == "ON" ? "ON" : "OFF";
         }
 
         private void CloseButton_OnClick(object sender, RoutedEventArgs e)

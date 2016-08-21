@@ -44,50 +44,51 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
                     var rawBytes = _listener.Receive(ref groupEP);
                     if (rawBytes!=null && rawBytes.Length >= 22)
                     {
-                        Task.Run(() =>
-                        {
+                        //WRAP IN REAL THREAD
+     //                   Task.Run(() =>
+         //               {
                             //last 36 bytes are guid!
-                            var guid = Encoding.ASCII.GetString(
-                                rawBytes, rawBytes.Length - 22, 22);
+                        var guid = Encoding.ASCII.GetString(
+                            rawBytes, rawBytes.Length - 22, 22);
 
-                            if (_clientsList.ContainsKey(guid))
+                        if (_clientsList.ContainsKey(guid))
+                        {
+                            var client = _clientsList[guid];
+                            client.VoipPort = groupEP;
+
+                            var spectatorAudio = _serverSettings.ServerSetting[(int)ServerSettingType.SPECTATORS_AUDIO_DISABLED];
+
+                            if (client.Coalition == 0 && spectatorAudio == "DISABLED")
                             {
-                                var client = _clientsList[guid];
-                                client.VoipPort = groupEP;
-
-                                var spectatorAudio = _serverSettings.ServerSetting[(int)ServerSettingType.SPECTATORS_AUDIO_DISABLED];
-
-                                if (client.Coalition == 0 && spectatorAudio == "DISABLED")
-                                {
-                                   // IGNORE THE AUDIO
-                                }
-                                else
-                                {
-                                    try
-                                    {
-                                        //decode
-                                        var udpVoicePacket = UDPVoicePacket.DecodeVoicePacket(rawBytes);
-
-                                        if (udpVoicePacket != null && udpVoicePacket.Modulation != 4) //magical ignore message 4
-                                        {
-                                            SendToOthers(rawBytes, client, udpVoicePacket);
-                                        }
-                                    }
-                                    catch (Exception)
-                                    {
-                                        //Hide for now, slows down loop to much....
-                                    }
-                                   
-                                   
-                                }
+                                // IGNORE THE AUDIO
                             }
                             else
                             {
-                                SRClient value;
-                                _clientsList.TryRemove(guid, out value);
-                                //  logger.Info("Removing  "+guid+" From UDP pool");
+                                try
+                                {
+                                    //decode
+                                    var udpVoicePacket = UDPVoicePacket.DecodeVoicePacket(rawBytes);
+
+                                    if (udpVoicePacket != null && udpVoicePacket.Modulation != 4) //magical ignore message 4
+                                    {
+                                        SendToOthers(rawBytes, client, udpVoicePacket);
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    //Hide for now, slows down loop to much....
+                                }
+                                   
+                                   
                             }
-                        });
+                        }
+                        else
+                        {
+                            SRClient value;
+                            _clientsList.TryRemove(guid, out value);
+                            //  logger.Info("Removing  "+guid+" From UDP pool");
+                        }
+    //                    });
                     }
                     else if (rawBytes!=null && rawBytes.Length == 15 && rawBytes[0] == 1 && rawBytes[14] == 15)
                     {

@@ -713,7 +713,15 @@ function SR.exportRadioSA342(_data)
         _data.radios[4].enc = true
     end
 
-    _data.control = 0; -- HOTAS Controls
+    if SR.getButtonPosition(452) > 0.5 then
+        _data.selected = 1
+    elseif SR.getButtonPosition(454) > 0.5 then
+        _data.selected = 2
+    elseif SR.getButtonPosition(453) > 0.5 then
+        _data.selected = 3
+    end
+    
+    _data.control = 1; -- HOTAS Controls
 
     return _data
 

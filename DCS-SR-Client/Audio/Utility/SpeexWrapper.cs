@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using NAudio.Wave;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Utility
@@ -287,15 +288,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Utility
 
                 Reset();
 
+                var settingsStore = SettingsStore.Instance;
+
                 //From https://github.com/mumble-voip/mumble/blob/a189969521081565b8bda93d253670370778d471/src/mumble/Settings.cpp
                 //and  https://github.com/mumble-voip/mumble/blob/3ffd9ad3ed18176774d8e1c64a96dffe0de69655/src/mumble/AudioInput.cpp#L605
-                AutomaticGainControl = true;
-                AutomaticGainControlTarget = 30000;
-                AutomaticGainControlDecrement = -60;
-                AutomaticGainControlLevelMax = 68;
+                AutomaticGainControl = settingsStore.GetClientSetting(SettingsKeys.AGC).BoolValue;
+                AutomaticGainControlTarget = settingsStore.GetClientSetting(SettingsKeys.AGCTarget).IntValue;
+                AutomaticGainControlDecrement = settingsStore.GetClientSetting(SettingsKeys.AGCDecrement).IntValue;
+                AutomaticGainControlLevelMax = settingsStore.GetClientSetting(SettingsKeys.AGCLevelMax).IntValue;
 
-                Denoise = true;
-                DenoiseAttenuation = -30;
+                Denoise = settingsStore.GetClientSetting(SettingsKeys.Denoise).BoolValue;
+                DenoiseAttenuation = settingsStore.GetClientSetting(SettingsKeys.DenoiseAttenuation).IntValue;
 
             }
 

@@ -91,10 +91,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             this.Left = _settings.GetPositionSetting(SettingsKeys.ClientX).FloatValue;
             this.Top = _settings.GetPositionSetting(SettingsKeys.ClientY).FloatValue;
 
-            // Notification/tray bar icon is initialised as soon as possible so it is visible immediately if the "StartMinimised" setting is enabled
-            InitNotificationIcon();
-
-            SetupLogging();
+           
 
             Title = Title + " - " + UpdaterChecker.VERSION;
 
@@ -117,7 +114,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             InitSettingsScreen();
 
             InitInput();
-
 
             InitAudioInput();
 
@@ -544,55 +540,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             RadioSoundEffects.IsChecked = _settings.GetClientSetting(SettingsKeys.RadioEffects).BoolValue;
             RadioSoundEffectsClipping.IsChecked = _settings.GetClientSetting(SettingsKeys.RadioEffectsClipping).BoolValue;
             AutoSelectChannel.IsChecked = _settings.GetClientSetting(SettingsKeys.AutoSelectPresetChannel).BoolValue;
-        }
 
-
-        private void SetupLogging()
-        {
-            var config = new LoggingConfiguration();
-
-            var fileTarget = new FileTarget();
-            config.AddTarget("file", fileTarget);
-
-            fileTarget.FileName = "${basedir}/clientlog.txt";
-            fileTarget.Layout =
-                @"${longdate} | ${logger} | ${message} ${exception:format=toString,Data:maxInnerExceptionLevel=1}";
-
-#if DEBUG
-            config.LoggingRules.Add( new LoggingRule("*", LogLevel.Debug, fileTarget));
-#else
-            config.LoggingRules.Add( new LoggingRule("*", LogLevel.Info, fileTarget));
-#endif
-           
-            LogManager.Configuration = config;
-        }
-
-        private void InitNotificationIcon()
-        {
-            System.Windows.Forms.MenuItem notifyIconContextMenuShow = new System.Windows.Forms.MenuItem
-            {
-                Index = 0,
-                Text = "Show"
-            };
-            notifyIconContextMenuShow.Click += new EventHandler(NotifyIcon_Show);
-
-            System.Windows.Forms.MenuItem notifyIconContextMenuQuit = new System.Windows.Forms.MenuItem
-            {
-                Index = 1,
-                Text = "Quit"
-            };
-            notifyIconContextMenuQuit.Click += new EventHandler(NotifyIcon_Quit);
-
-            System.Windows.Forms.ContextMenu notifyIconContextMenu = new System.Windows.Forms.ContextMenu();
-            notifyIconContextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] { notifyIconContextMenuShow, notifyIconContextMenuQuit });
-
-            System.Windows.Forms.NotifyIcon notifyIcon = new System.Windows.Forms.NotifyIcon
-            {
-                Icon = Properties.Resources.audio_headset,
-                Visible = true
-            };
-            notifyIcon.ContextMenu = notifyIconContextMenu;
-            notifyIcon.DoubleClick += new EventHandler(NotifyIcon_Show);
+            AlwaysAllowHotas.IsChecked = _settings.GetClientSetting(SettingsKeys.AlwaysAllowHotasControls).BoolValue;
+            AllowDCSPTT.IsChecked = _settings.GetClientSetting(SettingsKeys.AllowDCSPTT).BoolValue;
         }
 
         private void Connect()
@@ -844,16 +794,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             }
         }
 
-        private void NotifyIcon_Show(object sender, EventArgs args)
-        {
-            Show();
-            WindowState = WindowState.Normal;
-        }
-
-        private void NotifyIcon_Quit(object sender, EventArgs args)
-        {
-            Close();
-        }
 
         private void SpeakerBoost_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
@@ -1117,6 +1057,21 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             _settings.GetClientSetting(SettingsKeys.StartMinimised).BoolValue =
                 (bool)StartMinimised.IsChecked;
             _settings.Save();
+        }
+
+        private void AllowDCSPTT_OnClick(object sender, RoutedEventArgs e)
+        {
+            _settings.GetClientSetting(SettingsKeys.AllowDCSPTT).BoolValue =
+                (bool)AllowDCSPTT.IsChecked;
+            _settings.Save();
+        }
+
+        private void AlwaysAllowHotas_OnClick(object sender, RoutedEventArgs e)
+        {
+            _settings.GetClientSetting(SettingsKeys.AlwaysAllowHotasControls).BoolValue =
+                (bool)AlwaysAllowHotas.IsChecked;
+            _settings.Save();
+
         }
     }
 }

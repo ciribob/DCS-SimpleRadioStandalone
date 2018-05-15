@@ -512,7 +512,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
             //update common parts
             playerRadioInfo.name = message.name;
-            playerRadioInfo.control = message.control;
+           
+
+            if (_settings.GetClientSetting(SettingsKeys.AlwaysAllowHotasControls).BoolValue)
+            {
+                playerRadioInfo.control = DCSPlayerRadioInfo.RadioSwitchControls.HOTAS;
+            }
+            else
+            {
+                playerRadioInfo.control = message.control;
+            }
+
             playerRadioInfo.unit = message.unit;
             playerRadioInfo.pos = message.pos;
 
@@ -712,7 +722,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             }
 
             //change PTT last
-            playerRadioInfo.ptt = message.ptt;
+            if (!_settings.GetClientSetting(SettingsKeys.AllowDCSPTT).BoolValue)
+            {
+                playerRadioInfo.ptt =false;
+            }
+            else
+            {
+                playerRadioInfo.ptt = message.ptt;
+            }
+           
             //                }
             //            }
 

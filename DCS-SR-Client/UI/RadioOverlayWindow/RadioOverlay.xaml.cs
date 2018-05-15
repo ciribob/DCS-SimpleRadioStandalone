@@ -44,7 +44,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
             _aspectRatio = MinWidth / MinHeight;
 
             AllowsTransparency = true;
-            Opacity = _settings.GetClientSetting(SettingsKeys.RadioOpacity).DoubleValue;
+            Opacity = _settings.GetPositionSetting(SettingsKeys.RadioOpacity).DoubleValue;
             WindowOpacitySlider.Value = Opacity;
 
             radioControlGroup[0] = Radio1;
@@ -54,11 +54,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
             //allows click and drag anywhere on the window
             ContainerPanel.MouseLeftButtonDown += WrapPanel_MouseLeftButtonDown;
 
-            Top = _settings.GetClientSetting(SettingsKeys.RadioX).DoubleValue;
-            Left = _settings.GetClientSetting(SettingsKeys.RadioY).DoubleValue;
+            Top = _settings.GetPositionSetting(SettingsKeys.RadioX).DoubleValue;
+            Left = _settings.GetPositionSetting(SettingsKeys.RadioY).DoubleValue;
 
-            Width = _settings.GetClientSetting(SettingsKeys.RadioWidth).DoubleValue;
-            Height = _settings.GetClientSetting(SettingsKeys.RadioHeight).DoubleValue;
+            Width = _settings.GetPositionSetting(SettingsKeys.RadioWidth).DoubleValue;
+            Height = _settings.GetPositionSetting(SettingsKeys.RadioHeight).DoubleValue;
 
             //  Window_Loaded(null, null);
             CalculateScale();
@@ -160,11 +160,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            _settings.GetClientSetting(SettingsKeys.RadioWidth).DoubleValue = Width;
-            _settings.GetClientSetting(SettingsKeys.RadioHeight).DoubleValue = Height;
-            _settings.GetClientSetting(SettingsKeys.RadioOpacity).DoubleValue = Opacity;
-            _settings.GetClientSetting(SettingsKeys.RadioX).DoubleValue = Top;
-            _settings.GetClientSetting(SettingsKeys.RadioY).DoubleValue = Left;
+            _settings.GetPositionSetting(SettingsKeys.RadioWidth).DoubleValue = Width;
+            _settings.GetPositionSetting(SettingsKeys.RadioHeight).DoubleValue = Height;
+            _settings.GetPositionSetting(SettingsKeys.RadioOpacity).DoubleValue = Opacity;
+            _settings.GetPositionSetting(SettingsKeys.RadioX).DoubleValue = Top;
+            _settings.GetPositionSetting(SettingsKeys.RadioY).DoubleValue = Left;
             _settings.Save();
             base.OnClosing(e);
 

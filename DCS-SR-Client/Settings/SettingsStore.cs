@@ -72,6 +72,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
         OutgoingDCSUDPOther = 67, //7082
         DCSIncomingGameGUIUDP = 68, // 5068
         DCSLOSIncomingUDP = 69, //9085
+
+        AGC = 70,
+        AGCTarget = 71,
+        AGCDecrement=72,
+        AGCLevelMax = 73,
+
+        Denoise=74,
+        DenoiseAttenuation = 75,
+
+        AlwaysAllowHotasControls = 76,
+        AllowDCSPTT = 77
+
     }
 
     public enum InputBinding
@@ -280,6 +292,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             {SettingsKeys.OutgoingDCSUDPOther.ToString(), "7082"},
             {SettingsKeys.DCSIncomingGameGUIUDP.ToString(), "5068"},
             {SettingsKeys.DCSLOSIncomingUDP.ToString(), "9085"},
+
+            {SettingsKeys.AGC.ToString(), "true"},
+            {SettingsKeys.AGCTarget.ToString(), "30000"},
+            {SettingsKeys.AGCDecrement.ToString(), "-60"},
+            {SettingsKeys.AGCLevelMax.ToString(),"68" },
+
+            {SettingsKeys.Denoise.ToString(),"true" },
+            {SettingsKeys.DenoiseAttenuation.ToString(),"-30" },
+
+            {SettingsKeys.AlwaysAllowHotasControls.ToString(),"false" },
+            {SettingsKeys.AllowDCSPTT.ToString(),"true" },
+
         };
 
         public InputDevice GetControlSetting(InputBinding key)

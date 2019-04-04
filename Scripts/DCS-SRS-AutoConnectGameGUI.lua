@@ -17,7 +17,7 @@ local HOST_PLAYER_ID = 1
 
 SRSAuto.MESSAGE_PREFIX = "SRS Running @ " -- DO NOT MODIFY!!!
 
-package.path  = package.path..";.\\LuaSocket\\?.lua;"
+package.path = package.path..";.\\LuaSocket\\?.lua;"
 package.cpath = package.cpath..";.\\LuaSocket\\?.dll;"
 
 local socket = require("socket")
@@ -28,32 +28,32 @@ SRSAuto.UDPSendSocket:settimeout(0)
 SRSAuto.logFile = io.open(lfs.writedir()..[[Logs\DCS-SRS-AutoConnect.log]], "w")
 
 function SRSAuto.log(str)
-    if SRSAuto.logFile then
-        SRSAuto.logFile:write(str.."\n")
-        SRSAuto.logFile:flush()
-    end
+	if SRSAuto.logFile then
+		SRSAuto.logFile:write(str.."\n")
+		SRSAuto.logFile:flush()
+	end
 end
 
 -- Register callbacks --
 
 SRSAuto.onPlayerConnect = function(id)
 	if not DCS.isServer() then
-        return
-    end
+		return
+	end
 	if SRSAuto.SERVER_SEND_AUTO_CONNECT and id ~= HOST_PLAYER_ID then
-        SRSAuto.log(string.format("Sending auto connect message to player %d on connect ", id))
+		SRSAuto.log(string.format("Sending auto connect message to player %d on connect ", id))
 		net.send_chat_to(string.format(SRSAuto.MESSAGE_PREFIX .. "%s", SRSAuto.SERVER_SRS_HOST), id)
 	end
 end
 
 SRSAuto.onPlayerChangeSlot = function(id)
-    if not DCS.isServer() then
-        return
-    end
-    if SRSAuto.SERVER_SEND_AUTO_CONNECT and id ~= HOST_PLAYER_ID then
-        SRSAuto.log(string.format("Sending auto connect message to player %d on switch ", id))
-        net.send_chat_to(string.format(SRSAuto.MESSAGE_PREFIX .. "%s", SRSAuto.SERVER_SRS_HOST), id)
-   end
+	if not DCS.isServer() then
+		return
+	end
+	if SRSAuto.SERVER_SEND_AUTO_CONNECT and id ~= HOST_PLAYER_ID then
+		SRSAuto.log(string.format("Sending auto connect message to player %d on switch ", id))
+		net.send_chat_to(string.format(SRSAuto.MESSAGE_PREFIX .. "%s", SRSAuto.SERVER_SRS_HOST), id)
+	end
 end
 
 DCS.setUserCallbacks(SRSAuto)

@@ -1,5 +1,5 @@
 # DCS-SimpleRadioStandalone
-An open source Stand alone Radio for DCS integrating with all clickable cockpits and FC3 Aircraft
+An open source stand-alone radio for DCS that integrates with all in-game clickable cockpits as well as FC3 Aircraft.
 
 Read More Here: http://forums.eagle.ru/showthread.php?t=169387 
 

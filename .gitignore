@@ -264,3 +264,6 @@ install-build/
 sign.bat
 
 .leu
+
+# MacOSX DS_Store
+.DS_Store

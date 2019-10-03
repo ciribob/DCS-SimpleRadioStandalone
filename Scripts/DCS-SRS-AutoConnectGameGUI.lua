@@ -4,9 +4,27 @@
 -- Make sure you enter the correct address into SERVER_SRS_HOST below.
 -- You can add an optional Port. e.g. "127.0.0.1:5002"
 
+function externalip()
+	local http = require("socket.http")
+	local json = loadfile("Scripts\\JSON.lua")()
+	local resp,code,headers,status = http.request("http://ipinfo.io/json")
+	if code ~= 200 then return nil, "Failed fetching external IP; "..tostring(status) end
+	local data, err = json:decode(resp)
+	if not data then
+		return nil, "Failed fetching external IP; "..tostring(err)
+	end
+	if data.ip then
+		return data.ip
+	else
+		return nil, "Failed fetching external IP; no ip field was returned"
+	end
+end
+
 -- User options --
 local SRSAuto = {}
-SRSAuto.SERVER_SRS_HOST = "127.0.0.1"
+local ipaddr, err = externalip()
+local port = "9987"
+SRSAuto.SERVER_SRS_HOST = tostring(ipaddr)..":"..tostring(port)
 SRSAuto.SERVER_SEND_AUTO_CONNECT = true -- set to false to disable auto connect or just remove this file
 
 -- DO NOT EDIT BELOW HERE --

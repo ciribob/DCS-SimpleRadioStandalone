@@ -186,6 +186,8 @@ LuaExportActivityNextEvent = function(tCurrent)
                     _update = SR.exportRadioSU27(_update)
                 elseif _update.unit == "Su-25" or  _update.unit == "Su-25T" then
                     _update = SR.exportRadioSU25(_update)
+                elseif _update.unit == "F-16C_50" then
+                    _update = SR.exportRadioF16C(_update)
                 else
                      -- FC 3
                     _update.radios[2].name = "FC3 VHF"
@@ -1245,6 +1247,90 @@ function SR.exportRadioFA18C(_data)
     _data.control = 0; -- SRS Hotas Controls
 
     return _data
+end
+
+function SR.exportRadioF16C(_data)
+
+   -- UHF
+   _data.radios[2].name = "AN/ARC-164"
+   _data.radios[2].freq =  SR.getRadioFrequency(36)
+   _data.radios[2].modulation = SR.getRadioModulation(36)
+   _data.radios[2].volume = SR.getRadioVolume(0, 430,{0.0,1.0},false)
+   _data.radios[2].encMode = 2
+
+
+   -- VHF
+   _data.radios[3].name = "AN/ARC-222"
+   _data.radios[3].freq = SR.getRadioFrequency(38)
+   _data.radios[3].modulation = SR.getRadioModulation(38)
+   _data.radios[3].volume = SR.getRadioVolume(0, 431,{0.0,1.0},false)
+   _data.radios[3].encMode = 2
+   
+   -- C&I Backup/UFC by Raffson, aka Stoner
+   local _cni = SR.getButtonPosition(542)
+   if _cni == 0 then
+	  local _buhf_func = SR.getSelectorPosition(417, 0.1)
+      local _buhf_mode = SR.getSelectorPosition(416,0.1)
+	  if _buhf_func ~= 0 and _buhf_func ~= 3 then
+	      if _buhf_mode == 1 then -- Using UHF preset channels
+			local _channel  = SR.getSelectorPosition(410,0.05) + 1 --add 1 as channel 0 is channel 1
+			_data.radios[2].channel = _channel 
+		  elseif _buhf_mode == 2 then -- GUARD
+			_data.radios[2].freq = 243.0*1000000
+		  else -- Manual frequency
+		    local _d1 = 100*math.min((SR.getSelectorPosition(411, 0.1)+1), 3)
+		    local _d2 = 10*SR.getSelectorPosition(412, 0.1)
+		    local _d3 = SR.getSelectorPosition(413, 0.1)
+		    local _d4 = 0.1*SR.getSelectorPosition(414, 0.1)
+		    local _d5 = 0.025*SR.getSelectorPosition(415, 0.25)
+		    _data.radios[2].freq = (_d1+_d2+_d3+_d4+_d5)*1000000
+		  end
+		  if _buhf_func == 2 then -- Function set to BOTH --> also listen to guard
+			_data.radios[2].secFreq = 243.0*1000000
+		  else
+		    _data.radios[2].secFreq = 0
+		  end
+	  else -- UHF function is off or set to ADF --> disable transmissions by setting frequency to 0
+		  _data.radios[2].freq = 0
+		  _data.radios[2].secFreq = 0
+	  end
+	  --modulation should be the same as the main radio, thus we're leaving it alone...
+	  --same for encryption...
+	  _data.radios[2].volume = SR.getRadioVolume(0, 420,{0.0,1.0},false)
+   end
+
+   -- KY-58 Radio Encryption
+   local _ky58Power = SR.round(SR.getButtonPosition(707),0.1)
+   if _ky58Power == 0.5 and SR.round(SR.getButtonPosition(705),0.1) == 0.1 then -- mode switch set to C and powered on
+       -- Power on and correct mode selected
+       -- Get encryption key
+       local _channel =  SR.getSelectorPosition(706,0.1)
+
+       local _cipherSwitch = SR.round(SR.getButtonPosition(701),1)
+       local _radio=nil
+       if _cipherSwitch == 1.0 then -- CRAD1 (UHF)
+            _radio = _data.radios[2]
+       elseif _cipherSwitch == -1.0 then -- CRAD2 (VHF)
+            _radio = _data.radios[3]
+       end
+       if _radio~=nil and _channel > 0 and _channel < 7 then
+            _radio.encKey = _channel
+            _radio.enc = true
+            _radio.volume = SR.getRadioVolume(0, 708,{0.0,1.0},false) *  SR.getRadioVolume(0, 432,{0.0,1.0},false)--User KY-58 volume if chiper is used
+       end
+   end
+
+   local _cipherOnly =  SR.round(SR.getButtonPosition(443),1) == -1.0 --If HOT MIC CIPHER Switch, HOT MIC / OFF / CIPHER set to CIPHER, allow only cipher
+   if _cipherOnly and _data.radios[3].enc ~=true then
+      _data.radios[3].freq = 0
+   end
+   if _cipherOnly and _data.radios[2].enc ~=true then
+      _data.radios[2].freq = 0
+   end  
+
+   _data.control = 0; -- SRS Hotas Controls
+
+   return _data
 end
 
 

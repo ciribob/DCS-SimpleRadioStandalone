@@ -4,7 +4,10 @@
 -- Make sure you enter the correct address into SERVER_SRS_HOST below.
 -- You can add an optional Port. e.g. "127.0.0.1:5002"
 
-function externalip()
+function externalip() -- By Raffson, aka Stoner
+-- To make this work, you must make a directory called "socket" within your "DCS-installation-folder/LuaSocket"
+-- Then you must copy http.lua and url.lua (both Lua files are found in that LuaSocket folder) into that "socket" folder, otherwise the http module will not be found
+-- The installer should fix this, will see what I can do...
 	local http = require("socket.http")
 	local json = loadfile("Scripts\\JSON.lua")()
 	local resp,code,headers,status = http.request("http://ipinfo.io/json")
@@ -23,7 +26,7 @@ end
 -- User options --
 local SRSAuto = {}
 local ipaddr, err = externalip()
-local port = "9987"
+local port = "5002" --Change port if needed
 SRSAuto.SERVER_SRS_HOST = tostring(ipaddr)..":"..tostring(port)
 SRSAuto.SERVER_SEND_AUTO_CONNECT = true -- set to false to disable auto connect or just remove this file
 

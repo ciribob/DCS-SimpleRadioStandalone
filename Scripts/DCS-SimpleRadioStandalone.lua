@@ -140,6 +140,8 @@ LuaExportActivityNextEvent = function(tCurrent)
                     _update = SR.exportRadioA10C(_update)
                   elseif _update.unit == "FA-18C_hornet" then
                     _update = SR.exportRadioFA18C(_update)
+                elseif _update.unit == "F-16C_50" then
+                    _update = SR.exportRadioF16C(_update)
                 elseif string.find(_update.unit, "F-14") then
                     _update = SR.exportRadioF14(_update)                        
                 elseif _update.unit == "F-86F Sabre" then
@@ -1247,6 +1249,48 @@ function SR.exportRadioFA18C(_data)
     return _data
 end
 
+function SR.exportRadioF16C(_data)
+    
+    -- VHF AM
+   -- Set radio data
+   _data.radios[2].name = "VHF Radio AN/ARC-222"
+   _data.radios[2].freq =  SR.getRadioFrequency(36)
+   _data.radios[2].modulation = SR.getRadioModulation(36)
+   _data.radios[2].volume = SR.getRadioVolume(0, 430,{0.0,1.0},false)
+   -- _data.radios[2].encMode = 2 -- Mode 2 is set by aircraft
+
+   -- UHF
+   -- Set radio data
+   _data.radios[3].name = "UHF Radio AN/ARC-164"
+   _data.radios[3].freq = SR.getRadioFrequency(38)
+   _data.radios[3].modulation = SR.getRadioModulation(38)
+   _data.radios[3].volume = SR.getRadioVolume(0, 431,{0.0,1.0},false)
+   -- _data.radios[3].encMode = 2 -- Mode 2 is set by aircraft
+
+
+   -- KY-58 Radio Encryption
+   -- local _ky58Power = SR.round(SR.getButtonPosition(447),0.1)
+   -- if _ky58Power == 0.1 and SR.round(SR.getButtonPosition(444),0.1) == 0.1 then -- mode switch set to C and powered on
+   --     -- Power on!
+
+   --     -- Get encryption key
+   --     local _channel =  SR.getSelectorPosition(446,0.1)+1
+   --     if _channel > 6 then
+   --         _channel = 6 -- has two other options - lock to 6
+   --     end
+
+   --     -- _data.radios[2].encKey = _channel
+   --     -- _data.radios[2].enc = true
+      
+   --     _data.radios[3].encKey = _channel
+   --     _data.radios[3].enc = true
+   
+   -- end
+   
+   _data.control = 0; -- SRS Hotas Controls
+
+   return _data
+end
 
 function SR.exportRadioF86Sabre(_data)
 

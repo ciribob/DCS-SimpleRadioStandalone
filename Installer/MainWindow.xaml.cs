@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -341,10 +341,15 @@ namespace Installer
                 true);
 
             var luasocket = GetPathDCS() + "\\LuaSocket"
-            if( !(Directory.Exists(luasocket+"\\socket") &&
-                File.Exists(luasocket+"\\socket\\http.lua") &&
-                File.Exists(luasocket+"\\socket\\url.lua")) )
+            if( !(File.Exists(luasocket+"\\socket\\http.lua") &&
+                  File.Exists(luasocket+"\\socket\\url.lua")) )
             {
+		if( !Directory.Exists(luasocket+"\\socket") )
+		{
+			Thread.Sleep(200);
+			CreateDirectory(luasocket+"\\socket");
+			Thread.Sleep(200);
+		}
                 File.Copy(luasocket+"\\http.lua", luasocket+"\\socket\\http.lua");
                 File.Copy(luasocket+"\\url.lua", luasocket+"\\socket\\url.lua");
             }

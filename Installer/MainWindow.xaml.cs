@@ -23,6 +23,7 @@ namespace Installer
     {
         private const string REG_PATH = "HKEY_CURRENT_USER\\SOFTWARE\\DCS-SR-Standalone";
         private const string CLIENT_REG_PATH = "HKEY_CURRENT_USER\\SOFTWARE";
+        private const string DCS_PATH = "HKEY_CURRENT_USER\\SOFTWARE\\EAGLE DYNAMICS\\DCS WORLD";
         private readonly string currentDirectory;
 
         //   private readonly string currentPath;
@@ -77,6 +78,15 @@ namespace Installer
                 "");
 
             return srPath ?? "";
+        }
+
+        private static string GetPathDCS()
+        {
+            var Path = (string) Registry.GetValue(DCS_PATH,
+                "PATH",
+                "");
+
+            return Path ?? "";
         }
 
         private static void WritePath(string path, string key)
@@ -273,6 +283,7 @@ namespace Installer
 
         private void InstallProgram(string path)
         {
+
             if (Directory.Exists(path) && File.Exists(path + "\\SR-ClientRadio.exe"))
             {
                 DeleteFileIfExists(path + "\\SR-ClientRadio.exe");
@@ -328,6 +339,15 @@ namespace Installer
                 true);
             File.Copy(currentDirectory + "\\DCS-SRS-hook.lua", path + "\\DCS-SRS-hook.lua",
                 true);
+
+            var luasocket = GetPathDCS() + "\\LuaSocket"
+            if( !(Directory.Exists(luasocket+"\\socket") &&
+                File.Exists(luasocket+"\\socket\\http.lua") &&
+                File.Exists(luasocket+"\\socket\\url.lua")) )
+            {
+                File.Copy(luasocket+"\\http.lua", luasocket+"\\socket\\http.lua");
+                File.Copy(luasocket+"\\url.lua", luasocket+"\\socket\\url.lua");
+            }
         }
 
         private void InstallShortcuts(string path)

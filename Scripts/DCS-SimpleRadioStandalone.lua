@@ -573,15 +573,59 @@ end
 
 function SR.exportRadioA4E(_data)
 
-    _data.radios[2].name = "AN/ARC-27A"
-    _data.radios[2].freq = 251.0 * 1000000 --225 to 399.975MHZ
-    _data.radios[2].modulation = 0
-    _data.radios[2].secFreq = 243.0 * 1000000
-    _data.radios[2].volume = 1.0
-    _data.radios[2].freqMin = 225 * 1000000
-    _data.radios[2].freqMax = 399.975 * 1000000
-    _data.radios[2].volMode = 1
-    _data.radios[2].freqMode = 1
+    local panel = GetDevice(0)
+    local mainFreq = 0
+    local guardFreq = 0
+    local channel = nil
+
+    -- Oil pressure gauge is the most reliable way to get power status
+    local hasPower = panel:get_argument_value(152) > 0.05
+    -- "Function Select Switch" near the right edge controls radio power
+    local functionSelect = panel:get_argument_value(372)
+
+    if hasPower and functionSelect > 0.05 then
+        -- Left edge Mode Selector Switch controls local oscillator source
+        local modeSelector = panel:get_argument_value(366)
+        if modeSelector > -0.5 then
+            if modeSelector > 0.5 then
+                -- PRESET mode, currently hardcoded support for Hoggit's usual defaults
+                -- TODO Find a way to copy presets from the .miz file
+                channel = SR.getSelectorPosition(361, 0.05) + 1
+                mainFreq = 246.000e6 + 3.500e6 * channel
+            else
+                -- MAN mode, frequency from the three middle dials
+                local left = 200e6 * SR.round(panel:get_argument_value(367), 0.05)
+                local middle = 10e6 * SR.round(panel:get_argument_value(368), 0.1)
+                local right = 1e6 * SR.round(panel:get_argument_value(369), 0.05)
+                mainFreq = 220e6 + left + middle + right
+            end
+            -- Additionally, enable guard monitor if Function knob is in position T/R+G
+            if 0.15 < functionSelect and functionSelect < 0.25 then
+                guardFreq = 243.000e6
+            end
+        else
+            -- GD XMIT (Guard Transmit) mode
+            mainFreq = 243.000e6
+        end
+    end
+
+    local arc51 = _data.radios[2]
+    arc51.name = "AN/ARC-51BX"
+    arc51.freq = mainFreq
+    arc51.secFreq = guardFreq
+    arc51.channel = channel
+    -- ARC-51 is AM only
+    arc51.modulation = 0 
+    -- UHF airband starts at 225 MHz, but operation at down to 220 is possible
+    arc51.freqMin = 220.000e6
+    arc51.freqMax = 399.950e6
+
+    -- TODO Check if there are other volume knobs in series
+    arc51.volume = SR.getRadioVolume(0, 365, {0.2, 0.8}, false)
+    if arc51.volume < 0.0 then
+        -- The knob position at startup is 0.0, not 0.2, and it gets scaled to -33.33
+        arc51.volume = 0.0
+    end
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[3].name = "AN/ARC-186(V)"

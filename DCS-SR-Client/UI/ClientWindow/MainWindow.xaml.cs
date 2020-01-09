@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -1634,6 +1634,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             TabControl.SelectedItem = FavouritesSeversTab;
         }
 
+        private void DarkModeToggle_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (((System.Windows.Media.SolidColorBrush)TabControl.Background).Color == ((System.Windows.Media.SolidColorBrush)ReturnColor("#FF303030")).Color)
+            {
+                TabControl.Background = ReturnColor("#FFFFFF");
+            }
+            else
+            {
+                TabControl.Background = ReturnColor("#FF303030");
+            }            
+        }
+
         private void MicAGC_OnClick(object sender, RoutedEventArgs e)
         {
             _globalSettings.SetClientSetting(GlobalSettingsKeys.AGC, (bool) MicAGC.IsChecked);
@@ -1734,6 +1746,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             {
                 _client.ConnectExternalAWACSMode(ExternalAWACSModePassword.Password.Trim(), ExternalAWACSModeConnectionChanged);
             }
+        }
+
+        //Return SolidColorBrush from Hex
+        public System.Windows.Media.Brush ReturnColor(string color)
+        {
+            System.Windows.Media.BrushConverter converter = new System.Windows.Media.BrushConverter();
+            System.Windows.Media.SolidColorBrush brush = (System.Windows.Media.SolidColorBrush)converter.ConvertFromString(color);
+            return brush;
         }
 
         private void ExternalAWACSModeConnectionChanged(bool result, int coalition)

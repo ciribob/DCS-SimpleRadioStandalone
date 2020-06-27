@@ -386,26 +386,27 @@ function SR.checkLOS(_clientsList)
 
         if _hasLos then
             table.insert(_result, { id = _client.id, los = 0.0 })
+	    break ;
         else
-            --check from 10 - 60 in incremenents of 10 if there is Line of sight
-
-            -- check Max
-            _hasLos = terrain.isVisible(SR.lastKnownPos.x, SR.lastKnownPos.y + SR.LOS_HEIGHT_OFFSET_MAX, SR.lastKnownPos.z, _point.x, _client.alt + SR.LOS_HEIGHT_OFFSET, _point.z)
-
-            if _hasLos then
-                table.insert(_result, { id = _client.id, los = (SR.LOS_HEIGHT_OFFSET_MAX / 100.0) })
-            end
-
-            -- now check all the values that arent MAX offset and MIN offset
+            -- first check possible offset step by step
 
             for _losOffset = SR.LOS_HEIGHT_OFFSET + SR.LOS_HEIGHT_OFFSET_STEP, SR.LOS_HEIGHT_OFFSET_MAX - SR.LOS_HEIGHT_OFFSET_STEP, SR.LOS_HEIGHT_OFFSET_STEP do
 
                 _hasLos = terrain.isVisible(SR.lastKnownPos.x, SR.lastKnownPos.y + _losOffset, SR.lastKnownPos.z, _point.x, _client.alt + SR.LOS_HEIGHT_OFFSET, _point.z)
 
                 if _hasLos then
-                    table.insert(_result, { id = _client.id, los = (_losOffset / 100.0) })
+                    table.insert(_result, { id = _client.id, los = (_losOffset / SR.LOS_HEIGHT_OFFSET_MAX) })
                     break ;
                 end
+            end
+
+            -- check Max
+            _hasLos = terrain.isVisible(SR.lastKnownPos.x, SR.lastKnownPos.y + SR.LOS_HEIGHT_OFFSET_MAX, SR.lastKnownPos.z, _point.x, _client.alt + SR.LOS_HEIGHT_OFFSET, _point.z)
+
+            if _hasLos then
+		-- make sure we don't get a full signal LOS if LOS_HEIGHT_OFFSET_MAX is used
+                table.insert(_result, { id = _client.id, los = (0.99) })
+		break ;
             end
 
             if not _hasLos then

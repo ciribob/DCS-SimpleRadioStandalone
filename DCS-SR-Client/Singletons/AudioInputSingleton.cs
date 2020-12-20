@@ -1,15 +1,18 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow;
-using NAudio.Wave;
+using NAudio.CoreAudioApi;
+using NAudio.CoreAudioApi.Interfaces;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using NAudio.CoreAudioApi;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
 {
-    public class AudioInputSingleton
+    public class AudioInputSingleton : IDisposable, IMMNotificationClient, INotifyPropertyChanged
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -36,17 +39,41 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
         #endregion
 
         #region Instance Definition
+        private MMDeviceEnumerator _deviceEnum;
+        private AudioDeviceListItem _selectedAudioInput;
+        private List<AudioDeviceListItem> _inputAudioDevices;
 
-        public List<AudioDeviceListItem> InputAudioDevices { get; }
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        public AudioDeviceListItem SelectedAudioInput { get; set; }
+        public List<AudioDeviceListItem> InputAudioDevices
+        {
+            get => _inputAudioDevices; private set
+            {
+                _inputAudioDevices = value;
+                OnPropertyChanged();
+                OnPropertyChanged("MicrophoneAvailable");
+            }
+        }
+
+        public AudioDeviceListItem SelectedAudioInput
+        {
+            get => _selectedAudioInput;
+            set
+            {
+                _selectedAudioInput = value;
+                OnPropertyChanged();
+            }
+        }
 
         // Indicates whether a valid microphone is available - deactivating audio input controls and transmissions otherwise
-        public bool MicrophoneAvailable { get; private set; }
+        public bool MicrophoneAvailable => InputAudioDevices.Any();
 
         private AudioInputSingleton()
         {
+            _deviceEnum = new MMDeviceEnumerator();
             InputAudioDevices = BuildAudioInputs();
+
+            _deviceEnum.RegisterEndpointNotificationCallback(this);
         }
 
         private List<AudioDeviceListItem> BuildAudioInputs()
@@ -55,20 +82,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
                         GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.AudioInputDeviceId).RawValue);
 
             var inputs = new List<AudioDeviceListItem>();
-
-            var deviceEnum = new MMDeviceEnumerator();
-            var devices = deviceEnum.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active).ToList();
+            var devices = _deviceEnum.EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active).ToList();
 
             if (devices.Count == 0)
             {
-                MicrophoneAvailable = false;
                 Logger.Info("Audio Input - No audio input devices available, disabling mic preview");
                 return inputs;
-            }
-            else
-            {
-                MicrophoneAvailable = true;
-
             }
 
             Logger.Info("Audio Input - " + devices.Count + " audio input devices available, configuring as usual");
@@ -104,12 +123,59 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex,"Audio Input - " + item.DeviceFriendlyName );
+                    Logger.Error(ex, "Audio Input - " + item.DeviceFriendlyName);
                 }
-            
             }
 
+
             return inputs;
+        }
+
+
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void Dispose()
+        {
+            if (_deviceEnum != null)
+            {
+                _deviceEnum.UnregisterEndpointNotificationCallback(this);
+                _deviceEnum.Dispose();
+                _deviceEnum = null;
+            }
+        }
+
+        #endregion
+
+        #region IMMNotificationClient
+
+        public void OnDeviceStateChanged([MarshalAs(UnmanagedType.LPWStr)] string deviceId, [MarshalAs(UnmanagedType.I4)] DeviceState newState)
+        {
+            Logger.Info("Device {deviceId} State Changed to {newState}, rebuilding device list", deviceId, newState);
+            InputAudioDevices = BuildAudioInputs();
+        }
+
+        // The added and removed handlers don't seem to fire for me, but as the logic is the same I'm going to leave these handlers here.
+        public void OnDeviceAdded([MarshalAs(UnmanagedType.LPWStr)] string deviceId)
+        {
+            Logger.Info("Device {deviceId} Added, rebuilding device list", deviceId);
+            InputAudioDevices = BuildAudioInputs();
+        }
+
+        public void OnDeviceRemoved([MarshalAs(UnmanagedType.LPWStr)] string deviceId)
+        {
+            Logger.Info("Device {deviceId} Removed, rebuilding device list.", deviceId);
+            InputAudioDevices = BuildAudioInputs();
+        }
+
+        public void OnDefaultDeviceChanged(DataFlow flow, Role role, [MarshalAs(UnmanagedType.LPWStr)] string defaultDeviceId)
+        {
+        }
+
+        public void OnPropertyValueChanged([MarshalAs(UnmanagedType.LPWStr)] string pwstrDeviceId, PropertyKey key)
+        {
         }
 
         #endregion

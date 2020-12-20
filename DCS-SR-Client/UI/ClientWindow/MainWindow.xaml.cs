@@ -1111,6 +1111,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             _dcsAutoConnectListener?.Stop();
             _dcsAutoConnectListener = null;
+
+            AudioInput?.Dispose();
         }
 
         protected override void OnStateChanged(EventArgs e)

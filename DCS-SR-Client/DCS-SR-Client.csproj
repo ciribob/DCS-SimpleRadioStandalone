@@ -236,6 +236,7 @@
     <Compile Include="Settings\Favourites\MockFavouriteServerStore.cs" />
     <Compile Include="Settings\RadioChannels\FilePresetChannelsStore.cs" />
     <Compile Include="Settings\RadioChannels\MockPresetChannelsStore.cs" />
+    <Compile Include="Singletons\AudioDevicesBase.cs" />
     <Compile Include="Singletons\AudioOutputSingleton.cs" />
     <Compile Include="Singletons\ClientStateSingleton.cs" />
     <Compile Include="Singletons\ConnectedClientsSingleton.cs" />

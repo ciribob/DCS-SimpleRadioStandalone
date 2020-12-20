@@ -5,13 +5,10 @@ using NAudio.Dmo;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
 {
-    public class AudioOutputSingleton
+    public class AudioOutputSingleton : AudioDevicesBase
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -39,20 +36,59 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
 
         #region Instance Definition
 
-        public List<AudioDeviceListItem> OutputAudioDevices { get; }
-        public AudioDeviceListItem SelectedAudioOutput { get; set; }
+        private List<AudioDeviceListItem> _outputAudioDevices;
+        private List<AudioDeviceListItem> _micOutputAudioDevices;
+        private AudioDeviceListItem _selectedAudioOutput;
+        private AudioDeviceListItem _selectedMicAudioOutput;
 
-        public List<AudioDeviceListItem> MicOutputAudioDevices { get; }
-        public AudioDeviceListItem SelectedMicAudioOutput { get; set; }
+        public List<AudioDeviceListItem> OutputAudioDevices
+        {
+            get => _outputAudioDevices; private set
+            {
+                _outputAudioDevices = value;
+                OnPropertyChanged();
+            }
+        }
+        public AudioDeviceListItem SelectedAudioOutput
+        {
+            get => _selectedAudioOutput; set
+            {
+                _selectedAudioOutput = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public List<AudioDeviceListItem> MicOutputAudioDevices
+        {
+            get => _micOutputAudioDevices; private set
+            {
+                _micOutputAudioDevices = value;
+                OnPropertyChanged();
+            }
+        }
+        public AudioDeviceListItem SelectedMicAudioOutput
+        {
+            get => _selectedMicAudioOutput; set
+            {
+                _selectedMicAudioOutput = value;
+                OnPropertyChanged();
+            }
+        }
 
 
         // Version of Windows without bundled multimedia stuff as part of European anti-trust settlement
         // https://support.microsoft.com/en-us/help/11529/what-is-a-windows-7-n-edition
         public bool WindowsN { get; set; }
 
-        private AudioOutputSingleton()
+        private AudioOutputSingleton() : base(Logger)
         {
             WindowsN = DetectWindowsN();
+            OutputAudioDevices = BuildNormalAudioOutputs();
+            MicOutputAudioDevices = BuildMicAudioOutputs();
+        }
+
+        protected override void OnDeviceEnumChanged(string deviceId)
+        {
             OutputAudioDevices = BuildNormalAudioOutputs();
             MicOutputAudioDevices = BuildMicAudioOutputs();
         }
@@ -91,14 +127,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             {
                 savedDeviceId = GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId).RawValue;
                 SelectedMicAudioOutput = outputs[0];
-            } else
+            }
+            else
             {
                 savedDeviceId = GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.AudioOutputDeviceId).RawValue;
                 SelectedAudioOutput = outputs[0];
             }
 
-            var enumerator = new MMDeviceEnumerator();
-            var outputDeviceList = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+            var outputDeviceList = DeviceEnum.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
 
             var i = 1;
             foreach (var device in outputDeviceList)
@@ -153,6 +189,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
                 return true;
             }
         }
+
         #endregion
+
     }
 }

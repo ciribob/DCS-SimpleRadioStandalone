@@ -62,6 +62,7 @@
                             Style="{DynamicResource SquareButtonStyle}"
                             ToolTipService.ShowOnDisabled="True"
                             IsEnabled="{Binding AudioInput.MicrophoneAvailable}"
+                            IsEnabledChanged="Preview_IsEnabledChanged"
                             ToolTip="{Binding Path=AudioInput.MicrophoneAvailable, Converter={StaticResource MicAvailabilityTooltipConverter}}" />
 
                     <Label x:Name="SpeakerLabel"

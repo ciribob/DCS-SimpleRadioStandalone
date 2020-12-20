@@ -984,7 +984,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 }
                 else
                 {
-                    var input = ((MMDevice)AudioInput.SelectedAudioInput.Value).ID;
+                    var input = AudioInput.SelectedAudioInput.Value.ID;
                     _globalSettings.SetClientSetting(GlobalSettingsKeys.AudioInputDeviceId, input);
                 }
             }
@@ -995,14 +995,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             }
             else
             {
-                var output = (MMDevice)AudioOutput.SelectedAudioOutput.Value;
+                var output = AudioOutput.SelectedAudioOutput.Value;
                 _globalSettings.SetClientSetting(GlobalSettingsKeys.AudioOutputDeviceId, output.ID);
             }
 
             //check if we have optional output
             if (AudioOutput.SelectedMicAudioOutput.Value != null)
             {
-                var micOutput = (MMDevice)AudioOutput.SelectedMicAudioOutput.Value;
+                var micOutput = AudioOutput.SelectedMicAudioOutput.Value;
                 _globalSettings.SetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId, micOutput.ID);
             }
             else
@@ -1854,6 +1854,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         private void HQEffect_Click(object sender, RoutedEventArgs e)
         {
             _globalSettings.ProfileSettingsStore.SetClientSetting(ProfileSettingsKeys.HAVEQUICKTone, (bool)HQEffectToggle.IsChecked);
+        }
+
+        private void Preview_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            //If the mic is unplugged while we are previewing audo we need to maintain consistent state.
+            if (_audioPreview != null && (bool)e.NewValue == false) //currently previewing audio but disabling the button as no mic attached
+            {
+                PreviewAudio(sender, null);
+            }
         }
     }
 }

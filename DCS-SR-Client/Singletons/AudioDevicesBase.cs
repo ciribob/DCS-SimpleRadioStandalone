@@ -1,7 +1,9 @@
-﻿using NAudio.CoreAudioApi;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow;
+using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NLog;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -29,6 +31,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
         /// Override this method to react to changes in the device list.
         /// </summary>
         protected abstract void OnDeviceEnumChanged(string deviceId);
+
+
+        protected void DisposeListMembers(List<AudioDeviceListItem> list)
+        {
+            foreach (var item in list)
+            {
+                item.Dispose();
+            }
+        }
 
         public void Dispose()
         {

@@ -1,15 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using NAudio.CoreAudioApi;
+using System;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow
 {
-    public class AudioDeviceListItem
+    public class AudioDeviceListItem: IDisposable
     {
         public string Text { get; set; }
-        public object Value { get; set; }
+        public MMDevice Value { get; set; }
+
+        public void Dispose()
+        {
+            Value?.Dispose();
+        }
 
         public override string ToString()
         {

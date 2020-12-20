@@ -71,6 +71,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
         protected override void OnDeviceEnumChanged(string deviceId)
         {
             //react naiively to any event to start, we can work on logic to reduce unnecessary churn later
+            DisposeListMembers(InputAudioDevices);
             InputAudioDevices = BuildAudioInputs();
         }
 

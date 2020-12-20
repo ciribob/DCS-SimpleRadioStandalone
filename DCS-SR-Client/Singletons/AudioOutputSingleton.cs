@@ -89,6 +89,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
 
         protected override void OnDeviceEnumChanged(string deviceId)
         {
+            // we need to dispose of the MMDevice objects contained in the lists, or we get com exceptions on hardware refresh
+            DisposeListMembers(OutputAudioDevices);
+            DisposeListMembers(MicOutputAudioDevices);
+
             OutputAudioDevices = BuildNormalAudioOutputs();
             MicOutputAudioDevices = BuildMicAudioOutputs();
         }

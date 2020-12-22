@@ -57,6 +57,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             {
                 _selectedAudioInput = value;
                 OnPropertyChanged();
+                OnSelectedInputChanged();
             }
         }
 
@@ -130,8 +131,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             return inputs;
         }
 
+        public event EventHandler SelectedInputChanged;
+        protected void OnSelectedInputChanged()
+        {
+            SelectedInputChanged?.Invoke(this, EventArgs.Empty);
+        }
+
         #endregion
 
-       
+
     }
 }

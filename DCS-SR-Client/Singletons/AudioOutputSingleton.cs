@@ -64,6 +64,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             {
                 _micOutputAudioDevices = value;
                 OnPropertyChanged();
+                OnSelectedOutputChanged();
             }
         }
         public AudioDeviceListItem SelectedMicAudioOutput
@@ -72,6 +73,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             {
                 _selectedMicAudioOutput = value;
                 OnPropertyChanged();
+                OnSelectedOutputChanged();
             }
         }
 
@@ -192,6 +194,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
                 Logger.Warn("Windows N Detected - using inbuilt resampler");
                 return true;
             }
+        }
+
+
+        public event EventHandler SelectedOutputChanged;
+        protected void OnSelectedOutputChanged()
+        {
+            SelectedOutputChanged?.Invoke(this, EventArgs.Empty);
         }
 
         #endregion

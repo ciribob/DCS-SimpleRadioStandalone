@@ -115,13 +115,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
             }
             else 
             {
-                speakers = (MMDevice)_audioOutputSingleton.SelectedAudioOutput.Value;
+                speakers = _audioOutputSingleton.SelectedAudioOutput.Value;
             }
 
             MMDevice micOutput = null;
             if (_audioOutputSingleton.SelectedMicAudioOutput.Value != null)
             {
-                micOutput = (MMDevice)_audioOutputSingleton.SelectedMicAudioOutput.Value;
+                micOutput = _audioOutputSingleton.SelectedMicAudioOutput.Value;
             }
 
             try
@@ -291,6 +291,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         {
             Logger.Error("Recording Stopped");
         }
+        
         Stopwatch _stopwatch = new Stopwatch();
        
         private void WasapiCaptureOnDataAvailable(object sender, WaveInEventArgs e)

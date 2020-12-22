@@ -43,8 +43,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly CachedAudioEffectProvider _cachedAudioEffectsProvider;
-
         private readonly ConcurrentDictionary<string, ClientAudioProvider> _clientsBufferedAudio =
             new ConcurrentDictionary<string, ClientAudioProvider>();
 
@@ -72,6 +70,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
         private readonly AudioInputSingleton _audioInputSingleton = AudioInputSingleton.Instance;
         private readonly AudioOutputSingleton _audioOutputSingleton = AudioOutputSingleton.Instance;
+        private readonly CachedAudioEffectProvider _cachedAudioEffectsProvider = CachedAudioEffectProvider.Instance;
 
         private WasapiOut _micWaveOut;
         private BufferedWaveProvider _micWaveOutBuffer;
@@ -82,11 +81,31 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
         private ClientPassThroughAudioProvider _passThroughAudioProvider;
 
+        //TODO: Temp tuple , change out for class
+        private (string guid, InputDeviceManager devices, IPAddress ip, int port) _lastEncodingConnection;
+
         public AudioManager(bool windowsN)
         {
             this.windowsN = windowsN;
 
-            _cachedAudioEffectsProvider = CachedAudioEffectProvider.Instance;
+            _audioOutputSingleton.SelectedOutputChanged += audioDevice_SelectionChanged;
+            _audioInputSingleton.SelectedInputChanged += audioDevice_SelectionChanged;
+
+        }
+
+        // Allow a user to change devices while connected
+        private void audioDevice_SelectionChanged(object sender, EventArgs e)
+        {
+            var conn = _lastEncodingConnection;
+            
+            if (conn.guid == null)
+            {
+                // we haven't connected yet this session, no need to reconnect
+                return;
+            }
+
+            StopEncoding(); // on old device
+            StartEncoding(conn.guid, conn.devices, conn.ip, conn.port); //on new device
         }
 
         public float MicBoost { get; set; } = 1.0f;
@@ -107,6 +126,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         public void StartEncoding(string guid, InputDeviceManager inputManager,
             IPAddress ipAddress, int port)
         {
+
+            _lastEncodingConnection = (guid, inputManager, ipAddress, port);
 
             MMDevice speakers = null;
             if (_audioOutputSingleton.SelectedAudioOutput.Value == null)
@@ -292,8 +313,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
             Logger.Error("Recording Stopped");
         }
         
-        Stopwatch _stopwatch = new Stopwatch();
-       
         private void WasapiCaptureOnDataAvailable(object sender, WaveInEventArgs e)
         {
             if (_resampler == null)
@@ -684,6 +703,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 _effectsOutputBuffer = null;
 
                 MessageHub.Instance.ClearSubscriptions();
+                _lastEncodingConnection = (null, null, null, 0);
             }
         }
 

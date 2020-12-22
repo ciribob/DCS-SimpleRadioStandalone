@@ -177,47 +177,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             _dcsAutoConnectListener = new DCSAutoConnectHandler(AutoConnect);
 
-            AudioOutput.SelectedOutputChanged += Audio_SelectedDeviceChanged;
-            AudioInput.SelectedInputChanged += Audio_SelectedDeviceChanged;
-
             _updateTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
             _updateTimer.Tick += UpdatePlayerLocationAndVUMeters;
             _updateTimer.Start();
 
-        }
-
-        public static void InvokeIfNecessary(Action action)
-        {
-            if (Thread.CurrentThread == Application.Current.Dispatcher.Thread)
-                action();
-            else
-            {
-                Application.Current.Dispatcher.Invoke(action);
-            }
-        }
-
-        private void Audio_SelectedDeviceChanged(object sender, EventArgs e)
-        {
-            //InvokeIfNecessary(() => { //This may be called from a background thread
-            //    // Allow users to change Mic/output device without also requiring them to disconnect/reconnect
-            //    if (ClientState.IsConnected)
-            //    {
-            //        var connectEAM = ClientState.ExternalAWACSModeConnected;
-            //        if (connectEAM)
-            //        {
-            //            // Disconnect first
-            //            _client.DisconnectExternalAWACSMode();
-            //        }
-
-            //        Stop();
-            //        Connect();
-
-            //        if (connectEAM) //connected when we changed device
-            //        {
-            //            //TODO: Reconnect EAM
-            //        }
-            //    }
-            //});
         }
 
         private void CheckWindowVisibility()

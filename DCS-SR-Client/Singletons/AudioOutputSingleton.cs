@@ -55,6 +55,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             {
                 _selectedAudioOutput = value;
                 OnPropertyChanged();
+                OnSelectedOutputChanged();
             }
         }
 
@@ -64,7 +65,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             {
                 _micOutputAudioDevices = value;
                 OnPropertyChanged();
-                OnSelectedOutputChanged();
             }
         }
         public AudioDeviceListItem SelectedMicAudioOutput

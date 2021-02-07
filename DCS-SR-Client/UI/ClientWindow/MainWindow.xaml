@@ -318,7 +318,7 @@
                     <Button Content="Please Support SRS through Patreon"
                             Click="Donate_OnClick"
                             Width="220"
-                            Margin="0,5,0,0" controls:ButtonHelper.PreserveTextCase="True"
+                            Margin="0,5,0,0" controls:ControlsHelper.ContentCharacterCasing ="Normal"
                             Style="{StaticResource AccentedSquareButtonStyle}" />
 
                 </StackPanel>

@@ -101,7 +101,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                         //sync with others
                         //Radio info is marked as Stale for FC3 aircraft after every frequency change
 
-                        ProcessRadioInfo(message);
+                        if (!_clientStateSingleton.ExternalAWACSModeConnected)
+                        {
+                            ProcessRadioInfo(message);
+                        }
                     }
                     catch (SocketException e)
                     {

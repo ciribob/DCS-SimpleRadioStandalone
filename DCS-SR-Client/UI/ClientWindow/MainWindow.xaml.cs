@@ -1618,7 +1618,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             {
                 _client.DisconnectExternalAWACSMode();
             }
-            else if (!ClientState.IsGameExportConnected) //only if we're not in game
+            else
             {
                 ClientState.LastSeenName = ExternalAWACSModeName.Text;
                 _client.ConnectExternalAWACSMode(ExternalAWACSModePassword.Password.Trim(), ExternalAWACSModeConnectionChanged);

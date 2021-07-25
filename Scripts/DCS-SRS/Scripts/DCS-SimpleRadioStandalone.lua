@@ -2021,27 +2021,24 @@ function SR.exportRadioFA18C(_data)
 
             if iffMode == 1 then
                  if _ufc.UFC_OptionCueing1 == ":" then
-                     if editingMode == "1-" then
-                         local code = (string.sub(_ufc.UFC_OptionDisplay1, -2))
-                         if validateIffCode(code, 1) then return code end
-                     end
-                 else return -1
+                    local code = string.match(_ufc.UFC_ScratchPadNumberDisplay, "1-%d%d")
+                    if code and validateIffCode(code, 1) then
+                        return code
+                    end
+                else
+                    return -1
                  end
-
             elseif iffMode == 3 then
                  if _ufc.UFC_OptionCueing3 == ":" then
-                     if editingMode == "3-" then
-                         local code = (string.sub(_ufc.UFC_ScratchPadNumberDisplay, -4))
-                         if validateIffCode(code, 3) then return code end
-                     end
-                 else return -1
+                    local code = string.match(_ufc.UFC_ScratchPadNumberDisplay, "3-%d%d%d%d")
+                    if code and validateIffCode(code, 3) then
+                        return code
+                    end
+                else
+                    return -1
                  end
-
             elseif iffMode == 4 then
-                 if _ufc.UFC_OptionCueing4 == ":" then
-                     return true
-                 else return false
-                 end
+                return _ufc.UFC_OptionCueing4 == ":"
             end
         end
         return currentCode

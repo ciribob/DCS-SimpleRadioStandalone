@@ -1917,7 +1917,7 @@ function SR.exportRadioFA18C(_data)
                         local chan = tonumber(_ufc.UFC_ScratchPadNumberDisplay)
 
                         if chan == nil then
-                            return 0
+                            return currentChannel
                         end
                         return chan
                 end
@@ -1927,7 +1927,7 @@ function SR.exportRadioFA18C(_data)
                     local chan = tonumber(_ufc.UFC_ScratchPadNumberDisplay)
 
                     if chan == nil then
-                        return 0
+                        return currentChannel
                     end
                     return chan
                 end

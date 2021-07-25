@@ -2016,9 +2016,6 @@ function SR.exportRadioFA18C(_data)
         if _ufc.UFC_OptionDisplay2 == "2   " and _ufc.UFC_ScratchPadString1Display == "X" then
             -- UFC IFF transponder (XP) menu (don't confuse with IFF interrogator (AI) menu)
 
-            -- Which mode's code is being edited
-            local editingMode = string.sub(_ufc.UFC_ScratchPadNumberDisplay, 0, 2)
-
             if iffMode == 1 then
                  if _ufc.UFC_OptionCueing1 == ":" then
                     local code = string.match(_ufc.UFC_ScratchPadNumberDisplay, "1-%d%d")

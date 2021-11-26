@@ -1290,11 +1290,7 @@ function SR.exportRadioMI24P(_data)
         _data.ptt = true
     end
 
-    _data.control = 0; -- HOTAS for now
-
-    return _data
-
-    _data.control = 0; -- HOTAS for now
+    _data.control = 1; -- full radio
 
     return _data
 

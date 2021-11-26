@@ -1230,7 +1230,7 @@ end
 
 function SR.exportRadioMI24P(_data)
 
-    _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
+    _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
 
     _data.radios[1].name = "Intercom"
     _data.radios[1].freq = 100.0
@@ -1266,6 +1266,33 @@ function SR.exportRadioMI24P(_data)
     _data.radios[5].modulation = SR.getRadioModulation(52)
     _data.radios[5].volume = SR.getRadioVolume(0, 517, { 0.0, 1.0 }, false)
     _data.radios[5].volMode = 0
+
+    local _switch = SR.getSelectorPosition(455, 0.1)
+	
+	if _switch == 0 then
+        _data.selected = 1
+    elseif _switch == 4 then
+        _data.selected = 3
+	elseif _switch == 6 then
+		_data.selected = 2
+    else
+        _data.selected = -1
+    end
+	
+	local _pilotPTT = SR.getButtonPosition(738)
+    if _pilotPTT >= 0.1 then
+
+        if _pilotPTT == 0.5 then
+            -- intercom
+            _data.selected = 0
+        end
+
+        _data.ptt = true
+    end
+
+    _data.control = 0; -- HOTAS for now
+
+    return _data
 
     _data.control = 0; -- HOTAS for now
 

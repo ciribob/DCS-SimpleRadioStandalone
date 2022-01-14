@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
@@ -46,6 +45,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
             StartServer();
         }
 
+        public ServerState()
+        {
+            _eventAggregator = new EventAggregator();
+            _eventAggregator.Subscribe(this);
+            StartServer();
+        }
+#if NET461
         public void Handle(BanClientMessage message)
         {
             WriteBanIP(message.Client);
@@ -62,16 +68,48 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
         public void Handle(StartServerMessage message)
         {
             StartServer();
+
             _eventAggregator.PublishOnUIThread(new ServerStateMessage(true,
                 new List<SRClient>(_connectedClients.Values)));
-        }
+    }
 
         public void Handle(StopServerMessage message)
         {
             StopServer();
+
             _eventAggregator.PublishOnUIThread(new ServerStateMessage(false,
                 new List<SRClient>(_connectedClients.Values)));
         }
+
+#else
+        public Task HandleAsync(BanClientMessage message, CancellationToken cancellationToken)
+        {
+            return Task.Run(() =>
+            {
+                WriteBanIP(message.Client);
+                KickClient(message.Client);
+            });
+        }
+
+        public Task HandleAsync(KickClientMessage message, CancellationToken cancellationToken)
+        {
+            return Task.Run(() =>
+            {
+                var client = message.Client;
+                KickClient(client);
+            });
+        }
+
+        public Task HandleAsync(StartServerMessage message, CancellationToken cancellationToken)
+        {
+            return Task.Run(() => StartServer());
+        }
+
+        public Task HandleAsync(StopServerMessage message, CancellationToken cancellationToken)
+        {
+            return Task.Run(() => StopServer());
+        }
+#endif
 
         private void StartExport()
         {
@@ -259,7 +297,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
         private static string GetCurrentDirectory()
         {
             //To get the location the assembly normally resides on disk or the install directory
-            var currentPath = Assembly.GetExecutingAssembly().CodeBase;
+            var currentPath = Assembly.GetExecutingAssembly().Location;
 
             //once you have the path you get the directory with:
             var currentDirectory = Path.GetDirectoryName(currentPath);

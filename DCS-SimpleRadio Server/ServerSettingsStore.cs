@@ -1,10 +1,11 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Windows;
 using NLog;
 using SharpConfig;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
-using System.Collections.Generic;
-using System;
-using System.IO;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Settings
 {
@@ -54,11 +55,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Settings
                 _logger.Error(ex, "Failed to parse server config, potentially corrupted. Creating backing and re-initialising with default config");
 
 #if NET461
-                System.Windows.MessageBox.Show("Failed to read server config, it might have become corrupted.\n" +
+                MessageBox.Show("Failed to read server config, it might have become corrupted.\n" +
                     "SRS will create a backup of your current config file (server.cfg.bak) and initialise using default settings.",
                     "Config error",
-                    System.Windows.MessageBoxButton.OK,
-                    System.Windows.MessageBoxImage.Error);
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
 #endif
                 try
                 {

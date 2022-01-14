@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
@@ -51,6 +52,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
             
         }
 
+#if NET461
         public void Handle(ServerSettingsChangedMessage message)
         {
             try
@@ -62,6 +64,20 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
                 Logger.Error(ex, "Exception Sending Server Settings ");
             }
         }
+#else
+        public Task HandleAsync(ServerSettingsChangedMessage message, CancellationToken cancellationToken)
+        {
+            try
+            {
+                return Task.Run(() => HandleServerSettingsMessage(), cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Exception Sending Server Settings ");
+                return Task.FromResult(false);
+            }
+        }
+#endif
 
         protected override TcpSession CreateSession() { return new SRSClientSession(this, _clients, _bannedIps); }
 
@@ -88,9 +104,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
                 }
 
                 Logger.Error(ex,$"Unable to start the SRS Server");
-
+#if NET461
                 MessageBox.Show($"Unable to start the SRS Server\n\nPort {_serverSettings.GetServerPort()} in use\n\nChange the port by editing the .cfg", "Port in use",
                     MessageBoxButton.OK, MessageBoxImage.Error);
+#endif
                 Environment.Exit(0);
             }
         }
@@ -117,8 +134,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
 
                 try
                 {
+#if NET461
                     _eventAggregator.PublishOnUIThread(
                         new ServerStateMessage(true, new List<SRClient>(_clients.Values)));
+#else
+                    Logger.Info("Client disconnected. New list is" + _clients.Values.ToString());
+#endif
                 }
                 catch (Exception ex)
                 {
@@ -217,10 +238,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
                 _clients[srClient.ClientGuid] = srClient;
 
                 state.SRSGuid = srClient.ClientGuid;
-                
 
+#if NET461
                 _eventAggregator.PublishOnUIThread(new ServerStateMessage(true,
                     new List<SRClient>(_clients.Values)));
+#else
+                Logger.Info("Client connected. New list is [" + string.Join(",", _clients.Values) + "]");
+#endif
             }
 
             return true;
@@ -284,12 +308,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
                     if (send)
                         Multicast(replyMessage.Encode());
 
+#if NET461
                     // Only redraw client admin UI of server if really needed
                     if (redrawClientAdminList)
                     {
                         _eventAggregator.PublishOnUIThread(new ServerStateMessage(true,
                             new List<SRClient>(_clients.Values)));
                     }
+#endif
                 }
             }
         }
@@ -439,8 +465,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
                 _clients[client.ClientGuid].Coalition = clientCoalition;
                 _clients[client.ClientGuid].Name = client.Name;
 
+#if NET461
                 _eventAggregator.PublishOnUIThread(new ServerStateMessage(true,
                     new List<SRClient>(_clients.Values)));
+#endif
             }
 
             var replyMessage = new NetworkMessage
@@ -478,8 +506,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
                 _clients[client.ClientGuid].Coalition = 0;
                 _clients[client.ClientGuid].Name = "";
 
+#if NET461
                 _eventAggregator.PublishOnUIThread(new ServerStateMessage(true,
                     new List<SRClient>(_clients.Values)));
+#endif
 
                 var message = new NetworkMessage
                 {

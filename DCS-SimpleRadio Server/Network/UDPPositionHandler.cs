@@ -52,11 +52,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
 
             var port = _serverSettings.GetServerPort() +1;
             _listener = new UdpClient();
-            try
+#if NET461
+try
             {
                 _listener.AllowNatTraversal(true);
             }
             catch { }
+#endif
 
             _listener.DontFragment = true;
             _listener.Client.DontFragment = true;

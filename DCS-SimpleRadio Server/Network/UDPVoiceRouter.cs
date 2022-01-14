@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
@@ -107,12 +108,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
 
             var port = _serverSettings.GetServerPort();
             _listener = new UdpClient();
-            try
+#if NET461
+try
             {
                 _listener.AllowNatTraversal(true);
             }
             catch { }
-            
+#endif
+
             _listener.ExclusiveAddressUse = true;
             _listener.DontFragment = true;
             _listener.Client.DontFragment = true;
@@ -412,6 +415,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
             }
         }
 
+#if NET461
         public void Handle(ServerFrequenciesChanged message)
         {
             if (message.TestFrequencies != null)
@@ -423,6 +427,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
                 UpdateGlobalLobbyFrequencies(message.GlobalLobbyFrequencies);
             }
         }
-
+#else
+        public Task HandleAsync(ServerFrequenciesChanged message, CancellationToken cancellationToken)
+        {
+            if (message.TestFrequencies != null)
+            {
+                return Task.Run(() => UpdateTestFrequencies(message.TestFrequencies), cancellationToken);
+            }
+            else
+            {
+                return Task.Run(() => UpdateGlobalLobbyFrequencies(message.GlobalLobbyFrequencies), cancellationToken);
+            }
+        }
+#endif
     }
 }

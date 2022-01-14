@@ -13,8 +13,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
     {
         public static void Log(string eventCategory, string eventAction, string guid)
         {
+#if NET461
             var objValue = Registry.GetValue("HKEY_CURRENT_USER\\SOFTWARE\\DCS-SR-Standalone", "SRSAnalyticsOptOut",
                 "FALSE");
+#else
+            var objValue = "FALSE";
+#endif
             if (objValue == null || (string) objValue != "TRUE")
             {
 //#if !DEBUG

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Net;
-using System.Net.Sockets;
+#if NET461
 using System.Windows.Media;
+#endif
 using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Newtonsoft.Json;
@@ -50,7 +51,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Coalition"));
             }
         }
-
+#if NET461
         [JsonIgnore]
         public SolidColorBrush ClientCoalitionColour
         {
@@ -69,6 +70,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
                 }
             }
         }
+#endif
 
         [JsonIgnore]
         public bool Muted { get; set; }

@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Net;
 using System.Security.Principal;
-using System.Threading.Tasks;
-using System.Windows;
 using NLog;
 using Octokit;
-using Application = System.Windows.Application;
+#if NET461
+using System.Windows;
+#endif
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 {
@@ -99,7 +97,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
         public static void ShowUpdateAvailableDialog(string branch, Version version, string url, bool beta)
         {
             _logger.Warn($"New {branch} version available on GitHub: {version}");
-
+#if NET461
             var result = MessageBox.Show($"New {branch} version {version} available!\n\nDo you want to Auto update? This will close SRS\n\nYes - Auto Update\nNo - Manual Update\nCancel - Ignore",
                 "Update available", MessageBoxButton.YesNoCancel, MessageBoxImage.Information);
 
@@ -122,8 +120,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             {
                 Process.Start(url);
             }
+#else
+            _logger.Info($"New {branch} version {version} available!");
+#endif
         }
 
+#if NET461
         private static void LaunchUpdater(bool beta)
         {
             WindowsPrincipal principal = new WindowsPrincipal(WindowsIdentity.GetCurrent());
@@ -170,5 +172,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
                 }
             }
         }
+#endif
     }
 }

@@ -1,17 +1,14 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
-using Ciribob.DCS.SimpleRadio.Standalone.Server.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
 using NLog.Targets.Wrappers;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
+using Ciribob.DCS.SimpleRadio.Standalone.Server.Settings;
 using System.Threading;
-using System.Xml.Linq;
+using System.Collections.Generic;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network.Models
 {

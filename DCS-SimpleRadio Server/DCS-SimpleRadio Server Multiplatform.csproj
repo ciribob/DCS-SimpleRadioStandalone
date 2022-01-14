@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>DCS_SimpleRadio_Server_Multiplatform</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Properties\**" />
+    <Compile Remove="Settings\**" />
+    <Compile Remove="UI\**" />
+    <EmbeddedResource Remove="Properties\**" />
+    <EmbeddedResource Remove="Settings\**" />
+    <EmbeddedResource Remove="UI\**" />
+    <None Remove="Properties\**" />
+    <None Remove="Settings\**" />
+    <None Remove="UI\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Bootstrapper.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="App.config" />
+    <None Remove="app.manifest" />
+    <None Remove="App.xaml" />
+    <None Remove="FodyWeavers.xml" />
+    <None Remove="packages.config" />
+    <None Remove="packages.config.new.20160318193346" />
+    <None Remove="server-10.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Open.Nat" Version="2.1.0" />
+	<PackageReference Include="Caliburn.Micro.Core" Version="4.0.173" />
+	<PackageReference Include="sharpconfig" Version="3.2.9.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DCS-SR-Common\DCS-SimpleRadio Common Multiplatform.csproj" />
+  </ItemGroup>
+
+</Project>

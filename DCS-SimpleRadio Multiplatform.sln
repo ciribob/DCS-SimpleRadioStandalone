@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DCS-SimpleRadio Common Multiplatform", "DCS-SR-Common\DCS-SimpleRadio Common Multiplatform.csproj", "{45795513-E5C2-44AA-A439-C65F85B9199C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DCS-SimpleRadio Server Multiplatform", "DCS-SimpleRadio Server\DCS-SimpleRadio Server Multiplatform.csproj", "{40F61761-F7C8-4680-AC14-5A4CB486F83D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{45795513-E5C2-44AA-A439-C65F85B9199C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45795513-E5C2-44AA-A439-C65F85B9199C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45795513-E5C2-44AA-A439-C65F85B9199C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45795513-E5C2-44AA-A439-C65F85B9199C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40F61761-F7C8-4680-AC14-5A4CB486F83D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40F61761-F7C8-4680-AC14-5A4CB486F83D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40F61761-F7C8-4680-AC14-5A4CB486F83D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40F61761-F7C8-4680-AC14-5A4CB486F83D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CF88CDB3-803E-4946-A26F-9C03819DFABB}
+	EndGlobalSection
+EndGlobal

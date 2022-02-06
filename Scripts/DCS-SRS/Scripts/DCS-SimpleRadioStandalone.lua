@@ -3952,8 +3952,11 @@ LuaExportBeforeNextFrame = function()
 
     -- Check F/A-18C ENT keypress (needs to be checked in LuaExportBeforeNextFrame not to be missed)
     if _lastUnitType == "FA-18C_hornet" then
-        if not _fa18ent and SR.getButtonPosition(122) > 0 then
-            _fa18ent = true
+        if not _fa18ent then
+            local st, rv = pcall(SR.getButtonPosition, 122)     -- pcall to prevent dcs.log error after ejection
+            if st and rv > 0 then
+                _fa18ent = true
+            end
         end
     end
 

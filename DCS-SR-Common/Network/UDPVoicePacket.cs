@@ -18,6 +18,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
        * double Frequency - 8 bytes
        * byte Modulation - 1 byte
        * byte Encryption - 1 byte
+       * radio Num - 1 byte
        * - FIXED SEGMENT
        * UInt UnitId - 4 bytes
        * UInt64 PacketId - 8 bytes
@@ -40,7 +41,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
         public static readonly int FrequencySegmentLength =
             sizeof(double) // double Frequency - 8 bytes
             + sizeof(byte) // byte Modulation - 1 byte
-            + sizeof(byte); // byte Encryption - 1 byte
+            + sizeof(byte) // byte Encryption - 1 byte
+            + sizeof(byte); // Transmitting radio
 
         public static readonly int FixedPacketLength =
             sizeof(uint) // UInt UnitId - 4 bytes
@@ -68,7 +70,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
         SATCOM = 5,
         MIDS = 6,*/
         public byte[] Modulations { get; set; }
-    
+
         public byte[] Encryptions { get; set; }
 
         // FIXED SEGMENT
@@ -79,7 +81,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
         public byte[] OriginalClientGuidBytes { get; set; }
         public string OriginalClientGuid { get; set; }
         public ulong PacketNumber { get; set; }
-
+        public byte[] TransmittingRadio { get; set; }
         //Number of times its been retransmitted - added to stop retransmission loop with sensible limit
         public byte RetransmissionCount { get; set; } = new byte();
 
@@ -92,7 +94,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
             var staticSegmentLength = PacketHeaderLength + FixedPacketLength;
             var totalPacketLength = staticSegmentLength + dynamicSegmentLength;
 
-            PacketLength = (ushort) totalPacketLength;
+            PacketLength = (ushort)totalPacketLength;
 
             // Allocate memory for all combined packet segments
             var combinedBytes = new byte[totalPacketLength];
@@ -145,13 +147,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
                 combinedBytes[frequencyOffset + 6] = freq[6];
                 combinedBytes[frequencyOffset + 7] = freq[7];
 
+                // Radio that is transmitting (1 byte)
+                combinedBytes[frequencyOffset + 8] = TransmittingRadio[i];
+
                 // Radio modulation (1 byte), defaults to AM if not defined for all frequencies
                 var mod = Modulations.Length > i ? Modulations[i] : (byte)4;
-                combinedBytes[frequencyOffset + 8] = mod;
+                combinedBytes[frequencyOffset + 9] = mod;
 
                 // Radio encryption (1 byte), defaults to disabled if not defined for all frequencies
                 var enc = Encryptions.Length > i ? Encryptions[i] : (byte)0;
-                combinedBytes[frequencyOffset + 9] = enc;
+                combinedBytes[frequencyOffset + 10] = enc;
 
                 frequencyOffset += FrequencySegmentLength;
             }
@@ -230,6 +235,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
                 }
 
                 var frequencies = new double[freqCount];
+                var transmittingRadio = new byte[freqCount];
                 var modulations = new byte[freqCount];
                 var encryptions = new byte[freqCount];
 
@@ -237,8 +243,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
                 for (var i = 0; i < freqCount; i++)
                 {
                     frequencies[i] = BitConverter.ToDouble(encodedOpusAudio, frequencyOffset);
-                    modulations[i] = encodedOpusAudio[frequencyOffset + 8];
-                    encryptions[i] = encodedOpusAudio[frequencyOffset + 9];
+                    transmittingRadio[i] = encodedOpusAudio[frequencyOffset + 8];
+                    modulations[i] = encodedOpusAudio[frequencyOffset + 9];
+                    encryptions[i] = encodedOpusAudio[frequencyOffset + 10];
 
                     frequencyOffset += FrequencySegmentLength;
                 }
@@ -258,15 +265,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
                     Encryptions = encryptions,
                     Modulations = modulations,
                     PacketNumber = packetNumber,
+                    TransmittingRadio = transmittingRadio,
                     PacketLength = packetLength,
                     OriginalClientGuid = transmissionGuid,
-                    OriginalClientGuidBytes =  transmissionBytes,
+                    OriginalClientGuidBytes = transmissionBytes,
                     RetransmissionCount = retransmissionCount
                 };
             }
             catch (Exception ex)
             {
-                Logger.Error(ex,"Unable to decode UDP Voice Packet");
+                Logger.Error(ex, "Unable to decode UDP Voice Packet");
             }
 
             return null;

@@ -38,6 +38,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Setting
         TRANSMISSION_LOG_RETENTION = 27,
         RADIO_EFFECT_OVERRIDE = 28,
         SERVER_IP = 29,
+        REALISTIC_RADIO_ENABLED = 30,
     }
 
     public class DefaultServerSettings
@@ -73,7 +74,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Setting
             { ServerSettingsKeys.TRANSMISSION_LOG_ENABLED.ToString(), "false" },
             { ServerSettingsKeys.TRANSMISSION_LOG_RETENTION.ToString(), "2" },
             { ServerSettingsKeys.RADIO_EFFECT_OVERRIDE.ToString(), "false" },
-            { ServerSettingsKeys.SERVER_IP.ToString(), "0.0.0.0" }
+            { ServerSettingsKeys.SERVER_IP.ToString(), "0.0.0.0" },
+            { ServerSettingsKeys.REALISTIC_RADIO_ENABLED.ToString(), "false" },
         };
     }
 }

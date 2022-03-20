@@ -218,6 +218,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.UI.MainWindow
         public string TransmissionLogEnabledText
             => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED).BoolValue ? "ON" : "OFF";
 
+        public string RealisticRadioEnabledText
+            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.REALISTIC_RADIO_ENABLED).BoolValue ? "ON" : "OFF";
+
 
         public string ListeningPort
             => ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.SERVER_PORT).StringValue;
@@ -444,6 +447,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.UI.MainWindow
             var newSetting = TransmissionLogEnabledText != "ON";
             ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED, newSetting);
             NotifyOfPropertyChange(() => TransmissionLogEnabledText);
+
+            _eventAggregator.PublishOnBackgroundThread(new ServerSettingsChangedMessage());
+        }
+
+        public void RealisticRadioEnabledToggle()
+        {
+            var newSetting = RealisticRadioEnabledText != "ON";
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.REALISTIC_RADIO_ENABLED, newSetting);
+            NotifyOfPropertyChange(() => RealisticRadioEnabledText);
 
             _eventAggregator.PublishOnBackgroundThread(new ServerSettingsChangedMessage());
         }

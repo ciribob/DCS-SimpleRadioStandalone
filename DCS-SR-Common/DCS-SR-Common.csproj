@@ -108,6 +108,8 @@
   <ItemGroup>
     <Compile Include="DCSState\DCSAircraftCapabilities.cs" />
     <Compile Include="DCSState\DCSLatLngPosition.cs" />
+    <Compile Include="DCSState\RadioValues.cs" />
+    <Compile Include="DCSState\RadioTypes.cs" />
     <Compile Include="DCSState\Transponder.cs" />
     <Compile Include="DCSState\RadioReceivingPriority.cs" />
     <Compile Include="DCSState\RadioReceivingState.cs" />

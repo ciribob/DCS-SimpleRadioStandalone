@@ -48,6 +48,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
                     FrequencyToWaveLength(frequency)) / Math.PI;
         }
 
+        public static double CustomValueFriisMaximumTransmissionRange(double frequency, RadioValues receiving, RadioValues transmitting)
+        {
+            double partialFriis = 2 * (-receiving.Sensitivity + transmitting.Power + 1 + 1 - 40) / 20 
+                * 5 - (receiving.Sensitivity - transmitting.Power - 1 - 1) / 20;
+
+            return (partialFriis * 
+                FrequencyToWaveLength(frequency)) / Math.PI;
+        }
+
         //we can hear if the received power is more than the RX sensivity
         //Eventually this will scale the audio volume with distance
         public static bool CanHearTransmission(double distance, double frequency)

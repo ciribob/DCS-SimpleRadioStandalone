@@ -19,7 +19,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState
         ANARC164,
         ANARC182,
         ANARC186,
+        ANARC201D,
         ANARC210,
+        ANARC220,
         ANARC222,
         ANARC27,
         ANARC51BX,
@@ -74,12 +76,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState
             {Radios.Intercom.ToString(), new RadioValues(0) }, // Dummy value for intercoms
             {Radios.ANARC131.ToString(), new RadioValues(40) }, // possible sensitivity info https://apps.dtic.mil/sti/pdfs/ADA033368.pdf
             {Radios.ANARC134.ToString(), new RadioValues(46, -88) }, // https://www.liberatedmanuals.com/TM-11-5821-277-20.pdf
-            {Radios.ANARC150.ToString(), new RadioValues(40, -113) }, // https://en.wikipedia.org/wiki/AN/PRC-150
+            {Radios.ANARC150.ToString(), new RadioValues(40) }, // Proving difficult to find information for - produced by MagnaVox
             {Radios.ANARC159.ToString(), new RadioValues(40, -96)}, // https://www.columbiaelectronics.com/an_arc_159_v__uhf_transceiver.htm
             {Radios.ANARC164.ToString(), new RadioValues(40, -91)}, // https://tsc-60.cellmail.com/tsc-60/TSC-118/rtn_ncs_products_arc164_pdf.pdf
             {Radios.ANARC182.ToString(), new RadioValues(44, -110) }, // https://www.columbiaelectronics.com/an_arc_182_v__vhf_uhf_radio_set.htm, used AM parameters - modulation changes based on frequency with differing power outputs and sensitivity
             {Radios.ANARC186.ToString(), new RadioValues(40, -97) }, // https://www.columbiaelectronics.com/an_arc_186_v__radio_set.htm TODO: create ANARC186FM due to tx power and rx sensitivity differences
+            {Radios.ANARC201D.ToString(), new RadioValues(40) }, // https://www.l3harris.com/sites/default/files/2020-11/cs-tcom-an-arc-201d-sincgars-airborne-radio-datasheet.pdf
             {Radios.ANARC210.ToString(), new RadioValues(40) }, // http://static6.arrow.com/aropdfconversion/11eaff76e8fc9a992ea6cb5163f1efddd95392b2/arc-210integratedcommsystemswhitepaper.pdf.pdf, unable to find sensitivity information
+            {Radios.ANARC220.ToString(), new RadioValues(50) }, // https://dpdproductions.com/pages/military-radio-reference-list
             {Radios.ANARC222.ToString(), new RadioValues(40) }, // Having trouble finding SINGCARS configuration details for F16 Blk. 50 in relation to sensitivity, default values are likely a close approximation
             {Radios.ANARC27.ToString(),  new RadioValues(39)}, // https://web.archive.org/web/20100706140322/http://www.nj7p.org/cgi-bin/millist2?mode=normal&name=AN%2FARC-27
             {Radios.ANARC51BX.ToString(), new RadioValues(44)}, // No (good) documentation found yet 
@@ -127,6 +131,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState
 
         public static readonly Dictionary<string, string[]> AircraftDefaults = new Dictionary<string, string[]>()
         {
+            {"External AWACS", new [] { Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString(),
+                                       Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString()} },
+            {"CA", new [] { Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString(),
+                                       Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString()} },
+            {"AH-64D_BLK_II", new []  { Radios.Intercom.ToString(), Radios.ANARC186.ToString(), Radios.ANARC164.ToString(), Radios.ANARC201D.ToString()} }
             {"UH-1H", new [] { Radios.Intercom.ToString(), Radios.ANARC131.ToString(), Radios.ANARC51BX.ToString(), Radios.ANARC134.ToString() } },
             {"Ka-50", new [] {Radios.R800L14.ToString(), Radios.R828.ToString(), Radios.SPU9SW.ToString() } },
             {"Mi-8MT", new [] { Radios.Intercom.ToString(), Radios.R863.ToString(), Radios.JADRO1A.ToString(), Radios.R828.ToString() } },

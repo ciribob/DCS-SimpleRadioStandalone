@@ -43,7 +43,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             //Re-arranged to give maximum distance at receiving power of -90 based on transmitting power
             //of 10 watts
 
-            //Hard coded value 995267.9264 based on re-arranged Friis with 40dbm transmissing 
+            //Hard coded value 995267.9264 based on re-arranged Friis with 40dbm transmissing
+            //Calculating the partial friis benchmarks at 1-3 ticks, can probably remove the hardcoded value?
             if (sensitivity + power == 0)
             {
                 return (MagicPartiallySolvedFriis *

@@ -458,7 +458,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                         var equippedRadios = DefaultRadioInformation.GetAircraftDefaults()[client.RadioInfo.unit];
                                         var selfRadios = DefaultRadioInformation.GetAircraftDefaults()[_clientStateSingleton.DcsPlayerRadioInfo.unit];
                                         int arrayPos = Array.IndexOf(_clientStateSingleton.DcsPlayerRadioInfo.radios, radio);
-                                        var selfReceiving = equippedRadios.Length < arrayPos ? selfRadios[arrayPos] : Radios.Unknown;
+                                        var selfReceiving = equippedRadios.Length < arrayPos ? selfRadios[arrayPos] : Radios.Unknown.ToString();
                                         
                                         //Array.IndexOf(_clientStateSingleton.DcsPlayerRadioInfo.radios, radio)
                                         if (radio != null && state != null)

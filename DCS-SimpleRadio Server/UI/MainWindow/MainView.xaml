@@ -415,15 +415,15 @@
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"/>
 
-                <Label Content="Realistic Radio Values Enabled" 
+                <Label Content="Differing Radio Values Enabled" 
                        Grid.Row="21"
                        Grid.Column="0" 
                        Grid.ColumnSpan="2"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"/>
 
-                <Button x:Name="RealisticRadioEnabledToggle"
-                        Content="{Binding RealisticRadioEnabledText}"
+                <Button x:Name="DifferingRadioEnabledToggle"
+                        Content="{Binding DifferingRadioEnabledText}"
                         Grid.Row="21"
                         Grid.Column="2"
                         Width="75"
@@ -431,15 +431,15 @@
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"/>
 
-                <Label Content="Log Received Transmissions"
+                <Label Content="Use Custom Radio Values" 
                        Grid.Row="22"
                        Grid.Column="0" 
                        Grid.ColumnSpan="2"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"/>
 
-                <Button x:Name="TransmissionLogEnabledToggle"
-                        Content="{Binding TransmissionLogEnabledText}"
+                <Button x:Name="CustomRadioValueEnabledToggle"
+                        Content="{Binding CustomRadioValueEnabledText}"
                         Grid.Row="22"
                         Grid.Column="2"
                         Width="75"
@@ -447,15 +447,31 @@
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"/>
 
-                <Label Content="Transmission Archive Time"
+                <Label Content="Log Received Transmissions"
                        Grid.Row="23"
                        Grid.Column="0" 
                        Grid.ColumnSpan="2"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"/>
 
+                <Button x:Name="TransmissionLogEnabledToggle"
+                        Content="{Binding TransmissionLogEnabledText}"
+                        Grid.Row="23"
+                        Grid.Column="2"
+                        Width="75"
+                        Height="20"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"/>
+
+                <Label Content="Transmission Archive Time"
+                       Grid.Row="24"
+                       Grid.Column="0" 
+                       Grid.ColumnSpan="2"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"/>
+
                 <StackPanel Orientation="Vertical"
-                            Grid.Row="23"
+                            Grid.Row="24"
                             Grid.Column="2">
                     <Grid  Width="75">
                         <Grid.ColumnDefinitions>
@@ -482,13 +498,13 @@
                 </StackPanel>
 
                 <Label Content="Retransmit Hop/Node Count"
-                       Grid.Row="24"
+                       Grid.Row="25"
                        Grid.Column="0" 
                        Grid.ColumnSpan="2"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"/>
                 <StackPanel Orientation="Vertical"
-                            Grid.Row="24"
+                            Grid.Row="25"
                             Grid.Column="2">
                     <Grid  Width="75">
                         <Grid.ColumnDefinitions>

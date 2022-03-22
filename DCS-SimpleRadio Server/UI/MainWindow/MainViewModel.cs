@@ -218,9 +218,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.UI.MainWindow
         public string TransmissionLogEnabledText
             => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED).BoolValue ? "ON" : "OFF";
 
-        public string RealisticRadioEnabledText
-            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.REALISTIC_RADIO_ENABLED).BoolValue ? "ON" : "OFF";
+        public string DifferingRadioEnabledText
+            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.DIFFERING_RADIO_ENABLED).BoolValue ? "ON" : "OFF";
 
+        public string CustomRadioValueEnabledText
+            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.CUSTOM_RADIO_VALUE_ENABLE).BoolValue ? "ON" : "OFF";
 
         public string ListeningPort
             => ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.SERVER_PORT).StringValue;
@@ -451,13 +453,25 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.UI.MainWindow
             _eventAggregator.PublishOnBackgroundThread(new ServerSettingsChangedMessage());
         }
 
-        public void RealisticRadioEnabledToggle()
+        public void DifferingRadioEnabledToggle()
         {
-            var newSetting = RealisticRadioEnabledText != "ON";
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.REALISTIC_RADIO_ENABLED, newSetting);
-            NotifyOfPropertyChange(() => RealisticRadioEnabledText);
+            var newSetting = DifferingRadioEnabledText != "ON";
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.DIFFERING_RADIO_ENABLED, newSetting);
+            NotifyOfPropertyChange(() => DifferingRadioEnabledText);
+            // Initial prototype changes only apply on restart - consider either bundling into server settings
+            // or creating a RadioSettingsChangedMessage and extending ServerLifeCycle to implement an IHandler for it
+            //_eventAggregator.PublishOnBackgroundThread(new RadioSettingsChangedMessage());
+        }
 
-            _eventAggregator.PublishOnBackgroundThread(new ServerSettingsChangedMessage());
+        public void CustomRadioValueEnabledToggle()
+        {
+            var newSetting = CustomRadioValueEnabledText != "ON";
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.CUSTOM_RADIO_VALUE_ENABLE, newSetting);
+            NotifyOfPropertyChange(() => CustomRadioValueEnabledText);
+
+            // Initial prototype changes only apply on restart - consider either bundling into server settings
+            // or creating a RadioSettingsChangedMessage and extending ServerLifeCycle to implement an IHandler for it
+            //_eventAggregator.PublishOnBackgroundThread(new RadioSettingsChangedMessage());
         }
 
         public int ArchiveLimit

@@ -396,6 +396,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
                 MsgType = NetworkMessage.MessageType.SYNC,
                 Clients = new List<SRClient>(_clients.Values),
                 ServerSettings = _serverSettings.ToDictionary(),
+                AircraftSettings = _radioSettingsStore.GetAircraftSettings(),
+                RadioSettings = _radioSettingsStore.GetRadioSettings(),
                 Version = UpdaterChecker.VERSION
             };
 
@@ -501,30 +503,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
 
                 MulticastAllExeceptOne(message.Encode(), session.Id);
             }
-        }
-
-        private void HandleRadioSettingsMessage(SRSClientSession session)
-        {
-            // Due to size only send on request, do not multicast as with serversettings
-            var replyMessage = new NetworkMessage
-            {
-                MsgType = NetworkMessage.MessageType.RADIO_UPDATE,
-                RadioSettings = _radioSettingsStore.GetRadioSettings()
-            };
-
-            session.Send(replyMessage.Encode());
-        }
-
-        private void HandleAircraftSettingMessage(SRSClientSession session)
-        {
-            // Due to size only send on request, do not multicast as with serversettings
-            var replyMessage = new NetworkMessage
-            {
-                MsgType = NetworkMessage.MessageType.AIRCRAFT_SETTINGS,
-                AircraftSettings = _radioSettingsStore.GetAircraftSettings()
-            };
-
-            session.Send(replyMessage.Encode());
         }
 
         public void RequestStop()

@@ -135,7 +135,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState
                                        Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString()} },
             {"CA", new [] { Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString(),
                                        Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString(), Radios.Unknown.ToString()} },
-            {"AH-64D_BLK_II", new []  { Radios.Intercom.ToString(), Radios.ANARC186.ToString(), Radios.ANARC164.ToString(), Radios.ANARC201D.ToString()} }
+            {"AH-64D_BLK_II", new []  { Radios.Intercom.ToString(), Radios.ANARC186.ToString(), Radios.ANARC164.ToString(), Radios.ANARC201D.ToString()} },
             {"UH-1H", new [] { Radios.Intercom.ToString(), Radios.ANARC131.ToString(), Radios.ANARC51BX.ToString(), Radios.ANARC134.ToString() } },
             {"Ka-50", new [] {Radios.R800L14.ToString(), Radios.R828.ToString(), Radios.SPU9SW.ToString() } },
             {"Mi-8MT", new [] { Radios.Intercom.ToString(), Radios.R863.ToString(), Radios.JADRO1A.ToString(), Radios.R828.ToString() } },

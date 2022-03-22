@@ -24,7 +24,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
             VERSION_MISMATCH,
             EXTERNAL_AWACS_MODE_PASSWORD, // Received server side to "authenticate"/pick side for external AWACS mode
             EXTERNAL_AWACS_MODE_DISCONNECT, // Received server side on "voluntary" disconnect by the client (without closing the server connection)
-            RADIO_SETTINGS,
+            RADIO_SETTINGS, // TODO: find a better way to combine aircraft and radiosettings request into one
             AIRCRAFT_SETTINGS,
         }
 

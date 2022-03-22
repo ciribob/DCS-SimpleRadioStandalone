@@ -829,7 +829,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                 }
 
                 double max;
-                if(!SyncedServerSettings.Instance.GetSettingAsBool(ServerSettingsKeys.REALISTIC_RADIO_ENABLED))
+                if(!SyncedServerSettings.Instance.GetSettingAsBool(ServerSettingsKeys.DIFFERING_RADIO_ENABLED))
                 {
                     max = RadioCalculator.FriisMaximumTransmissionRange(frequency);
                 } 

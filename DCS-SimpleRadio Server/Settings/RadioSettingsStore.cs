@@ -1,4 +1,5 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
@@ -42,13 +43,21 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Settings
             radioValues = DefaultRadioInformation.RadioDefaults;
             aircraftValues = DefaultRadioInformation.AircraftDefaults;
 
+            if (ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.CUSTOM_RADIO_VALUE_ENABLE).BoolValue)
+            {
+                ReadCustomConfig();
+            }
+        }
+
+        private void ReadCustomConfig()
+        {
             try
             {
                 var deserializedRadios = JsonConvert.DeserializeObject<Dictionary<string, RadioValues>>((File.ReadAllText(_configRadioFile)));
 
                 foreach (KeyValuePair<string, RadioValues> kvp in deserializedRadios)
                 {
-                    if(radioValues.ContainsKey(kvp.Key))
+                    if (radioValues.ContainsKey(kvp.Key))
                     {
                         radioValues[kvp.Key] = kvp.Value;
                     }
@@ -58,7 +67,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Settings
                     }
                 }
             }
-            catch(FileNotFoundException ex)
+            catch (FileNotFoundException ex)
             {
                 _logger.Info("Unable to find radio configuration file, using default values");
                 radioValues = DefaultRadioInformation.RadioDefaults;
@@ -66,7 +75,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Settings
 
                 SaveRadio();
             }
-            catch(JsonReaderException ex)
+            catch (JsonReaderException ex)
             {
                 _logger.Error(ex, "Failed to parse radio configuration, potentially corrupted.");
 
@@ -86,9 +95,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Settings
             {
                 var deserializedAircraft = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(File.ReadAllText(_configAircraftFile));
 
-                foreach(KeyValuePair<string, string[]> kvp in deserializedAircraft)
+                foreach (KeyValuePair<string, string[]> kvp in deserializedAircraft)
                 {
-                    if(deserializedAircraft.ContainsKey(kvp.Key))
+                    if (deserializedAircraft.ContainsKey(kvp.Key))
                     {
                         aircraftValues[kvp.Key] = kvp.Value;
                     }
@@ -120,6 +129,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Settings
 
                 SaveAircraft();
             }
+        }
+
+        private void ResetDefaultConfig()
+        {
+            radioValues = DefaultRadioInformation.RadioDefaults;
+            aircraftValues = DefaultRadioInformation.AircraftDefaults;
         }
 
         public static RadioSettingsStore Instance

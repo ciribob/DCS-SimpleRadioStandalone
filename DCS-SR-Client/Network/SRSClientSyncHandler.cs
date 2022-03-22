@@ -454,13 +454,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                         }
                                         //add server settings
                                         _serverSettings.Decode(serverMessage.ServerSettings);
-
+                                        _radioSettings.DecodeRadios(serverMessage.RadioSettings);
+                                        _radioSettings.DecodeAircraft(serverMessage.AircraftSettings);
                                         if (_clientStateSingleton.ExternalAWACSModelSelected &&
                                             !_serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE))
                                         {
                                             DisconnectExternalAWACSMode();
                                         }
-
+                                        Console.WriteLine("Sync");
                                         CallUpdateUIOnMain();
 
                                         break;
@@ -512,12 +513,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                                             _radioDCSSync.StartExternalAWACSModeLoop();
                                         }
-                                        break;
-                                    case NetworkMessage.MessageType.RADIO_SETTINGS:
-                                        _radioSettings.DecodeRadios(serverMessage.RadioSettings);
-                                        break;
-                                    case NetworkMessage.MessageType.AIRCRAFT_SETTINGS:
-                                        _radioSettings.DecodeAircraft(serverMessage.AircraftSettings);
                                         break;
                                     default:
                                         Logger.Error("Recevied unknown " + line);

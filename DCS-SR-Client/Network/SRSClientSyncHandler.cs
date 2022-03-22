@@ -45,7 +45,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
         private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
         private readonly ConnectedClientsSingleton _clients = ConnectedClientsSingleton.Instance;
-
+        private readonly SynchedRadioSettings _radioSettings = SynchedRadioSettings.Instance;
 
         private DCSRadioSyncManager _radioDCSSync = null;
         private LotATCSyncHandler _lotATCSync;
@@ -512,6 +512,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                                             _radioDCSSync.StartExternalAWACSModeLoop();
                                         }
+                                        break;
+                                    case NetworkMessage.MessageType.RADIO_SETTINGS:
+                                        _radioSettings.DecodeRadios(serverMessage.RadioSettings);
+                                        break;
+                                    case NetworkMessage.MessageType.AIRCRAFT_SETTINGS:
+                                        _radioSettings.DecodeAircraft(serverMessage.AircraftSettings);
                                         break;
                                     default:
                                         Logger.Error("Recevied unknown " + line);

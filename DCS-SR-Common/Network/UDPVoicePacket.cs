@@ -81,7 +81,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
         public byte[] OriginalClientGuidBytes { get; set; }
         public string OriginalClientGuid { get; set; }
         public ulong PacketNumber { get; set; }
-        public byte[] TransmittingRadio { get; set; }
+        public byte[] TransmittedPower { get; set; }
         //Number of times its been retransmitted - added to stop retransmission loop with sensible limit
         public byte RetransmissionCount { get; set; } = new byte();
 
@@ -148,7 +148,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
                 combinedBytes[frequencyOffset + 7] = freq[7];
 
                 // Radio that is transmitting (1 byte)
-                combinedBytes[frequencyOffset + 8] = TransmittingRadio[i];
+                combinedBytes[frequencyOffset + 8] = TransmittedPower[i];
 
                 // Radio modulation (1 byte), defaults to AM if not defined for all frequencies
                 var mod = Modulations.Length > i ? Modulations[i] : (byte)4;
@@ -265,7 +265,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
                     Encryptions = encryptions,
                     Modulations = modulations,
                     PacketNumber = packetNumber,
-                    TransmittingRadio = transmittingRadio,
+                    TransmittedPower = transmittingRadio,
                     PacketLength = packetLength,
                     OriginalClientGuid = transmissionGuid,
                     OriginalClientGuidBytes = transmissionBytes,

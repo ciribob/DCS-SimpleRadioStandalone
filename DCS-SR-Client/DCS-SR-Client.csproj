@@ -224,6 +224,7 @@
     <Compile Include="Network\LotATC\LotATCSyncHandler.cs" />
     <Compile Include="Network\UDPCommandHandler.cs" />
     <Compile Include="Network\UDPVoiceHandler.cs" />
+    <Compile Include="Settings\SynchedRadioSettings.cs" />
     <Compile Include="Settings\SynchedServerSettings.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

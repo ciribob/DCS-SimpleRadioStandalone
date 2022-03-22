@@ -8,10 +8,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState
 {
     public class RadioValues
     {
-        public int Power { get; }
-        public int Sensitivity { get; }
+        public byte Power { get; }
+        public int Sensitivity { get; } // this could probably be changed to a byte to express the abs value
 
-        public RadioValues(int power, int sensitivity = -90)
+        public RadioValues(byte power, int sensitivity = -90)
         {
             Power = power;
             Sensitivity = sensitivity;

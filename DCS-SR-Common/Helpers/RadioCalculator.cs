@@ -36,25 +36,28 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 
         // TODO - this equation will be used to mix in static audio to the transmission audio
         // static will creep in in the last 20 % and be ramped up in volume based on distance
-        public static double FriisMaximumTransmissionRange(double frequency)
+        public static double FriisMaximumTransmissionRange(double frequency, int sensitivity = 0, byte power = 0)
         {
             //Friis equation http://www.daycounter.com/Calculators/Friis-Calculator.phtml
             //Prx= Ptx(dB)+ Gtx(dB)+ Grx(dB)  -  20log(4*PI*d/lambda);
             //Re-arranged to give maximum distance at receiving power of -90 based on transmitting power
-            //of 40 watts
+            //of 10 watts
 
-            //Hard coded value 995267.9264 based on re-arranged Friis with 40dbm transmissing
-            return (MagicPartiallySolvedFriis *
+            //Hard coded value 995267.9264 based on re-arranged Friis with 40dbm transmissing 
+            if (sensitivity + power == 0)
+            {
+                return (MagicPartiallySolvedFriis *
                     FrequencyToWaveLength(frequency)) / Math.PI;
-        }
+            }
+            else
+            {
+                double partialFriis = 2 * (-sensitivity + power + 1 + 1 - 40) / 20
+                    * 5 - (sensitivity - power - 1 - 1) / 20;
 
-        public static double CustomValueFriisMaximumTransmissionRange(double frequency, RadioValues receiving, RadioValues transmitting)
-        {
-            double partialFriis = 2 * (-receiving.Sensitivity + transmitting.Power + 1 + 1 - 40) / 20 
-                * 5 - (receiving.Sensitivity - transmitting.Power - 1 - 1) / 20;
+                return (partialFriis *
+                    FrequencyToWaveLength(frequency)) / Math.PI;
+            }
 
-            return (partialFriis * 
-                FrequencyToWaveLength(frequency)) / Math.PI;
         }
 
         //we can hear if the received power is more than the RX sensivity
@@ -107,6 +110,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             return Math.Sqrt((distance * distance) + (height * height));
 
         }
-      
+
     }
 }

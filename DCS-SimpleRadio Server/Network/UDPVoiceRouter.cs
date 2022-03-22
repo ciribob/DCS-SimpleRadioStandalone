@@ -201,7 +201,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
                         if (_clientsList.ContainsKey(guid))
                         {
                             var client = _clientsList[guid];
-                            Console.WriteLine(client.RadioInfo.unit);
                             client.VoipPort = udpPacket.ReceivedFrom;
 
                             var spectatorAudioDisabled =

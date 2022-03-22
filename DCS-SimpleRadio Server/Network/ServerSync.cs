@@ -8,6 +8,7 @@ using System.Threading;
 using System.Windows;
 using Caliburn.Micro;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
 using Ciribob.DCS.SimpleRadio.Standalone.Server.Settings;
@@ -29,6 +30,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
         private readonly IEventAggregator _eventAggregator;
 
         private readonly ServerSettingsStore _serverSettings;
+        private readonly RadioSettingsStore _radioSettingsStore;
         private NatHandler _natHandler;
 
 
@@ -40,6 +42,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
             _eventAggregator = eventAggregator;
             _eventAggregator.Subscribe(this);
             _serverSettings = ServerSettingsStore.Instance;
+            _radioSettingsStore = RadioSettingsStore.Instance;
 
             OptionKeepAlive = true;
 
@@ -498,6 +501,30 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
 
                 MulticastAllExeceptOne(message.Encode(), session.Id);
             }
+        }
+
+        private void HandleRadioSettingsMessage(SRSClientSession session)
+        {
+            // Due to size only send on request, do not multicast as with serversettings
+            var replyMessage = new NetworkMessage
+            {
+                MsgType = NetworkMessage.MessageType.RADIO_UPDATE,
+                RadioSettings = _radioSettingsStore.GetRadioSettings()
+            };
+
+            session.Send(replyMessage.Encode());
+        }
+
+        private void HandleAircraftSettingMessage(SRSClientSession session)
+        {
+            // Due to size only send on request, do not multicast as with serversettings
+            var replyMessage = new NetworkMessage
+            {
+                MsgType = NetworkMessage.MessageType.AIRCRAFT_SETTINGS,
+                AircraftSettings = _radioSettingsStore.GetAircraftSettings()
+            };
+
+            session.Send(replyMessage.Encode());
         }
 
         public void RequestStop()

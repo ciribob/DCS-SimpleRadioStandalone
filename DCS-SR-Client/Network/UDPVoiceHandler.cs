@@ -159,6 +159,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             var settings = GlobalSettingsStore.Instance;
             _inputManager.StartDetectPtt(pressed =>
             {
+                var activeBindings = pressed.Count(state =>
+                    state.IsActive && (int) state.MainDevice.InputBind >= (int) InputBinding.Intercom &&
+                    (int) state.MainDevice.InputBind <= (int) InputBinding.Switch10);
+
+                // By ensuring there was only one active binding during this loop, it would ensure
+                // the user is not surprised by any changes
+                if (activeBindings > 1) return;
+                
                 var radios = _clientStateSingleton.DcsPlayerRadioInfo;
 
                 var radioSwitchPtt = _globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.RadioSwitchIsPTT);

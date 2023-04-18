@@ -4163,26 +4163,26 @@ function SR.exportRadioM2000C(_data)
     local GREEN_devid = 19
     local RED_device = GetDevice(RED_devid)
     local GREEN_device = GetDevice(GREEN_devid)
-    
+
     local has_cockpit_ptt = false;
-    
+
     local RED_ptt = false
     local GREEN_ptt = false
     local GREEN_guard = 0
-    
-    pcall(function() 
+
+    pcall(function()
         RED_ptt = RED_device:is_ptt_pressed()
         GREEN_ptt = GREEN_device:is_ptt_pressed()
         has_cockpit_ptt = true
         end)
-        
-    pcall(function() 
+
+    pcall(function()
         GREEN_guard = tonumber(GREEN_device:guard_standby_freq())
         end)
-        
+
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
-    _data.control = 0 
-    
+    _data.control = 0
+
     -- Different PTT/select control if the module version supports cockpit PTT
     if has_cockpit_ptt then
         _data.control = 1
@@ -4199,8 +4199,6 @@ function SR.exportRadioM2000C(_data)
             _data.ptt = false
         end
     end
-    
-    
 
     _data.radios[2].name = "TRT ERA 7000 V/UHF"
     _data.radios[2].freq = SR.getRadioFrequency(19)
@@ -4211,7 +4209,6 @@ function SR.exportRadioM2000C(_data)
     if GREEN_guard>0 then
         _data.radios[2].secFreq = GREEN_guard
     end
-    
 
     -- get channel selector
     local _selector = SR.getSelectorPosition(448, 0.50)
@@ -4236,8 +4233,6 @@ function SR.exportRadioM2000C(_data)
     --     _data.selected = 1
     -- end
 
-
-
     -- reset state on aircraft switch
     if _lastUnitId ~= _data.unitId then
         _mirageEncStatus = false
@@ -4259,12 +4254,9 @@ function SR.exportRadioM2000C(_data)
 
     _previousEncState = SR.getButtonPosition(432)
 
-
-
     -- Handle transponder
 
     _data.iff = {status=0,mode1=0,mode3=0,mode4=false,control=0,expansion=false}
-
 
     local iffIdent =  SR.getButtonPosition(383) -- -1 is off 0 or more is on
 
@@ -4333,6 +4325,17 @@ function SR.exportRadioM2000C(_data)
     else
         _data.iff.mode4 = false
     end
+
+    -- Expansion Radio - Server Side Controlled
+    _data.radios[4].name = "AN/ARC-186(V)FM"
+    _data.radios[4].freq = 30.0 * 1000000 --VHF/FM opera entre 30.000 y 76.000 MHz.
+    _data.radios[4].modulation = 1
+    _data.radios[4].volume = 1.0
+    _data.radios[4].freqMin = 30 * 1000000
+    _data.radios[4].freqMax = 76 * 1000000
+    _data.radios[4].volMode = 1
+    _data.radios[4].freqMode = 1
+    _data.radios[4].expansion = true
 
     return _data
 end

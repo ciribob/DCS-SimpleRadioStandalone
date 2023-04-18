@@ -1412,6 +1412,17 @@ function SR.exportRadioVSNF4(_data)
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
 
+    -- Expansion Radio - Server Side Controlled
+    _data.radios[4].name = "AN/ARC-186(V)FM"
+    _data.radios[4].freq = 30.0 * 1000000 --VHF/FM opera entre 30.000 y 76.000 MHz.
+    _data.radios[4].modulation = 1
+    _data.radios[4].volume = 1.0
+    _data.radios[4].freqMin = 30 * 1000000
+    _data.radios[4].freqMax = 76 * 1000000
+    _data.radios[4].volMode = 1
+    _data.radios[4].freqMode = 1
+    _data.radios[4].expansion = true
+
     _data.radios[2].encKey = 1
     _data.radios[2].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 

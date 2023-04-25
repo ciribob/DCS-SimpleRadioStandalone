@@ -46,7 +46,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
         private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
         private readonly ConnectedClientsSingleton _clients = ConnectedClientsSingleton.Instance;
-
+        private readonly SynchedRadioSettings _radioSettings = SynchedRadioSettings.Instance;
 
         private DCSRadioSyncManager _radioDCSSync = null;
         private LotATCSyncHandler _lotATCSync;
@@ -457,13 +457,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                         }
                                         //add server settings
                                         _serverSettings.Decode(serverMessage.ServerSettings);
-
+                                        _radioSettings.DecodeRadios(serverMessage.RadioSettings);
+                                        _radioSettings.DecodeAircraft(serverMessage.AircraftSettings);
                                         if (_clientStateSingleton.ExternalAWACSModelSelected &&
                                             !_serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE))
                                         {
                                             DisconnectExternalAWACSMode();
                                         }
-
+                                        Console.WriteLine("Sync");
                                         CallUpdateUIOnMain();
 
                                         break;

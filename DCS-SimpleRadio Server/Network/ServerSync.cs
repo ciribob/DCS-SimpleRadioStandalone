@@ -8,6 +8,7 @@ using System.Threading;
 using System.Windows;
 using Caliburn.Micro;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
 using Ciribob.DCS.SimpleRadio.Standalone.Server.Settings;
@@ -29,6 +30,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
         private readonly IEventAggregator _eventAggregator;
 
         private readonly ServerSettingsStore _serverSettings;
+        private readonly RadioSettingsStore _radioSettingsStore;
         private NatHandler _natHandler;
 
 
@@ -40,6 +42,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
             _eventAggregator = eventAggregator;
             _eventAggregator.Subscribe(this);
             _serverSettings = ServerSettingsStore.Instance;
+            _radioSettingsStore = RadioSettingsStore.Instance;
 
             OptionKeepAlive = true;
 
@@ -395,6 +398,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
                 MsgType = NetworkMessage.MessageType.SYNC,
                 Clients = new List<SRClient>(_clients.Values),
                 ServerSettings = _serverSettings.ToDictionary(),
+                AircraftSettings = _radioSettingsStore.GetAircraftSettings(),
+                RadioSettings = _radioSettingsStore.GetRadioSettings(),
                 Version = UpdaterChecker.VERSION
             };
 

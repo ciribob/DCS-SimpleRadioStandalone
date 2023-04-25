@@ -36,16 +36,29 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 
         //  - this equation could be used to mix in static audio to the transmission audio
         // static will creep in in the last 20 % and be ramped up in volume based on distance
-        public static double FriisMaximumTransmissionRange(double frequency)
+        public static double FriisMaximumTransmissionRange(double frequency, int sensitivity = 0, byte power = 0)
         {
             //Friis equation http://www.daycounter.com/Calculators/Friis-Calculator.phtml
             //Prx= Ptx(dB)+ Gtx(dB)+ Grx(dB)  -  20log(4*PI*d/lambda);
             //Re-arranged to give maximum distance at receiving power of -90 based on transmitting power
-            //of 40 watts
+            //of 10 watts
 
             //Hard coded value 995267.9264 based on re-arranged Friis with 40dbm transmissing
-            return (MagicPartiallySolvedFriis *
+            //Calculating the partial friis benchmarks at 1-3 ticks, can probably remove the hardcoded value?
+            if (sensitivity + power == 0)
+            {
+                return (MagicPartiallySolvedFriis *
                     FrequencyToWaveLength(frequency)) / Math.PI;
+            }
+            else
+            {
+                double partialFriis = 2 * (-sensitivity + power + 1 + 1 - 40) / 20
+                    * 5 - (sensitivity - power - 1 - 1) / 20;
+
+                return (partialFriis *
+                    FrequencyToWaveLength(frequency)) / Math.PI;
+            }
+
         }
 
         //we can hear if the received power is more than the RX sensivity
@@ -98,6 +111,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             return Math.Sqrt((distance * distance) + (height * height));
 
         }
-      
+
     }
 }

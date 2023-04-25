@@ -16,6 +16,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
 using FragLabs.Audio.Codecs;
@@ -374,9 +375,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                                     var strictEncryption = _serverSettings.GetSettingAsBool(ServerSettingsKeys.STRICT_RADIO_ENCRYPTION);
 
-                                        // Parse frequencies into receiving radio priority for selection below
-                                        for (var i = 0; i < frequencyCount; i++)
+                                    SRClient client = null;
+
+                                    // Parse frequencies into receiving radio priority for selection below
+                                    for (var i = 0; i < frequencyCount; i++)
                                     {
+                                        if (client is null)
+                                        {
+                                            ConnectedClientsSingleton.Instance.TryGetValue(udpVoicePacket.Guid, out client);
+                                        }
+
                                         RadioReceivingState state = null;
                                         bool decryptable;
 
@@ -402,6 +410,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                         float losLoss = 0.0f;
                                         double receivPowerLossPercent = 0.0;
 
+                                        var equippedRadios = DefaultRadioInformation.GetAircraftDefaults()[client.RadioInfo.unit];
+                                        var selfRadios = DefaultRadioInformation.GetAircraftDefaults()[_clientStateSingleton.DcsPlayerRadioInfo.unit];
+                                        int arrayPos = Array.IndexOf(_clientStateSingleton.DcsPlayerRadioInfo.radios, radio);
+                                        var selfReceiving = equippedRadios.Length < arrayPos ? selfRadios[arrayPos] : Radios.Unknown.ToString();
+                                        
+                                        //Array.IndexOf(_clientStateSingleton.DcsPlayerRadioInfo.radios, radio)
                                         if (radio != null && state != null)
                                         {
                                             if (
@@ -411,6 +425,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                                 || (
                                                     HasLineOfSight(udpVoicePacket, out losLoss)
                                                     && InRange(udpVoicePacket.Guid, udpVoicePacket.Frequencies[i],
+                                                    DefaultRadioInformation.GetRadioDefaults()[selfReceiving.ToString()].Sensitivity,
+                                                    udpVoicePacket.TransmittedPower[i],
                                                         out receivPowerLossPercent)
                                                     && !blockedRadios.Contains(state.ReceivedOn)
                                                 )
@@ -716,7 +732,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             return false;
         }
 
-        private bool InRange(string transmissingClientGuid, double frequency, out double signalStrength)
+        private bool InRange(string transmissingClientGuid, double frequency, int sensitivity, byte transmissionPower, out double signalStrength)
         {
             signalStrength = 0;
             if (!_serverSettings.GetSettingAsBool(ServerSettingsKeys.DISTANCE_ENABLED))
@@ -742,7 +758,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     dist = RadioCalculator.CalculateDistanceHaversine(myLatLng, clientLatLng);
                 }
 
-                var max = RadioCalculator.FriisMaximumTransmissionRange(frequency);
+                double max;
+                if(!SyncedServerSettings.Instance.GetSettingAsBool(ServerSettingsKeys.DIFFERING_RADIO_ENABLED))
+                {
+                    max = RadioCalculator.FriisMaximumTransmissionRange(frequency);
+                } 
+                else
+                {
+                    max = RadioCalculator.FriisMaximumTransmissionRange(frequency, sensitivity, transmissionPower);
+                }
+                
                 // % loss of signal
                 // 0 is no loss 1.0 is full loss
                 signalStrength = (dist / max);
@@ -941,6 +966,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                         List<double> frequencies = new List<double>(transmittingRadios.Count);
                         List<byte> encryptions = new List<byte>(transmittingRadios.Count);
                         List<byte> modulations = new List<byte>(transmittingRadios.Count);
+                        List<byte> transmittingRadio = new List<byte>(transmittingRadios.Count);
 
                         for (int i = 0; i < transmittingRadios.Count; i++)
                         {
@@ -965,6 +991,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                             }
 
                             frequencies.Add(radio.freq);
+
+                            var radioDetails = DefaultRadioInformation.GetRadioDefaults();
+                            var matchedRadio = DefaultRadioInformation.GetAircraftDefaults()[ClientStateSingleton.Instance.DcsPlayerRadioInfo.unit]
+                                .Where(x => x.ToString() == radio.name
+                                .Where(c => char.IsLetterOrDigit(c))
+                                .ToString())
+                                .ToArray();
+                            byte radioNum = matchedRadio.Length > 0 ? (byte)radioDetails[matchedRadio[0].ToString()].Power : (byte)radioDetails[Radios.Unknown.ToString()].Power;
+
+                            transmittingRadio.Add(radioNum);
                             encryptions.Add(radio.enc ? radio.encKey : (byte) 0);
                             modulations.Add((byte) radio.modulation);
                         }
@@ -979,6 +1015,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                             UnitId = _clientStateSingleton.DcsPlayerRadioInfo.unitId,
                             Encryptions = encryptions.ToArray(),
                             Modulations = modulations.ToArray(),
+                            TransmittedPower = transmittingRadio.ToArray(),
                             PacketNumber = _packetNumber++,
                             OriginalClientGuidBytes = _guidAsciiBytes
                         };

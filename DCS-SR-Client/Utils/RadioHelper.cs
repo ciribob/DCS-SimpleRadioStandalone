@@ -13,6 +13,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Utils
 {
     public static class RadioHelper
     {
+        public static int GetChannel( int radioId ) {
+            var radio = GetRadio( radioId );
+
+			//TODO: Fix the MIDS Channel being off by one during EAM a better way.
+			if ( radio != null && radioId > 0 ) {
+                if ( ClientStateSingleton.Instance.ExternalAWACSModeConnected == true ) {
+                    return radio.channel + 1;
+                }
+            }
+            return radio.channel;
+        }
+
         public static void ToggleGuard(int radioId)
         {
             var radio = GetRadio(radioId);

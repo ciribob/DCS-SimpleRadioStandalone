@@ -374,7 +374,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
                     RadioFrequency.Text = "MIDS";
                     if (currentRadio.channel >= 0)
                     {
-                        RadioMetaData.Text = " CHN " + currentRadio.channel;
+                        //TODO: Fix the MIDS Channel being off by one in a better way.
+                        RadioMetaData.Text = " CHN " + (currentRadio.channel + 1);
                     }
                     else
                     {

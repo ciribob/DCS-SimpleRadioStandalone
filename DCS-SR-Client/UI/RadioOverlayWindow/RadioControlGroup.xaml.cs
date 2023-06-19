@@ -287,8 +287,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
                     RadioFrequency.Text = "MIDS";
                     if (currentRadio.channel >= 0)
                     {
-                        RadioFrequency.Text += " CHN " + currentRadio.channel;
-                    }
+                        RadioFrequency.Text += " CHN " + RadioHelper.GetChannel( RadioId );
+					}
                     else
                     {
                         RadioFrequency.Text += " OFF";

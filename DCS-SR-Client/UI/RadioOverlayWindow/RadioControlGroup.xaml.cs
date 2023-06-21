@@ -301,7 +301,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
 						string MIDSChannel =
 							((currentRadio.freq - 1030000000) / (MHz / 10)).ToString( "0",
 								CultureInfo.InvariantCulture );
-						RadioFrequency.Text = $"CHN {MIDSChannel}";
+						RadioFrequency.Text = $"CHN {MIDSChannel} ";
 					}
 					else {
 						RadioFrequency.Text =

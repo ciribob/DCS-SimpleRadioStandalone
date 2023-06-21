@@ -140,56 +140,69 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
             _dragging = false;
         }
 
-        private void ToggleButtons(bool enable)
+        private void ToggleButtons(bool enable, bool MIDSmode=false )
         {
             if (enable)
             {
-                Up10.Visibility = Visibility.Visible;
-                Up1.Visibility = Visibility.Visible;
-                Up01.Visibility = Visibility.Visible;
-                Up001.Visibility = Visibility.Visible;
-                Up0001.Visibility = Visibility.Visible;
+				Up10.Visibility = Visibility.Visible;
+				Up1.Visibility = Visibility.Visible;
+				Up01.Visibility = Visibility.Visible;
+				if ( !MIDSmode ) {
+					Up001.Visibility = Visibility.Visible;
+					Up0001.Visibility = Visibility.Visible;
+				}
 
-                Down10.Visibility = Visibility.Visible;
-                Down1.Visibility = Visibility.Visible;
-                Down01.Visibility = Visibility.Visible;
-                Down001.Visibility = Visibility.Visible;
-                Down0001.Visibility = Visibility.Visible;
 
-                Up10.IsEnabled = true;
-                Up1.IsEnabled = true;
-                Up01.IsEnabled = true;
-                Up001.IsEnabled = true;
-                Up0001.IsEnabled = true;
+				Down10.Visibility = Visibility.Visible;
+				Down1.Visibility = Visibility.Visible;
+				Down01.Visibility = Visibility.Visible;
+				if ( !MIDSmode ) {
+					Down001.Visibility = Visibility.Visible;
+					Down0001.Visibility = Visibility.Visible;
+				}
 
-                Down10.IsEnabled = true;
-                Down1.IsEnabled = true;
-                Down01.IsEnabled = true;
-                Down001.IsEnabled = true;
-                Down0001.IsEnabled = true;
+				Up10.IsEnabled = true;
+				Up1.IsEnabled = true;
+				Up01.IsEnabled = true;
+				if ( !MIDSmode ) {
+					Up001.IsEnabled = true;
+					Up0001.IsEnabled = true;
+				}
 
-                //  ReloadButton.IsEnabled = true;
-                //LoadFromFileButton.IsEnabled = true;
+				Down10.IsEnabled = true;
+				Down1.IsEnabled = true;
+				Down01.IsEnabled = true;
+				if ( !MIDSmode ) {
+					Down001.IsEnabled = true;
+					Down0001.IsEnabled = true;
+				}
 
-                PresetChannelsView.IsEnabled = true;
+				//  ReloadButton.IsEnabled = true;
+				//LoadFromFileButton.IsEnabled = true;
+
+				PresetChannelsView.IsEnabled = true;
 
                 ChannelTab.Visibility = Visibility.Visible;
             }
             else
             {
-                Up10.Visibility = Visibility.Hidden;
-                Up1.Visibility = Visibility.Hidden;
-                Up01.Visibility = Visibility.Hidden;
-                Up001.Visibility = Visibility.Hidden;
-                Up0001.Visibility = Visibility.Hidden;
+				Up10.Visibility = Visibility.Hidden;
+				Up1.Visibility = Visibility.Hidden;
+				Up01.Visibility = Visibility.Hidden;
+				if ( !MIDSmode ) {
+					Up001.Visibility = Visibility.Hidden;
+					Up0001.Visibility = Visibility.Hidden;
+				}
 
-                Down10.Visibility = Visibility.Hidden;
-                Down1.Visibility = Visibility.Hidden;
-                Down01.Visibility = Visibility.Hidden;
-                Down001.Visibility = Visibility.Hidden;
-                Down0001.Visibility = Visibility.Hidden;
+				Down10.Visibility = Visibility.Hidden;
+				Down1.Visibility = Visibility.Hidden;
+				Down01.Visibility = Visibility.Hidden;
+				if ( !MIDSmode ) {
+					Down001.Visibility = Visibility.Hidden;
+					Down0001.Visibility = Visibility.Hidden;
+				}
 
-                PresetChannelsView.IsEnabled = false;
+				PresetChannelsView.IsEnabled = false;
 
                 ChannelTab.Visibility = Visibility.Collapsed;
             }
@@ -282,25 +295,21 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
                 {
                     RadioFrequency.Text = "INTERCOM";
                 }
-                else if (currentRadio.modulation == RadioInformation.Modulation.MIDS) //MIDS
-                {
-                    RadioFrequency.Text = "MIDS";
-                    if (currentRadio.channel >= 0)
-                    {
-                        RadioFrequency.Text += " CHN " + currentRadio.channel;
-                    }
-                    else
-                    {
-                        RadioFrequency.Text += " OFF";
-                    }
-                }
                 else
                 {
-                    RadioFrequency.Text =
-                        (currentRadio.freq / MHz).ToString("0.000",
-                            CultureInfo.InvariantCulture); //make nuber UK / US style with decimals not commas!
-                        
-                    if(currentRadio.modulation == RadioInformation.Modulation.AM)
+					if ( currentRadio.modulation == RadioInformation.Modulation.MIDS ) {
+						string MIDSChannel =
+							((currentRadio.freq - 1030000000) / (MHz / 10)).ToString( "0",
+								CultureInfo.InvariantCulture );
+						RadioFrequency.Text = $"CHN {MIDSChannel}";
+					}
+					else {
+						RadioFrequency.Text =
+							(currentRadio.freq / MHz).ToString( "0.000",
+								CultureInfo.InvariantCulture ); //make number UK / US style with decimals not commas!
+					}
+
+					if (currentRadio.modulation == RadioInformation.Modulation.AM)
                     {
                         RadioFrequency.Text += "AM";
                     }
@@ -312,7 +321,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
                     {
                         RadioFrequency.Text += "HQ";
                     }
-                    else
+					else if ( currentRadio.modulation == RadioInformation.Modulation.MIDS ) {
+						RadioFrequency.Text += "MIDS";
+					}
+					else
                     {
                         RadioFrequency.Text += "";
                     }
@@ -364,7 +376,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
                     //  _dragging = false;
                 }
 
-                ToggleButtons(currentRadio.freqMode == RadioInformation.FreqMode.OVERLAY);
+                ToggleButtons(currentRadio.freqMode == RadioInformation.FreqMode.OVERLAY,
+					currentRadio.modulation == RadioInformation.Modulation.MIDS );
 
                 if (_dragging == false)
                 {

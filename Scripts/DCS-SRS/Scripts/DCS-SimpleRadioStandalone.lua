@@ -2956,7 +2956,7 @@ end
     local midsBChannel = _fa18.radio4.channel
     if midsBChannel < 127 then
         _radio.freq = SR.MIDS_FREQ +  (SR.MIDS_FREQ_SEPARATION * midsBChannel)
-        _radio.channel = midsBChannel
+        _radio.channel = -1
     else
         _radio.freq = 1
         _radio.channel = -1

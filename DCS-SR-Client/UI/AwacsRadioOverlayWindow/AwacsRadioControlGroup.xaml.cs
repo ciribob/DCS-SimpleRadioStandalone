@@ -193,33 +193,42 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
             _dragging = false;
         }
 
-        private void ToggleButtons(bool enable)
+        private void ToggleButtons(bool enable, bool MIDSmode = false)
         {
             if (enable)
             {
                 Up10.Visibility = Visibility.Visible;
                 Up1.Visibility = Visibility.Visible;
                 Up01.Visibility = Visibility.Visible;
-                Up001.Visibility = Visibility.Visible;
-                Up0001.Visibility = Visibility.Visible;
+                if(!MIDSmode) {
+					Up001.Visibility = Visibility.Visible;
+					Up0001.Visibility = Visibility.Visible;
+				}
+
 
                 Down10.Visibility = Visibility.Visible;
                 Down1.Visibility = Visibility.Visible;
                 Down01.Visibility = Visibility.Visible;
-                Down001.Visibility = Visibility.Visible;
-                Down0001.Visibility = Visibility.Visible;
+                if ( !MIDSmode ) {
+                    Down001.Visibility = Visibility.Visible;
+                    Down0001.Visibility = Visibility.Visible;
+                }
 
                 Up10.IsEnabled = true;
                 Up1.IsEnabled = true;
                 Up01.IsEnabled = true;
-                Up001.IsEnabled = true;
-                Up0001.IsEnabled = true;
+                if ( !MIDSmode ) {
+                    Up001.IsEnabled = true;
+                    Up0001.IsEnabled = true;
+                }
 
                 Down10.IsEnabled = true;
                 Down1.IsEnabled = true;
                 Down01.IsEnabled = true;
-                Down001.IsEnabled = true;
-                Down0001.IsEnabled = true;
+                if ( !MIDSmode ) {
+                    Down001.IsEnabled = true;
+                    Down0001.IsEnabled = true;
+                }
 
                 PresetChannelsView.IsEnabled = true;
 
@@ -271,14 +280,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
                 Up10.Visibility = Visibility.Hidden;
                 Up1.Visibility = Visibility.Hidden;
                 Up01.Visibility = Visibility.Hidden;
-                Up001.Visibility = Visibility.Hidden;
-                Up0001.Visibility = Visibility.Hidden;
+                if ( !MIDSmode ) {
+                    Up001.Visibility = Visibility.Hidden;
+                    Up0001.Visibility = Visibility.Hidden;
+                }
 
                 Down10.Visibility = Visibility.Hidden;
                 Down1.Visibility = Visibility.Hidden;
                 Down01.Visibility = Visibility.Hidden;
-                Down001.Visibility = Visibility.Hidden;
-                Down0001.Visibility = Visibility.Hidden;
+                if ( !MIDSmode ) {
+                    Down001.Visibility = Visibility.Hidden;
+                    Down0001.Visibility = Visibility.Hidden;
+                }
 
                 ToggleSimultaneousTransmissionButton.IsEnabled = false;
                 ToggleSimultaneousTransmissionButton.Foreground = new SolidColorBrush(Colors.White);
@@ -369,28 +382,23 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
                     RadioFrequency.Text = "INTERCOM";
                     RadioMetaData.Text = "";
                 }
-                else if (currentRadio.modulation == RadioInformation.Modulation.MIDS) //MIDS
-                {
-                    RadioFrequency.Text = "MIDS";
-                    if (currentRadio.channel >= 0)
-                    {
-                        RadioMetaData.Text = " CHN " + currentRadio.channel;
-                    }
-                    else
-                    {
-                        RadioMetaData.Text = " OFF";
-                    }
-  
-                }
                 else
                 {
                     if (!RadioFrequency.IsFocused
                         || currentRadio.freqMode == RadioInformation.FreqMode.COCKPIT
                         || currentRadio.modulation == RadioInformation.Modulation.DISABLED)
                     {
-                        RadioFrequency.Text =
-                            (currentRadio.freq / MHz).ToString("0.000",
-                                CultureInfo.InvariantCulture); //make number UK / US style with decimals not commas!
+                        if(currentRadio.modulation == RadioInformation.Modulation.MIDS ) {
+							string MIDSChannel =
+		                        ((currentRadio.freq - 1030000000) / (MHz / 10)).ToString( "0",
+			                        CultureInfo.InvariantCulture );
+							RadioFrequency.Text = $"CHN {MIDSChannel}";
+						}
+                        else {
+							RadioFrequency.Text =
+	                            (currentRadio.freq / MHz).ToString( "0.000",
+		                            CultureInfo.InvariantCulture ); //make number UK / US style with decimals not commas!
+						}
                     }
 
                     if (currentRadio.modulation == RadioInformation.Modulation.AM)
@@ -405,7 +413,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
                     {
                         RadioMetaData.Text = "HQ";
                     }
-                    else
+					else if ( currentRadio.modulation == RadioInformation.Modulation.MIDS ) {
+						RadioMetaData.Text = "MIDS";
+					}
+					else
                     {
                         RadioMetaData.Text += "";
                     }
@@ -450,7 +461,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
                     //  _dragging = false;
                 }
 
-                ToggleButtons(currentRadio.freqMode == RadioInformation.FreqMode.OVERLAY);
+                ToggleButtons(currentRadio.freqMode == RadioInformation.FreqMode.OVERLAY, 
+                    currentRadio.modulation == RadioInformation.Modulation.MIDS);
 
                 if (_dragging == false)
                 {

@@ -55,72 +55,72 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
 
                     if (radioInfo.capabilities.dcsPtt)
                     {
-                        DCSPTT.Content = "Available in Cockpit";
+                        DCSPTT.Content = Properties.Resources.OverlayAvailableCockpit;
 
                         if (!profile.GetClientSettingBool(ProfileSettingsKeys.AllowDCSPTT))
                         {
-                            DCSPTT.Content += " - Disabled in SRS";
+                            DCSPTT.Content += " " + Properties.Resources.OverlayDisabledSRS;
                         }
                         
                     }
                     else
                     {
-                        DCSPTT.Content = "Not Available - SRS Controls Only ";
+                        DCSPTT.Content = Properties.Resources.OverlayNotAvailable;
                     }
 
                     if (radioInfo.capabilities.dcsRadioSwitch)
                     {
-                        DCSRadioSwitch.Content = "Available in Cockpit";
+                        DCSRadioSwitch.Content = Properties.Resources.OverlayAvailableCockpit;
 
                         if (profile.GetClientSettingBool(ProfileSettingsKeys.AlwaysAllowHotasControls))
                         {
-                            DCSRadioSwitch.Content += " - Disabled in SRS";
+                            DCSRadioSwitch.Content += " " + Properties.Resources.OverlayDisabledSRS;
                         }
 
                     }
                     else
                     {
-                        DCSRadioSwitch.Content = "Not Available - SRS Controls Only";
+                        DCSRadioSwitch.Content = Properties.Resources.OverlayNotAvailable;
                     }
 
                     if (radioInfo.capabilities.dcsIFF)
                     {
-                        DCSIFF.Content = "Available in Cockpit";
+                        DCSIFF.Content = Properties.Resources.OverlayAvailableCockpit;
 
                         if (profile.GetClientSettingBool(ProfileSettingsKeys.AlwaysAllowTransponderOverlay))
                         {
-                            DCSIFF.Content += " - Disabled in SRS";
+                            DCSIFF.Content += " " + Properties.Resources.OverlayDisabledSRS;
                         }
 
                     }
                     else
                     {
-                        DCSIFF.Content = "Not Available - SRS Controls Only";
+                        DCSIFF.Content = Properties.Resources.OverlayNotAvailable;
                     }
 
                     if (radioInfo.capabilities.intercomHotMic)
                     {
-                        IntercomHotMic.Content = "Available in Cockpit";
+                        IntercomHotMic.Content = Properties.Resources.OverlayAvailableCockpit;
 
                         if (!profile.GetClientSettingBool(ProfileSettingsKeys.AllowDCSPTT) || profile.GetClientSettingBool(ProfileSettingsKeys.AlwaysAllowHotasControls))
                         {
-                            IntercomHotMic.Content += " - Disabled in SRS";
+                            IntercomHotMic.Content += " " + Properties.Resources.OverlayDisabledSRS;
                         }
 
                     }
                     else
                     {
-                        IntercomHotMic.Content = "Not Available";
+                        IntercomHotMic.Content = Properties.Resources.ValueNotAvailable;
                     }
 
                 }
                 else
                 {
                     Desc.Text = "";
-                    DCSPTT.Content = "Unknown";
-                    DCSRadioSwitch.Content = "Unknown";
-                    DCSIFF.Content = "Unknown";
-                    IntercomHotMic.Content = "Unknown";
+                    DCSPTT.Content = Properties.Resources.ValueUnknown;
+                    DCSRadioSwitch.Content = Properties.Resources.ValueUnknown;
+                    DCSIFF.Content = Properties.Resources.ValueUnknown;
+                    IntercomHotMic.Content = Properties.Resources.ValueUnknown;
 
                 }
             }

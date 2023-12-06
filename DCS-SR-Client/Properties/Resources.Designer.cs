@@ -19,7 +19,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -61,12 +61,2731 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Allow Anonymous Usage Stats.
+        /// </summary>
+        public static string AllowAnonymousUsage {
+            get {
+                return ResourceManager.GetString("AllowAnonymousUsage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow INCOCKPIT DCS Controlled PTT.
+        /// </summary>
+        public static string AllowDCSPTT {
+            get {
+                return ResourceManager.GetString("AllowDCSPTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rotary Style Frequency Increment/Decrement.
+        /// </summary>
+        public static string AllowRotaryIncrement {
+            get {
+                return ResourceManager.GetString("AllowRotaryIncrement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow Transmissions To Be Recorded.
+        /// </summary>
+        public static string AllowTransmissionsRecord {
+            get {
+                return ResourceManager.GetString("AllowTransmissionsRecord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow XInput Controller (Xbox controller).
+        /// </summary>
+        public static string AllowXInputController {
+            get {
+                return ResourceManager.GetString("AllowXInputController", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ALWAYS allow SRS Hotkeys.
+        /// </summary>
+        public static string AlwaysAllowHotas {
+            get {
+                return ResourceManager.GetString("AlwaysAllowHotas", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ALWAYS allow Transponder Overlay Controls.
+        /// </summary>
+        public static string AlwaysAllowTransponderOverlay {
+            get {
+                return ResourceManager.GetString("AlwaysAllowTransponderOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable Ambient Cockpit Effects.
+        /// </summary>
+        public static string AmbientEffectToggle {
+            get {
+                return ResourceManager.GetString("AmbientEffectToggle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ambient Cockpit Effect Volume.
+        /// </summary>
+        public static string AmbientEffectVolume {
+            get {
+                return ResourceManager.GetString("AmbientEffectVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         public static System.Drawing.Icon audio_headset {
             get {
                 object obj = ResourceManager.GetObject("audio_headset", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Audio.
+        /// </summary>
+        public static string AudioHeader {
+            get {
+                return ResourceManager.GetString("AudioHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto Connect.
+        /// </summary>
+        public static string AutoConnectEnabled {
+            get {
+                return ResourceManager.GetString("AutoConnectEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto Connect.
+        /// </summary>
+        public static string AutoConnectHeader {
+            get {
+                return ResourceManager.GetString("AutoConnectHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto Connect Mismatch Prompt.
+        /// </summary>
+        public static string AutoConnectMismatchPrompt {
+            get {
+                return ResourceManager.GetString("AutoConnectMismatchPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto Connect Prompt.
+        /// </summary>
+        public static string AutoConnectPrompt {
+            get {
+                return ResourceManager.GetString("AutoConnectPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto Select First Channel Preset.
+        /// </summary>
+        public static string AutoSelectChannel {
+            get {
+                return ResourceManager.GetString("AutoSelectChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto Select Profile For Aircraft.
+        /// </summary>
+        public static string AutoSelectInputProfile {
+            get {
+                return ResourceManager.GetString("AutoSelectInputProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable Background Radio Effects
+        ///(UHF/VHF/HF/FM).
+        /// </summary>
+        public static string BackgroundRadioNoise {
+            get {
+                return ResourceManager.GetString("BackgroundRadioNoise", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string BtnClose {
+            get {
+                return ResourceManager.GetString("BtnClose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disable.
+        /// </summary>
+        public static string BtnDisable {
+            get {
+                return ResourceManager.GetString("BtnDisable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable.
+        /// </summary>
+        public static string BtnEnable {
+            get {
+                return ResourceManager.GetString("BtnEnable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IDENT.
+        /// </summary>
+        public static string BtnTransponderIDENT {
+            get {
+                return ResourceManager.GetString("BtnTransponderIDENT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Button.
+        /// </summary>
+        public static string ButtonLabel {
+            get {
+                return ResourceManager.GetString("ButtonLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PLACE_HOLDER.
+        /// </summary>
+        public static string CHANGEME {
+            get {
+                return ResourceManager.GetString("CHANGEME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Check for beta updates.
+        /// </summary>
+        public static string CheckForBetaUpdates {
+            get {
+                return ResourceManager.GetString("CheckForBetaUpdates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connected Clients.
+        /// </summary>
+        public static string ClientWindowTitile {
+            get {
+                return ResourceManager.GetString("ClientWindowTitile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DCS-SRS Client.
+        /// </summary>
+        public static string ClientWindowTitle {
+            get {
+                return ResourceManager.GetString("ClientWindowTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connected Clients:.
+        /// </summary>
+        public static string ConnectedClientsLabel {
+            get {
+                return ResourceManager.GetString("ConnectedClientsLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connect External AWACS Mode (EAM).
+        /// </summary>
+        public static string ConnectExternalAWACSMode {
+            get {
+                return ResourceManager.GetString("ConnectExternalAWACSMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Controls.
+        /// </summary>
+        public static string ControlsHeader {
+            get {
+                return ResourceManager.GetString("ControlsHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Controls.
+        /// </summary>
+        public static string ControlsTab {
+            get {
+                return ResourceManager.GetString("ControlsTab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copy Profile.
+        /// </summary>
+        public static string CopyProfile {
+            get {
+                return ResourceManager.GetString("CopyProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create Profile.
+        /// </summary>
+        public static string CreateProfile {
+            get {
+                return ResourceManager.GetString("CreateProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current Position:.
+        /// </summary>
+        public static string CurrentPositionLabel {
+            get {
+                return ResourceManager.GetString("CurrentPositionLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current Profile:.
+        /// </summary>
+        public static string CurrentProfile {
+            get {
+                return ResourceManager.GetString("CurrentProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        public static string CurrentProfileNone {
+            get {
+                return ResourceManager.GetString("CurrentProfileNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default Microphone.
+        /// </summary>
+        public static string DefaultMicrophone {
+            get {
+                return ResourceManager.GetString("DefaultMicrophone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NO MIC OUTPUT / PASSTHROUGH.
+        /// </summary>
+        public static string DefaultNoPassthru {
+            get {
+                return ResourceManager.GetString("DefaultNoPassthru", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default Speakers.
+        /// </summary>
+        public static string DefaultSpeakers {
+            get {
+                return ResourceManager.GetString("DefaultSpeakers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Profile.
+        /// </summary>
+        public static string DeleteProfile {
+            get {
+                return ResourceManager.GetString("DeleteProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear.
+        /// </summary>
+        public static string DeviceClear {
+            get {
+                return ResourceManager.GetString("DeviceClear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Control.
+        /// </summary>
+        public static string DeviceControl {
+            get {
+                return ResourceManager.GetString("DeviceControl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Device.
+        /// </summary>
+        public static string DeviceLabel {
+            get {
+                return ResourceManager.GetString("DeviceLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set.
+        /// </summary>
+        public static string DeviceSet {
+            get {
+                return ResourceManager.GetString("DeviceSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Record Tone for Disallowed Audio.
+        /// </summary>
+        public static string DisallowedAudioTone {
+            get {
+                return ResourceManager.GetString("DisallowedAudioTone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disconnect External AWACS MODE (EAM).
+        /// </summary>
+        public static string DisconnectExternalAWACSMode {
+            get {
+                return ResourceManager.GetString("DisconnectExternalAWACSMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please Support SRS through Patreon.
+        /// </summary>
+        public static string Donate_OnClick {
+            get {
+                return ResourceManager.GetString("Donate_OnClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 0%.
+        /// </summary>
+        public static string EffectVolume0 {
+            get {
+                return ResourceManager.GetString("EffectVolume0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 100%.
+        /// </summary>
+        public static string EffectVolume100 {
+            get {
+                return ResourceManager.GetString("EffectVolume100", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 200%.
+        /// </summary>
+        public static string EffectVolume200 {
+            get {
+                return ResourceManager.GetString("EffectVolume200", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow More Controller Input Devices.
+        /// </summary>
+        public static string ExpandInputDevices {
+            get {
+                return ResourceManager.GetString("ExpandInputDevices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to EAM name.
+        /// </summary>
+        public static string ExternalAWACSModeNameLabel {
+            get {
+                return ResourceManager.GetString("ExternalAWACSModeNameLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to EAM coalition password.
+        /// </summary>
+        public static string ExternalAWACSModePasswordLabel {
+            get {
+                return ResourceManager.GetString("ExternalAWACSModePasswordLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to EAM coalition password.
+        /// </summary>
+        public static string FavAddEAM {
+            get {
+                return ResourceManager.GetString("FavAddEAM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        public static string FavAddName {
+            get {
+                return ResourceManager.GetString("FavAddName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add new configuration.
+        /// </summary>
+        public static string FavAddNewConfig {
+            get {
+                return ResourceManager.GetString("FavAddNewConfig", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ServerAddress.
+        /// </summary>
+        public static string FavAddServer {
+            get {
+                return ResourceManager.GetString("FavAddServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Is Default.
+        /// </summary>
+        public static string FavListDefault {
+            get {
+                return ResourceManager.GetString("FavListDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to EAM coal. pass.
+        /// </summary>
+        public static string FavListEAM {
+            get {
+                return ResourceManager.GetString("FavListEAM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        public static string FavListName {
+            get {
+                return ResourceManager.GetString("FavListName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ServerAddress/port.
+        /// </summary>
+        public static string FavListServer {
+            get {
+                return ResourceManager.GetString("FavListServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Favourites.
+        /// </summary>
+        public static string FavouritesSeversHeader {
+            get {
+                return ResourceManager.GetString("FavouritesSeversHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Favourites.
+        /// </summary>
+        public static string FavouritesSeversTab {
+            get {
+                return ResourceManager.GetString("FavouritesSeversTab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Selected.
+        /// </summary>
+        public static string FavRmSelected {
+            get {
+                return ResourceManager.GetString("FavRmSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FM Effect Volume.
+        /// </summary>
+        public static string FMEffectVolume {
+            get {
+                return ResourceManager.GetString("FMEffectVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Game.
+        /// </summary>
+        public static string GameConnectionStatusLabel {
+            get {
+                return ResourceManager.GetString("GameConnectionStatusLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to General.
+        /// </summary>
+        public static string GeneralTab {
+            get {
+                return ResourceManager.GetString("GeneralTab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Global Settings.
+        /// </summary>
+        public static string GlobalSettingsHeader {
+            get {
+                return ResourceManager.GetString("GlobalSettingsHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Help &amp; About.
+        /// </summary>
+        public static string HelpHeader {
+            get {
+                return ResourceManager.GetString("HelpHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current Language: EN. Localization Ready.
+        ///Please consider help translating SRS to your language.
+        ///.
+        /// </summary>
+        public static string HelpLocalizationNotes {
+            get {
+                return ResourceManager.GetString("HelpLocalizationNotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        ///DCS In-game SRS Overlay.
+        /// </summary>
+        public static string HelpP1 {
+            get {
+                return ResourceManager.GetString("HelpP1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SRS has an optional DCS in-game overlay - to toggle use.
+        /// </summary>
+        public static string HelpP1L1 {
+            get {
+                return ResourceManager.GetString("HelpP1L1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left Ctrl + Left Shift + ESC..
+        /// </summary>
+        public static string HelpP1L2 {
+            get {
+                return ResourceManager.GetString("HelpP1L2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This will toggle through various states including hidden. The position and visibility state are automatically saved..
+        /// </summary>
+        public static string HelpP1L3 {
+            get {
+                return ResourceManager.GetString("HelpP1L3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Speaker and Microphone Boost.
+        /// </summary>
+        public static string HelpP2 {
+            get {
+                return ResourceManager.GetString("HelpP2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please preview your audio first.
+        /// </summary>
+        public static string HelpP2L1 {
+            get {
+                return ResourceManager.GetString("HelpP2L1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using the preview option to make sure that your microphone and speakers are configured correctly..
+        /// </summary>
+        public static string HelpP2L2 {
+            get {
+                return ResourceManager.GetString("HelpP2L2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Speaker boost can be set higher to counteract the volume reduction caused by clipping and the radio effects. If speaker boost is too high - you may have issues where other windows sounds are too loud. Reduce the boost to fix this..
+        /// </summary>
+        public static string HelpP2L3 {
+            get {
+                return ResourceManager.GetString("HelpP2L3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Troubleshooting.
+        /// </summary>
+        public static string HelpP3 {
+            get {
+                return ResourceManager.GetString("HelpP3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If you have any issues with the SRS please get help on the dedicated Discord channel.
+        /// </summary>
+        public static string HelpP3L1 {
+            get {
+                return ResourceManager.GetString("HelpP3L1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to here.
+        /// </summary>
+        public static string HelpP3L2 {
+            get {
+                return ResourceManager.GetString("HelpP3L2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to and make sure to follow the information in #common-issues first before asking for help in #support.
+        /// </summary>
+        public static string HelpP3L3 {
+            get {
+                return ResourceManager.GetString("HelpP3L3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Input Device not detected?.
+        /// </summary>
+        public static string HelpP4 {
+            get {
+                return ResourceManager.GetString("HelpP4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If your input device isn&apos;t detected - try enabling &quot;Allow more input devices&quot; and restart the client..
+        /// </summary>
+        public static string HelpP4L1 {
+            get {
+                return ResourceManager.GetString("HelpP4L1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If ALL devices then stop working - turn the setting off and please post you clientlog.txt on the dedicated SRS.
+        /// </summary>
+        public static string HelpP4L2 {
+            get {
+                return ResourceManager.GetString("HelpP4L2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Discord Channel.
+        /// </summary>
+        public static string HelpP4L3 {
+            get {
+                return ResourceManager.GetString("HelpP4L3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to in order for me to help you add the device to the whitelist..
+        /// </summary>
+        public static string HelpP4L4 {
+            get {
+                return ResourceManager.GetString("HelpP4L4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fixed Channels.
+        /// </summary>
+        public static string HelpP5 {
+            get {
+                return ResourceManager.GetString("HelpP5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To create a fixed channel list to be used on FC3 aircraft radios and expansion radios, simply create a text file with the frequencies.
+        /// </summary>
+        public static string HelpP5L1 {
+            get {
+                return ResourceManager.GetString("HelpP5L1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to you want, with a new frequency on each line, named after the radio you want the fixed channels for in the SimpleRadio Folder where the radio is installed..
+        /// </summary>
+        public static string HelpP5L2 {
+            get {
+                return ResourceManager.GetString("HelpP5L2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Special characters (-,/ etc) can be ignored as can the case..
+        /// </summary>
+        public static string HelpP5L3 {
+            get {
+                return ResourceManager.GetString("HelpP5L3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Full list of Frequencies &amp; Radio Names.
+        /// </summary>
+        public static string HelpP5L4 {
+            get {
+                return ResourceManager.GetString("HelpP5L4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to For example, for the FC3 F15C Radio, AN/ARC-164 UHF 1, create a text file called &quot;ANARC-164 UHF1.txt&quot; or &quot;anarc164 uhf1.txt&quot;..
+        /// </summary>
+        public static string HelpP5L5 {
+            get {
+                return ResourceManager.GetString("HelpP5L5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add the frequencies within the supported ranges (check the link above for ranges) and save the file..
+        /// </summary>
+        public static string HelpP5L6 {
+            get {
+                return ResourceManager.GetString("HelpP5L6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file will be automatically loaded for that radio when you jump into that aircraft or manually reloaded with the Reload button on the channel tab on the overlay.
+        /// </summary>
+        public static string HelpP5L7 {
+            get {
+                return ResourceManager.GetString("HelpP5L7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to here.
+        /// </summary>
+        public static string HelpP5L8 {
+            get {
+                return ResourceManager.GetString("HelpP5L8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Latest Version &amp; Updates.
+        /// </summary>
+        public static string HelpP6 {
+            get {
+                return ResourceManager.GetString("HelpP6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can always get the latest version from GitHubs Release section for SRS:.
+        /// </summary>
+        public static string HelpP6L1 {
+            get {
+                return ResourceManager.GetString("HelpP6L1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest.
+        /// </summary>
+        public static string HelpP6L2 {
+            get {
+                return ResourceManager.GetString("HelpP6L2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Older versions are.
+        /// </summary>
+        public static string HelpP6L3 {
+            get {
+                return ResourceManager.GetString("HelpP6L3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to here.
+        /// </summary>
+        public static string HelpP6L4 {
+            get {
+                return ResourceManager.GetString("HelpP6L4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Help.
+        /// </summary>
+        public static string HelpTab {
+            get {
+                return ResourceManager.GetString("HelpTab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HF Effect Volume.
+        /// </summary>
+        public static string HFEffectVolume {
+            get {
+                return ResourceManager.GetString("HFEffectVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable HAVEQUICK Effect.
+        /// </summary>
+        public static string HQEffect {
+            get {
+                return ResourceManager.GetString("HQEffect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Awacs Toggle.
+        /// </summary>
+        public static string InputAwacsOverlay {
+            get {
+                return ResourceManager.GetString("InputAwacsOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Down 0.001MHz.
+        /// </summary>
+        public static string InputDown0001 {
+            get {
+                return ResourceManager.GetString("InputDown0001", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Down 0.01MHz.
+        /// </summary>
+        public static string InputDown001 {
+            get {
+                return ResourceManager.GetString("InputDown001", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Down 0.1MHz.
+        /// </summary>
+        public static string InputDown01 {
+            get {
+                return ResourceManager.GetString("InputDown01", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Down 1MHz.
+        /// </summary>
+        public static string InputDown1 {
+            get {
+                return ResourceManager.GetString("InputDown1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Down 10MHz.
+        /// </summary>
+        public static string InputDown10 {
+            get {
+                return ResourceManager.GetString("InputDown10", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Down 100MHz.
+        /// </summary>
+        public static string InputDown100 {
+            get {
+                return ResourceManager.GetString("InputDown100", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Encryption Key Down.
+        /// </summary>
+        public static string InputEncryptionDecrease {
+            get {
+                return ResourceManager.GetString("InputEncryptionDecrease", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Encryption Key Up.
+        /// </summary>
+        public static string InputEncryptionIncrease {
+            get {
+                return ResourceManager.GetString("InputEncryptionIncrease", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Intercom Select.
+        /// </summary>
+        public static string InputIntercom {
+            get {
+                return ResourceManager.GetString("InputIntercom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Special Intercom Select &amp; PTT.
+        /// </summary>
+        public static string InputIntercomPTT {
+            get {
+                return ResourceManager.GetString("InputIntercomPTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modifier.
+        /// </summary>
+        public static string InputModifier {
+            get {
+                return ResourceManager.GetString("InputModifier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Next Radio.
+        /// </summary>
+        public static string InputNextRadio {
+            get {
+                return ResourceManager.GetString("InputNextRadio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Previous Radio.
+        /// </summary>
+        public static string InputPreviousRadio {
+            get {
+                return ResourceManager.GetString("InputPreviousRadio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Push To Talk - PTT.
+        /// </summary>
+        public static string InputPTT {
+            get {
+                return ResourceManager.GetString("InputPTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 1.
+        /// </summary>
+        public static string InputRadio1 {
+            get {
+                return ResourceManager.GetString("InputRadio1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 10.
+        /// </summary>
+        public static string InputRadio10 {
+            get {
+                return ResourceManager.GetString("InputRadio10", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 2.
+        /// </summary>
+        public static string InputRadio2 {
+            get {
+                return ResourceManager.GetString("InputRadio2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 3.
+        /// </summary>
+        public static string InputRadio3 {
+            get {
+                return ResourceManager.GetString("InputRadio3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 4.
+        /// </summary>
+        public static string InputRadio4 {
+            get {
+                return ResourceManager.GetString("InputRadio4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 5.
+        /// </summary>
+        public static string InputRadio5 {
+            get {
+                return ResourceManager.GetString("InputRadio5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 6.
+        /// </summary>
+        public static string InputRadio6 {
+            get {
+                return ResourceManager.GetString("InputRadio6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 7.
+        /// </summary>
+        public static string InputRadio7 {
+            get {
+                return ResourceManager.GetString("InputRadio7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 8.
+        /// </summary>
+        public static string InputRadio8 {
+            get {
+                return ResourceManager.GetString("InputRadio8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 9.
+        /// </summary>
+        public static string InputRadio9 {
+            get {
+                return ResourceManager.GetString("InputRadio9", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio Channel Down.
+        /// </summary>
+        public static string InputRadioChannelDown {
+            get {
+                return ResourceManager.GetString("InputRadioChannelDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio Channel Up.
+        /// </summary>
+        public static string InputRadioChannelUp {
+            get {
+                return ResourceManager.GetString("InputRadioChannelUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overlay Toggle.
+        /// </summary>
+        public static string InputRadioOverlay {
+            get {
+                return ResourceManager.GetString("InputRadioOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio Volume Down.
+        /// </summary>
+        public static string InputRadioVolumeDown {
+            get {
+                return ResourceManager.GetString("InputRadioVolumeDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio Volume Up.
+        /// </summary>
+        public static string InputRadioVolumeUp {
+            get {
+                return ResourceManager.GetString("InputRadioVolumeUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        public static string InputTextNone {
+            get {
+                return ResourceManager.GetString("InputTextNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle Encryption.
+        /// </summary>
+        public static string InputToggleEncryption {
+            get {
+                return ResourceManager.GetString("InputToggleEncryption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle Guard.
+        /// </summary>
+        public static string InputToggleGuard {
+            get {
+                return ResourceManager.GetString("InputToggleGuard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transponder IDENT Toggle.
+        /// </summary>
+        public static string InputTransponderIDENT {
+            get {
+                return ResourceManager.GetString("InputTransponderIDENT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Up 0.001MHz.
+        /// </summary>
+        public static string InputUp0001 {
+            get {
+                return ResourceManager.GetString("InputUp0001", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Up 0.01MHz.
+        /// </summary>
+        public static string InputUp001 {
+            get {
+                return ResourceManager.GetString("InputUp001", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Up 0.1MHz.
+        /// </summary>
+        public static string InputUp01 {
+            get {
+                return ResourceManager.GetString("InputUp01", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Up 1MHz.
+        /// </summary>
+        public static string InputUp1 {
+            get {
+                return ResourceManager.GetString("InputUp1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Up 10MHz.
+        /// </summary>
+        public static string InputUp10 {
+            get {
+                return ResourceManager.GetString("InputUp10", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Up 100MHz.
+        /// </summary>
+        public static string InputUp100 {
+            get {
+                return ResourceManager.GetString("InputUp100", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Controls / Cockpit Integration.
+        /// </summary>
+        public static string IntegrationHeader {
+            get {
+                return ResourceManager.GetString("IntegrationHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Intercom Audio Channel.
+        /// </summary>
+        public static string IntercomConfig {
+            get {
+                return ResourceManager.GetString("IntercomConfig", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Intercom Transmit End Effect.
+        /// </summary>
+        public static string IntercomEndTransmitEffect {
+            get {
+                return ResourceManager.GetString("IntercomEndTransmitEffect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Intercom Transmit Start Effect.
+        /// </summary>
+        public static string IntercomStartTransmitEffect {
+            get {
+                return ResourceManager.GetString("IntercomStartTransmitEffect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LotATC.
+        /// </summary>
+        public static string LotATCConnectionStatusLabel {
+            get {
+                return ResourceManager.GetString("LotATCConnectionStatusLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Microphone Automatic Gain Control.
+        /// </summary>
+        public static string MicAGC {
+            get {
+                return ResourceManager.GetString("MicAGC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Microphone Noise Suppression .
+        /// </summary>
+        public static string MicDenoise {
+            get {
+                return ResourceManager.GetString("MicDenoise", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Microphone.
+        /// </summary>
+        public static string MicLabel {
+            get {
+                return ResourceManager.GetString("MicLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Microphone.
+        /// </summary>
+        public static string MicrophoneHeader {
+            get {
+                return ResourceManager.GetString("MicrophoneHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimise to tray.
+        /// </summary>
+        public static string Minimisetotray {
+            get {
+                return ResourceManager.GetString("Minimisetotray", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Miscellanous Settings.
+        /// </summary>
+        public static string MiscellanousHeader {
+            get {
+                return ResourceManager.GetString("MiscellanousHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SRS Admin Privileges.
+        /// </summary>
+        public static string MsgBoxAdmin {
+            get {
+                return ResourceManager.GetString("MsgBoxAdmin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SRS Requires admin rights to be able to read keyboard input in the background. 
+        ///
+        ///If you do not use any keyboard binds you can disable SRS Admin Privileges. 
+        ///
+        ///For this setting to take effect SRS must be restarted.
+        /// </summary>
+        public static string MsgBoxAdminText {
+            get {
+                return ResourceManager.GetString("MsgBoxAdminText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Audio Output Error.
+        /// </summary>
+        public static string MsgBoxAudioError {
+            get {
+                return ResourceManager.GetString("MsgBoxAudioError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Problem initialising Audio Output!
+        ///
+        ///Try a different Output device and please post your clientlog.txt to the support Discord server.
+        ///
+        ///Join support Discord server now?.
+        /// </summary>
+        public static string MsgBoxAudioErrorText {
+            get {
+                return ResourceManager.GetString("MsgBoxAudioErrorText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto Connect.
+        /// </summary>
+        public static string MsgBoxAutoConnect {
+            get {
+                return ResourceManager.GetString("MsgBoxAutoConnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Would you like to try to auto-connect to DCS-SRS @.
+        /// </summary>
+        public static string MsgBoxAutoConnectText {
+            get {
+                return ResourceManager.GetString("MsgBoxAutoConnectText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirmation.
+        /// </summary>
+        public static string MsgBoxConfirm {
+            get {
+                return ResourceManager.GetString("MsgBoxConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete.
+        /// </summary>
+        public static string MsgBoxConfirmDeleteText {
+            get {
+                return ResourceManager.GetString("MsgBoxConfirmDeleteText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        public static string MsgBoxError {
+            get {
+                return ResourceManager.GetString("MsgBoxError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot delete the default input!.
+        /// </summary>
+        public static string MsgBoxErrorInputText {
+            get {
+                return ResourceManager.GetString("MsgBoxErrorInputText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot rename the default input!.
+        /// </summary>
+        public static string MsgBoxErrorRenameText {
+            get {
+                return ResourceManager.GetString("MsgBoxErrorRenameText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Host Name Error.
+        /// </summary>
+        public static string MsgBoxInvalidIP {
+            get {
+                return ResourceManager.GetString("MsgBoxInvalidIP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid IP or Host Name!.
+        /// </summary>
+        public static string MsgBoxInvalidIPText {
+            get {
+                return ResourceManager.GetString("MsgBoxInvalidIPText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning.
+        /// </summary>
+        public static string MsgBoxMicPassthru {
+            get {
+                return ResourceManager.GetString("MsgBoxMicPassthru", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mic Output and Speaker Output should not be set to the same device!
+        ///
+        ///Mic Output is just for recording and not for use as a sidetone. You will hear yourself with a small delay!
+        ///
+        ///Hit disconnect and change Mic Output / Passthrough.
+        /// </summary>
+        public static string MsgBoxMicPassthruText {
+            get {
+                return ResourceManager.GetString("MsgBoxMicPassthruText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto Connect Mismatch.
+        /// </summary>
+        public static string MsgBoxMismatch {
+            get {
+                return ResourceManager.GetString("MsgBoxMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The SRS server advertised by DCS @.
+        /// </summary>
+        public static string MsgBoxMismatchText1 {
+            get {
+                return ResourceManager.GetString("MsgBoxMismatchText1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to does not match the SRS server @.
+        /// </summary>
+        public static string MsgBoxMismatchText2 {
+            get {
+                return ResourceManager.GetString("MsgBoxMismatchText2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to you are currently connected to..
+        /// </summary>
+        public static string MsgBoxMismatchText3 {
+            get {
+                return ResourceManager.GetString("MsgBoxMismatchText3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Would you like to connect to the advertised SRS server?.
+        /// </summary>
+        public static string MsgBoxMismatchText4 {
+            get {
+                return ResourceManager.GetString("MsgBoxMismatchText4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SRS window position reset.
+        /// </summary>
+        public static string MsgBoxNotVisible {
+            get {
+                return ResourceManager.GetString("MsgBoxNotVisible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The SRS client window is no longer visible likely due to a monitor reconfiguration.\n\nThe position will be reset to default to fix this issue..
+        /// </summary>
+        public static string MsgBoxNotVisibleText {
+            get {
+                return ResourceManager.GetString("MsgBoxNotVisibleText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please leave this ticked.
+        /// </summary>
+        public static string MsgBoxPleaseTick {
+            get {
+                return ResourceManager.GetString("MsgBoxPleaseTick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please leave this ticked - SRS logging is extremely minimal (you can verify by looking at the source) - and limited to: Country &amp; SRS Version on startup.
+        ///
+        ///By keeping this enabled I can judge the usage of SRS, and which versions are still in use for support..
+        /// </summary>
+        public static string MsgBoxPleaseTickText {
+            get {
+                return ResourceManager.GetString("MsgBoxPleaseTickText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Controller Input Devices Rescanned.
+        /// </summary>
+        public static string MsgBoxRescan {
+            get {
+                return ResourceManager.GetString("MsgBoxRescan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New controller input devices can now be used.
+        /// </summary>
+        public static string MsgBoxRescanText {
+            get {
+                return ResourceManager.GetString("MsgBoxRescanText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restart SimpleRadio Standalone.
+        /// </summary>
+        public static string MsgBoxRestart {
+            get {
+                return ResourceManager.GetString("MsgBoxRestart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must restart SRS for this setting to take effect.
+        ///
+        ///Turning this on will allow almost any DirectX device to be used as input expect a Mouse but WILL LIKELY cause issues with other devices being detected. 
+        ///
+        ///Use SRS Device Listing (see Discord) instead to enable the missing device.
+        ///
+        ///Do not turn on unless you know what you&apos;re doing :).
+        /// </summary>
+        public static string MsgBoxRestartExpandText {
+            get {
+                return ResourceManager.GetString("MsgBoxRestartExpandText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must restart SRS for this setting to take effect..
+        /// </summary>
+        public static string MsgBoxRestartXInputText {
+            get {
+                return ResourceManager.GetString("MsgBoxRestartXInputText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SRS Client Path.
+        /// </summary>
+        public static string MsgBoxSetSRSPath {
+            get {
+                return ResourceManager.GetString("MsgBoxSetSRSPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SRS Path set to: .
+        /// </summary>
+        public static string MsgBoxSetSRSPathText {
+            get {
+                return ResourceManager.GetString("MsgBoxSetSRSPathText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thank You!.
+        /// </summary>
+        public static string MsgBoxThankYou {
+            get {
+                return ResourceManager.GetString("MsgBoxThankYou", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thank you for enabling this!
+        ///
+        ///By keeping this enabled I can judge the usage of SRS, and which versions are still in use for support..
+        /// </summary>
+        public static string MsgBoxThankYouText {
+            get {
+                return ResourceManager.GetString("MsgBoxThankYouText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable FM Radio Tone.
+        /// </summary>
+        public static string NATORadioTone {
+            get {
+                return ResourceManager.GetString("NATORadioTone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Available in Cockpit.
+        /// </summary>
+        public static string OverlayAvailableCockpit {
+            get {
+                return ResourceManager.GetString("OverlayAvailableCockpit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to AWACS / GCI Panel.
+        /// </summary>
+        public static string OverlayAwacsPanel {
+            get {
+                return ResourceManager.GetString("OverlayAwacsPanel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CNH.
+        /// </summary>
+        public static string OverlayChannelPrefix {
+            get {
+                return ResourceManager.GetString("OverlayChannelPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ch..
+        /// </summary>
+        public static string OverlayChannelTab {
+            get {
+                return ResourceManager.GetString("OverlayChannelTab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cockpit Controls.
+        /// </summary>
+        public static string OverlayCockpitControls {
+            get {
+                return ResourceManager.GetString("OverlayCockpitControls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DCS IFF.
+        /// </summary>
+        public static string OverlayDCSIFF {
+            get {
+                return ResourceManager.GetString("OverlayDCSIFF", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DCS PTT Controls.
+        /// </summary>
+        public static string OverlayDCSPTT {
+            get {
+                return ResourceManager.GetString("OverlayDCSPTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DCS Radio Switch Controls.
+        /// </summary>
+        public static string OverlayDCSRadioSwitch {
+            get {
+                return ResourceManager.GetString("OverlayDCSRadioSwitch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to - Disabled in SRS.
+        /// </summary>
+        public static string OverlayDisabledSRS {
+            get {
+                return ResourceManager.GetString("OverlayDisabledSRS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Encryption Key.
+        /// </summary>
+        public static string OverlayEncryptionKey {
+            get {
+                return ResourceManager.GetString("OverlayEncryptionKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enc.
+        /// </summary>
+        public static string OverlayEncryptionTab {
+            get {
+                return ResourceManager.GetString("OverlayEncryptionTab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HOTAS Controls.
+        /// </summary>
+        public static string OverlayHotasControls {
+            get {
+                return ResourceManager.GetString("OverlayHotasControls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to INTERCOM.
+        /// </summary>
+        public static string OverlayIntercom {
+            get {
+                return ResourceManager.GetString("OverlayIntercom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Intercom Hot Mic.
+        /// </summary>
+        public static string OverlayIntercomHotMic {
+            get {
+                return ResourceManager.GetString("OverlayIntercomHotMic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MIDS.
+        /// </summary>
+        public static string OverlayMIDS {
+            get {
+                return ResourceManager.GetString("OverlayMIDS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NO INTERCOM.
+        /// </summary>
+        public static string OverlayNoIntercom {
+            get {
+                return ResourceManager.GetString("OverlayNoIntercom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Radio.
+        /// </summary>
+        public static string OverlayNoRadio {
+            get {
+                return ResourceManager.GetString("OverlayNoRadio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not Available - SRS Overlay Controls Only.
+        /// </summary>
+        public static string OverlayNotAvailable {
+            get {
+                return ResourceManager.GetString("OverlayNotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reload.
+        /// </summary>
+        public static string OverlayPresetReload {
+            get {
+                return ResourceManager.GetString("OverlayPresetReload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio Capabilities.
+        /// </summary>
+        public static string OverlayRadioCapabilities {
+            get {
+                return ResourceManager.GetString("OverlayRadioCapabilities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio.
+        /// </summary>
+        public static string OverlayRadioTab {
+            get {
+                return ResourceManager.GetString("OverlayRadioTab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Simul. Transmission OFF.
+        /// </summary>
+        public static string OverlaySimulTransOFF {
+            get {
+                return ResourceManager.GetString("OverlaySimulTransOFF", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Simul. Transmission ON.
+        /// </summary>
+        public static string OverlaySimulTransON {
+            get {
+                return ResourceManager.GetString("OverlaySimulTransON", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ST.
+        /// </summary>
+        public static string OverlaySimulTransST {
+            get {
+                return ResourceManager.GetString("OverlaySimulTransST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TRANSPONDER.
+        /// </summary>
+        public static string OverlayTransponder {
+            get {
+                return ResourceManager.GetString("OverlayTransponder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Play connection sounds.
+        /// </summary>
+        public static string PlayConnectionSounds {
+            get {
+                return ResourceManager.GetString("PlayConnectionSounds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Audio Preview.
+        /// </summary>
+        public static string PreviewAudio {
+            get {
+                return ResourceManager.GetString("PreviewAudio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop Preview.
+        /// </summary>
+        public static string PreviewAudioStop {
+            get {
+                return ResourceManager.GetString("PreviewAudioStop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile.
+        /// </summary>
+        public static string ProfileHeader {
+            get {
+                return ResourceManager.GetString("ProfileHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Profile Settings.
+        /// </summary>
+        public static string ProfileSettingsHeader {
+            get {
+                return ResourceManager.GetString("ProfileSettingsHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Push to Talk Release Delay (ms) - SRS Hotkeys only.
+        /// </summary>
+        public static string PTTReleaseDelay {
+            get {
+                return ResourceManager.GetString("PTTReleaseDelay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 0.
+        /// </summary>
+        public static string PTTReleaseDelay0 {
+            get {
+                return ResourceManager.GetString("PTTReleaseDelay0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1000.
+        /// </summary>
+        public static string PTTReleaseDelay1000 {
+            get {
+                return ResourceManager.GetString("PTTReleaseDelay1000", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 500.
+        /// </summary>
+        public static string PTTReleaseDelay500 {
+            get {
+                return ResourceManager.GetString("PTTReleaseDelay500", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Push to Talk Start Delay (ms) - SRS Hotkeys only.
+        /// </summary>
+        public static string PTTStartDelay {
+            get {
+                return ResourceManager.GetString("PTTStartDelay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 0.
+        /// </summary>
+        public static string PTTStartDelay0 {
+            get {
+                return ResourceManager.GetString("PTTStartDelay0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1000.
+        /// </summary>
+        public static string PTTStartDelay1000 {
+            get {
+                return ResourceManager.GetString("PTTStartDelay1000", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 500.
+        /// </summary>
+        public static string PTTStartDelay500 {
+            get {
+                return ResourceManager.GetString("PTTStartDelay500", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 10 Audio Channel.
+        /// </summary>
+        public static string Radio10Config {
+            get {
+                return ResourceManager.GetString("Radio10Config", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 1 Audio Channel.
+        /// </summary>
+        public static string Radio1Config {
+            get {
+                return ResourceManager.GetString("Radio1Config", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 2 Audio Channel.
+        /// </summary>
+        public static string Radio2Config {
+            get {
+                return ResourceManager.GetString("Radio2Config", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 3 Audio Channel.
+        /// </summary>
+        public static string Radio3Config {
+            get {
+                return ResourceManager.GetString("Radio3Config", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 4 Audio Channel.
+        /// </summary>
+        public static string Radio4Config {
+            get {
+                return ResourceManager.GetString("Radio4Config", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 5 Audio Channel.
+        /// </summary>
+        public static string Radio5Config {
+            get {
+                return ResourceManager.GetString("Radio5Config", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 6 Audio Channel.
+        /// </summary>
+        public static string Radio6Config {
+            get {
+                return ResourceManager.GetString("Radio6Config", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 7 Audio Channel.
+        /// </summary>
+        public static string Radio7Config {
+            get {
+                return ResourceManager.GetString("Radio7Config", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 8 Audio Channel.
+        /// </summary>
+        public static string Radio8Config {
+            get {
+                return ResourceManager.GetString("Radio8Config", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio 9 Audio Channel.
+        /// </summary>
+        public static string Radio9Config {
+            get {
+                return ResourceManager.GetString("Radio9Config", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Equal.
+        /// </summary>
+        public static string RadioChannelEqual {
+            get {
+                return ResourceManager.GetString("RadioChannelEqual", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Left.
+        /// </summary>
+        public static string RadioChannelLeft {
+            get {
+                return ResourceManager.GetString("RadioChannelLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Right.
+        /// </summary>
+        public static string RadioChannelRight {
+            get {
+                return ResourceManager.GetString("RadioChannelRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio Effect Settings.
+        /// </summary>
+        public static string RadioEffectHeader {
+            get {
+                return ResourceManager.GetString("RadioEffectHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio Encryption Effects
+        ///Requires Tx or Rx Effects On.
+        /// </summary>
+        public static string RadioEncryptionEffectsToggle {
+            get {
+                return ResourceManager.GetString("RadioEncryptionEffectsToggle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio Transmit End Effect.
+        /// </summary>
+        public static string RadioEndTransmitEffect {
+            get {
+                return ResourceManager.GetString("RadioEndTransmitEffect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MIDS Tx &amp; Rx Effect
+        ///Requires Tx or Rx Effects On.
+        /// </summary>
+        public static string RadioMIDSToggle {
+            get {
+                return ResourceManager.GetString("RadioMIDSToggle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide Overlay Taskbar Item.
+        /// </summary>
+        public static string RadioOverlayTaskbarItem {
+            get {
+                return ResourceManager.GetString("RadioOverlayTaskbarItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio Rx Effects.
+        /// </summary>
+        public static string RadioRxEffects {
+            get {
+                return ResourceManager.GetString("RadioRxEffects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End.
+        /// </summary>
+        public static string RadioRxEnd {
+            get {
+                return ResourceManager.GetString("RadioRxEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start.
+        /// </summary>
+        public static string RadioRxStart {
+            get {
+                return ResourceManager.GetString("RadioRxStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable Radio Voice Effect.
+        /// </summary>
+        public static string RadioSoundEffects {
+            get {
+                return ResourceManager.GetString("RadioSoundEffects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable Clipping Effect (Requires Radio effects on!).
+        /// </summary>
+        public static string RadioSoundEffectsClipping {
+            get {
+                return ResourceManager.GetString("RadioSoundEffectsClipping", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio Transmit Start Effect.
+        /// </summary>
+        public static string RadioStartTransmitEffect {
+            get {
+                return ResourceManager.GetString("RadioStartTransmitEffect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio Switch works as Push To Talk (PTT).
+        /// </summary>
+        public static string RadioSwitchIsPTT {
+            get {
+                return ResourceManager.GetString("RadioSwitchIsPTT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio Tx Effects.
+        /// </summary>
+        public static string RadioTxEffects {
+            get {
+                return ResourceManager.GetString("RadioTxEffects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End.
+        /// </summary>
+        public static string RadioTxEnd {
+            get {
+                return ResourceManager.GetString("RadioTxEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start.
+        /// </summary>
+        public static string RadioTxStart {
+            get {
+                return ResourceManager.GetString("RadioTxStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recording.
+        /// </summary>
+        public static string RecordingHeader {
+            get {
+                return ResourceManager.GetString("RecordingHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recording Quality.
+        /// </summary>
+        public static string RecordingQuality {
+            get {
+                return ResourceManager.GetString("RecordingQuality", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 0 - Highest.
+        /// </summary>
+        public static string RecordingQuality0 {
+            get {
+                return ResourceManager.GetString("RecordingQuality0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lowest - 9.
+        /// </summary>
+        public static string RecordingQuality9 {
+            get {
+                return ResourceManager.GetString("RecordingQuality9", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Record Transmissions.
+        /// </summary>
+        public static string RecordTransmissions {
+            get {
+                return ResourceManager.GetString("RecordTransmissions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto Refocus DCS.
+        /// </summary>
+        public static string RefocusDCS {
+            get {
+                return ResourceManager.GetString("RefocusDCS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename Profile.
+        /// </summary>
+        public static string RenameProfile {
+            get {
+                return ResourceManager.GetString("RenameProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Require Admin.
+        /// </summary>
+        public static string RequireAdminToggle {
+            get {
+                return ResourceManager.GetString("RequireAdminToggle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rescan Controller Input Devices.
+        /// </summary>
+        public static string RescanInputDevices {
+            get {
+                return ResourceManager.GetString("RescanInputDevices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset.
+        /// </summary>
+        public static string Reset {
+            get {
+                return ResourceManager.GetString("Reset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset Radio Overlay.
+        /// </summary>
+        public static string ResetRadioOverlay {
+            get {
+                return ResourceManager.GetString("ResetRadioOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server.
+        /// </summary>
+        public static string Server {
+            get {
+                return ResourceManager.GetString("Server", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server.
+        /// </summary>
+        public static string ServerConnectionStatusLabel {
+            get {
+                return ResourceManager.GetString("ServerConnectionStatusLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server Settings.
+        /// </summary>
+        public static string ServerWindowTitle {
+            get {
+                return ResourceManager.GetString("ServerWindowTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set SRS Path for DCS.
+        /// </summary>
+        public static string SetSRSPath {
+            get {
+                return ResourceManager.GetString("SetSRSPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set Path.
+        /// </summary>
+        public static string SetSRSPathBtn {
+            get {
+                return ResourceManager.GetString("SetSRSPathBtn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string SettingsTab {
+            get {
+                return ResourceManager.GetString("SettingsTab", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Setup.
+        /// </summary>
+        public static string SetupHeader {
+            get {
+                return ResourceManager.GetString("SetupHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle AWACS Overlay.
+        /// </summary>
+        public static string ShowAwacsOverlay {
+            get {
+                return ResourceManager.GetString("ShowAwacsOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle Client List.
+        /// </summary>
+        public static string ShowClientList {
+            get {
+                return ResourceManager.GetString("ShowClientList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Toggle Radio Overlay.
+        /// </summary>
+        public static string ShowOverlay {
+            get {
+                return ResourceManager.GetString("ShowOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Transmitter Name (Requires Server ON too).
+        /// </summary>
+        public static string ShowTransmitterName {
+            get {
+                return ResourceManager.GetString("ShowTransmitterName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Record to Single File.
+        /// </summary>
+        public static string SingleFileMixdown {
+            get {
+                return ResourceManager.GetString("SingleFileMixdown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Speaker Boost:.
+        /// </summary>
+        public static string SpeakerBoost {
+            get {
+                return ResourceManager.GetString("SpeakerBoost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to +/- %.
+        /// </summary>
+        public static string SpeakerBoostLabel {
+            get {
+                return ResourceManager.GetString("SpeakerBoostLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Speakers &amp; Optional Mic Output.
+        /// </summary>
+        public static string SpeakerLabel {
+            get {
+                return ResourceManager.GetString("SpeakerLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SRS Interface.
+        /// </summary>
+        public static string SRSInterfaceHeader {
+            get {
+                return ResourceManager.GetString("SRSInterfaceHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow Radio Encryption.
+        /// </summary>
+        public static string SrvAllowRadioEncryption {
+            get {
+                return ResourceManager.GetString("SrvAllowRadioEncryption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Coalition Security.
+        /// </summary>
+        public static string SrvCoalitionSecurity {
+            get {
+                return ResourceManager.GetString("SrvCoalitionSecurity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Distance Limitations.
+        /// </summary>
+        public static string SrvDistance {
+            get {
+                return ResourceManager.GetString("SrvDistance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to External AWACS Mode.
+        /// </summary>
+        public static string SrvExternalAWACSMode {
+            get {
+                return ResourceManager.GetString("SrvExternalAWACSMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Line Of Sight.
+        /// </summary>
+        public static string SrvLineOfSight {
+            get {
+                return ResourceManager.GetString("SrvLineOfSight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retransmit Node Limit.
+        /// </summary>
+        public static string SrvNodeLimit {
+            get {
+                return ResourceManager.GetString("SrvNodeLimit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio Expansion.
+        /// </summary>
+        public static string SrvRadioExpansion {
+            get {
+                return ResourceManager.GetString("SrvRadioExpansion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IRL Radio Rx Interfence.
+        /// </summary>
+        public static string SrvRadioRXInterference {
+            get {
+                return ResourceManager.GetString("SrvRadioRXInterference", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IRL Radio Tx Behaviour.
+        /// </summary>
+        public static string SrvRealRadio {
+            get {
+                return ResourceManager.GetString("SrvRealRadio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server Version.
+        /// </summary>
+        public static string SrvServerVersion {
+            get {
+                return ResourceManager.GetString("SrvServerVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Transmitter Name.
+        /// </summary>
+        public static string SrvShowTransmitterName {
+            get {
+                return ResourceManager.GetString("SrvShowTransmitterName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Spectator Audio.
+        /// </summary>
+        public static string SrvSpectatorAudio {
+            get {
+                return ResourceManager.GetString("SrvSpectatorAudio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Strict Radio Encryption.
+        /// </summary>
+        public static string SrvStrictRadioEncryption {
+            get {
+                return ResourceManager.GetString("SrvStrictRadioEncryption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Tuned Client Count.
+        /// </summary>
+        public static string SrvTunedClientCount {
+            get {
+                return ResourceManager.GetString("SrvTunedClientCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Startminimised.
+        /// </summary>
+        public static string Startminimised {
+            get {
+                return ResourceManager.GetString("Startminimised", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connect.
+        /// </summary>
+        public static string StartStop {
+            get {
+                return ResourceManager.GetString("StartStop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connecting....
+        /// </summary>
+        public static string StartStopConnecting {
+            get {
+                return ResourceManager.GetString("StartStopConnecting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disconnect.
+        /// </summary>
+        public static string StartStopDisconnect {
+            get {
+                return ResourceManager.GetString("StartStopDisconnect", resourceCulture);
             }
         }
         
@@ -107,6 +2826,294 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
             get {
                 object obj = ResourceManager.GetObject("status_disconnected_game", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Template.
+        /// </summary>
+        public static string TemplateHeader {
+            get {
+                return ResourceManager.GetString("TemplateHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Server Settings.
+        /// </summary>
+        public static string ToggleServerSettings {
+            get {
+                return ResourceManager.GetString("ToggleServerSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Window Opacity.
+        /// </summary>
+        public static string ToolTipOpacity {
+            get {
+                return ResourceManager.GetString("ToolTipOpacity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retransmit.
+        /// </summary>
+        public static string ToolTipRetransmit {
+            get {
+                return ResourceManager.GetString("ToolTipRetransmit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selected Radio.
+        /// </summary>
+        public static string ToolTipSelectedRadio {
+            get {
+                return ResourceManager.GetString("ToolTipSelectedRadio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Simultaneous Transmission.
+        /// </summary>
+        public static string ToolTipSimulTrans {
+            get {
+                return ResourceManager.GetString("ToolTipSimulTrans", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Activate / Deactivate Transponder.
+        /// </summary>
+        public static string ToolTipTransponder {
+            get {
+                return ResourceManager.GetString("ToolTipTransponder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mode 4.
+        /// </summary>
+        public static string ToolTipTransponderMode4 {
+            get {
+                return ResourceManager.GetString("ToolTipTransponderMode4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to UHF Effect Volume.
+        /// </summary>
+        public static string UHFEffectVolume {
+            get {
+                return ResourceManager.GetString("UHFEffectVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Allow VAICOM TX Inhibit.
+        /// </summary>
+        public static string VAICOMTXInhibitEnabled {
+            get {
+                return ResourceManager.GetString("VAICOMTXInhibitEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Available.
+        /// </summary>
+        public static string ValueAvailable {
+            get {
+                return ResourceManager.GetString("ValueAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DISABLED.
+        /// </summary>
+        public static string ValueDISABLED {
+            get {
+                return ResourceManager.GetString("ValueDISABLED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ENABLED.
+        /// </summary>
+        public static string ValueENABLED {
+            get {
+                return ResourceManager.GetString("ValueENABLED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not Available.
+        /// </summary>
+        public static string ValueNotAvailable {
+            get {
+                return ResourceManager.GetString("ValueNotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OFF.
+        /// </summary>
+        public static string ValueOFF {
+            get {
+                return ResourceManager.GetString("ValueOFF", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ON.
+        /// </summary>
+        public static string ValueON {
+            get {
+                return ResourceManager.GetString("ValueON", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unavailable.
+        /// </summary>
+        public static string ValueUnavailable {
+            get {
+                return ResourceManager.GetString("ValueUnavailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown.
+        /// </summary>
+        public static string ValueUnknown {
+            get {
+                return ResourceManager.GetString("ValueUnknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to VHF Effect Volume.
+        /// </summary>
+        public static string VHFEffectVolume {
+            get {
+                return ResourceManager.GetString("VHFEffectVolume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to VOIP.
+        /// </summary>
+        public static string VOIPConnectionStatusLabel {
+            get {
+                return ResourceManager.GetString("VOIPConnectionStatusLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use Voice Detection (VOX) on Intercom Hot Mic.
+        /// </summary>
+        public static string VOXEnabled {
+            get {
+                return ResourceManager.GetString("VOXEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Intercom Hot Mic Voice Detection.
+        /// </summary>
+        public static string VOXHeader {
+            get {
+                return ResourceManager.GetString("VOXHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Voice Detection minimum transmission length (ms).
+        /// </summary>
+        public static string VOXMinimimumTXTime {
+            get {
+                return ResourceManager.GetString("VOXMinimimumTXTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 0.
+        /// </summary>
+        public static string VOXMinimimumTXTime0 {
+            get {
+                return ResourceManager.GetString("VOXMinimimumTXTime0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1000.
+        /// </summary>
+        public static string VOXMinimimumTXTime1000 {
+            get {
+                return ResourceManager.GetString("VOXMinimimumTXTime1000", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 2000.
+        /// </summary>
+        public static string VOXMinimimumTXTime2000 {
+            get {
+                return ResourceManager.GetString("VOXMinimimumTXTime2000", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Voice Detection Threshold.
+        /// </summary>
+        public static string VOXMinimumRMS {
+            get {
+                return ResourceManager.GetString("VOXMinimumRMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Higher.
+        /// </summary>
+        public static string VOXMinimumRMSHigher {
+            get {
+                return ResourceManager.GetString("VOXMinimumRMSHigher", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lower.
+        /// </summary>
+        public static string VOXMinimumRMSLower {
+            get {
+                return ResourceManager.GetString("VOXMinimumRMSLower", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Voice Detection Sensitivity.
+        /// </summary>
+        public static string VOXMode {
+            get {
+                return ResourceManager.GetString("VOXMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Higher.
+        /// </summary>
+        public static string VOXModeHigher {
+            get {
+                return ResourceManager.GetString("VOXModeHigher", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lower.
+        /// </summary>
+        public static string VOXModeLower {
+            get {
+                return ResourceManager.GetString("VOXModeLower", resourceCulture);
             }
         }
     }

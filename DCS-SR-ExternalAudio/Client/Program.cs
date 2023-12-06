@@ -87,8 +87,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.ExternalAudioClient.Client
                 HelpText = "Modulation AM or FM comma separated - AM,FM or just AM  ",
                 Required = true)]
             public string Modulations { get; set; }
-
-
+            
+            [Option("ambient",
+                HelpText = "Ambient Cockpit - UH1 FA18 etc",
+                Default = "",
+                Required = false)]
+            public string AmbientCockpit { get; set; }
+            
+            [Option("ambientVolume",
+                HelpText = "Ambient Cockpit Volume",
+                Required = false)]
+            public float AmbientCockpitVolume { get; set; }
+            
             [Option('c', "coalition",
                 HelpText = "Coalition - 0 is Spectator, 1 is Red, 2 is Blue",
                 Required = true)]

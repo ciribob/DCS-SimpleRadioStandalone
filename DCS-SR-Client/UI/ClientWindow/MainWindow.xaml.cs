@@ -226,8 +226,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             if (!mainWindowVisible)
             {
                 MessageBox.Show(this,
-                    "The SRS client window is no longer visible likely due to a monitor reconfiguration.\n\nThe position will be reset to default to fix this issue.",
-                    "SRS window position reset",
+                    Properties.Resources.MsgBoxNotVisibleText,
+                    Properties.Resources.MsgBoxNotVisible,
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
 
@@ -243,8 +243,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             if (!radioWindowVisible)
             {
                 MessageBox.Show(this,
-                    "The SRS radio overlay is no longer visible likely due to a monitor reconfiguration.\n\nThe position will be reset to default to fix this issue.",
-                    "SRS window position reset",
+                    Properties.Resources.MsgBoxNotVisibleText,
+                    Properties.Resources.MsgBoxNotVisible,
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
 
@@ -263,8 +263,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             if (!awacsWindowVisible)
             {
                 MessageBox.Show(this,
-                    "The SRS AWACS overlay is no longer visible likely due to a monitor reconfiguration.\n\nThe position will be reset to default to fix this issue",
-                    "SRS window position reset",
+                    Properties.Resources.MsgBoxNotVisibleText,
+                    Properties.Resources.MsgBoxNotVisible,
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
 
@@ -350,156 +350,156 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             IntercomStartTransmitEffect.SelectionChanged += OnIntercomStartTransmitEffectChanged;
             IntercomEndTransmitEffect.SelectionChanged += OnIntercomEndTransmitEffectChanged;
 
-            Radio1.InputName = "Radio 1";
+            Radio1.InputName = Properties.Resources.InputRadio1;
             Radio1.ControlInputBinding = InputBinding.Switch1;
             Radio1.InputDeviceManager = InputManager;
 
-            Radio2.InputName = "Radio 2";
+            Radio2.InputName = Properties.Resources.InputRadio2;
             Radio2.ControlInputBinding = InputBinding.Switch2;
             Radio2.InputDeviceManager = InputManager;
 
-            Radio3.InputName = "Radio 3";
+            Radio3.InputName = Properties.Resources.InputRadio3;
             Radio3.ControlInputBinding = InputBinding.Switch3;
             Radio3.InputDeviceManager = InputManager;
 
-            PTT.InputName = "Push To Talk - PTT";
+            PTT.InputName = Properties.Resources.InputPTT;
             PTT.ControlInputBinding = InputBinding.Ptt;
             PTT.InputDeviceManager = InputManager;
 
-            Intercom.InputName = "Intercom Select";
+            Intercom.InputName = Properties.Resources.InputIntercom;
             Intercom.ControlInputBinding = InputBinding.Intercom;
             Intercom.InputDeviceManager = InputManager;
 
-            IntercomPTT.InputName = "Special Intercom Select & PTT";
+            IntercomPTT.InputName = Properties.Resources.InputIntercomPTT;
             IntercomPTT.ControlInputBinding = InputBinding.IntercomPTT;
             IntercomPTT.InputDeviceManager = InputManager;
 
-            RadioOverlay.InputName = "Overlay Toggle";
+            RadioOverlay.InputName = Properties.Resources.InputRadioOverlay;
             RadioOverlay.ControlInputBinding = InputBinding.OverlayToggle;
             RadioOverlay.InputDeviceManager = InputManager;
 
-            AwacsOverlayToggle.InputName = "Awacs Toggle";
+            AwacsOverlayToggle.InputName = Properties.Resources.InputAwacsOverlay;
             AwacsOverlayToggle.ControlInputBinding = InputBinding.AwacsOverlayToggle;
             AwacsOverlayToggle.InputDeviceManager = InputManager;
 
-            Radio4.InputName = "Radio 4";
+            Radio4.InputName = Properties.Resources.InputRadio4;
             Radio4.ControlInputBinding = InputBinding.Switch4;
             Radio4.InputDeviceManager = InputManager;
 
-            Radio5.InputName = "Radio 5";
+            Radio5.InputName = Properties.Resources.InputRadio5;
             Radio5.ControlInputBinding = InputBinding.Switch5;
             Radio5.InputDeviceManager = InputManager;
 
-            Radio6.InputName = "Radio 6";
+            Radio6.InputName = Properties.Resources.InputRadio6;
             Radio6.ControlInputBinding = InputBinding.Switch6;
             Radio6.InputDeviceManager = InputManager;
 
-            Radio7.InputName = "Radio 7";
+            Radio7.InputName = Properties.Resources.InputRadio7;
             Radio7.ControlInputBinding = InputBinding.Switch7;
             Radio7.InputDeviceManager = InputManager;
 
-            Radio8.InputName = "Radio 8";
+            Radio8.InputName = Properties.Resources.InputRadio8;
             Radio8.ControlInputBinding = InputBinding.Switch8;
             Radio8.InputDeviceManager = InputManager;
 
-            Radio9.InputName = "Radio 9";
+            Radio9.InputName = Properties.Resources.InputRadio9;
             Radio9.ControlInputBinding = InputBinding.Switch9;
             Radio9.InputDeviceManager = InputManager;
 
-            Radio10.InputName = "Radio 10";
+            Radio10.InputName = Properties.Resources.InputRadio10;
             Radio10.ControlInputBinding = InputBinding.Switch10;
             Radio10.InputDeviceManager = InputManager;
 
-            Up100.InputName = "Up 100MHz";
+            Up100.InputName = Properties.Resources.InputUp100;
             Up100.ControlInputBinding = InputBinding.Up100;
             Up100.InputDeviceManager = InputManager;
 
-            Up10.InputName = "Up 10MHz";
+            Up10.InputName = Properties.Resources.InputUp10;
             Up10.ControlInputBinding = InputBinding.Up10;
             Up10.InputDeviceManager = InputManager;
 
-            Up1.InputName = "Up 1MHz";
+            Up1.InputName = Properties.Resources.InputUp1;
             Up1.ControlInputBinding = InputBinding.Up1;
             Up1.InputDeviceManager = InputManager;
 
-            Up01.InputName = "Up 0.1MHz";
+            Up01.InputName = Properties.Resources.InputUp01;
             Up01.ControlInputBinding = InputBinding.Up01;
             Up01.InputDeviceManager = InputManager;
 
-            Up001.InputName = "Up 0.01MHz";
+            Up001.InputName = Properties.Resources.InputUp001;
             Up001.ControlInputBinding = InputBinding.Up001;
             Up001.InputDeviceManager = InputManager;
 
-            Up0001.InputName = "Up 0.001MHz";
+            Up0001.InputName = Properties.Resources.InputUp0001;
             Up0001.ControlInputBinding = InputBinding.Up0001;
             Up0001.InputDeviceManager = InputManager;
 
 
-            Down100.InputName = "Down 100MHz";
+            Down100.InputName = Properties.Resources.InputDown100;
             Down100.ControlInputBinding = InputBinding.Down100;
             Down100.InputDeviceManager = InputManager;
 
-            Down10.InputName = "Down 10MHz";
+            Down10.InputName = Properties.Resources.InputDown10;
             Down10.ControlInputBinding = InputBinding.Down10;
             Down10.InputDeviceManager = InputManager;
 
-            Down1.InputName = "Down 1MHz";
+            Down1.InputName = Properties.Resources.InputDown1;
             Down1.ControlInputBinding = InputBinding.Down1;
             Down1.InputDeviceManager = InputManager;
 
-            Down01.InputName = "Down 0.1MHz";
+            Down01.InputName = Properties.Resources.InputDown01;
             Down01.ControlInputBinding = InputBinding.Down01;
             Down01.InputDeviceManager = InputManager;
 
-            Down001.InputName = "Down 0.01MHz";
+            Down001.InputName = Properties.Resources.InputDown001;
             Down001.ControlInputBinding = InputBinding.Down001;
             Down001.InputDeviceManager = InputManager;
 
-            Down0001.InputName = "Down 0.001MHz";
+            Down0001.InputName = Properties.Resources.InputDown0001;
             Down0001.ControlInputBinding = InputBinding.Down0001;
             Down0001.InputDeviceManager = InputManager;
 
-            ToggleGuard.InputName = "Toggle Guard";
+            ToggleGuard.InputName = Properties.Resources.InputToggleGuard;
             ToggleGuard.ControlInputBinding = InputBinding.ToggleGuard;
             ToggleGuard.InputDeviceManager = InputManager;
 
-            NextRadio.InputName = "Select Next Radio";
+            NextRadio.InputName = Properties.Resources.InputNextRadio;
             NextRadio.ControlInputBinding = InputBinding.NextRadio;
             NextRadio.InputDeviceManager = InputManager;
 
-            PreviousRadio.InputName = "Select Previous Radio";
+            PreviousRadio.InputName = Properties.Resources.InputPreviousRadio;
             PreviousRadio.ControlInputBinding = InputBinding.PreviousRadio;
             PreviousRadio.InputDeviceManager = InputManager;
 
-            ToggleEncryption.InputName = "Toggle Encryption";
+            ToggleEncryption.InputName = Properties.Resources.InputToggleEncryption;
             ToggleEncryption.ControlInputBinding = InputBinding.ToggleEncryption;
             ToggleEncryption.InputDeviceManager = InputManager;
 
-            EncryptionKeyIncrease.InputName = "Encryption Key Up";
+            EncryptionKeyIncrease.InputName = Properties.Resources.InputEncryptionIncrease;
             EncryptionKeyIncrease.ControlInputBinding = InputBinding.EncryptionKeyIncrease;
             EncryptionKeyIncrease.InputDeviceManager = InputManager;
 
-            EncryptionKeyDecrease.InputName = "Encryption Key Down";
+            EncryptionKeyDecrease.InputName = Properties.Resources.InputEncryptionDecrease;
             EncryptionKeyDecrease.ControlInputBinding = InputBinding.EncryptionKeyDecrease;
             EncryptionKeyDecrease.InputDeviceManager = InputManager;
 
-            RadioChannelUp.InputName = "Radio Channel Up";
+            RadioChannelUp.InputName = Properties.Resources.InputRadioChannelUp;
             RadioChannelUp.ControlInputBinding = InputBinding.RadioChannelUp;
             RadioChannelUp.InputDeviceManager = InputManager;
 
-            RadioChannelDown.InputName = "Radio Channel Down";
+            RadioChannelDown.InputName = Properties.Resources.InputRadioChannelDown;
             RadioChannelDown.ControlInputBinding = InputBinding.RadioChannelDown;
             RadioChannelDown.InputDeviceManager = InputManager;
 
-            TransponderIDENT.InputName = "Transponder IDENT Toggle";
+            TransponderIDENT.InputName = Properties.Resources.InputTransponderIDENT;
             TransponderIDENT.ControlInputBinding = InputBinding.TransponderIDENT;
             TransponderIDENT.InputDeviceManager = InputManager;
 
-            RadioVolumeUp.InputName = "Radio Volume Up";
+            RadioVolumeUp.InputName = Properties.Resources.InputRadioVolumeUp;
             RadioVolumeUp.ControlInputBinding = InputBinding.RadioVolumeUp;
             RadioVolumeUp.InputDeviceManager = InputManager;
 
-            RadioVolumeDown.InputName = "Radio Volume Down";
+            RadioVolumeDown.InputName = Properties.Resources.InputRadioVolumeDown;
             RadioVolumeDown.ControlInputBinding = InputBinding.RadioVolumeDown;
             RadioVolumeDown.InputDeviceManager = InputManager;
         }
@@ -900,6 +900,26 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             HFEffectVolume.Value = (_globalSettings.ProfileSettingsStore.GetClientSettingFloat(ProfileSettingsKeys.HFNoiseVolume)
                                     / double.Parse(ProfileSettingsStore.DefaultSettingsProfileSettings[ProfileSettingsKeys.HFNoiseVolume.ToString()], CultureInfo.InvariantCulture)) * 100;
             HFEffectVolume.IsEnabled = true;
+
+
+            AmbientCockpitEffectToggle.IsChecked = _globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.AmbientCockpitNoiseEffect);
+
+            AmbientCockpitEffectVolume.IsEnabled = false;
+            AmbientCockpitEffectVolume.ValueChanged += (sender, e) =>
+            {
+                if (AmbientCockpitEffectVolume.IsEnabled)
+                {
+                    var orig = double.Parse(ProfileSettingsStore.DefaultSettingsProfileSettings[ProfileSettingsKeys.AmbientCockpitNoiseEffectVolume.ToString()], CultureInfo.InvariantCulture);
+
+                    var vol = orig * (e.NewValue / 100);
+
+                    _globalSettings.ProfileSettingsStore.SetClientSettingFloat(ProfileSettingsKeys.AmbientCockpitNoiseEffectVolume, (float)vol);
+                }
+
+            };
+            AmbientCockpitEffectVolume.Value = (_globalSettings.ProfileSettingsStore.GetClientSettingFloat(ProfileSettingsKeys.AmbientCockpitNoiseEffectVolume)
+                                         / double.Parse(ProfileSettingsStore.DefaultSettingsProfileSettings[ProfileSettingsKeys.AmbientCockpitNoiseEffectVolume.ToString()], CultureInfo.InvariantCulture)) * 100;
+            AmbientCockpitEffectVolume.IsEnabled = true;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -986,7 +1006,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
                         _client.TryConnect(new IPEndPoint(_resolvedIp, _port), ConnectCallback);
 
-                        StartStop.Content = "Connecting...";
+                        StartStop.Content = Properties.Resources.StartStopConnecting;
                         StartStop.IsEnabled = false;
                         Mic.IsEnabled = false;
                         Speakers.IsEnabled = false;
@@ -995,7 +1015,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
                         if (_audioPreview != null)
                         {
-                            Preview.Content = "Audio Preview";
+                            Preview.Content = Properties.Resources.PreviewAudio;
                             _audioPreview.StopEncoding();
                             _audioPreview = null;
                         }
@@ -1003,7 +1023,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                     else
                     {
                         //invalid ID
-                        MessageBox.Show("Invalid IP or Host Name!", "Host Name Error", MessageBoxButton.OK,
+                        MessageBox.Show(Properties.Resources.MsgBoxInvalidIPText, Properties.Resources.MsgBoxInvalidIP, MessageBoxButton.OK,
                             MessageBoxImage.Error);
 
                         ClientState.IsConnected = false;
@@ -1012,7 +1032,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 }
                 catch (Exception ex) when (ex is SocketException || ex is ArgumentException)
                 {
-                    MessageBox.Show("Invalid IP or Host Name!", "Host Name Error", MessageBoxButton.OK,
+                    MessageBox.Show(Properties.Resources.MsgBoxInvalidIPText, Properties.Resources.MsgBoxInvalidIP, MessageBoxButton.OK,
                         MessageBoxImage.Error);
 
                     ClientState.IsConnected = false;
@@ -1066,7 +1086,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             ClientState.IsConnectionErrored = connectionError;
 
-            StartStop.Content = "Connect";
+            StartStop.Content = Properties.Resources.StartStop;
             StartStop.IsEnabled = true;
             Mic.IsEnabled = true;
             Speakers.IsEnabled = true;
@@ -1076,7 +1096,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             ToggleServerSettings.IsEnabled = false;
 
             ConnectExternalAWACSMode.IsEnabled = false;
-            ConnectExternalAWACSMode.Content = "Connect External AWACS MODE (EAM)";
+            ConnectExternalAWACSMode.Content = Properties.Resources.ConnectExternalAWACSMode;
 
             if (!string.IsNullOrWhiteSpace(ClientState.LastSeenName) &&
                 _globalSettings.GetClientSetting(GlobalSettingsKeys.LastSeenName).StringValue != ClientState.LastSeenName)
@@ -1145,7 +1165,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             if (_globalSettings.GetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId).RawValue
                 .Equals(_globalSettings.GetClientSetting(GlobalSettingsKeys.AudioOutputDeviceId).RawValue))
             {
-                MessageBox.Show("Mic Output and Speaker Output should not be set to the same device!\n\nMic Output is just for recording and not for use as a sidetone. You will hear yourself with a small delay!\n\nHit disconnect and change Mic Output / Passthrough", "Warning", MessageBoxButton.OK,
+                MessageBox.Show(Properties.Resources.MsgBoxMicPassthruText, Properties.Resources.MsgBoxMicPassthru, MessageBoxButton.OK,
                     MessageBoxImage.Warning);
             }
         }
@@ -1164,7 +1184,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 {
                     try
                     {
-                        StartStop.Content = "Disconnect";
+                        StartStop.Content = Properties.Resources.StartStopDisconnect;
                         StartStop.IsEnabled = true;
 
                         ClientState.IsConnected = true;
@@ -1195,8 +1215,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                         Stop();
 
                         var messageBoxResult = CustomMessageBox.ShowYesNo(
-                            "Problem initialising Audio Output!\n\nTry a different Output device and please post your clientlog.txt to the support Discord server.\n\nJoin support Discord server now?",
-                            "Audio Output Error",
+                            Properties.Resources.MsgBoxAudioErrorText,
+                            Properties.Resources.MsgBoxAudioError,
                             "OPEN PRIVACY SETTINGS",
                             "JOIN DISCORD SERVER",
                             MessageBoxImage.Error);
@@ -1281,7 +1301,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                     _audioPreview.SpeakerBoost = VolumeConversionHelper.ConvertVolumeSliderToScale((float)SpeakerBoost.Value);
                     _audioPreview.StartPreview(AudioOutput.WindowsN);
 
-                    Preview.Content = "Stop Preview";
+                    Preview.Content = Properties.Resources.PreviewAudioStop;
                 }
                 catch (Exception ex)
                 {
@@ -1292,7 +1312,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             }
             else
             {
-                Preview.Content = "Audio Preview";
+                Preview.Content = Preview.Content = Properties.Resources.PreviewAudio;
                 _audioPreview.StopEncoding();
                 _audioPreview = null;
             }
@@ -1307,13 +1327,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 bool eamEnabled = _serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE);
 
                 ConnectExternalAWACSMode.IsEnabled = eamEnabled;
-                ConnectExternalAWACSMode.Content = ClientState.ExternalAWACSModelSelected ? "Disconnect External AWACS MODE (EAM)" : "Connect External AWACS MODE (EAM)";
+                ConnectExternalAWACSMode.Content = ClientState.ExternalAWACSModelSelected ? Properties.Resources.DisconnectExternalAWACSMode : Properties.Resources.ConnectExternalAWACSMode;
             }
             else
             {
                 ToggleServerSettings.IsEnabled = false;
                 ConnectExternalAWACSMode.IsEnabled = false;
-                ConnectExternalAWACSMode.Content = "Connect External AWACS MODE (EAM)";
+                ConnectExternalAWACSMode.Content = Properties.Resources.ConnectExternalAWACSMode;
             }
         }
 
@@ -1541,7 +1561,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                     WindowHelper.BringProcessToFront(Process.GetCurrentProcess());
 
                     var result = MessageBox.Show(this,
-                        $"Would you like to try to auto-connect to DCS-SRS @ {address}:{port}? ", "Auto Connect",
+                        $"{Properties.Resources.MsgBoxAutoConnectText} {address}:{port}? ", "Auto Connect",
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Question);
 
@@ -1569,9 +1589,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 WindowHelper.BringProcessToFront(Process.GetCurrentProcess());
 
                 var result = MessageBox.Show(this,
-                    $"The SRS server advertised by DCS @ {advertisedConnection} does not match the SRS server @ {currentConnection} you are currently connected to.\n\n" +
-                    $"Would you like to connect to the advertised SRS server?",
-                    "Auto Connect Mismatch",
+                    $"{Properties.Resources.MsgBoxMismatchText1} {advertisedConnection} {Properties.Resources.MsgBoxMismatchText2} {currentConnection} {Properties.Resources.MsgBoxMismatchText3}\n\n" +
+                    $"{Properties.Resources.MsgBoxMismatchText4}",
+                    Properties.Resources.MsgBoxMismatch,
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Warning);
 
@@ -1583,7 +1603,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 Stop();
 
                 StartStop.IsEnabled = false;
-                StartStop.Content = "Connecting...";
+                StartStop.Content = Properties.Resources.StartStopConnecting;
                 await Task.Delay(2000);
                 StartStop.IsEnabled = true;
                 ServerIp.Text = advertisedConnection;
@@ -1659,8 +1679,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         private void ExpandInputDevices_OnClick_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show(
-                "You must restart SRS for this setting to take effect.\n\nTurning this on will allow almost any DirectX device to be used as input expect a Mouse but WILL LIKELY cause issues with other devices being detected. \n\nUse SRS Device Listing (see Discord) instead to enable the missing device\n\nDo not turn on unless you know what you're doing :) ",
-                "Restart SimpleRadio Standalone", MessageBoxButton.OK,
+                Properties.Resources.MsgBoxRestartExpandText,
+                Properties.Resources.MsgBoxRestart, MessageBoxButton.OK,
                 MessageBoxImage.Warning);
 
             _globalSettings.SetClientSetting(GlobalSettingsKeys.ExpandControls, (bool)ExpandInputDevices.IsChecked);
@@ -1669,8 +1689,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         private void AllowXInputController_OnClick_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show(
-                "You must restart SRS for this setting to take effect.",
-                "Restart SimpleRadio Standalone", MessageBoxButton.OK,
+                Properties.Resources.MsgBoxRestartXInputText,
+                Properties.Resources.MsgBoxRestart, MessageBoxButton.OK,
                 MessageBoxImage.Warning);
 
             _globalSettings.SetClientSetting(GlobalSettingsKeys.AllowXInputController, (bool)AllowXInputController.IsChecked);
@@ -1801,7 +1821,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 ClientState.PlayerCoaltionLocationMetadata.name = ClientState.LastSeenName;
                 ClientState.DcsPlayerRadioInfo.name = ClientState.LastSeenName;
 
-                ConnectExternalAWACSMode.Content = "Disconnect External AWACS MODE (EAM)";
+                ConnectExternalAWACSMode.Content = Properties.Resources.DisconnectExternalAWACSMode;
             }
             else
             {
@@ -1812,7 +1832,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 ClientState.DcsPlayerRadioInfo.LastUpdate = 0;
                 ClientState.LastSent = 0;
 
-                ConnectExternalAWACSMode.Content = "Connect External AWACS MODE (EAM)";
+                ConnectExternalAWACSMode.Content = Properties.Resources.ConnectExternalAWACSMode;
                 ExternalAWACSModePassword.IsEnabled = _serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE);
                 ExternalAWACSModeName.IsEnabled = _serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE);
             }
@@ -1822,8 +1842,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         {
             InputManager.InitDevices();
             MessageBox.Show(this,
-                "Controller Input Devices Rescanned",
-                "New controller input devices can now be used.",
+                Properties.Resources.MsgBoxRescanText,
+                Properties.Resources.MsgBoxRescan,
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
@@ -1833,8 +1853,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             Registry.SetValue("HKEY_CURRENT_USER\\SOFTWARE\\DCS-SR-Standalone", "SRPathStandalone", Directory.GetCurrentDirectory());
 
             MessageBox.Show(this,
-                "SRS Path set to: " + Directory.GetCurrentDirectory(),
-                "SRS Client Path",
+                Properties.Resources.MsgBoxSetSRSPathText + Directory.GetCurrentDirectory(),
+                Properties.Resources.MsgBoxSetSRSPath,
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
@@ -1843,8 +1863,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         {
             _globalSettings.SetClientSetting(GlobalSettingsKeys.RequireAdmin, (bool)RequireAdminToggle.IsChecked);
             MessageBox.Show(this,
-                "SRS Requires admin rights to be able to read keyboard input in the background. \n\nIf you do not use any keyboard binds you can disable SRS Admin Privileges. \n\nFor this setting to take effect SRS must be restarted",
-                "SRS Admin Privileges", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Properties.Resources.MsgBoxAdminText,
+                Properties.Resources.MsgBoxAdmin, MessageBoxButton.OK, MessageBoxImage.Warning);
 
         }
 
@@ -1871,16 +1891,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             if (current.Equals("default"))
             {
                 MessageBox.Show(this,
-                    "Cannot delete the default input!",
-                    "Error",
+                    Properties.Resources.MsgBoxErrorInputText,
+                    Properties.Resources.MsgBoxError,
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
             else
             {
                 var result = MessageBox.Show(this,
-                    $"Are you sure you want to delete {current} ?",
-                    "Confirmation",
+                    $"{Properties.Resources.MsgBoxConfirmDeleteText} {current} ?",
+                    Properties.Resources.MsgBoxConfirm,
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Warning);
 
@@ -1902,8 +1922,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             if (current.Equals("default"))
             {
                 MessageBox.Show(this,
-                    "Cannot rename the default input!",
-                    "Error",
+                    Properties.Resources.MsgBoxErrorRenameText,
+                    Properties.Resources.MsgBoxError,
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
@@ -2032,8 +2052,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             if (!(bool)AllowAnonymousUsage.IsChecked)
             {
                 MessageBox.Show(
-                    "Please leave this ticked - SRS logging is extremely minimal (you can verify by looking at the source) - and limited to: Country & SRS Version on startup.\n\nBy keeping this enabled I can judge the usage of SRS, and which versions are still in use for support.",
-                    "Please leave this ticked", MessageBoxButton.OK,
+                    Properties.Resources.MsgBoxPleaseTickText,
+                    Properties.Resources.MsgBoxPleaseTick, MessageBoxButton.OK,
                     MessageBoxImage.Warning);
 
                 Registry.SetValue("HKEY_CURRENT_USER\\SOFTWARE\\DCS-SR-Standalone", "SRSAnalyticsOptOut", "TRUE");
@@ -2041,8 +2061,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             else
             {
                 MessageBox.Show(
-                    "Thank you for enabling this!\n\nBy keeping this enabled I can judge the usage of SRS, and which versions are still in use for support.",
-                    "Thank You!", MessageBoxButton.OK,
+                    Properties.Resources.MsgBoxThankYouText,
+                    Properties.Resources.MsgBoxThankYou, MessageBoxButton.OK,
                     MessageBoxImage.Warning);
                 Registry.SetValue("HKEY_CURRENT_USER\\SOFTWARE\\DCS-SR-Standalone", "SRSAnalyticsOptOut", "FALSE");
             }
@@ -2111,5 +2131,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 _globalSettings.SetClientSetting(GlobalSettingsKeys.VOXMinimumDB, (double)e.NewValue);
         }
 
+        private void AmbientCockpitEffectToggle_OnClick(object sender, RoutedEventArgs e)
+        {
+            _globalSettings.ProfileSettingsStore.SetClientSettingBool(ProfileSettingsKeys.AmbientCockpitNoiseEffect, (bool)AmbientCockpitEffectToggle.IsChecked);
+        }
     }
 }

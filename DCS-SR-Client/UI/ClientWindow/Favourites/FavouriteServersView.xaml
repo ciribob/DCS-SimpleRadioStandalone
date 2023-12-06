@@ -6,6 +6,7 @@
              xmlns:favourites="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.UI"
+			 xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Properties"
              d:DataContext="{d:DesignInstance favourites:FavouriteServersViewModel,
                                               IsDesignTimeCreatable=False}"
              d:DesignHeight="300"
@@ -25,7 +26,7 @@
                    Margin="0,0,0,5"
                    HorizontalAlignment="Center"
                    FontWeight="Bold"
-                   Text="Add new configuration" />
+                   Text="{x:Static p:Resources.DeviceControl}" />
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -38,12 +39,12 @@
             <TextBlock Grid.Column="0"
                        Margin="0,0,5,0"
                        VerticalAlignment="Center"
-                       Text="Name" />
+                       Text="{x:Static p:Resources.FavAddName}" />
             <TextBox Grid.Column="1" Text="{Binding Path=NewName}" />
             <TextBlock Grid.Column="2"
                        Margin="10,0,5,0"
                        VerticalAlignment="Center"
-                       Text="ServerAddress" />
+                       Text="{x:Static p:Resources.FavAddServer}" />
             <TextBox Grid.Column="3" Text="{Binding Path=NewAddress}" />
         </Grid>
         
@@ -59,7 +60,7 @@
             <TextBlock Grid.Column="0"
                        Margin="0,0,5,0"
                        VerticalAlignment="Center"
-                       Text="EAM coalition password" />
+                       Text="{x:Static p:Resources.FavAddEAM}" />
             <TextBox Grid.Column="1" Text="{Binding Path=NewEAMCoalitionPassword}" />
             <Button Grid.Column="2"
                     Height="23"
@@ -77,7 +78,7 @@
                 Width="120"
                 Margin="0,30,0,10"
                 Command="{Binding Path=RemoveSelectedCommand}"
-                Content="Remove Selected" />
+                Content="{x:Static p:Resources.FavRmSelected}" />
 
         <DataGrid Name="FavouritesGrid"
                   Grid.Row="4"
@@ -103,18 +104,18 @@
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Path=Name}" Header="Name">
+                <DataGridTextColumn Binding="{Binding Path=Name}" Header="{x:Static p:Resources.FavListName}">
                 </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding Path=Address}" Header="ServerAddress/port" />
-                <DataGridTextColumn Binding="{Binding Path=EAMCoalitionPassword}" Header="EAM coal. pass" />
-                <DataGridTemplateColumn Header="Is Default">
+                <DataGridTextColumn Binding="{Binding Path=Address}" Header="{x:Static p:Resources.FavListServer}" />
+                <DataGridTextColumn Binding="{Binding Path=EAMCoalitionPassword}" Header="{x:Static p:Resources.FavListEAM}" />
+                <DataGridTemplateColumn Header="{x:Static p:Resources.FavListDefault}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="ui:ServerAddress">
 
                             <Button Name="Button"
                                     Command="{Binding ElementName=FavouritesGrid,
                                                       Path=DataContext.OnDefaultChangedCommand}"
-                                    CommandParameter="{Binding}"
+                                    CommandParameter="{Binding}"    
                                     Padding="0" />
 
                             <DataTemplate.Triggers>

@@ -159,11 +159,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
                 {
                     if (dcsPlayerRadioInfo.control == DCSPlayerRadioInfo.RadioSwitchControls.HOTAS)
                     {
-                        ControlText.Text = "HOTAS Controls";
+                        ControlText.Text = Client.Properties.Resources.OverlayHotasControls;
                     }
                     else
                     {
-                        ControlText.Text = "Cockpit Controls";
+                        ControlText.Text = Client.Properties.Resources.OverlayCockpitControls;
                     }
                 }
                 else

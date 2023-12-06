@@ -7,6 +7,7 @@
              xmlns:mvvm="clr-namespace:MvvmEventBinding;assembly=MvvmEventBinding"
              xmlns:presetChannels1="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.PresetChannels"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+			 xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Properties"
              Name="RadioControlContainer"
              Width="170"
              Height="75">
@@ -52,7 +53,7 @@
                            FontSize="10"
                            Foreground="#E7E7E7"
                            Padding="0"
-                           Text="Radio" />
+                           Text="{x:Static p:Resources.OverlayRadioTab}" />
             </TabItem.Header>
             <StackPanel Orientation="Vertical">
                 <!--    -->
@@ -135,7 +136,7 @@
                              MouseDown="RadioSelectSwitch"
                              Stroke="Black"
                              Style="{x:Null}"
-                             ToolTip="Selected Radio" />
+                             ToolTip="{x:Static p:Resources.ToolTipSelectedRadio}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Button x:Name="Down10"
@@ -224,7 +225,7 @@
                             Foreground="Black"
                             Style="{StaticResource DarkStyle-Button}"
                             Click="RetransmitClick"
-                            ToolTip="Retransmit" />
+                            ToolTip="{x:Static p:Resources.ToolTipRetransmit}" />
 
                 </StackPanel>
             </StackPanel>
@@ -235,7 +236,7 @@
                            FontSize="10"
                            Foreground="#E7E7E7"
                            Padding="0"
-                           Text="Enc" />
+                           Text="{x:Static p:Resources.OverlayEncryptionTab}" />
             </TabItem.Header>
 
             <WrapPanel HorizontalAlignment="Center"
@@ -244,7 +245,7 @@
                 <TextBlock HorizontalAlignment="Center"
                            FontSize="10"
                            Foreground="#E7E7E7"
-                           Text="Encryption Key"
+                           Text="{x:Static p:Resources.OverlayEncryptionKey}"
                            TextAlignment="Center" />
                 <WrapPanel Orientation="Horizontal">
                     <xctk:IntegerUpDown Name="EncryptionKeySpinner"
@@ -260,7 +261,7 @@
                             Height="20"
                             Margin="5"
                             Click="Encryption_ButtonClick"
-                            Content="Enable"
+                            Content="{x:Static p:Resources.BtnEnable}"
                             Style="{x:Null}" />
                 </WrapPanel>
 
@@ -274,7 +275,7 @@
                            FontSize="10"
                            Foreground="#E7E7E7"
                            Padding="0"
-                           Text="Ch." />
+                           Text="{x:Static p:Resources.OverlayChannelTab}" />
             </TabItem.Header>
 
             <presetChannels1:PresetChannelsView x:Name="PresetChannelsView"

@@ -238,14 +238,19 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
             try
             {
                 _bannedIps.Clear();
-                var lines = File.ReadAllLines(GetCurrentDirectory() + "\\banned.txt");
-
-                foreach (var line in lines)
+                
+                string path = Path.Combine(GetCurrentDirectory(), "banned.txt");
+                if (!File.Exists(path))
                 {
-                    IPAddress ip = null;
-                    if (IPAddress.TryParse(line.Trim(), out ip))
+                    Logger.Info($"'{path}' was not found or you don't have permission to read the file");
+                    return;
+                }
+                
+                foreach (var line in File.ReadAllLines(path))
+                {
+                    if (IPAddress.TryParse(line.Trim(), out IPAddress ip))
                     {
-                        Logger.Info("Loaded Banned IP: " + line);
+                        Logger.Info($"Loaded Banned IP: {line}");
                         _bannedIps.Add(ip);
                     }
                 }

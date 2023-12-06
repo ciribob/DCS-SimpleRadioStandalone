@@ -4,8 +4,9 @@
                       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+					  xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Properties"
       
-                      Title="Radio Capabilities"
+                      Title="{x:Static p:Resources.OverlayRadioCapabilities}"
                       Width="400"
                       Height="280"
                       ResizeMode="NoResize">
@@ -38,46 +39,46 @@
                Grid.Column="0"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Intercom Hot Mic" />
+               Content="{x:Static p:Resources.OverlayIntercomHotMic}" />
 
         <Label Name="IntercomHotMic"
                Grid.Row="0"
                Grid.Column="1"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Unknown" />
+               Content="{x:Static p:Resources.ValueUnknown}" />
 
         <Label Grid.Row="1"
                Grid.Column="0"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="DCS IFF" />
+               Content="{x:Static p:Resources.OverlayDCSIFF}" />
 
         <Label Name="DCSIFF"
                Grid.Row="1"
                Grid.Column="1"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Unknown" />
+               Content="{x:Static p:Resources.ValueUnknown}" />
 
         <Label Grid.Row="2"
                Grid.Column="0"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="DCS Radio Switch Controls" />
+               Content="{x:Static p:Resources.OverlayDCSRadioSwitch}" />
 
         <Label Name="DCSRadioSwitch"
                Grid.Row="2"
                Grid.Column="1"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Available" />
+               Content="{x:Static p:Resources.ValueAvailable}" />
 
         <Label Grid.Row="3"
                Grid.Column="0"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="DCS PTT Controls" />
+               Content="{x:Static p:Resources.OverlayDCSPTT}" />
 
         <Label Name="DCSPTT"
                Grid.Row="3"
@@ -85,7 +86,7 @@
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
               
-               Content="Not Available - SRS Overlay Controls Only" />
+               Content="{x:Static p:Resources.OverlayNotAvailable}" />
 
         <TextBox Name="Desc"
                Grid.Row="4"
@@ -97,7 +98,7 @@
                BorderThickness="0"
                HorizontalScrollBarVisibility="Disabled"
                VerticalScrollBarVisibility="Disabled"
-               Text="Unknown" />
+               Text="{x:Static p:Resources.ValueUnknown}" />
 
         <Button Grid.Row="5"
                 Grid.Column="0"
@@ -106,7 +107,7 @@
                 Height="30"
                 Margin="5,0,5,5"
                 Click="CloseButton_OnClick"
-                Content="Close" />
+                Content="{x:Static p:Resources.BtnClose}" />
 
 
     </Grid>

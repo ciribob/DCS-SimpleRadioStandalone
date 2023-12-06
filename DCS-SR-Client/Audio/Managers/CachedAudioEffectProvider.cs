@@ -17,6 +17,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         public List<CachedAudioEffect> IntercomTransmissionStart { get; }
         public List<CachedAudioEffect> IntercomTransmissionEnd { get; }
 
+        private Dictionary<string, CachedAudioEffect> _ambientAudioEffects { get; } =
+            new Dictionary<string, CachedAudioEffect>();
+
 
 
         private static CachedAudioEffectProvider _instance;
@@ -258,5 +261,21 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
         }
 
+        //TODO unload ever?
+        public CachedAudioEffect GetAmbientEffect(string name)
+        {
+            name = name.ToLowerInvariant();
+            if (_ambientAudioEffects.TryGetValue(name, out CachedAudioEffect effect))
+            {
+                return effect;
+            }
+
+            effect = new CachedAudioEffect(CachedAudioEffect.AudioEffectTypes.AMBIENT_COCKPIT,
+                name);
+
+            _ambientAudioEffects[name] = effect;
+
+            return effect;
+        }
     }
 }

@@ -116,13 +116,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
 
                 if (currentRadio.modulation == RadioInformation.Modulation.INTERCOM) //intercom
                 {
-                    RadioLabel.Text = "INTERCOM";
+                    RadioLabel.Text = Client.Properties.Resources.OverlayIntercom;
 
                     RadioVolume.IsEnabled = currentRadio.volMode == RadioInformation.VolumeMode.OVERLAY;
                 }
                 else
                 {
-                    RadioLabel.Text = "NO INTERCOM";
+                    RadioLabel.Text = Client.Properties.Resources.OverlayNoIntercom;
                     RadioActive.Fill = new SolidColorBrush(Colors.Red);
                     RadioVolume.IsEnabled = false;
                 }

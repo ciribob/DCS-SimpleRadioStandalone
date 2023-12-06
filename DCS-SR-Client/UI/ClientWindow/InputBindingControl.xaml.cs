@@ -34,7 +34,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         public void LoadInputSettings()
         {
             DeviceLabel.Content = InputName;
-            ModifierLabel.Content = InputName + " Modifier";
+            ModifierLabel.Content = InputName + " " + Properties.Resources.InputModifier;
             ModifierBinding = (InputBinding)((int)ControlInputBinding) + 100; //add 100 gets the enum of the modifier
 
             var currentInputProfile = GlobalSettingsStore.Instance.ProfileSettingsStore.GetCurrentInputProfile();
@@ -51,8 +51,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 }
                 else
                 {
-                    DeviceText.Text = "None";
-                    Device.Text = "None";
+                    DeviceText.Text = Properties.Resources.InputTextNone;
+                    Device.Text = Properties.Resources.InputTextNone;
                 }
 
                 if (currentInputProfile.ContainsKey(ModifierBinding))
@@ -64,8 +64,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 }
                 else
                 {
-                    ModifierText.Text = "None";
-                    ModifierDevice.Text = "None";
+                    ModifierText.Text = Properties.Resources.InputTextNone;
+                    ModifierDevice.Text = Properties.Resources.InputTextNone;
                 }
             }
         }

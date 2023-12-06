@@ -66,7 +66,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
         DISABLED = 3,
         HAVEQUICK = 4,
         SATCOM = 5,
-        MIDS = 6,*/
+        MIDS = 6,
+        SINCGARS = 7*/
         public byte[] Modulations { get; set; }
 
         public byte[] Encryptions { get; set; }

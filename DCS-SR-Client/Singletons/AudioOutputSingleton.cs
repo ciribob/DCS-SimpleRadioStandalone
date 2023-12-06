@@ -63,7 +63,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             Logger.Info("Audio Output - Saved ID " +
                          GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.AudioOutputDeviceId).RawValue);
 
-            return BuildAudioOutputs("Default Speakers", false);
+            return BuildAudioOutputs(Properties.Resources.DefaultSpeakers, false);
         }
 
         private List<AudioDeviceListItem> BuildMicAudioOutputs()
@@ -72,7 +72,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             Logger.Info("Mic Audio Output - Saved ID " +
                                    GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId).RawValue);
 
-            return BuildAudioOutputs("NO MIC OUTPUT / PASSTHROUGH", true);
+            return BuildAudioOutputs(Properties.Resources.DefaultNoPassthru, true);
         }
 
         private List<AudioDeviceListItem> BuildAudioOutputs(string defaultItemText, bool micOutput)

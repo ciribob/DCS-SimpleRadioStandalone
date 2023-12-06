@@ -46,7 +46,18 @@ namespace Installer
             var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
             var version = fvi.FileVersion;
 
-            intro.Content = intro.Content + " v" + version;
+            Title = Properties.Resources.Title;
+            intro.Content = Properties.Resources.intro + " v" + version;
+            step2.Content = Properties.Resources.step2;
+            srPathButton.Content = Properties.Resources.srPathButton;
+            step3.Content = Properties.Resources.step3;
+            dcsPathButton.Content = Properties.Resources.dcsPathButton;
+            InstallButton.Content = Properties.Resources.InstallButton;
+            RemoveButton.Content = Properties.Resources.RemoveButton;
+            step4.Content = Properties.Resources.step4;
+            InstallScriptsCheckbox.Content = Properties.Resources.InstallScriptsCheckbox;
+            CreateStartMenuShortcut.Content = Properties.Resources.CreateStartMenuShortcut;
+            ServerNote.Text = Properties.Resources.ServerNote;
 
             //allows click and drag anywhere on the window
             containerPanel.MouseLeftButtonDown += GridPanel_MouseLeftButtonDown;
@@ -86,8 +97,8 @@ namespace Installer
             {
 
                 MessageBox.Show(
-                    "Please extract the entire installation zip into a folder and then run the installer from the extracted folder.\n\nDo not run the installer from the zip as it wont work!",
-                    "Please Extract Installation zip",
+                    Properties.Resources.MsgBoxExtractedText,
+                    Properties.Resources.MsgBoxExtracted,
                     MessageBoxButton.OK, MessageBoxImage.Error);
 
                 Logger.Warn("Files missing from Installation Directory");
@@ -109,8 +120,8 @@ namespace Installer
                             {
                                 Logger.Info("Silent Installer Running");
                                 var result = MessageBox.Show(
-                                    "Do you want to make changes? \n\nYes - Pause install and make changes\n\nNo - Run with previous install path and install scripts as default. \n\nIf unsure - hit Yes!",
-                                    "Change Installer Settings?",
+                                    Properties.Resources.MsgBoxChangeText,
+                                    Properties.Resources.MsgBoxChange,
                                     MessageBoxButton.YesNo, MessageBoxImage.Information);
 
                                 if (result == MessageBoxResult.Yes)
@@ -265,8 +276,8 @@ namespace Installer
         {
            
                 MessageBox.Show(
-                    "DCS must now be closed before continuing the install or uninstall!\n\nClose DCS and please try again.",
-                    "Please Close DCS",
+                    Properties.Resources.MsgBoxDCSText,
+                    Properties.Resources.MsgBoxDCS,
                     MessageBoxButton.OK, MessageBoxImage.Error);
             
         }
@@ -286,8 +297,8 @@ namespace Installer
                 if (paths.Count == 0)
                 {
                     MessageBox.Show(
-                        "Unable to find DCS Folder in Saved Games!\n\nPlease check the path to the \"Saved Games\" folder\n\nMake sure you are selecting the \"Saved Games\" folder - NOT the DCS folder inside \"Saved Games\" and NOT the DCS installation directory",
-                        "SR Standalone Installer",
+                        Properties.Resources.MsgBoxFolderText,
+                        Properties.Resources.MsgBoxFolder,
                         MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
@@ -302,7 +313,7 @@ namespace Installer
             InstallButton.IsEnabled = false;
             RemoveButton.IsEnabled = false;
 
-            InstallButton.Content = "Installing...";
+            InstallButton.Content = Properties.Resources.InstallButton;
 
             _progressBarDialog = new ProgressBarDialog();
             _progressBarDialog.Owner = this;
@@ -342,8 +353,8 @@ namespace Installer
                     _progressBarDialog.UpdateProgress(true, "Error with Installation");
 
                     MessageBox.Show(
-                        "Error with installation - please post your installer-log.txt on the SRS Discord for Support",
-                        "Installation Error",
+                        Properties.Resources.MsgBoxInstallErrorText,
+                        Properties.Resources.MsgBoxInstallError,
                         MessageBoxButton.OK, MessageBoxImage.Error);
                 
                     Process.Start("https://discord.gg/vqxAw7H");
@@ -369,8 +380,8 @@ namespace Installer
                     {
 
                         MessageBox.Show(
-                            "Unable to find DCS Folder in Saved Games!\n\nPlease check the path to the \"Saved Games\" folder\n\nMake sure you are selecting the \"Saved Games\" folder - NOT the DCS folder inside \"Saved Games\" and NOT the DCS installation directory",
-                            "SR Standalone Installer",
+                            Properties.Resources.MsgBoxFolderText,
+                            Properties.Resources.MsgBoxFolder,
                             MessageBoxButton.OK, MessageBoxImage.Error);
                         return 0;
                     }
@@ -378,8 +389,8 @@ namespace Installer
                     if (IsDCSRunning())
                     {
                         MessageBox.Show(
-                            "DCS must now be closed before continuing the installation!\n\nClose DCS and please try again.",
-                            "Please Close DCS",
+                            Properties.Resources.MsgBoxDCSText,
+                            Properties.Resources.MsgBoxDCS,
                             MessageBoxButton.OK, MessageBoxImage.Error);
 
                         Logger.Warn("DCS is Running - Installer stopped");
@@ -420,14 +431,14 @@ namespace Installer
 
                 if (dcsScriptsPath != null)
                 {
-                    string message = "Installation / Update Completed Successfully!\nInstalled DCS Scripts to: \n";
+                    string message = Properties.Resources.MsgBoxInstallSuccessText;
 
                     foreach (var path in paths)
                     {
                         message += ("\n" + path);
                     }
 
-                    MessageBox.Show(message, "SR Standalone Installer",
+                    MessageBox.Show(message, Properties.Resources.MsgBoxInstallTitle,
                         MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
@@ -442,9 +453,9 @@ namespace Installer
                     }
                     else
                     {
-                        string message = "Installation / Update Completed Successfully!";
+                        string message = Properties.Resources.MsgBoxInstallSuccessText2;
 
-                        MessageBox.Show(message, "SR Standalone Installer",
+                        MessageBox.Show(message, Properties.Resources.MsgBoxInstallTitle,
                             MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     
@@ -941,6 +952,7 @@ namespace Installer
             Logger.Info($"Copying directories");
             DirectoryCopy(_currentDirectory+"\\AudioEffects", path+"\\AudioEffects");
             DirectoryCopy(_currentDirectory + "\\Scripts", path + "\\Scripts");
+            DirectoryCopy(_currentDirectory + "\\zh-CN", path + "\\zh-CN");
 
             Logger.Info($"Finished installing SRS Program to {path}");
 
@@ -1041,8 +1053,8 @@ namespace Installer
             catch (FileNotFoundException)
             {
                 MessageBox.Show(
-                    "Install files not found - Unable to install! \n\nMake sure you extract all the files in the zip then run the Installer",
-                    "Not Unzipped", MessageBoxButton.OK, MessageBoxImage.Error);
+                    Properties.Resources.MsgBoxExtractedText2,
+                    Properties.Resources.MsgBoxExtracted2, MessageBoxButton.OK, MessageBoxImage.Error);
                 Environment.Exit(0);
             }
             Logger.Info($"Scripts installed to {path}");
@@ -1235,25 +1247,25 @@ namespace Installer
             _progressBarDialog = new ProgressBarDialog();
             _progressBarDialog.Owner = this;
             _progressBarDialog.Show();
-            _progressBarDialog.UpdateProgress(false, "Uninstalling SRS");
+            _progressBarDialog.UpdateProgress(false, Properties.Resources.MsgBoxUninstalling);
 
             var result = await UninstallSR(srPath.Text,dcsScriptsPath.Text);
             if (result)
             {
-                _progressBarDialog.UpdateProgress(true, "Removed SRS Successfully!");
+                _progressBarDialog.UpdateProgress(true, Properties.Resources.MsgBoxRemovedText2);
                 Logger.Info($"Removed SRS Successfully!");
 
                 MessageBox.Show(
-                    "SR Standalone Removed Successfully!\n\nContaining folder left just in case you want favourites or frequencies",
-                    "SR Standalone Installer",
+                    Properties.Resources.MsgBoxRemovedText,
+                    Properties.Resources.MsgBoxInstallTitle,
                     MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
-                _progressBarDialog.UpdateProgress(true, "Error with Uninstaller");
+                _progressBarDialog.UpdateProgress(true, Properties.Resources.MsgBoxUninstallError);
                 MessageBox.Show(
-                    "Error with uninstaller - please post your installer-log.txt on the SRS Discord for Support",
-                    "Installation Error",
+                    Properties.Resources.MsgBoxUninstallErrorText,
+                    Properties.Resources.MsgBoxInstallError,
                     MessageBoxButton.OK, MessageBoxImage.Error);
 
                 Process.Start("https://discord.gg/vqxAw7H");

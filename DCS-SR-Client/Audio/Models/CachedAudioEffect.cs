@@ -59,9 +59,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             INTERCOM_TRANS_START = 12,
             INTERCOM_TRANS_END = 13,
             AM_COLLISION = 14,
+            AMBIENT_COCKPIT = 15,
         }
 
         public CachedAudioEffect(AudioEffectTypes audioEffect): this(audioEffect, audioEffect.ToString() + ".wav", AppDomain.CurrentDomain.BaseDirectory + "\\AudioEffects\\"+ audioEffect.ToString() + ".wav") { }
+
+        public CachedAudioEffect(AudioEffectTypes audioEffect, string fileName): this(audioEffect, fileName + ".wav", AppDomain.CurrentDomain.BaseDirectory + "\\AudioEffects\\Ambient\\" + fileName.ToString() + ".wav") { }
 
         public CachedAudioEffect(AudioEffectTypes audioEffect, string fileName, string path)
         {
@@ -100,12 +103,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             }
             else
             {
-                Logger.Info($"Unable to find file for effect {audioEffect} in AudioEffects\\{FileName} ");
+                Logger.Info($"Unable to find file for effect {audioEffect} in {path} ");
             }
         }
 
         public AudioEffectTypes AudioEffectType { get; }
 
-        public float[] AudioEffectFloat { get; set; }
+        public float[] AudioEffectFloat { get; set; } = new float[0];
     }
 }

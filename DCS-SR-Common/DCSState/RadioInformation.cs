@@ -47,6 +47,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             HAVEQUICK = 4,
             SATCOM = 5,
             MIDS = 6,
+            SINCGARS = 7
         }
 
         public bool enc = false; // encryption enabled

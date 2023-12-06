@@ -103,7 +103,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
                                 OriginalClientGuid = audio.OriginalClientGuid,
                                 Encryption = audio.Encryption
 
-
                             };
 
                             if (_lastRead == 0)

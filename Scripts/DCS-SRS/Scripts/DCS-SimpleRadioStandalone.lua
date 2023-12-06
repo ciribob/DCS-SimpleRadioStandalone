@@ -1,4 +1,4 @@
--- Version 2.0.8.6
+-- Version 2.0.9.1
 -- Special thanks to Cap. Zeen, Tarres and Splash for all the help
 -- with getting the radio information :)
 -- Run the installer to correctly install this file
@@ -95,6 +95,23 @@ SR.fc3["Su-33"] = true
 SR.fc3["Su-25"] = true
 SR.fc3["Su-25T"] = true
 
+--[[ Reading special options.
+   option: dot separated 'path' to your option under the plugins field,
+   ie 'DCS-SRS.srsAutoLaunchEnabled', or 'SA342.HOT_MIC'
+--]]
+SR.specialOptions = {}
+function SR.getSpecialOption(option)
+    if not SR.specialOptions[option] then
+        local options = require('optionsEditor')
+        -- If the option doesn't exist, a nil value is returned.
+        -- Memoize into a subtable to avoid entering that code again,
+        -- since options.getOption ends up doing a disk access.
+        SR.specialOptions[option] = { value = options.getOption('plugins.'..option) }
+    end
+    
+    return SR.specialOptions[option].value
+end
+
 -- Function to load mods' SRS plugin script
 function SR.LoadModsPlugins()
     local mode, errmsg
@@ -165,7 +182,7 @@ function SR.exporter()
             },
             control = 0, -- HOTAS
         }
-
+        _update.ambient = {vol = 0.0, abType = '' }
         _update.name = _data.UnitName
         _update.unit = _data.Name
         _update.unitId = LoGetPlayerPlaneId()
@@ -233,6 +250,8 @@ function SR.exporter()
             _update.control = 0;
             _update.selected = 1
             _update.iff = {status=0,mode1=0,mode3=0,mode4=0,control=0,expansion=false,mic=-1}
+
+            _update.ambient = {vol = 0.2, abType = 'jet' }
         end
 
         _lastUnitId = _update.unitId
@@ -241,6 +260,7 @@ function SR.exporter()
         --Ground Commander or spectator
         _update = {
             name = "Unknown",
+            ambient = {vol = 0.0, abType = ''},
             unit = "CA",
             selected = 1,
             ptt = false,
@@ -450,6 +470,22 @@ function SR.exportRadioA10A(_data)
     _data.control = 0;
     _data.selected = 1
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+      --  local _door = SR.getButtonPosition(181)
+
+      --  if _door > 0.15 then 
+            _data.ambient = {vol = 0.3,  abType = 'a10' }
+       -- else
+       --     _data.ambient = {vol = 0.2,  abType = 'a10' }
+      --  end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'a10' }
+    end
+
     return _data
 end
 
@@ -494,6 +530,22 @@ function SR.exportRadioMiG29(_data)
     _data.control = 0;
     _data.selected = 1
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+      --  local _door = SR.getButtonPosition(181)
+
+     --   if _door > 0.15 then 
+            _data.ambient = {vol = 0.3,  abType = 'mig29' }
+     --   else
+      --      _data.ambient = {vol = 0.2,  abType = 'mig29' }
+    --    end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'mig29' }
+    end
+
     return _data
 end
 
@@ -534,6 +586,21 @@ function SR.exportRadioSU25(_data)
 
     _data.control = 0;
     _data.selected = 1
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+     --   local _door = SR.getButtonPosition(181)
+    
+    --    if _door > 0.15 then 
+            _data.ambient = {vol = 0.3,  abType = 'su25' }
+     --   else
+      --      _data.ambient = {vol = 0.2,  abType = 'su25' }
+    --    end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'su25' }
+    end
 
     return _data
 end
@@ -578,6 +645,22 @@ function SR.exportRadioSU27(_data)
     _data.control = 0;
     _data.selected = 1
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+      --  local _door = SR.getButtonPosition(181)
+
+      --  if _door > 0.2 then 
+            _data.ambient = {vol = 0.3,  abType = 'su27' }
+      --  else
+      --      _data.ambient = {vol = 0.2,  abType = 'su27' }
+     --   end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'su27' }
+    end
+
     return _data
 end
 
@@ -589,7 +672,7 @@ _ah64.cipher = {
 
 
 function SR.exportRadioAH64D(_data)
-    _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = true, desc = "Recommended: Always Allow SRS Hotkeys - OFF. Bind Intercom Select & PTT, Radio PTT and DCS RTS up down" }
+    _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = true, desc = "Recommended: Always Allow SRS Hotkeys - OFF. Bind Intercom Select & PTT, Radio PTT and DCS RTS up down" }
 
 -- 17 is the pilot (back seat)
 -- 18 is the gunner (front seat)
@@ -678,6 +761,8 @@ function SR.exportRadioAH64D(_data)
 -- ["Radio_UHF"] = UHF,
 -- ["Net_Standby_UHF"] = ,
 -- } 
+
+
 
     -- Check if player is in a new aircraft
     if _lastUnitId ~= _data.unitId then
@@ -863,7 +948,50 @@ function SR.exportRadioAH64D(_data)
 
     _data.control = 1
     _data.radios[3].encMode = 2 -- Mode 2 is set by aircraft
+
+      --CYCLIC_RTS_SW_LEFT 573 CPG 531 PLT
+    local _pttButtonId = 573
+    if SR.lastKnownSeat == 0 then
+        _pttButtonId = 531
+    end
+
+    local _pilotPTT = SR.getButtonPosition(_pttButtonId)
+    if _pilotPTT >= 0.5 then
+
+        _data.intercomHotMic = false
+        -- intercom
+        _data.selected = 0
+        _data.ptt = true
+
+    elseif _pilotPTT <= -0.5 then
+        _data.ptt = true
+    end
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+        _data.ambient = {vol = 0.2,  abType = 'ah64' }
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'ah64' }
+    end
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _doorLeft = SR.getButtonPosition(795)
+        local _doorRight = SR.getButtonPosition(798)
+
+        if _doorLeft > 0.3 or _doorRight > 0.3 then 
+            _data.ambient = {vol = 0.35,  abType = 'ah64' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'ah64' }
+        end 
     
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'ah64' }
+    end
+
     return _data
 
 end
@@ -891,12 +1019,14 @@ function SR.exportRadioUH60L(_data)
     local fm1Power = GetDevice(0):get_argument_value(601) > 0.01
     local fm1Volume = 0
     local fm1Freq = 0
+    local fm1Modulation = 1
 
     if fm1Power and isDCPower then
         -- radio volume * ics master volume * ics switch
         fm1Volume = GetDevice(0):get_argument_value(604) * GetDevice(0):get_argument_value(401) * GetDevice(0):get_argument_value(403)
         fm1Freq = fm1Device:get_frequency()
         ARC201FM1Freq = get_param_handle("ARC201FM1param"):get()
+        fm1Modulation = get_param_handle("ARC201_FM1_MODULATION"):get()
     end
     
     if not (fm1Power and isDCPower) then
@@ -904,11 +1034,11 @@ function SR.exportRadioUH60L(_data)
     end
 
     _data.radios[2].name = "AN/ARC-201 (1)"
-    _data.radios[2].freq = ARC201FM1Freq--fm1Freq
-    _data.radios[2].modulation = 1
+    _data.radios[2].freq = ARC201FM1Freq --fm1Freq
+    _data.radios[2].modulation = fm1Modulation
     _data.radios[2].volume = fm1Volume
-    _data.radios[2].freqMin = 30e6
-    _data.radios[2].freqMax = 87.975e6
+    _data.radios[2].freqMin = 29.990e6
+    _data.radios[2].freqMax = 87.985e6
     _data.radios[2].volMode = 0
     _data.radios[2].freqMode = 0
     _data.radios[2].rtMode = 0
@@ -973,12 +1103,14 @@ function SR.exportRadioUH60L(_data)
     local fm2Power = GetDevice(0):get_argument_value(701) > 0.01
     local fm2Volume = 0
     local fm2Freq = 0
+    local fm2Modulation = 1
 
     if fm2Power and isDCPower then
         -- radio volume * ics master volume * ics switch
         fm2Volume = GetDevice(0):get_argument_value(704) * GetDevice(0):get_argument_value(401) * GetDevice(0):get_argument_value(406)
         fm2Freq = fm2Device:get_frequency()
         ARC201FM2Freq = get_param_handle("ARC201FM2param"):get()
+        fm2Modulation = get_param_handle("ARC201_FM2_MODULATION"):get()
     end
     
     if not (fm2Power and isDCPower) then
@@ -986,11 +1118,11 @@ function SR.exportRadioUH60L(_data)
     end
 
     _data.radios[5].name = "AN/ARC-201 (2)"
-    _data.radios[5].freq = ARC201FM2Freq--fm2Freq
-    _data.radios[5].modulation = 1
+    _data.radios[5].freq = ARC201FM2Freq --fm2Freq
+    _data.radios[5].modulation = fm2Modulation
     _data.radios[5].volume = fm2Volume
-    _data.radios[5].freqMin = 30e6
-    _data.radios[5].freqMax = 87.975e6
+    _data.radios[5].freqMin = 29.990e6
+    _data.radios[5].freqMax = 87.985e6
     _data.radios[5].volMode = 0
     _data.radios[5].freqMode = 0
     _data.radios[5].rtMode = 0
@@ -1019,9 +1151,185 @@ function SR.exportRadioUH60L(_data)
     _data.intercomHotMic = GetDevice(0):get_argument_value(402) > 0
     _data.ptt = GetDevice(0):get_argument_value(82) > 0
     _data.control = 1; -- full radio HOTAS control
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+        _data.ambient = {vol = 0.2,  abType = 'uh60' }
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'uh60' }
+    end
     
     return _data
 end
+
+function SR.exportRadioSH60B(_data)
+    _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = true, desc = "" }
+
+    local isDCPower = SR.getButtonPosition(17) > 0 -- just using battery switch position for now, could tie into DC ESS BUS later?
+    local intercomVolume = 0
+    if isDCPower then
+        -- ics master volume
+        intercomVolume = GetDevice(0):get_argument_value(401)
+    end
+
+    _data.radios[1].name = "Intercom"
+    _data.radios[1].freq = 100.0
+    _data.radios[1].modulation = 2 --Special intercom modulation
+    _data.radios[1].volume = intercomVolume
+    _data.radios[1].volMode = 0
+    _data.radios[1].freqMode = 0
+    _data.radios[1].rtMode = 0
+
+    -- Copilot's AN/ARC-182 FM (COM1)
+    local fm2Device = GetDevice(8)
+    local fm2Power = GetDevice(0):get_argument_value(3113) > 0 --NEEDS UPDATE
+    local fm2Volume = 0
+    local fm2Freq = 0
+    local fm2Mod = 0
+
+    if fm2Power and isDCPower then
+        -- radio volume * ics master volume * ics switch
+        fm2Volume = GetDevice(0):get_argument_value(3167) * GetDevice(0):get_argument_value(401) * GetDevice(0):get_argument_value(403)
+        fm2Freq = fm2Device:get_frequency()
+        ARC182FM2Freq = get_param_handle("ARC182_1_param"):get()
+        fm2Mod = GetDevice(0):get_argument_value(3119)
+    end
+    
+    if not (fm2Power and isDCPower) then
+        ARC182FM2Freq = 0
+    end
+    
+    if fm2Mod == 1 then --Nessecary since cockpit switches are inverse from SRS settings 
+        fm2ModCorrected = 0 
+    else fm2ModCorrected = 1
+    end
+
+    _data.radios[2].name = "AN/ARC-182 (1)"
+    _data.radios[2].freq = ARC182FM2Freq--fm2Freq
+    _data.radios[2].modulation = fm2ModCorrected
+    _data.radios[2].volume = fm2Volume
+    _data.radios[2].freqMin = 30e6
+    _data.radios[2].freqMax = 399.975e6
+    _data.radios[2].volMode = 0
+    _data.radios[2].freqMode = 0
+    _data.radios[2].rtMode = 0
+
+    -- Pilots' AN/ARC-182 FM (COM2)
+    local fm1Device = GetDevice(6)
+    local fm1Power = GetDevice(0):get_argument_value(3113) > 0 --NEEDS UPDATE
+    local fm1Volume = 0
+    local fm1Freq = 0
+    local fm1Mod = 0
+
+    if fm1Power and isDCPower then
+        -- radio volume * ics master volume * ics switch
+        fm1Volume = GetDevice(0):get_argument_value(3168) * GetDevice(0):get_argument_value(401) * GetDevice(0):get_argument_value(404)
+        fm1Freq = fm1Device:get_frequency()
+        ARC182FM1Freq = get_param_handle("ARC182_2_param"):get()
+        fm1Mod = GetDevice(0):get_argument_value(3120)
+    end
+    
+    if not (fm1Power and isDCPower) then
+        ARC182FM1Freq = 0
+    end
+    
+    if fm1Mod == 1 then 
+        fm1ModCorrected = 0 
+    else fm1ModCorrected = 1
+    end
+
+    _data.radios[3].name = "AN/ARC-182 (2)"
+    _data.radios[3].freq = ARC182FM1Freq--fm1Freq
+    _data.radios[3].modulation = fm1ModCorrected
+    _data.radios[3].volume = fm1Volume
+    _data.radios[3].freqMin = 30e6
+    _data.radios[3].freqMax = 399.975e6
+    _data.radios[3].volMode = 0
+    _data.radios[3].freqMode = 0
+    _data.radios[3].rtMode = 0
+    
+    --D/L not implemented in module, using a "dummy radio" for now
+    _data.radios[4].name = "DATA LINK (D/L)"
+    _data.radios[4].freq = 0
+    _data.radios[4].modulation = 0
+    _data.radios[4].volume = GetDevice(0):get_argument_value(401) * GetDevice(0):get_argument_value(409)
+    _data.radios[4].freqMin = 15e9
+    _data.radios[4].freqMax = 15e9
+    _data.radios[4].volMode = 1
+    _data.radios[4].freqMode = 1
+    _data.radios[4].encKey = 1 
+    _data.radios[4].encMode = 0 
+    _data.radios[4].rtMode = 1 
+
+    -- AN/ARC-174A HF radio - not implemented in module, freqs must be changed through SRS UI
+    _data.radios[5].name = "AN/ARC-174(A)"
+    _data.radios[5].freq = 2e6
+    _data.radios[5].modulation = 0
+    _data.radios[5].volume = GetDevice(0):get_argument_value(401) * GetDevice(0):get_argument_value(407)
+    _data.radios[5].freqMin = 2e6
+    _data.radios[5].freqMax = 29.9999e6
+    _data.radios[5].volMode = 1
+    _data.radios[5].freqMode = 1
+    _data.radios[5].encKey = 1 
+    _data.radios[5].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting --ANDR0ID Added
+    _data.radios[5].rtMode = 1 
+
+    -- Only select radio if power to ICS panel
+    local radioXMTSelectorValue = _data.selected or 0
+    if isDCPower then
+        radioXMTSelectorValue = SR.round(GetDevice(0):get_argument_value(400) * 5, 1)
+        -- SR.log(radioXMTSelectorValue)
+    end
+
+    -- UHF/VHF BACKUP
+    local arc164Device = GetDevice(5)
+    local arc164Power = GetDevice(0):get_argument_value(3091) > 0
+    local arc164Volume = 0
+    local arc164Freq = 0
+    local arc164Mod = 0
+    --local arc164SecFreq = 0
+
+    if arc164Power and isDCPower then
+        -- radio volume * ics master volume * ics switch
+        arc164Volume = GetDevice(0):get_argument_value(3089) * GetDevice(0):get_argument_value(401) * GetDevice(0):get_argument_value(405)
+        arc164Freq = get_param_handle("VUHFB_FREQ"):get()
+        arc164Mod = GetDevice(0):get_argument_value(3094)
+        --arc164SecFreq = 243e6
+    end
+    
+    if arc164Mod == 1 then 
+        arc164ModCorrected = 0 
+    else arc164ModCorrected = 1
+    end 
+
+    _data.radios[6].name = "UHF/VHF BACKUP"
+    _data.radios[6].freq = arc164Freq * 1000
+    _data.radios[6].modulation = arc164ModCorrected
+    --_data.radios[6].secFreq = arc164SecFreq
+    _data.radios[6].volume = arc164Volume
+    _data.radios[6].freqMin = 30e6
+    _data.radios[6].freqMax = 399.975e6
+    _data.radios[6].volMode = 0
+    _data.radios[6].freqMode = 0
+    _data.radios[6].rtMode = 0
+
+    _data.selected = radioXMTSelectorValue
+    _data.intercomHotMic = GetDevice(0):get_argument_value(402) > 0
+    _data.ptt = GetDevice(0):get_argument_value(82) > 0
+    _data.control = 1; -- full radio HOTAS control
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+        _data.ambient = {vol = 0.2,  abType = 'uh60' }
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'uh60' }
+    end
+
+    return _data
+end
+
 
 function SR.exportRadioA4E(_data)
 
@@ -1091,6 +1399,23 @@ function SR.exportRadioA4E(_data)
     _data.control = 0;
     _data.selected = 1
 
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(26)
+
+        if _door > 0.2 then 
+            _data.ambient = {vol = 0.3,  abType = 'A4' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'A4' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'A4' }
+    end
+
     return _data
 end
 
@@ -1135,6 +1460,22 @@ function SR.exportRadioSK60(_data)
 
     _data.control = 0;
     _data.selected = 1
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(38)
+
+        if _door < 0.9 then 
+            _data.ambient = {vol = 0.3,  abType = 'sk60' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'sk60' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'sk60' }
+    end
 
     return _data
 
@@ -1240,6 +1581,14 @@ function SR.exportRadioT45(_data)
     end
 
     _data.control = 1; -- full radio HOTAS control
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+        _data.ambient = {vol = 0.2,  abType = 'jet' }
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'jet' }
+    end
     
     return _data
 end
@@ -1297,14 +1646,19 @@ function SR.exportRadioPUCARA(_data)
     
     end
    
-    
-    
-  
     _data.control = 1 -- Hotas Controls radio
     
     
      _data.control = 0;
     _data.selected = 1
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+        _data.ambient = {vol = 0.2,  abType = 'jet' }
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'jet' }
+    end
      
     return _data
 end
@@ -1384,6 +1738,22 @@ function SR.exportRadioA29B(_data)
     _data.control = 0 -- Hotas Controls radio
     _data.selected = 1
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(26)
+
+        if _door > 0.2 then 
+            _data.ambient = {vol = 0.3,  abType = 'a29' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'a29' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'a29' }
+    end
+
     return _data
 end
 
@@ -1417,6 +1787,14 @@ function SR.exportRadioVSNF4(_data)
 
     _data.control = 0;
     _data.selected = 1
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+        _data.ambient = {vol = 0.2,  abType = 'jet' }
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'jet' }
+    end
 
     return _data
 end
@@ -1481,7 +1859,13 @@ function SR.exportRadioHercules(_data)
     _data.radios[4].freqMode = 1
     _data.radios[4].expansion = false
 
-    _data.intercomHotMic = true
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+        _data.ambient = {vol = 0.2,  abType = 'hercules' }
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'hercules' }
+    end
 
     return _data;
 end
@@ -1528,10 +1912,51 @@ function SR.exportRadioF15C(_data)
     _data.control = 0;
     _data.selected = 1
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+     --   local _door = SR.getButtonPosition(181)
+
+  --      if _door > 0.2 then 
+            _data.ambient = {vol = 0.3,  abType = 'f15' }
+      --  else
+        --    _data.ambient = {vol = 0.2,  abType = 'f15' }
+      --  end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'f15' }
+    end
+
     return _data
 end
 
+local _f15e = {}
+-- initial IFF status set to -1 to indicate its not initialized, status then set depending on cold/hot start
+_f15e.iff = {
+    status=-1,
+    mode1=-1,
+    mode3=-1,
+    mode4=false,
+    control=0,
+    expansion=false,
+}
+
 function SR.exportRadioF15ESE(_data)
+
+    -- reset state on aircraft switch
+    if _lastUnitId ~= _data.unitId then
+        _f15e.iff = {
+            status=-1,
+            mode1=-1,
+            mode3=-1,
+            mode4=false,
+            control=0,
+            expansion=false,
+        }
+    end
+
+    _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = true, desc = "" }
 
     _data.radios[1].name = "Intercom"
     _data.radios[1].freq = 100.0
@@ -1553,19 +1978,115 @@ function SR.exportRadioF15ESE(_data)
     local _seat = SR.lastKnownSeat
 
     if _seat == 0 then
-       
-        _data.radios[2].volume = SR.getRadioVolume(0, 282, { 0.1, 1.0 }, false)
-        _data.radios[3].volume = SR.getRadioVolume(0, 283, { 0.1, 1.0 }, false)
-    else
-        _data.radios[2].volume = SR.getRadioVolume(0, 1307, { 0.1, 1.0 }, false)
-        _data.radios[3].volume = SR.getRadioVolume(0, 1308, { 0.1, 1.0 }, false)
+        _data.radios[2].volume = SR.getRadioVolume(0, 282, { 0.0, 1.0 }, false)
+        _data.radios[3].volume = SR.getRadioVolume(0, 283, { 0.0, 1.0 }, false)
 
+        if SR.getButtonPosition(509) >= 0.5 then
+            _data.intercomHotMic = true
+        end
+    else
+        _data.radios[2].volume = SR.getRadioVolume(0, 1307, { 0.0, 1.0 }, false)
+        _data.radios[3].volume = SR.getRadioVolume(0, 1308, { 0.0, 1.0 }, false)
+
+        if SR.getButtonPosition(1427) >= 0.5 then
+            _data.intercomHotMic = true
+        end
     end
 
-
-    _data.control = 0;
+    _data.control = 0
     _data.selected = 1
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(38)
+
+        if _door > 0.2 then 
+            _data.ambient = {vol = 0.3,  abType = 'f15' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'f15' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'f15' }
+    end
+
+        -- { ["UFC_SC_11"] = MC*,["UFC_CC_03"] = ,["UFC_CC_02"] = ,["UFC_SC_05A"] = .,["UFC_CC_04"] = ,["UFC_SC_09"] = AAI SLV ,["UFC_SC_08"] = U133000*,["UFC_SC_12"] =  ,["UFC_DISPLAY"] = ,["UFC_SC_10"] = PROGRAM ,["UFC_SC_05"] = *U225000,["UFC_SC_07"] = GV ,["UFC_SC_08A"] = .,["UFC_SC_06"] =  G,["UFC_SC_02"] = *M1-00,["UFC_SC_04"] = *M3-0000,["UFC_SC_03"] = *M2,["UFC_CC_01"] = -IFF-,["UFC_SC_01"] =  PH-0,} 
+    --{ ["UFC_SC_11"] = MC ,["UFC_CC_03"] = ,["UFC_CC_02"] = ,["UFC_SC_05A"] = .,["UFC_CC_04"] = ,["UFC_SC_09"] = AAI SLV ,["UFC_SC_08"] = U133000*,["UFC_SC_12"] =  ,["UFC_DISPLAY"] = ,["UFC_SC_10"] = PROGRAM ,["UFC_SC_05"] = *U225000,["UFC_SC_07"] = GV ,["UFC_SC_08A"] = .,["UFC_SC_06"] =  G,["UFC_SC_02"] =  M1-00,["UFC_SC_04"] =  M3-0000,["UFC_SC_03"] =  M2,["UFC_CC_01"] = -IFF-,["UFC_SC_01"] =  PH-0,} 
+
+    local ufc = nil
+
+    if _seat == 0 then
+        ufc = SR.getListIndicatorValue(9)
+    else
+        ufc = SR.getListIndicatorValue(18)
+    end
+    
+    if ufc and ufc["UFC_CC_01"] ~= nil and  string.match(ufc["UFC_CC_01"], "IFF") then
+        if ufc["UFC_SC_02"] ~= nil then
+            --["UFC_SC_02"] =  M1-00
+            if string.sub(ufc["UFC_SC_02"], 1,1) == "*" then
+                local code = string.match(ufc["UFC_SC_02"], "%d%d")
+
+                if code then
+                    _f15e.iff.mode1 = code
+                end
+            else
+               _f15e.iff.mode1 = -1
+            end
+        end
+
+        if ufc["UFC_SC_04"] ~= nil then
+            --["UFC_SC_04"] =  M3-0000
+
+            if string.sub(ufc["UFC_SC_04"], 1,1) == "*" then
+
+                local code = string.match(ufc["UFC_SC_04"], "%d%d%d%d")
+
+                if code then
+                    _f15e.iff.mode3 = code
+                end
+            else
+                _f15e.iff.mode3 = -1
+            end
+            
+        end
+
+        if ufc["UFC_SC_11"] ~= nil then
+           -- ["UFC_SC_11"] = MC*
+
+           if ufc["UFC_SC_11"] == "MC*" then
+             _f15e.iff.mode4 = true
+           else
+             _f15e.iff.mode4 = false
+           end
+            
+        end
+    end
+
+    if _f15e.iff.mode4 == true or _f15e.iff.mode3 ~= -1 or _f15e.iff.mode1 ~= -1 then
+        _f15e.iff.status = 1
+
+        -- IDENT check
+        local iffIdent = -1 
+
+        if _seat == 0 then
+            iffIdent = SR.getButtonPosition(297)
+        else
+            iffIdent = SR.getButtonPosition(1322)
+        end
+
+        if iffIdent == 1 then
+            _f15e.iff.status = 2 -- IDENT (BLINKY THING)
+        end
+
+    else
+        _f15e.iff.status = -1
+    end
+
+    _data.iff = _f15e.iff
+              
     return _data
 end
 
@@ -1729,6 +2250,25 @@ function SR.exportRadioUH1H(_data)
         _data.iff.mode4 = false
     end
 
+    local _doorLeft = SR.getButtonPosition(420)
+
+    -- engine on
+    if SR.getAmbientVolumeEngine()  > 10 then
+        if _doorLeft >= 0 and _doorLeft < 0.5 then
+            -- engine on and door closed
+            _data.ambient = {vol = 0.2,  abType = 'uh1' }
+        else
+            -- engine on and door open
+            _data.ambient = {vol = 0.35, abType = 'uh1' }
+        end
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'uh1' }
+    end
+
+
+    -- SR.log("ambient STATUS"..SR.JSON:encode(_data.ambient).."\n\n")
+
     return _data
 
 end
@@ -1866,12 +2406,11 @@ function SR.exportRadioSA342(_data)
         _data.control = 0; -- OVERLAY Controls
     end
 
-    _data.intercomHotMic = true
+     -- The option reads 'disable HOT_MIC', true means off.
+     _data.intercomHotMic = not SR.getSpecialOption('SA342.HOT_MIC')
 
-    
     -- HANDLE TRANSPONDER
     _data.iff = {status=0,mode1=0,mode3=0,mode4=false,control=0,expansion=false}
-
 
     local iffPower =  SR.getButtonPosition(246)
 
@@ -1905,6 +2444,14 @@ function SR.exportRadioSA342(_data)
         _data.iff.mode4 = true
     else
         _data.iff.mode4 = false
+    end
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+        _data.ambient = {vol = 0.2,  abType = 'sa342' }
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'sa342' }
     end
 
     return _data
@@ -1958,6 +2505,22 @@ function SR.exportRadioKA50(_data)
     end
 
     _data.control = 1;
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(38)
+
+        if _door > 0.2 then 
+            _data.ambient = {vol = 0.3,  abType = 'ka50' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'ka50' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'ka50' }
+    end
 
     return _data
 
@@ -2032,6 +2595,24 @@ function SR.exportRadioMI8(_data)
     end
 
     _data.control = 1; -- full radio
+
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _doorLeft = SR.getButtonPosition(216)
+        local _doorRight = SR.getButtonPosition(215)
+
+        if _doorLeft > 0.2 or _doorRight > 0.2 then 
+            _data.ambient = {vol = 0.35,  abType = 'mi8' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'mi8' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'mi8' }
+    end
 
     return _data
 
@@ -2162,6 +2743,23 @@ function SR.exportRadioMI24P(_data)
     
     _data.control = 1;
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _doorLeft = SR.getButtonPosition(9)
+        local _doorRight = SR.getButtonPosition(849)
+
+        if _doorLeft > 0.2 or _doorRight > 0.2 then 
+            _data.ambient = {vol = 0.35,  abType = 'mi24' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'mi24' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'mi24' }
+    end
+
     return _data
 
 end
@@ -2220,7 +2818,22 @@ function SR.exportRadioL39(_data)
 
     _data.control = 1; -- full radio - for expansion radios - DCS controls must be disabled
 
-    _data.control = 1; -- full radio
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _doorLeft = SR.getButtonPosition(139)
+        local _doorRight = SR.getButtonPosition(140)
+
+        if _doorLeft > 0.2 or _doorRight > 0.2 then 
+            _data.ambient = {vol = 0.3,  abType = 'l39' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'l39' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'mi24' }
+    end
 
     return _data
 end
@@ -2284,6 +2897,14 @@ function SR.exportRadioEagleII(_data)
 
     _data.control = 0; -- HOTAS
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+        _data.ambient = {vol = 0.2,  abType = 'ChristenEagle' }
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'ChristenEagle' }
+    end
+
     return _data
 end
 
@@ -2342,13 +2963,21 @@ function SR.exportRadioYak52(_data)
 
     _data.control = 1; -- full radio - for expansion radios - DCS controls must be disabled
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+        _data.ambient = {vol = 0.2,  abType = 'yak52' }
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'yak52' }
+    end
+
     return _data
 end
 
 --for A10C
 function SR.exportRadioA10C(_data)
 
-    _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
+    _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = false, desc = "Using cockpit PTT (HOTAS Mic Switch) requires use of VoIP bindings." }
 
     -- Check if player is in a new aircraft
     if _lastUnitId ~= _data.unitId then
@@ -2449,35 +3078,35 @@ function SR.exportRadioA10C(_data)
     -- Mic Switch Radio Select and Transmit - by Dyram
     -- Check Mic Switch position (UP: 751 1.0, DOWN: 751 -1.0, FWD: 752 1.0, AFT: 752 -1.0)
     -- ED broke this as part of the VoIP work
-    -- if SR.getButtonPosition(752) == 1 then
-    --     -- Mic Switch FWD pressed
-    --     -- Check Intercom panel Rotary Selector Dial (0: INT, 1: FM, 2: VHF, 3: HF, 4: "")
-    --     if SR.getSelectorPosition(239, 0.1) == 2 then
-    --         -- Intercom panel set to VHF
-    --         _data.selected = 1 -- radios[2] VHF AM
-    --         _data.ptt = true
-    --     elseif SR.getSelectorPosition(239, 0.1) == 0 then
-    --         -- Intercom panel set to INT
-    --         -- Intercom not functional, but select it anyway to be proper
-    --         _data.selected = 0 -- radios[1] Intercom
-    --     else
-    --         _data.selected = -1
-    --     end
-    -- elseif SR.getButtonPosition(751) == -1 then
-    --     -- Mic Switch DOWN pressed
-    --     _data.selected = 2 -- radios[3] UHF
-    --     _data.ptt = true
-    -- elseif SR.getButtonPosition(752) == -1 then
-    --     -- Mic Switch AFT pressed
-    --     _data.selected = 3 -- radios[4] VHF FM
-    --     _data.ptt = true
-    -- else
-    --     -- Mic Switch released
-    --     _data.selected = -1
-    --     _data.ptt = false
-    -- end
+    if SR.getButtonPosition(752) == 1 then
+        -- Mic Switch FWD pressed
+        -- Check Intercom panel Rotary Selector Dial (0: INT, 1: FM, 2: VHF, 3: HF, 4: "")
+        if SR.getSelectorPosition(239, 0.1) == 2 then
+            -- Intercom panel set to VHF
+            _data.selected = 1 -- radios[2] VHF AM
+            _data.ptt = true
+        elseif SR.getSelectorPosition(239, 0.1) == 0 then
+            -- Intercom panel set to INT
+            -- Intercom not functional, but select it anyway to be proper
+            _data.selected = 0 -- radios[1] Intercom
+        else
+            _data.selected = -1
+        end
+    elseif SR.getButtonPosition(751) == -1 then
+        -- Mic Switch DOWN pressed
+        _data.selected = 2 -- radios[3] UHF
+        _data.ptt = true
+    elseif SR.getButtonPosition(752) == -1 then
+        -- Mic Switch AFT pressed
+        _data.selected = 3 -- radios[4] VHF FM
+        _data.ptt = true
+    else
+        -- Mic Switch released
+        _data.selected = -1
+        _data.ptt = false
+    end
 
-    _data.control = 0 -- Overlay  
+    _data.control = 1 -- Overlay  
 
     -- Handle transponder
 
@@ -2534,7 +3163,24 @@ function SR.exportRadioA10C(_data)
         _data.iff.mode4 = false
     end
 
-    -- SR.log("IFF STATUS"..SR.JSON:encode(_data.iff).."\n\n")
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(7)
+
+        if _door > 0.1 then 
+            _data.ambient = {vol = 0.3,  abType = 'a10' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'a10' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'a10' }
+    end
+
+    -- SR.log("ambient STATUS"..SR.JSON:encode(_data.ambient).."\n\n")
     return _data
 end
 
@@ -2547,7 +3193,7 @@ _a10c2.encKey = 1
 
 function SR.exportRadioA10C2(_data)
 
-    _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
+    _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = false, desc = "Using cockpit PTT (HOTAS Mic Switch) requires use of VoIP bindings." }
 
     -- Check if player is in a new aircraft
     if _lastUnitId ~= _data.unitId then
@@ -2685,7 +3331,38 @@ function SR.exportRadioA10C2(_data)
         end
     end
 
-    _data.control = 0 -- Overlay  
+ -- Mic Switch Radio Select and Transmit - by Dyram
+    -- Check Mic Switch position (UP: 751 1.0, DOWN: 751 -1.0, FWD: 752 1.0, AFT: 752 -1.0)
+    -- ED broke this as part of the VoIP work
+    if SR.getButtonPosition(752) == 1 then
+        -- Mic Switch FWD pressed
+        -- Check Intercom panel Rotary Selector Dial (0: INT, 1: FM, 2: VHF, 3: HF, 4: "")
+        if SR.getSelectorPosition(239, 0.1) == 2 then
+            -- Intercom panel set to VHF
+            _data.selected = 1 -- radios[2] VHF AM
+            _data.ptt = true
+        elseif SR.getSelectorPosition(239, 0.1) == 0 then
+            -- Intercom panel set to INT
+            -- Intercom not functional, but select it anyway to be proper
+            _data.selected = 0 -- radios[1] Intercom
+        else
+            _data.selected = -1
+        end
+    elseif SR.getButtonPosition(751) == -1 then
+        -- Mic Switch DOWN pressed
+        _data.selected = 2 -- radios[3] UHF
+        _data.ptt = true
+    elseif SR.getButtonPosition(752) == -1 then
+        -- Mic Switch AFT pressed
+        _data.selected = 3 -- radios[4] VHF FM
+        _data.ptt = true
+    else
+        -- Mic Switch released
+        _data.selected = -1
+        _data.ptt = false
+    end
+
+    _data.control = 1 -- Overlay  
 
     -- Handle transponder
 
@@ -2740,6 +3417,22 @@ function SR.exportRadioA10C2(_data)
         _data.iff.mode4 = true
     else
         _data.iff.mode4 = false
+    end
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(7)
+
+        if _door > 0.1 then 
+            _data.ambient = {vol = 0.3,  abType = 'a10' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'a10' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'a10' }
     end
 
     -- SR.log("IFF STATUS"..SR.JSON:encode(_data.iff).."\n\n")
@@ -3080,6 +3773,22 @@ end
         end
     end
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(181)
+
+        if _door > 0.5 then 
+            _data.ambient = {vol = 0.3,  abType = 'fa18' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'fa18' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'fa18' }
+    end
+
     return _data
 end
 
@@ -3236,6 +3945,22 @@ function SR.exportRadioF16C(_data)
 
     -- SR.log("IFF STATUS"..SR.JSON:encode(_data.iff).."\n\n")
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(7)
+
+        if _door > 0.1 then 
+            _data.ambient = {vol = 0.3,  abType = 'f16' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'f16' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'f16' }
+    end
+
     return _data
 end
 
@@ -3298,6 +4023,22 @@ function SR.exportRadioF86Sabre(_data)
 
     _data.control = 0; -- Hotas Controls
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(181)
+
+        if _door > 0.1 then 
+            _data.ambient = {vol = 0.3,  abType = 'f86' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'f86' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'f86' }
+    end
+
     return _data;
 end
 
@@ -3347,6 +4088,22 @@ function SR.exportRadioMIG15(_data)
 
     _data.control = 0; -- Hotas Controls radio
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(225)
+
+        if _door > 0.3 then 
+            _data.ambient = {vol = 0.3,  abType = 'mig15' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'mig15' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'mig15' }
+    end
+
     return _data;
 end
 
@@ -3388,6 +4145,22 @@ function SR.exportRadioMIG19(_data)
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
     _data.control = 0; -- Hotas Controls radio
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(433)
+
+        if _door > 0.1 then 
+            _data.ambient = {vol = 0.3,  abType = 'mig19' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'mig19' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'mig19' }
+    end
 
     return _data;
 end
@@ -3438,6 +4211,22 @@ function SR.exportRadioMIG21(_data)
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
     _data.control = 0; -- hotas radio
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(1)
+
+        if _door > 0.15 then 
+            _data.ambient = {vol = 0.3,  abType = 'mig21' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'mig21' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'mig21' }
+    end
 
     return _data;
 end
@@ -3564,6 +4353,22 @@ function SR.exportRadioF5E(_data)
         _data.iff.mode4 = false
     end
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(181)
+
+        if _door > 0.1 then 
+            _data.ambient = {vol = 0.3,  abType = 'f5' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'f5' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'f5' }
+    end
+
     return _data;
 end
 
@@ -3612,13 +4417,29 @@ function SR.exportRadioP51(_data)
 
     _data.control = 0; -- hotas radio
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(162)
+
+        if _door > 0.1 then 
+            _data.ambient = {vol = 0.35,  abType = 'p51' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'p51' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'p51' }
+    end
+
     return _data;
 end
 
 
 function SR.exportRadioP47(_data)
 
-    _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "Only one radio by default" }
+    _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "Only one radio by default" }
 
     _data.radios[2].name = "SCR522"
     _data.radios[2].freq = SR.getRadioFrequency(23)
@@ -3628,11 +4449,11 @@ function SR.exportRadioP47(_data)
     _data.selected = 1
 
     --Cant find the button in the cockpit?
-    -- if (SR.getButtonPosition(44)) > 0.5 then
-    --     _data.ptt = true
-    -- else
-    --     _data.ptt = false
-    -- end
+    if (SR.getButtonPosition(44)) > 0.5 then
+        _data.ptt = true
+    else
+        _data.ptt = false
+    end
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[3].name = "AN/ARC-186(V)"
@@ -3661,6 +4482,22 @@ function SR.exportRadioP47(_data)
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
     _data.control = 0; -- hotas radio
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(38)
+
+        if _door > 0.1 then 
+            _data.ambient = {vol = 0.35,  abType = 'p47' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'p47' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'p47' }
+    end
 
     return _data;
 end
@@ -3711,16 +4548,38 @@ function SR.exportRadioFW190(_data)
 
     _data.control = 0; -- hotas radio
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(194)
+
+        if _door > 0.1 then 
+            _data.ambient = {vol = 0.35,  abType = 'fw190' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'fw190' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'fw190' }
+    end
+
     return _data;
 end
 
 function SR.exportRadioBF109(_data)
-    _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
+    _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
     
     _data.radios[2].name = "FuG 16ZY"
     _data.radios[2].freq = SR.getRadioFrequency(14)
     _data.radios[2].modulation = 0
     _data.radios[2].volume = SR.getRadioVolume(0, 130, { 0.0, 1.0 }, false)
+
+    if (SR.getButtonPosition(150)) > 0.5 then
+        _data.ptt = true
+    else
+        _data.ptt = false
+    end
 
     _data.selected = 1
 
@@ -3751,6 +4610,22 @@ function SR.exportRadioBF109(_data)
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
     _data.control = 0; -- hotas radio
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(95)
+
+        if _door > 0.1 then 
+            _data.ambient = {vol = 0.35,  abType = 'bf109' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'bf109' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'bf109' }
+    end
 
     return _data;
 end
@@ -3794,6 +4669,22 @@ function SR.exportRadioSpitfireLFMkIX (_data)
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
     _data.control = 0; -- no ptt, same as the FW and 109. No connector.
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(138)
+
+        if _door > 0.1 then 
+            _data.ambient = {vol = 0.35,  abType = 'spitfire' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'spitfire' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'spitfire' }
+    end
 
     return _data;
 end
@@ -3854,6 +4745,23 @@ function SR.exportRadioMosquitoFBMkVI (_data)
 
     _data.control = 0; -- no ptt, same as the FW and 109. No connector.
     _data.selected = 1
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _doorLeft = SR.getButtonPosition(250)
+        local _doorRight = SR.getButtonPosition(252)
+
+        if _doorLeft > 0.7 or _doorRight > 0.7 then 
+            _data.ambient = {vol = 0.35,  abType = 'mosquito' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'mosquito' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'mosquito' }
+    end
 
     return _data;
 end
@@ -3974,6 +4882,23 @@ function SR.exportRadioC101EB(_data)
     -- only if The hot mic talk button (labeled TALK in cockpit) is up
     if frontHotMic == 1 or rearHotMic == 1 then
        _data.intercomHotMic = true
+    end
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _doorLeft = SR.getButtonPosition(1)
+        local _doorRight = SR.getButtonPosition(301)
+
+        if _doorLeft > 0.7 or _doorRight > 0.7 then 
+            _data.ambient = {vol = 0.3,  abType = 'c101' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'c101' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'c101' }
     end
 
     return _data;
@@ -4113,6 +5038,23 @@ function SR.exportRadioC101CC(_data)
        _data.intercomHotMic = true
     end
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _doorLeft = SR.getButtonPosition(1)
+        local _doorRight = SR.getButtonPosition(301)
+
+        if _doorLeft > 0.7 or _doorRight > 0.7 then 
+            _data.ambient = {vol = 0.3,  abType = 'c101' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'c101' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'c101' }
+    end
+
     return _data;
 end
 
@@ -4194,6 +5136,15 @@ function SR.exportRadioMB339A(_data)
         expansion = false
     }
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+        _data.ambient = {vol = 0.2,  abType = 'MB339' }
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'MB339' }
+    end
+
     return _data;
 end
 
@@ -4249,6 +5200,15 @@ function SR.exportRadioHawk(_data)
     end
 
     _data.control = 1; -- full radio
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+        _data.ambient = {vol = 0.2,  abType = 'jet' }
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'jet' }
+    end
 
     return _data;
 end
@@ -4364,12 +5324,16 @@ function SR.exportRadioM2000C(_data)
     _data.iff = {status=0,mode1=0,mode3=0,mode4=false,control=0,expansion=false}
 
 
-    local iffIdent =  SR.getButtonPosition(383) -- -1 is off 0 or more is on
 
-    -- No power switch - always on
-    _data.iff.status = 1 -- NORMAL
+    -- Power switch
+    local masterIFF = SR.getSelectorPosition(392, 0.25)
+    if masterIFF >= 2 then
+        _data.iff.status = 1 -- NORMAL
+    end
 
-    if iffIdent == 1 then
+    --IFF IDENT/MIC blinking
+    local iffIdent =  SR.getButtonPosition(383) -- -1 is MIC, 0 is OUT(OFF), 1 is IDENT
+    if iffIdent == 1 or (iffIdent == -1 and (GREEN_ptt or RED_ptt)) then
         _data.iff.status = 2 -- IDENT (BLINKY THING)
     end
 
@@ -4388,7 +5352,7 @@ function SR.exportRadioM2000C(_data)
 
     _data.iff.mode1 = mode1Digit1+mode1Digit2
 
-    if mode1On ~= 0 then
+    if mode1On == 0 then
         _data.iff.mode1 = -1
     end
 
@@ -4417,19 +5381,35 @@ function SR.exportRadioM2000C(_data)
 
     _data.iff.mode3 = mode3Digit1+mode3Digit2+mode3Digit3+mode3Digit4
 
-    if mode3On ~= 0 then
+    if mode3On == 0 then
         _data.iff.mode3 = -1
-    elseif iffPower == 4 then
+    elseif masterIFF == 3 then
         -- EMERG SETTING 7770
         _data.iff.mode3 = 7700
     end
 
-    local mode4On =  SR.round(SR.getButtonPosition(598),0.1)*10
-
-    if mode4On == 2 then
+    local mode4On = SR.getButtonPosition(390)
+    if mode4On == 1 then
         _data.iff.mode4 = true
     else
         _data.iff.mode4 = false
+    end
+
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(38)
+
+        if _door > 0.3 then 
+            _data.ambient = {vol = 0.3,  abType = 'm2000' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'm2000' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'm2000' }
     end
 
     return _data
@@ -4518,6 +5498,154 @@ function SR.exportRadioF1CE(_data)
 
     _data.control = 0;
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(1)
+
+        if _door > 0.2 then 
+            _data.ambient = {vol = 0.3,  abType = 'f1' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'f1' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'f1' }
+    end
+
+    return _data
+end
+
+
+function SR.exportRadioF1BE(_data)
+
+    _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
+
+    -- Intercom Function
+    _data.radios[1].name = "Intercom"
+    _data.radios[1].freq = 100
+    _data.radios[1].modulation = 2
+    _data.radios[1].volume = 1.0
+    _data.radios[1].volMode = 1.0
+
+
+    _data.radios[2].name = "V/UHF TRAP-136"
+    _data.radios[2].freq = SR.getRadioFrequency(6)
+    _data.radios[2].modulation = 0
+    _data.radios[2].volMode = 0
+
+
+    _data.radios[3].name = "UHF TRAP-137B"
+    _data.radios[3].freq = SR.getRadioFrequency(7)
+    _data.radios[3].modulation = 0
+    _data.radios[3].volMode = 0
+    _data.radios[3].channel = SR.getNonStandardSpinner(348, {[0.000]= "1", [0.050]= "2",[0.100]= "3",[0.150]= "4",[0.200]= "5",[0.250]= "6",[0.300]= "7",[0.350]= "8",[0.400]= "9",[0.450]= "10",[0.500]= "11",[0.550]= "12",[0.600]= "13",[0.650]= "14",[0.700]= "15",[0.750]= "16",[0.800]= "17",[0.850]= "18",[0.900]= "19",[0.950]= "20"},0.05,3)
+
+    _data.iff = {status=0,mode1=0,mode3=0,mode4=false,control=0,expansion=false}
+
+    local iffPower =  SR.getSelectorPosition(739,0.1)
+
+    local iffIdent =  SR.getButtonPosition(744) -- -1 is off 0 or more is on
+
+    if iffPower >= 7 then
+        _data.iff.status = 1 -- NORMAL
+
+        if iffIdent == 1 then
+            _data.iff.status = 2 -- IDENT (BLINKY THING)
+        end
+    end
+
+    local mode1On =  SR.getButtonPosition(750)
+
+    local _lookupTable = {[0.000]= "0", [0.125] = "1", [0.250] = "2", [0.375] = "3", [0.500] = "4", [0.625] = "5", [0.750] = "6", [0.875] = "7", [1.000] = "0"}
+    _data.iff.mode1 = SR.getNonStandardSpinner(732,_lookupTable, 0.125,3) .. SR.getNonStandardSpinner(733,{[0.000]= "0", [0.125] = "1", [0.250] = "2", [0.375] = "3", [0.500] = "0", [0.625] = "1", [0.750] = "2", [0.875] = "3", [1.000] = "0"},0.125,3)
+
+    if mode1On ~= 0 then
+        _data.iff.mode1 = -1
+    end
+
+    local mode3On =  SR.getButtonPosition(752)
+
+    _data.iff.mode3 = SR.getNonStandardSpinner(734,_lookupTable, 0.125,3) .. SR.getNonStandardSpinner(735,_lookupTable,0.125,3).. SR.getNonStandardSpinner(736,_lookupTable,0.125,3).. SR.getNonStandardSpinner(737,_lookupTable,0.125,3)
+
+    if mode3On ~= 0 then
+        _data.iff.mode3 = -1
+    elseif iffPower == 10 then
+        -- EMERG SETTING 7770
+        _data.iff.mode3 = 7700
+    end
+
+    local mode4On =  SR.getButtonPosition(745)
+
+    if mode4On ~= 0 then
+        _data.iff.mode4 = true
+    else
+        _data.iff.mode4 = false
+    end
+    
+     -- Expansion Radio - Server Side Controlled
+    _data.radios[4].name = "AN/ARC-210"
+    _data.radios[4].freq = 251.0 * 1000000 --10-399.975 MHZ
+    _data.radios[4].modulation = 0
+    _data.radios[4].secFreq = 243.0 * 1000000
+    _data.radios[4].volume = 1.0
+    _data.radios[4].freqMin = 110 * 1000000
+    _data.radios[4].freqMax = 399.975 * 1000000
+    _data.radios[4].volMode = 1
+    _data.radios[4].freqMode = 1
+    _data.radios[4].expansion = true
+    _data.radios[4].encKey = 1
+    _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+
+   -- SR.lastKnownSeat = 1
+
+    if SR.lastKnownSeat == 0 then
+        _data.radios[2].volume = SR.getRadioVolume(0, 311,{0.0,1.0},false)
+
+        if SR.getSelectorPosition(280,0.2) == 0 and _data.radios[2].freq > 1000 then
+            _data.radios[2].secFreq = 121.5 * 1000000
+        end
+
+        if SR.getSelectorPosition(282,0.5) == 1 then
+            _data.radios[2].channel = SR.getNonStandardSpinner(283, {[0.000]= "1", [0.050]= "2",[0.100]= "3",[0.150]= "4",[0.200]= "5",[0.250]= "6",[0.300]= "7",[0.350]= "8",[0.400]= "9",[0.450]= "10",[0.500]= "11",[0.550]= "12",[0.600]= "13",[0.650]= "14",[0.700]= "15",[0.750]= "16",[0.800]= "17",[0.850]= "18",[0.900]= "19",[0.950]= "20"},0.05,3)
+        end
+
+        _data.radios[3].volume = SR.getRadioVolume(0, 314,{0.0,1.0},false)
+    else
+        _data.radios[2].volume = SR.getRadioVolume(0, 327,{0.0,1.0},false)
+
+        if SR.getSelectorPosition(298,0.2) == 0 and _data.radios[2].freq > 1000 then
+            _data.radios[2].secFreq = 121.5 * 1000000
+        end
+
+        if SR.getSelectorPosition(300,0.5) == 1 then
+            _data.radios[2].channel = SR.getNonStandardSpinner(303, {[0.000]= "1", [0.050]= "2",[0.100]= "3",[0.150]= "4",[0.200]= "5",[0.250]= "6",[0.300]= "7",[0.350]= "8",[0.400]= "9",[0.450]= "10",[0.500]= "11",[0.550]= "12",[0.600]= "13",[0.650]= "14",[0.700]= "15",[0.750]= "16",[0.800]= "17",[0.850]= "18",[0.900]= "19",[0.950]= "20"},0.05,3)
+        end
+
+        _data.radios[3].volume = SR.getRadioVolume(0, 330,{0.0,1.0},false)
+
+    end
+
+    _data.control = 0;
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _doorLeft = SR.getButtonPosition(1)
+        local _doorRight = SR.getButtonPosition(6)
+
+        if _doorLeft > 0.2 or _doorRight > 0.2 then 
+            _data.ambient = {vol = 0.3,  abType = 'f1' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'f1' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'f1' }
+    end
+
     return _data
 end
 
@@ -4579,6 +5707,22 @@ function SR.exportRadioJF17(_data)
     end
 
     _data.iff.mode4 =  _iff:is_m6_trs_on()
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(181)
+
+        if _door > 0.2 then 
+            _data.ambient = {vol = 0.3,  abType = 'jf17' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'jf17' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'jf17' }
+    end
 
     return _data
 end
@@ -4773,6 +5917,22 @@ end
     _data.selected = 1
     _data.control = 0; -- partial radio, allows hotkeys
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(38)
+
+        if _door > 0.2 then 
+            _data.ambient = {vol = 0.35,  abType = 'av8bna' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'av8bna' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'av8bna' }
+    end
+
     return _data
 end
 
@@ -4930,6 +6090,22 @@ function SR.exportRadioF14(_data)
 
     -- SR.log("IFF STATUS"..SR.JSON:encode(_data.iff).."\n\n")
 
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(403)
+
+        if _door > 0.2 then 
+            _data.ambient = {vol = 0.3,  abType = 'f14' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'f14' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'f14' }
+    end
+
     return _data
 end
 
@@ -4940,23 +6116,14 @@ function SR.exportRadioAJS37(_data)
     _data.radios[2].name = "FR 22"
     _data.radios[2].freq = SR.getRadioFrequency(30)
     _data.radios[2].modulation = SR.getRadioModulation(30)
-
-    --   local _modulation =SR.getButtonPosition(3008)
-
-    --   if _modulation > 0.5 then
-    --       _data.radios[3].modulation = 1
-    --   else
-    --       _data.radios[3].modulation = 0
-    --   end
-
-    _data.radios[2].volume = 1.0
-    _data.radios[2].volMode = 1
+    _data.radios[2].volume =  SR.getRadioVolume(0, 385,{0.0, 1.0},false)
+    _data.radios[2].volMode = 0
 
     _data.radios[3].name = "FR 24"
     _data.radios[3].freq = SR.getRadioFrequency(31)
     _data.radios[3].modulation = SR.getRadioModulation(31)
-    _data.radios[3].volume = SR.getRadioVolume(0, 385,{0.0, 1.0},false)
-    _data.radios[3].volMode = 0
+    _data.radios[3].volume = 1.0
+    _data.radios[3].volMode = 1
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-164 UHF"
@@ -4974,6 +6141,22 @@ function SR.exportRadioAJS37(_data)
 
     _data.control = 0;
     _data.selected = 1
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = SR.getButtonPosition(10)
+
+        if _door > 0.2 then 
+            _data.ambient = {vol = 0.3,  abType = 'ajs37' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'ajs37' }
+        end 
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'ajs37' }
+    end
 
     return _data
 end
@@ -5046,6 +6229,29 @@ function SR.getNonStandardSpinner(_deviceId, _range, _step, _round)
     return _res
 
 end
+
+function SR.getAmbientVolumeEngine()
+
+    local _res = 0
+    
+    pcall(function()
+    
+        local engine = LoGetEngineInfo()
+
+        --{"EngineStart":{"left":0,"right":0},"FuelConsumption":{"left":1797.9623832703,"right":1795.5901498795},"HydraulicPressure":{"left":0,"right":0},"RPM":{"left":97.268943786621,"right":97.269966125488},"Temperature":{"left":746.81764087677,"right":745.09023532867},"fuel_external":0,"fuel_internal":0.99688786268234}
+        --SR.log(JSON:encode(engine))
+        if engine.RPM and engine.RPM.left > 1 then
+            _res = engine.RPM.left 
+        end
+
+        if engine.RPM and engine.RPM.right > 1 then
+            _res = engine.RPM.right
+        end
+    end )
+
+    return SR.round(_res,1)
+end
+
 
 function SR.getRadioFrequency(_deviceId, _roundTo, _ignoreIsOn)
     local _device = GetDevice(_deviceId)
@@ -5270,7 +6476,7 @@ SR.exporters["M-2000C"] = SR.exportRadioM2000C
 SR.exporters["M-2000D"] = SR.exportRadioM2000C
 SR.exporters["Mirage-F1CE"] = SR.exportRadioF1CE  
 SR.exporters["Mirage-F1EE"]   = SR.exportRadioF1CE
---SR.exporters["Mirage-F1BE"]   = SR.exportRadioF1
+SR.exporters["Mirage-F1BE"]   = SR.exportRadioF1BE
 --SR.exporters["Mirage-F1M-EE"] = SR.exportRadioF1
 SR.exporters["JF-17"] = SR.exportRadioJF17
 SR.exporters["AV8BNA"] = SR.exportRadioAV8BNA
@@ -5278,6 +6484,7 @@ SR.exporters["AJS37"] = SR.exportRadioAJS37
 SR.exporters["A-10A"] = SR.exportRadioA10A
 SR.exporters["UH-60L"] = SR.exportRadioUH60L
 SR.exporters["MH-60R"] = SR.exportRadioUH60L
+SR.exporters["SH60B"] = SR.exportRadioSH60B
 SR.exporters["AH-64D_BLK_II"] = SR.exportRadioAH64D
 SR.exporters["A-4E-C"] = SR.exportRadioA4E
 SR.exporters["SK-60"] = SR.exportRadioSK60
@@ -5406,4 +6613,4 @@ end
 -- Load mods' SRS plugins
 SR.LoadModsPlugins()
 
-SR.log("Loaded SimpleRadio Standalone Export version: 2.0.8.6")
+SR.log("Loaded SimpleRadio Standalone Export version: 2.0.9.1")

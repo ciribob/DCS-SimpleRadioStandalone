@@ -68,6 +68,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
         [JsonNetworkIgnoreSerialization]
         public DCSAircraftCapabilities capabilities = new DCSAircraftCapabilities();
 
+        [JsonDCSIgnoreSerialization]
+        public Ambient ambient = new Ambient()
+        {
+            vol = 0.0f,
+            abType = ""
+        };
+
+
         public enum SimultaneousTransmissionControl
         {
             ENABLED_INTERNAL_SRS_CONTROLS = 1,
@@ -89,6 +97,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
         {
             name = "";
             latLng = new DCSLatLngPosition();
+            ambient = new Ambient()
+            {
+                vol = 1.0f,
+              //  pitch = 1.0f,
+                abType = ""
+            };
             ptt = false;
             selected = 0;
             unit = "";
@@ -151,6 +165,19 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
                 {
                     //check iff
                     if (!iff.Equals(compareRadio.iff))
+                    {
+                        return false;
+                    }
+                }
+
+                if (((ambient == null) || (compareRadio.ambient == null)))
+                {
+                    return false;
+                }
+                else
+                {
+                    //check ambient
+                    if (!ambient.Equals(compareRadio.ambient))
                     {
                         return false;
                     }
@@ -314,6 +341,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             var clone = (DCSPlayerRadioInfo) this.MemberwiseClone();
 
             clone.iff = this.iff.Copy();
+            clone.ambient = this.ambient.Copy();
             //ignore position
             clone.radios = new RadioInformation[11];
 
@@ -324,6 +352,50 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 
             return clone;
 
+        }
+    }
+
+    public class Ambient
+    {
+        public float vol = 1.0f;
+      //  public float pitch = 1.0f;
+        public string abType = "";
+
+        public override bool Equals(object obj)
+        {
+            if ((obj == null) || (GetType() != obj.GetType()))
+                return false;
+
+            var compare = (Ambient)obj;
+
+
+            if (vol != compare.vol)
+            {
+                return false;
+            }
+
+            if (abType != compare.abType)
+            {
+                return false;
+            }
+
+            // if (pitch != compare.pitch)
+            // {
+            //     return false;
+            // }
+
+            return true;
+        }
+
+        public Ambient Copy()
+        {
+            return new Ambient()
+            {
+                vol = vol, 
+                abType = abType, 
+                //pitch = pitch
+
+            } ;
         }
     }
 }

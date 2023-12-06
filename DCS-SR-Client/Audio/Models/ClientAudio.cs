@@ -22,5 +22,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
         public string OriginalClientGuid { get; internal set; }
         public bool IsSecondary { get; set; }
         public bool NoAudioEffects { get; set; }
+        public Ambient Ambient { get; set; }
     }
 }

@@ -5,6 +5,7 @@
              xmlns:local="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Overlay"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+			 xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Properties"
              Name="RadioControlContainer"
              Width="310"
              Height="35">
@@ -20,7 +21,7 @@
                    Foreground="#E7E7E7"
                    Padding="0"
                    Style="{x:Null}"
-                   Text="INTERCOM"
+                   Text="{x:Static p:Resources.OverlayIntercom}"
                    TextAlignment="Center" />
 
         <Ellipse x:Name="RadioActive"
@@ -33,7 +34,7 @@
                  MouseDown="RadioSelectSwitch"
                  Stroke="Black"
                  Style="{x:Null}"
-                 ToolTip="Selected Radio" />
+                 ToolTip="{x:Static p:Resources.ToolTipSelectedRadio}" />
         <Slider x:Name="RadioVolume"
                 Width="115"
                 Height="20"

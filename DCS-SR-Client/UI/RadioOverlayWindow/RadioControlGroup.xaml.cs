@@ -218,8 +218,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
             if ((dcsPlayerRadioInfo == null) || !dcsPlayerRadioInfo.IsCurrent())
             {
                 RadioActive.Fill = new SolidColorBrush(Colors.Red);
-                RadioLabel.Text = "No Radio";
-                RadioFrequency.Text = "Unknown";
+                RadioLabel.Text = Properties.Resources.OverlayNoRadio;
+                RadioFrequency.Text = Properties.Resources.ValueUnknown;
 
                 RadioVolume.IsEnabled = false;
 
@@ -276,8 +276,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
                 if (currentRadio.modulation == RadioInformation.Modulation.DISABLED) // disabled
                 {
                     RadioActive.Fill = new SolidColorBrush(Colors.Red);
-                    RadioLabel.Text = "No Radio";
-                    RadioFrequency.Text = "Unknown";
+                    RadioLabel.Text = Properties.Resources.OverlayNoRadio;
+                    RadioFrequency.Text = Properties.Resources.ValueUnknown;
 
                     RadioVolume.IsEnabled = false;
 
@@ -293,7 +293,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
 
                 if (currentRadio.modulation == RadioInformation.Modulation.INTERCOM) //intercom
                 {
-                    RadioFrequency.Text = "INTERCOM";
+                    RadioFrequency.Text = Properties.Resources.OverlayIntercom;
                 }
                 else
                 {
@@ -316,6 +316,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
                     else if(currentRadio.modulation == RadioInformation.Modulation.FM)
                     {
                         RadioFrequency.Text += "FM";
+                    }
+                    else if (currentRadio.modulation == RadioInformation.Modulation.SINCGARS)
+                    {
+                        RadioFrequency.Text += "SG";
                     }
                     else if (currentRadio.modulation == RadioInformation.Modulation.HAVEQUICK)
                     {
@@ -413,7 +417,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
                     EncryptionKeySpinner.IsEnabled = false;
                     EncryptionButton.IsEnabled = false;
                     EncryptionButton.Visibility = Visibility.Hidden;
-                    EncryptionButton.Content = "Enable";
+                    EncryptionButton.Content = Properties.Resources.BtnEnable;
 
                     EncryptionTab.Visibility = Visibility.Collapsed;
                 }
@@ -425,7 +429,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
 
                     //disallow encryption toggle
                     EncryptionButton.IsEnabled = false;
-                    EncryptionButton.Content = "Enable";
+                    EncryptionButton.Content = Properties.Resources.BtnEnable;
                     EncryptionButton.Visibility = Visibility.Visible;
                     EncryptionTab.Visibility = Visibility.Visible;
                 }
@@ -438,11 +442,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
 
                     if (currentRadio.enc)
                     {
-                        EncryptionButton.Content = "Disable";
+                        EncryptionButton.Content = Properties.Resources.BtnDisable;
                     }
                     else
                     {
-                        EncryptionButton.Content = "Enable";
+                        EncryptionButton.Content = Properties.Resources.BtnEnable;
                     }
                     EncryptionTab.Visibility = Visibility.Visible;
                 }
@@ -453,7 +457,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
                 EncryptionKeySpinner.IsEnabled = false;
                 EncryptionButton.IsEnabled = false;
                 EncryptionButton.Visibility = Visibility.Hidden;
-                EncryptionButton.Content = "Enable";
+                EncryptionButton.Content = Properties.Resources.BtnEnable;
                 EncryptionTab.Visibility = Visibility.Collapsed;
             }
         }
@@ -553,11 +557,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
 
                     if (currentRadio.enc)
                     {
-                        EncryptionButton.Content = "Enable";
+                        EncryptionButton.Content = Properties.Resources.BtnEnable;
                     }
                     else
                     {
-                        EncryptionButton.Content = "Disable";
+                        EncryptionButton.Content = Properties.Resources.BtnDisable;
                     }
                 }
             }

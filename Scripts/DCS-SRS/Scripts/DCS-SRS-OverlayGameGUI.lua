@@ -1,9 +1,9 @@
--- Version 2.0.8.6
+-- Version 2.0.9.1
 -- Make sure you COPY this file to the same location as the Export.lua as well! 
 -- Otherwise the Overlay will not work
 
 
-net.log("Loading - DCS-SRS Overlay GameGUI - Ciribob: 2.0.8.6 ")
+net.log("Loading - DCS-SRS Overlay GameGUI - Ciribob: 2.0.9.1 ")
 
 local base = _G
 
@@ -77,6 +77,22 @@ srsOverlay.module_specific["M-2000C"] = function(radios)
 					base.Export.GetDevice(20):set_ext_rx(true)
 				else
 					base.Export.GetDevice(20):set_ext_rx(false)
+				end
+			end
+		end
+	end
+
+
+srsOverlay.module_specific["UH-60L"] = function(radios) -- for ARC-201 scanning feature, detects RX-ing
+		for _i,_radio in pairs(radios) do
+			local _isReceiving,_sentBy = srsOverlay.isReceiving(_i)
+			if _i==2 then -- ARC-201 FM1
+				if _isReceiving>0 then
+					base.Export.GetDevice(2):performClickableAction(20101, 1)
+				end
+			elseif _i==5 then -- ARC-201 FM2
+				if _isReceiving>0 then
+					base.Export.GetDevice(9):performClickableAction(20102, 1)
 				end
 			end
 		end
@@ -274,6 +290,8 @@ function srsOverlay.updateRadio()
                         fullMessage = fullMessage.." AM"
                      elseif _radio.modulation == 1 then
                         fullMessage = fullMessage.." FM"
+                     elseif _radio.modulation == 7 then
+                        fullMessage = fullMessage.." SG"
                      elseif _radio.modulation == 4 then
                         fullMessage = fullMessage.." HQ"
                      end
@@ -672,4 +690,4 @@ end
 
 DCS.setUserCallbacks(srsOverlay)
 
-net.log("Loaded - DCS-SRS Overlay GameGUI - Ciribob: 2.0.8.6 ")
+net.log("Loaded - DCS-SRS Overlay GameGUI - Ciribob: 2.0.9.1 ")

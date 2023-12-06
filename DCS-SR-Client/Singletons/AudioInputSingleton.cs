@@ -75,7 +75,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
 
             inputs.Add(new AudioDeviceListItem()
             {
-                Text = "Default Microphone",
+                Text = Properties.Resources.DefaultMicrophone,
                 Value = null
             });
             SelectedAudioInput = inputs[0];

@@ -2,6 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow"
+		xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Properties"
         Name="RadioOverlayWin"
         Title="DCS-SimpleRadio"
         Width="805"
@@ -57,7 +58,7 @@
                        FontSize="13"
                        Foreground="#E7E7E7"
                        Padding="0"
-                       Text="AWACS / GCI Panel" />
+                       Text="{x:Static p:Resources.OverlayAwacsPanel}" />
             <Button Height="15"
                     Margin="0,0,0,0"
                     VerticalAlignment="Center"
@@ -151,7 +152,7 @@
                 Maximum="1.0"
                 Minimum="0.05"
                 Style="{x:Null}"
-                ToolTip="Window Opacity"
+                ToolTip="{x:Static p:Resources.ToolTipOpacity}"
                 ValueChanged="windowOpacitySlider_ValueChanged"
                 Value="1.0" />
 
@@ -167,7 +168,7 @@
                 Grid.Row="4"
                 Grid.Column="4"
                 Click="ToggleGlobalSimultaneousTransmissionButton_Click"
-                Content="Simul. Transmission OFF"
+                Content="{x:Static p:Resources.OverlaySimulTransOFF}"
                 Margin="0,5,25,5"
                 Style="{StaticResource DarkStyle-Button}" />
     </Grid>

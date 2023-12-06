@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Overlay"
         xmlns:radioOverlayWindow="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow"
+		xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Properties"
         Name="RadioOverlayWin"
         Title="DCS-SimpleRadio"
         Width="170"
@@ -109,7 +110,7 @@
                 Maximum="1.0"
                 Minimum="0.05"
                 Style="{x:Null}"
-                ToolTip="Window Opacity"
+                ToolTip="{x:Static p:Resources.ToolTipOpacity}"
                 ValueChanged="windowOpacitySlider_ValueChanged"
                 Value="1.0" />
 

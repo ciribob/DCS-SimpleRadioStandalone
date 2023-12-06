@@ -60,8 +60,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
         private bool irlRadioRXInterference = false;
 
         private readonly SyncedServerSettings serverSettings;
-
-
+        
         public ClientEffectsPipeline()
         {
             profileSettings = Settings.GlobalSettingsStore.Instance.ProfileSettingsStore;
@@ -77,7 +76,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
             _lowPassFilter = BiQuadFilter.LowPassFilter(AudioManager.OUTPUT_SAMPLE_RATE, 4130, 2.0f);
             RefreshSettings();
 
-            amCollisionEffect = CachedAudioEffectProvider.Instance.AMCollision;
+            amCollisionEffect = effectProvider.AMCollision;
            
         }
 
@@ -135,15 +134,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
                 && !lastTransmission.NoAudioEffects
                 && (lastTransmission.Modulation == RadioInformation.Modulation.AM
                     || lastTransmission.Modulation == RadioInformation.Modulation.FM
+                    || lastTransmission.Modulation == RadioInformation.Modulation.SINCGARS
                     || lastTransmission.Modulation == RadioInformation.Modulation.HAVEQUICK)
                 && irlRadioRXInterference)
             {
                 if (transmissions.Count > 1)
                 {
                     //All AM is wrecked if more than one transmission
-                    //For HQ - only if more than TWO transmissions
-                    if (lastTransmission.Modulation == RadioInformation.Modulation.AM && amCollisionEffect.Loaded
-                    || lastTransmission.Modulation == RadioInformation.Modulation.HAVEQUICK && transmissions.Count > 2)
+                    //For HQ - only if more than TWO transmissions and its totally fucked
+                    if (lastTransmission.Modulation == RadioInformation.Modulation.HAVEQUICK && transmissions.Count > 2 && amCollisionEffect.Loaded)
                     {
                         //replace the buffer with our own
                         int outIndex = 0;
@@ -161,7 +160,33 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
 
                         process = false;
                     }
-                    else if (lastTransmission.Modulation == RadioInformation.Modulation.FM)
+                    else if (lastTransmission.Modulation == RadioInformation.Modulation.AM && amCollisionEffect.Loaded)
+                    {
+                        //AM https://www.youtube.com/watch?v=yHRDjhkrDbo
+                        //Heterodyne tone AND audio from multiple transmitters in a horrible mess
+                        //TODO improve this
+
+              
+                        //process here first
+                        tempBuffer = ProcessClientAudioSamples(tempBuffer, clientTransmissionLength, 0, lastTransmission);
+                        process = false;
+
+                        //apply heterodyne tone to the mixdown
+                        //replace the buffer with our own
+                        int outIndex = 0;
+                        while (outIndex < clientTransmissionLength)
+                        {
+                            var amByte = this.amCollisionEffect.AudioEffectFloat[amEffectPosition++];
+
+                            tempBuffer[outIndex++] += ((amByte * amCollisionVol) * lastTransmission.Volume);
+
+                            if (amEffectPosition == amCollisionEffect.AudioEffectFloat.Length)
+                            {
+                                amEffectPosition = 0;
+                            }
+                        }
+                    }
+                    else if (lastTransmission.Modulation == RadioInformation.Modulation.FM || lastTransmission.Modulation == RadioInformation.Modulation.SINCGARS)
                     {
                         //FM picketing / picket fencing - pick one transmission at random
                         //TODO improve this to pick the stronger frequency?
@@ -176,7 +201,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
 
                         clientTransmissionLength = transmission.PCMMonoAudio.Length;
                     }
-
                 }
             }
 
@@ -290,7 +314,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
                     }
                 }
 
-                if (modulation == RadioInformation.Modulation.FM
+                if ((modulation == RadioInformation.Modulation.FM || modulation == RadioInformation.Modulation.SINCGARS)
                     && effectProvider.NATOTone.Loaded
                     && natoToneEnabled)
                 {
@@ -396,7 +420,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
                         }
                     }
                 }
-                else if (modulation == RadioInformation.Modulation.FM)
+                else if (modulation == RadioInformation.Modulation.FM || modulation == RadioInformation.Modulation.SINCGARS)
                 {
                     if (effectProvider.FMNoise.Loaded)
                     {

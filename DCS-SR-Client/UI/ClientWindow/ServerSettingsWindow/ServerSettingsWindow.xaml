@@ -4,7 +4,8 @@
                       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                      Title="Server Settings"
+					  xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Properties"
+                      Title="{x:Static p:Resources.ServerWindowTitle}"
                       Width="300"
                       Height="300"
                       ResizeMode="NoResize">
@@ -39,72 +40,72 @@
                Grid.Column="0"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Coalition Security" />
+               Content="{x:Static p:Resources.SrvCoalitionSecurity}" />
 
         <Label Name="CoalitionSecurity"
                Grid.Row="0"
                Grid.Column="1"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Unknown" />
+               Content="{x:Static p:Resources.ValueUnknown}" />
 
         <Label Grid.Row="1"
                Grid.Column="0"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Spectator Audio" />
+               Content="{x:Static p:Resources.SrvSpectatorAudio}" />
 
         <Label Name="SpectatorAudio"
                Grid.Row="1"
                Grid.Column="1"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Unknown" />
+               Content="{x:Static p:Resources.ValueUnknown}" />
 
         <Label Grid.Row="2"
                Grid.Column="0"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Line Of Sight" />
+               Content="{x:Static p:Resources.SrvLineOfSight}" />
 
         <Label Name="LineOfSight"
                Grid.Row="2"
                Grid.Column="1"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Unknown" />
+               Content="{x:Static p:Resources.ValueUnknown}" />
 
         <Label Grid.Row="3"
                Grid.Column="0"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Distance Limitations" />
+               Content="{x:Static p:Resources.SrvDistance}" />
 
         <Label Name="Distance"
                Grid.Row="3"
                Grid.Column="1"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Unknown" />
+               Content="{x:Static p:Resources.ValueUnknown}" />
 
         <Label Grid.Row="4"
                Grid.Column="0"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="IRL Radio Tx Behaviour" />
+               Content="{x:Static p:Resources.SrvRealRadio}" />
 
         <Label Name="RealRadio"
                Grid.Row="4"
                Grid.Column="1"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Unknown" />
+               Content="{x:Static p:Resources.ValueUnknown}" />
 
         <Label Grid.Row="5"
                Grid.Column="0"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="IRL Radio Rx Interfence" />
+               Content="{x:Static p:Resources.SrvRadioRXInterference}" />
 
 
         <Label Name="RadioRXInterference"
@@ -112,14 +113,14 @@
                Grid.Column="1"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Unknown" />
+               Content="{x:Static p:Resources.ValueUnknown}" />
 
 
         <Label Grid.Row="6"
                Grid.Column="0"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Radio Expansion" />
+               Content="{x:Static p:Resources.SrvRadioExpansion}" />
 
 
         <Label Name="RadioExpansion"
@@ -127,91 +128,91 @@
                Grid.Column="1"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Unknown" />
+               Content="{x:Static p:Resources.ValueUnknown}" />
 
         <Label Grid.Row="7"
                Grid.Column="0"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="External AWACS Mode" />
+               Content="{x:Static p:Resources.SrvExternalAWACSMode}" />
 
         <Label Name="ExternalAWACSMode"
                Grid.Row="7"
                Grid.Column="1"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Unknown" />
+               Content="{x:Static p:Resources.ValueUnknown}" />
 
         <Label Grid.Row="8"
                Grid.Column="0"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Allow Radio Encryption" />
+               Content="{x:Static p:Resources.SrvAllowRadioEncryption}" />
 
         <Label Name="AllowRadioEncryption"
                Grid.Row="8"
                Grid.Column="1"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Unknown" />
+               Content="{x:Static p:Resources.ValueUnknown}" />
 
         <Label Grid.Row="9"
                Grid.Column="0"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Strict Radio Encryption" />
+               Content="{x:Static p:Resources.SrvStrictRadioEncryption}" />
 
         <Label Name="StrictRadioEncryption"
                Grid.Row="9"
                Grid.Column="1"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Unknown" />
+               Content="{x:Static p:Resources.ValueUnknown}" />
 
         <Label Grid.Row="10"
                Grid.Column="0"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Show Tuned Client Count" />
+               Content="{x:Static p:Resources.SrvTunedClientCount}" />
 
         <Label Name="TunedClientCount"
                Grid.Row="10"
                Grid.Column="1"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Unknown" />
+               Content="{x:Static p:Resources.ValueUnknown}" />
 
         <Label Grid.Row="11"
                Grid.Column="0"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Show Transmitter Name" />
+               Content="{x:Static p:Resources.SrvShowTransmitterName}" />
 
         <Label Name="ShowTransmitterName"
                Grid.Row="11"
                Grid.Column="1"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Unknown" />
+               Content="{x:Static p:Resources.ValueUnknown}" />
 
         <Label Grid.Row="12"
                Grid.Column="0"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Server Version" />
+               Content="{x:Static p:Resources.SrvServerVersion}" />
 
         <Label Name="ServerVersion"
                Grid.Row="12"
                Grid.Column="1"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Unknown" />
+               Content="{x:Static p:Resources.ValueUnknown}" />
 
         <Label Grid.Row="13"
                Grid.Column="0"
                HorizontalContentAlignment="Center"
                VerticalContentAlignment="Center"
-               Content="Retransmit Node Limit" />
+               Content="{x:Static p:Resources.SrvNodeLimit}" />
 
         <Label Name="NodeLimit"
                Grid.Row="13"
@@ -230,7 +231,7 @@
                 Width="80"
                 Margin="5,5,5,5"
                 Click="CloseButton_OnClick"
-                Content="Close"
+                Content="{x:Static p:Resources.BtnClose}"
                 HorizontalAlignment="Center"/>
      
 

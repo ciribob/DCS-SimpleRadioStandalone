@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Security.Principal;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using NLog;
@@ -21,7 +23,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 
         public static readonly string MINIMUM_PROTOCOL_VERSION = "1.9.0.0";
 
-        public static readonly string VERSION = "2.0.8.6";
+        public static readonly string VERSION = "2.0.9.1";
 
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
@@ -98,10 +100,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 
         public static void ShowUpdateAvailableDialog(string branch, Version version, string url, bool beta)
         {
+            //Thread.CurrentThread.CurrentUICulture = new CultureInfo("zh-CN");
             _logger.Warn($"New {branch} version available on GitHub: {version}");
 
-            var result = MessageBox.Show($"New {branch} version {version} available!\n\nDo you want to Auto update? This will close SRS\n\nYes - Auto Update\nNo - Manual Update\nCancel - Ignore",
-                "Update available", MessageBoxButton.YesNoCancel, MessageBoxImage.Information);
+            var result = MessageBox.Show($"{Properties.Resources.MsgBoxUpdate1} {branch} {Properties.Resources.MsgBoxUpdate2} {version} {Properties.Resources.MsgBoxUpdate3}\n\n{Properties.Resources.MsgBoxUpdate4}",
+                Properties.Resources.MsgBoxUpdateTitle, MessageBoxButton.YesNoCancel, MessageBoxImage.Information);
 
             if (result == MessageBoxResult.Yes)
             {
@@ -111,8 +114,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show($"Unable to Auto Update - please download latest version manually",
-                        "Auto Update Error", MessageBoxButton.YesNoCancel, MessageBoxImage.Information);
+                    MessageBox.Show($"{Properties.Resources.MsgBoxUpdateFailed}",
+                        Properties.Resources.MsgBoxUpdateFailedTitle, MessageBoxButton.YesNoCancel, MessageBoxImage.Information);
 
                     Process.Start(url);
                 }

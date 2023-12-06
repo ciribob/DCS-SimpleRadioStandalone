@@ -313,8 +313,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
                 RadioId > dcsPlayerRadioInfo.radios.Length - 1)
             {
                 RadioActive.Fill = new SolidColorBrush(Colors.Red);
-                RadioLabel.Text = "No Radio";
-                RadioFrequency.Text = "Unknown";
+                RadioLabel.Text = Properties.Resources.OverlayNoRadio;
+                RadioFrequency.Text = Properties.Resources.ValueUnknown;
 
                 RadioMetaData.Text = "";
 
@@ -363,8 +363,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
                 if (currentRadio == null || currentRadio.modulation == RadioInformation.Modulation.DISABLED) // disabled
                 {
                     RadioActive.Fill = new SolidColorBrush(Colors.Red);
-                    RadioLabel.Text = "No Radio";
-                    RadioFrequency.Text = "Unknown";
+                    RadioLabel.Text = Properties.Resources.OverlayNoRadio;
+                    RadioFrequency.Text = Properties.Resources.ValueUnknown;
                     RadioMetaData.Text = "";
 
 
@@ -379,7 +379,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
                 }
                 if (currentRadio.modulation == RadioInformation.Modulation.INTERCOM) //intercom
                 {
-                    RadioFrequency.Text = "INTERCOM";
+                    RadioFrequency.Text = Properties.Resources.OverlayIntercom;
                     RadioMetaData.Text = "";
                 }
                 else
@@ -389,16 +389,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
                         || currentRadio.modulation == RadioInformation.Modulation.DISABLED)
                     {
                         if(currentRadio.modulation == RadioInformation.Modulation.MIDS ) {
-							string MIDSChannel =
+							            string MIDSChannel =
 		                        ((currentRadio.freq - 1030000000) / (MHz / 10)).ToString( "0",
 			                        CultureInfo.InvariantCulture );
-							RadioFrequency.Text = $"CHN {MIDSChannel}";
-						}
+							                RadioFrequency.Text = $"CHN {MIDSChannel}";
+						        }
                         else {
-							RadioFrequency.Text =
+							          RadioFrequency.Text =
 	                            (currentRadio.freq / MHz).ToString( "0.000",
 		                            CultureInfo.InvariantCulture ); //make number UK / US style with decimals not commas!
-						}
+						                 }
                     }
 
                     if (currentRadio.modulation == RadioInformation.Modulation.AM)
@@ -409,14 +409,19 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
                     {
                         RadioMetaData.Text = "FM";
                     }
+                    else if (currentRadio.modulation == RadioInformation.Modulation.SINCGARS)
+                    {
+                        RadioMetaData.Text = "SG";
+                    }
                     else if (currentRadio.modulation == RadioInformation.Modulation.HAVEQUICK)
                     {
                         RadioMetaData.Text = "HQ";
                     }
-					else if ( currentRadio.modulation == RadioInformation.Modulation.MIDS ) {
-						RadioMetaData.Text = "MIDS";
-					}
-					else
+					          else if ( currentRadio.modulation == RadioInformation.Modulation.MIDS ) 
+                    {
+						            RadioMetaData.Text = "MIDS";
+					          }
+					          else
                     {
                         RadioMetaData.Text += "";
                     }
@@ -538,7 +543,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
                     EncryptionKeySpinner.IsEnabled = false;
                     EncryptionButton.IsEnabled = false;
                     EncryptionButton.Visibility = Visibility.Hidden;
-                    EncryptionButton.Content = "Enable";
+                    EncryptionButton.Content = Properties.Resources.BtnEnable;
 
                     EncryptionTab.Visibility = Visibility.Collapsed;
                 }
@@ -550,7 +555,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
 
                     //disallow encryption toggle
                     EncryptionButton.IsEnabled = false;
-                    EncryptionButton.Content = "Enable";
+                    EncryptionButton.Content = Properties.Resources.BtnEnable;
                     EncryptionButton.Visibility = Visibility.Visible;
                     EncryptionTab.Visibility = Visibility.Visible;
                 }
@@ -563,11 +568,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
 
                     if (currentRadio.enc)
                     {
-                        EncryptionButton.Content = "Disable";
+                        EncryptionButton.Content = Properties.Resources.BtnDisable;
                     }
                     else
                     {
-                        EncryptionButton.Content = "Enable";
+                        EncryptionButton.Content = Properties.Resources.BtnEnable;
                     }
                     EncryptionTab.Visibility = Visibility.Visible;
                 }
@@ -578,7 +583,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
                 EncryptionKeySpinner.IsEnabled = false;
                 EncryptionButton.IsEnabled = false;
                 EncryptionButton.Visibility = Visibility.Hidden;
-                EncryptionButton.Content = "Enable";
+                EncryptionButton.Content = Properties.Resources.BtnEnable;
                 EncryptionTab.Visibility = Visibility.Collapsed;
             }
         }
@@ -657,11 +662,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
 
                     if (currentRadio.enc)
                     {
-                        EncryptionButton.Content = "Enable";
+                        EncryptionButton.Content = Properties.Resources.BtnEnable;
                     }
                     else
                     {
-                        EncryptionButton.Content = "Disable";
+                        EncryptionButton.Content = Properties.Resources.BtnDisable;
                     }
                 }
             }

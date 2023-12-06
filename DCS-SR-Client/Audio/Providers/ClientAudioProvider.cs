@@ -13,6 +13,7 @@ using NLog;
 using static Ciribob.DCS.SimpleRadio.Standalone.Common.RadioInformation;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Recording;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
+using System.Collections.Generic;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client
 {
@@ -26,15 +27,28 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private bool passThrough;
-       // private readonly WaveFileWriter waveWriter;
+        private readonly CachedAudioEffectProvider audioEffectProvider = CachedAudioEffectProvider.Instance;
+
+        private bool passThrough; 
+        
+       // private WaveFileWriter waveWriter;
+
+        //progress per radio
+        private Dictionary<string, int>[] ambientEffectProgress;
+
+        private float ambientCockpitEffectVolume = 1.0f;
+        private bool ambientCockpitEffectEnabled = true;
+
+        private ProfileSettingsStore settingsStore = GlobalSettingsStore.Instance.ProfileSettingsStore;
+        private double lastLoaded = 0;
+
         public ClientAudioProvider(bool passThrough = false)
         {
             this.passThrough = passThrough;
-
+            var radios = ClientStateSingleton.Instance.DcsPlayerRadioInfo.radios.Length;
             if (!passThrough)
             {
-                var radios = ClientStateSingleton.Instance.DcsPlayerRadioInfo.radios.Length;
+               
                 JitterBufferProviderInterface =
                     new JitterBufferProviderInterface[radios];
 
@@ -44,9 +58,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                         new JitterBufferProviderInterface(new WaveFormat(AudioManager.OUTPUT_SAMPLE_RATE, 1));
 
                 }
-                
             }
-           // waveWriter = new NAudio.Wave.WaveFileWriter($@"C:\\temp\\output{RandomFloat()}.wav", new WaveFormat(AudioManager.OUTPUT_SAMPLE_RATE, 1));
+
+            ambientEffectProgress = new Dictionary<string, int>[radios];
+
+            for (int i = 0; i < radios; i++)
+            {
+                ambientEffectProgress[i] = new Dictionary<string, int>();
+            }
+
+          //  waveWriter = new NAudio.Wave.WaveFileWriter($@"C:\\temp\\output{RandomFloat()}.wav", new WaveFormat(AudioManager.OUTPUT_SAMPLE_RATE, 1));
             
             _decoder = OpusDecoder.Create(AudioManager.OUTPUT_SAMPLE_RATE, 1);
             _decoder.ForwardErrorCorrection = false;
@@ -77,6 +98,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
 
         public JitterBufferAudio AddClientAudioSamples(ClientAudio audio)
         {
+            ReLoadSettings();
 
             //sort out volume
             //            var timer = new Stopwatch();
@@ -115,6 +137,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             {
                 //adjust for LOS + Distance + Volume
                 AdjustVolumeForLoss(audio);
+
+                //Add cockpit effect
+                if(ambientCockpitEffectEnabled)
+                    AddCockpitAmbientAudio(audio);
             }
             else
             {
@@ -124,7 +150,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             if (newTransmission)
             {
                 // System.Diagnostics.Debug.WriteLine(audio.ClientGuid+"ADDED");
-                //append ms of silence - this functions as our jitter buffer??
+                //append ms of silence - this functions as our jitter buffer
                 var silencePad = (AudioManager.OUTPUT_SAMPLE_RATE / 1000) * SILENCE_PAD;
                 var newAudio = new float[audio.PcmAudioFloat.Length + silencePad];
                 Buffer.BlockCopy(audio.PcmAudioFloat, 0, newAudio, silencePad, audio.PcmAudioFloat.Length);
@@ -204,6 +230,65 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             //timer.Stop();
         }
 
+        //high throughput - cache these settings for 3 seconds
+        private void ReLoadSettings()
+        {
+            long now = DateTime.Now.Ticks;
+            if ((now - lastLoaded) > 30000000)
+            {
+                lastLoaded = now;
+                ambientCockpitEffectEnabled = settingsStore.GetClientSettingBool(ProfileSettingsKeys.AmbientCockpitNoiseEffect);
+                ambientCockpitEffectVolume =
+                    settingsStore.GetClientSettingFloat(ProfileSettingsKeys.AmbientCockpitNoiseEffectVolume);
+            }
+                
+        }
+        
+        private void AddCockpitAmbientAudio(ClientAudio clientAudio)
+        {
+ //           clientAudio.Ambient.abType = "uh1";
+ //           clientAudio.Ambient.vol = 0.35f;
+
+            var abType = clientAudio.Ambient?.abType;
+
+            if (string.IsNullOrEmpty(abType))
+            {
+                return;
+            }
+
+            var effect = audioEffectProvider.GetAmbientEffect(clientAudio.Ambient.abType);
+
+            var vol = clientAudio.Ambient.vol;
+
+            var ambientEffectProg = ambientEffectProgress[clientAudio.ReceivedRadio];
+
+            if (effect.Loaded)
+            {
+                var effectLength = effect.AudioEffectFloat.Length;
+
+                if (!ambientEffectProg.TryGetValue(clientAudio.Ambient.abType, out int progress))
+                {
+                    progress = 0;
+                    ambientEffectProg[clientAudio.Ambient.abType] = 0;
+                }
+
+                var audio = clientAudio.PcmAudioFloat;
+                for (var i = 0; i < audio.Length; i++)
+                {
+                    audio[i] += (effect.AudioEffectFloat[progress] * (vol * ambientCockpitEffectVolume));
+
+                    progress++;
+
+                    if (progress >= effectLength)
+                    {
+                        progress = 0;
+                    }
+                }
+
+                ambientEffectProg[clientAudio.Ambient.abType] = progress;
+            }
+        }
+
         private void AdjustVolumeForLoss(ClientAudio clientAudio)
         {
             if (clientAudio.Modulation == (short)Modulation.MIDS || clientAudio.Modulation == (short)Modulation.SATCOM)
@@ -258,9 +343,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
         //destructor to clear up opus
         ~ClientAudioProvider()
         {
-            // waveWriter.Flush();
-            // waveWriter.Dispose();
-            _decoder?.Dispose();
+            // waveWriter?.Flush();
+            // waveWriter?.Dispose();
+            // waveWriter = null;
+            // _decoder?.Dispose();
             _decoder = null;
         }
 

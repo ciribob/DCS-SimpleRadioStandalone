@@ -17,7 +17,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly ConcurrentDictionary<string, SRClient> _clients;
         private readonly HashSet<IPAddress> _bannedIps;
 
         // Received data string.
@@ -25,16 +24,29 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
 
         public string SRSGuid { get; set; }
 
+        /// <summary>
+        /// Stores remote address. Only available after connect.
+        /// </summary>
+        private string RemoteAddress { get; set; } = string.Empty;
+        
+        /// <summary>
+        /// Stores remote port. Only available after connect.
+        /// </summary>
+        private string RemotePort { get; set; } = string.Empty;
+
         public SRSClientSession(ServerSync server, ConcurrentDictionary<string, SRClient> client, HashSet<IPAddress> bannedIps) : base(server)
         {
-            _clients = client;
             _bannedIps = bannedIps;
         }
 
         protected override void OnConnected()
         {
             var clientIp = (IPEndPoint)Socket.RemoteEndPoint;
+            RemoteAddress = clientIp.Address.ToString();
+            RemotePort = clientIp.Port.ToString();
 
+            LogOperation("Client connected");
+            
             if (_bannedIps.Contains(clientIp.Address))
             {
                 Logger.Warn("Disconnecting Banned Client -  " + clientIp.Address + " " + clientIp.Port);
@@ -55,6 +67,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
 
         protected override void OnDisconnected()
         {
+            LogOperation("Client disconnected");
+            RemoteAddress = "";
+            RemotePort = "";
+            
             _receiveBuffer.Clear();
             ((ServerSync)Server).HandleDisconnect(this);
         }
@@ -81,6 +97,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
                 }
                 catch (Exception ex)
                 {
+                    LogOperation("Get network message");
                     Logger.Error(ex, $"Unable to process JSON: \n {message}");
                 }
 
@@ -113,5 +130,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
             Logger.Error($"Caught Socket Error: {error}");
         }
 
+        /// <summary>
+        /// Logs information about the remote ip and port attempting to perform some operation.
+        /// </summary>
+        /// <param name="operation">
+        /// Plain text name of the operation.
+        /// </param>
+        private void LogOperation(string operation)
+        {
+            Logger.Info($"{operation}: IP {RemoteAddress} | Port {RemotePort}");
+        }
     }
 }

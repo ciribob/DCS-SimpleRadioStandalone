@@ -89,7 +89,8 @@
                 VerticalAlignment="Top"
                 Click="Remove_Plugin"
                 Content="Remove DCS-SRS" />
-        <Label Width="447"
+        <Label x:Name="step4"
+			   Width="447"
                Height="40"
                Margin="10,223,0,0"
                HorizontalAlignment="Left"
@@ -111,7 +112,8 @@
             VerticalAlignment="Top"
             FontSize="12"
             TextWrapping="Wrap"
-            ><Run Text="Please Note: Server installs will need to manually install the DCS-SRS-AutoConnectGameGUI.lua - found in the SRS Install Location in the Scripts folder. Installation instructions are "/><Run Text="in"/><Run Text=" the file."/></TextBlock>
+            ><Run x:Name="ServerNote"
+				  Text="Please Note: Server installs will need to manually install the DCS-SRS-AutoConnectGameGUI.lua - found in the SRS Install Location in the Scripts folder. Installation instructions are in the file."/></TextBlock>
 
     </Grid>
 </Window>

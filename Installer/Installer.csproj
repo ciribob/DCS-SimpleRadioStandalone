@@ -102,6 +102,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Costura, Version=1.6.2.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.1.6.2\lib\dotnet\Costura.dll</HintPath>
@@ -174,6 +177,11 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Properties\Resources.zh-CN.Designer.cs">
+      <DependentUpon>Resources.zh-CN.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -184,6 +192,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="Properties\Resources.zh-CN.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.zh-CN.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -261,7 +273,11 @@ copy /Y "$(SolutionDir)DCS-SR-Client\bin\x64\Release\WebRTCVad.dll" "$(SolutionD
 xcopy /Y /e "$(SolutionDir)Scripts" "$(SolutionDir)install-build\Scripts"
 if not exist "$(SolutionDir)install-build\Scripts\DCS-SRS\bin\" mkdir "$(SolutionDir)install-build\Scripts\DCS-SRS\bin\"
 copy /Y "$(SolutionDir)x64\Release\srs.dll" "$(SolutionDir)install-build\Scripts\DCS-SRS\bin\srs.dll"
-del /S $(SolutionDir)install-build\*.git*</PostBuildEvent>
+
+if not exist "$(SolutionDir)install-build\zh-CN" mkdir "$(SolutionDir)install-build\zh-CN"
+copy /Y "$(SolutionDir)DCS-SR-Client\bin\x64\Release\zh-CN\SR-ClientRadio.resources.dll" "$(SolutionDir)install-build\zh-CN\SR-ClientRadio.resources.dll"
+copy /Y "$(SolutionDir)DCS-SR-Client\bin\x64\Release\zh-CN\DCS-SR-Common.resources.dll" "$(SolutionDir)install-build\zh-CN\DCS-SR-Common.resources.dll"
+copy /Y "$(SolutionDir)Installer\bin\x64\Release\zh-CN\Installer.resources.dll" "$(SolutionDir)install-build\zh-CN\Installer.resources.dll"</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\Fody.2.1.2\build\netstandard1.0\Fody.targets" Condition="Exists('..\packages\Fody.2.1.2\build\netstandard1.0\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

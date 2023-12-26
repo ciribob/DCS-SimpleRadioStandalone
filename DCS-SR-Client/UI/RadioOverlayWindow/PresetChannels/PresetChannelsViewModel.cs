@@ -92,9 +92,21 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.Preset
             }
             else
             {
-                //SR.MIDS_FREQ = 1030.0 * 1000000-- Start at UHF 10300
-               // SR.MIDS_FREQ_SEPARATION = 1.0 * 100000-- 0.1 MHZ between MIDS channels
-               for (int i = 1; i < 127; i++)
+				//SR.MIDS_FREQ = 1030.0 * 1000000-- Start at UHF 10300
+				// SR.MIDS_FREQ_SEPARATION = 1.0 * 100000-- 0.1 MHZ between MIDS channels
+				int i = 1;
+				foreach ( var channel in _channelsStore.LoadFromStore( radio.name ) ) {
+					if ( ((double)channel.Value) <= 127000000
+						&& ((double)channel.Value) >= 1000000 ) {
+						channel.Channel = i++;
+                        channel.Value = ((double)channel.Value/10)+(1030*1000000);
+						PresetChannels.Add( channel );
+					}
+				}
+
+
+                /*
+				for (int i = 1; i < 127; i++)
                {
                    PresetChannels.Add(new PresetChannel
                    {
@@ -103,6 +115,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.Preset
                        Value = (i * 100000.0) + (1030.0 * 1000000.0)
                    });
                }
+                */
             }
         }
 

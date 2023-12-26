@@ -83,11 +83,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Utils
                 {
                     if (delta)
                     {
-                        //ignore as its done via set channel which is not delta
-                        if (radio.modulation == RadioInformation.Modulation.MIDS)
-                        {
-                            return false;
-                        }
 
                         if (GlobalSettingsStore.Instance.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.RotaryStyleIncrement))
                         {

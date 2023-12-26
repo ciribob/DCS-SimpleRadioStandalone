@@ -50,7 +50,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
             //    Opacity = opacity;
             windowOpacitySlider.Value = Opacity;
 
-            radioControlGroup[0] = radio1;
+			radioControlGroup = new RadioControlGroup[ 10 ];
+			radioControlGroup[0] = radio1;
             radioControlGroup[1] = radio2;
             radioControlGroup[2] = radio3;
             radioControlGroup[3] = radio4;

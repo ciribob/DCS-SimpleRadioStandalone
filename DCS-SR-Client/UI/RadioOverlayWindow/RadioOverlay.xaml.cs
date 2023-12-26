@@ -59,7 +59,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
             Opacity = _globalSettings.GetPositionSetting(GlobalSettingsKeys.RadioOpacity).DoubleValue;
             WindowOpacitySlider.Value = Opacity;
 
-            radioControlGroup[0] = Radio1;
+            radioControlGroup = new RadioControlGroup[ 5 ];
+			radioControlGroup[0] = Radio1;
             radioControlGroup[1] = Radio2;
             radioControlGroup[2] = Radio3;
             radioControlGroup[3] = Radio4;

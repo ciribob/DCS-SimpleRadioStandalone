@@ -168,7 +168,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 
             // Force an immediate update of radio information
             _clientStateSingleton.LastSent = 0;
-
+            _clientStateSingleton.DcsPlayerRadioInfo.LastUpdate = DateTime.Now.Ticks;
             Task.Factory.StartNew(() =>
             {
                 Logger.Debug("Starting external AWACS mode loop");

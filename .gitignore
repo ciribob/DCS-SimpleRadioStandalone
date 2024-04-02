@@ -263,3 +263,6 @@ install-build/
 sign.bat
 
 .leu
+
+# Fody Generated Files
+*.xsd

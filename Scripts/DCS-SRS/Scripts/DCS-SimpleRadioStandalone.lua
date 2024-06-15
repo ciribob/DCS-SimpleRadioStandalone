@@ -2405,6 +2405,13 @@ local _oh58RetranPersist = nil -- For persistence of retrans variable
 function SR.exportRadioOH58D(_data)
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = true, desc = "VOX control for intercom volume" }
 
+    if _lastUnitId ~= _data.unitId then
+        -- New aircraft; VOX volume is at 0
+        pcall(function()
+            GetDevice(42):performClickableAction(3159, 1) -- Pilot Vox
+            GetDevice(42):performClickableAction(3176, 1) -- CoPilot Vox
+        end)
+    end
 
     _data.radios[1].name = "Intercom"
     _data.radios[1].freq = 100.0

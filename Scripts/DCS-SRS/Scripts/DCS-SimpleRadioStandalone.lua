@@ -3910,29 +3910,30 @@ function SR.exportRadioFA18C(_data)
     _radio.freq = SR.getRadioFrequency(39)
     _radio.modulation = SR.getRadioModulation(39)
     _radio.volume = SR.getRadioVolume(0, 123, { 0.0, 1.0 }, false)
--- _radio.encMode = 2 -- Mode 2 is set by aircraft
+    -- _radio.encMode = 2 -- Mode 2 is set by aircraft
 
-_fa18.radio2.guard = getGuardFreq(_radio.freq, _fa18.radio2.guard, _radio.modulation)
-_radio.secFreq = _fa18.radio2.guard
+    _fa18.radio2.guard = getGuardFreq(_radio.freq, _fa18.radio2.guard, _radio.modulation)
+    _radio.secFreq = _fa18.radio2.guard
 
--- KY-58 Radio Encryption
-local _ky58Power = SR.round(SR.getButtonPosition(447), 0.1)
-if _ky58Power == 0.1 and SR.round(SR.getButtonPosition(444), 0.1) == 0.1 then
-    -- mode switch set to C and powered on
-    -- Power on!
+    -- KY-58 Radio Encryption
+    local _ky58Power = SR.round(SR.getButtonPosition(447), 0.1)
+    local _ky58PoweredOn = _ky58Power == 0.1
+    if _ky58PoweredOn and SR.round(SR.getButtonPosition(444), 0.1) == 0.1 then
+        -- mode switch set to C and powered on
+        -- Power on!
 
-    -- Get encryption key
-    local _channel = SR.getSelectorPosition(446, 0.1) + 1
-    if _channel > 6 then
-        _channel = 6 -- has two other options - lock to 6
+        -- Get encryption key
+        local _channel = SR.getSelectorPosition(446, 0.1) + 1
+        if _channel > 6 then
+            _channel = 6 -- has two other options - lock to 6
+        end
+
+        _radio = _data.radios[2 + SR.getSelectorPosition(144, 0.3)]
+        _radio.encMode = 2 -- Mode 2 is set by aircraft
+        _radio.encKey = _channel
+        _radio.enc = true
+
     end
-
-    _radio = _data.radios[2 + SR.getSelectorPosition(144, 0.3)]
-    _radio.encMode = 2 -- Mode 2 is set by aircraft
-    _radio.encKey = _channel
-    _radio.enc = true
-
-end
 
 
     -- MIDS
@@ -4101,6 +4102,39 @@ end
     else
         -- engine off
         _data.ambient = {vol = 0, abType = 'fa18' }
+    end
+
+    -- Relay (RLY):
+    local commRelaySwitch = 350 -- 3-pos: PLAIN/OFF/CIPHER.
+    local commGuardXmit = 351 -- 3-pos: COMM1/OFF/COMM2.
+
+    -- If relay is not OFF, it creates a 2-way relay between COMM 1 and COMM 2.
+    local commRelaySwitchPosition = SR.getButtonPosition(commRelaySwitch)
+    if  commRelaySwitchPosition ~= 0 then
+        local comm1 = 2
+        local comm2 = 3
+        
+        local spacing = math.abs(_data.radios[comm1].freq - _data.radios[comm2].freq)
+        
+        local ky58Desired = commRelaySwitchPosition == 1
+        
+        -- we can retransmit if:
+        -- * The two radios are at least 10MHz apart.
+        -- * IF cipher is requested, KY-58 must be powered on.
+        if spacing >= 10e6 and (not ky58Desired or _ky58PoweredOn) then
+            -- Apply params on COMM 1 (index 2) and COMM 2 (index 3)
+            for commIdx=2,3 do
+                -- Force in-cockpit
+                _data.radios[commIdx].rtMode = 0
+                -- Set as relay
+                _data.radios[commIdx].retransmit = true
+                -- Pilot can no longer transmit on them.
+                _data.radios[commIdx].rxOnly = true
+
+                -- Keep encryption only if relaying through the KY-58.
+                _data.radios[commIdx].enc = _data.radios[commIdx].enc and ky58Desired
+            end
+        end
     end
 
     return _data

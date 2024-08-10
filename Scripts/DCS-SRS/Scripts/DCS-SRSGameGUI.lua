@@ -67,36 +67,59 @@ SRS.onSimulationFrame = function()
 end
 
 SRS.sendUpdate = function(playerID)
-  
-    local _update = {
-        name = "",
-        side = 0,
-        seat = 0,
-    }
+	local _update = {
+		name = "",
+		side = 0,
+		type = "?",
+		slot = 0,
+		seat = 0,
+	}
 
-    _update.name = net.get_player_info(playerID, "name" )
-	_update.side = net.get_player_info(playerID,"side")
+	_update.name = net.get_player_info(playerID, "name" )
+	_update.side = net.get_player_info(playerID, "side")
 
-	local slot =  net.get_player_info(playerID,"slot")
+	local _player_slot =  net.get_player_info(playerID, 'slot')
 
-	if slot and slot ~= '' then 
-		slot = tostring(slot)
-	    
-	    -- Slot 2744_2 -- backseat slot is Unit ID  _2 
-	    if string.find(tostring(slot), "_", 1, true) then
-	        --extract substring - get the seat ID
-	        slot = string.sub(slot, string.find(slot, "_", 1, true)+1, string.len(slot))
-
-	        local slotNum = tonumber(slot)
-
-	        if slotNum ~= nil and slotNum >= 1 then
-	        	_update.seat = slotNum -1 -- -1 as seat starts at 2
-	        end
-	    end
-	end
+    -- Parsing implimentation thanks to Perun and SpecialK
+    -- https://github.com/Special-K-s-Flightsim-Bots/DCSServerBot/blob/695a36824d373e4b92a0559f6466ad566c2ad35b/Scripts/net/DCSServerBot/DCSServerBotUtils.lua#L94
+	if _player_slot and _player_slot ~= '' then
+        if not(string.find(_player_slot, 'red') or string.find(_player_slot, 'blue')) then
+            -- Player took model
+            _update.slot = _player_slot
+            _update.seat = 0
+            if (not tonumber(_player_slot)) then
+                -- If this is multiseat slot parse master slot and look for seat number
+                _t_start, _t_end = string.find(_player_slot, '_%d+')
+                if _t_start then
+                    -- This is co-player
+                    _update.slot = tonumber(string.sub(_player_slot, 0 , _t_start -1 ))
+                    _update.seat = tonumber(string.sub(_player_slot, _t_start + 1, _t_end ))
+                end
+            else
+                _update.slot = tonumber(_player_slot)
+            end
+            _update.type = tostring(DCS.getUnitType(_update.slot))
+        else
+            -- Deal with the special slots added by Combined Arms and Spectators
+            if string.find(_player_slot, 'artillery_commander') then
+                _update.type = "artillery_commander"
+            elseif string.find(_player_slot, 'instructor') then
+                _update.type = "instructor"
+            elseif string.find(_player_slot, 'forward_observer') then
+                _update.type = "forward_observer"
+            elseif string.find(_player_slot, 'observer') then
+                _update.type = "observer"
+            end
+            _update.slot = -1
+            _sub_slot = 0
+        end
+    else
+        _update.slot = -1
+        _sub_slot = -1
+    end
 
 	local _jsonUpdate = SRS.JSON:encode(_update).." \n"
-    --SRS.log("Update -  Slot  ID:"..playerID.." Name: ".._update.name.." Side: ".._update.side)
+	-- SRS.log("Update -  Slot  ID:"..playerID.." Name: ".._update.name.." Type: ".._update.type.." Slot: ".._update.slot.." Seat: ".._update.seat.." Side: ".._update.side)
 	socket.try(SRS.UDPSendSocket:sendto(_jsonUpdate, "127.0.0.1", 5068))
 	socket.try(SRS.UDPSendSocket:sendto(_jsonUpdate, "127.0.0.1", 9087))
 end

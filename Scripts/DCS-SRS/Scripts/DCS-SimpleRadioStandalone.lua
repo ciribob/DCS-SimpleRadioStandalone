@@ -295,8 +295,21 @@ function SR.exporter()
             iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=0,control=0,expansion=false,mic=-1}
         }
 
+        if SR.lastKnownUnitType == 'artillery_commander' then
+            _update.unit = "Artillery Command"
+        	_update.unitId = 100000002
+        elseif SR.lastKnownUnitType == 'instructor' then
+            _update.unit = "Instructor"
+            _update.unitId = 100000003
+        elseif SR.lastKnownUnitType == 'forward_observer' then
+            _update.unit = "Forward Observer"
+            _update.unitId = 100000004
+        elseif SR.lastKnownUnitType == 'observer' then
+            _update.unit = "Observer"
+            _update.unitId = 100000005
+        end
+        
         local _latLng,_point = SR.exportCameraLocation()
-
         _update.latLng = _latLng
         SR.lastKnownPos = _point
 

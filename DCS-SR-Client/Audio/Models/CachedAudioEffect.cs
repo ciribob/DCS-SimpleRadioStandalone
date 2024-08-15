@@ -80,7 +80,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                 using (var reader = new WaveFileReader(file))
                 {
                     //    Assert.AreEqual(16, reader.WaveFormat.BitsPerSample, "Only works with 16 bit audio");
-                    if (reader.WaveFormat.BitsPerSample == RequiredFormat.BitsPerSample && reader.WaveFormat.SampleRate == reader.WaveFormat.SampleRate && reader.WaveFormat.Channels == 1)
+                    if (reader.WaveFormat.BitsPerSample == RequiredFormat.BitsPerSample && reader.WaveFormat.SampleRate == RequiredFormat.SampleRate && reader.WaveFormat.Channels == 1)
                     {
                         var tmpBytes = new byte[reader.Length];
                         var read = reader.Read(tmpBytes, 0, tmpBytes.Length);

@@ -1,4 +1,4 @@
--- Version 2.1.0.8
+-- Version 2.1.0.9
 -- Special thanks to Cap. Zeen, Tarres and Splash for all the help
 -- with getting the radio information :)
 -- Run the installer to correctly install this file
@@ -153,7 +153,7 @@ function SR.exporter()
     local _data = LoGetSelfData()
 
     -- REMOVE
- --   SR.log(SR.debugDump(_data).."\n\n")
+   -- SR.log(SR.debugDump(_data).."\n\n")
 
     if _data ~= nil and not SR.fc3[_data.Name] then
         -- check for death / eject -- call below returns a number when ejected - ignore FC3
@@ -295,6 +295,11 @@ function SR.exporter()
             iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=0,control=0,expansion=false,mic=-1}
         }
 
+        -- Allows for custom radio's using the DCS-Plugin scheme.
+        local aircraftExporter = SR.exporters["CA"]
+        if aircraftExporter then
+            _update = aircraftExporter(_update)
+    
         if SR.lastKnownUnitType == 'artillery_commander' then
             _update.unit = "Artillery Command"
             _update.unitId = (SR.lastKnownCoalition .. 100001002)
@@ -2229,6 +2234,177 @@ function SR.exportRadioUH1H(_data)
 
 end
 
+
+function SR.exportRadioCH47F(_data)
+
+    _data.radios[1].name = "Intercom"
+    _data.radios[1].freq = 100.0
+    _data.radios[1].modulation = 2 --Special intercom modulation
+    _data.radios[1].volMode = 0
+
+    -- TODO most radios dont yet work properly so i'll let them use SRS frequencies + Channels but in cockpit volume
+
+    _data.radios[2].name = "ARC-201 FM1" -- ARC 201
+    --_data.radios[2].freq = SR.getRadioFrequency(50)
+    _data.radios[2].freq = 30000000
+    _data.radios[2].modulation = SR.getRadioModulation(50)
+    _data.radios[2].modulation = 1
+    _data.radios[2].volMode = 0
+    _data.radios[2].encMode = 2
+
+    _data.radios[2].volMode = 0
+    _data.radios[2].encMode = 0
+    _data.radios[2].freqMin = 20.0 * 1000000
+    _data.radios[2].freqMax = 60.0 * 1000000
+    _data.radios[2].modulation = 0
+    _data.radios[2].volMode = 0
+    _data.radios[2].freqMode = 1
+
+    _data.radios[3].name = "ARC-164 UHF" -- ARC_164
+    --_data.radios[3].freq = SR.getRadioFrequency(48)
+    _data.radios[3].freq = 251.0 * 1000000 --225-399.975 MHZ
+    _data.radios[3].modulation = SR.getRadioModulation(48)
+    _data.radios[3].volMode = 0
+    _data.radios[3].encMode = 2
+
+    _data.radios[3].modulation = 0
+    _data.radios[3].secFreq = 243.0 * 1000000
+    _data.radios[3].volume = 1.0
+    _data.radios[3].freqMin = 225 * 1000000
+    _data.radios[3].freqMax = 399.975 * 1000000
+    _data.radios[3].freqMode = 1
+    _data.radios[3].encKey = 1
+    _data.radios[3].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+
+
+    _data.radios[4].name = "ARC-186 VHF" -- ARC_186
+    _data.radios[4].freq = SR.getRadioFrequency(49)
+    _data.radios[4].modulation = SR.getRadioModulation(49)
+
+
+    _data.radios[4].encKey = 1
+    _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+
+
+    _data.radios[5].name = "ARC-220 HF" -- ARC_220
+    --_data.radios[5].freq = SR.getRadioFrequency(51)
+    _data.radios[5].modulation = SR.getRadioModulation(51)
+    _data.radios[5].encMode = 0
+    _data.radios[5].freq = 5.0 * 1000000
+    _data.radios[5].volume = 1.0
+
+    _data.radios[5].freqMin = 1.0 * 1000000
+    _data.radios[5].freqMax = 10.0 * 1000000
+    _data.radios[5].modulation = 0
+    _data.radios[5].volMode = 0
+    _data.radios[5].freqMode = 1
+
+
+    _data.radios[6].name = "ARC-201 FM1"
+   -- _data.radios[6].freq = SR.getRadioFrequency(32)
+    _data.radios[6].freq = 32000000
+    _data.radios[6].modulation = 1
+    _data.radios[6].volume = 1.0
+
+    _data.radios[6].volMode = 0
+    _data.radios[6].encMode = 0
+    _data.radios[6].freqMin = 20.0 * 1000000
+    _data.radios[6].freqMax = 60.0 * 1000000
+    _data.radios[6].modulation = 0
+    _data.radios[6].volMode = 0
+    _data.radios[6].freqMode = 1
+
+    local _seat = SR.lastKnownSeat
+
+    local _pilotCopilotRadios = function(_offset, _pttArg)
+
+
+        _data.radios[1].volume = SR.getRadioVolume(0, _offset+23, {0, 1.0}, false) -- 23
+        _data.radios[2].volume = SR.getRadioVolume(0, _offset+23, {0, 1.0}, false) * SR.getRadioVolume(0, _offset, { 0, 1.0 }, false) * SR.getButtonPosition(_offset+1) -- +1
+        _data.radios[3].volume = SR.getRadioVolume(0, _offset+23, {0, 1.0}, false) * SR.getRadioVolume(0, _offset+2, { 0, 1.0 }, false) * SR.getButtonPosition(_offset+3) -- +3
+        _data.radios[4].volume = SR.getRadioVolume(0, 1219, {0, 1.0}, false) * SR.getRadioVolume(0, _offset + 23, {0, 1.0}, false) * SR.getRadioVolume(0, _offset+4, { 0, 1.0 }, false) * SR.getButtonPosition(_offset+5)
+        _data.radios[5].volume = SR.getRadioVolume(0, _offset+23, {0, 1.0}, false) * SR.getRadioVolume(0, _offset+6, { 0, 1.0 }, false) * SR.getButtonPosition(_offset+7)
+        _data.radios[6].volume = SR.getRadioVolume(0, _offset+23, {0, 1.0}, false) * SR.getRadioVolume(0, _offset+8, { 0, 1.0 }, false) * SR.getButtonPosition(_offset+9)
+
+        local _selector = SR.getSelectorPosition(_offset+22, 0.05) 
+
+
+        if _selector <= 6 then
+            _data.selected = _selector
+        else
+            _data.selected = -1
+        end
+
+        if _pttArg > 0 then
+
+            local _ptt = SR.getButtonPosition(_pttArg)
+
+            if _ptt >= 0.1 then
+
+                if _ptt == 0.5 then
+                    -- intercom
+                    _data.selected = 0
+                end
+
+                _data.ptt = true
+            end
+        end
+
+    end
+
+    if _seat == 0 then -- 591
+        local _offset = 591
+
+        _pilotCopilotRadios(591,1271)
+
+        _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
+        _data.control = 1; -- Full Radio
+
+    elseif _seat == 1 then --624
+
+        _pilotCopilotRadios(624,1283)
+
+        _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
+        _data.control = 1; -- Full Radio
+        
+    elseif _seat == 2 then --657
+        
+        _pilotCopilotRadios(591,-1)
+
+        _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
+    else
+        _data.radios[1].volume = 1.0
+        _data.radios[2].volume = 1.0
+        _data.radios[3].volume = 1.0
+        _data.radios[4].volume = 1.0
+        _data.radios[5].volume = 1.0
+        _data.radios[6].volume = 1.0
+
+        _data.radios[1].volMode = 1
+        _data.radios[2].volMode = 1
+        _data.radios[3].volMode = 1
+        _data.radios[4].volMode = 1
+        _data.radios[5].volMode = 1
+        _data.radios[6].volMode = 1
+
+        _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
+
+    end
+        
+    -- engine on
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+        _data.ambient = {vol = 0.2, abType = 'ch47' }
+    
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'ch47' }
+    end
+
+    return _data
+
+end
+
 function SR.exportRadioSA342(_data)
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "" }
 
@@ -3931,29 +4107,30 @@ function SR.exportRadioFA18C(_data)
     _radio.freq = SR.getRadioFrequency(39)
     _radio.modulation = SR.getRadioModulation(39)
     _radio.volume = SR.getRadioVolume(0, 123, { 0.0, 1.0 }, false)
--- _radio.encMode = 2 -- Mode 2 is set by aircraft
+    -- _radio.encMode = 2 -- Mode 2 is set by aircraft
 
-_fa18.radio2.guard = getGuardFreq(_radio.freq, _fa18.radio2.guard, _radio.modulation)
-_radio.secFreq = _fa18.radio2.guard
+    _fa18.radio2.guard = getGuardFreq(_radio.freq, _fa18.radio2.guard, _radio.modulation)
+    _radio.secFreq = _fa18.radio2.guard
 
--- KY-58 Radio Encryption
-local _ky58Power = SR.round(SR.getButtonPosition(447), 0.1)
-if _ky58Power == 0.1 and SR.round(SR.getButtonPosition(444), 0.1) == 0.1 then
-    -- mode switch set to C and powered on
-    -- Power on!
+    -- KY-58 Radio Encryption
+    local _ky58Power = SR.round(SR.getButtonPosition(447), 0.1)
+    local _ky58PoweredOn = _ky58Power == 0.1
+    if _ky58PoweredOn and SR.round(SR.getButtonPosition(444), 0.1) == 0.1 then
+        -- mode switch set to C and powered on
+        -- Power on!
 
-    -- Get encryption key
-    local _channel = SR.getSelectorPosition(446, 0.1) + 1
-    if _channel > 6 then
-        _channel = 6 -- has two other options - lock to 6
+        -- Get encryption key
+        local _channel = SR.getSelectorPosition(446, 0.1) + 1
+        if _channel > 6 then
+            _channel = 6 -- has two other options - lock to 6
+        end
+
+        _radio = _data.radios[2 + SR.getSelectorPosition(144, 0.3)]
+        _radio.encMode = 2 -- Mode 2 is set by aircraft
+        _radio.encKey = _channel
+        _radio.enc = true
+
     end
-
-    _radio = _data.radios[2 + SR.getSelectorPosition(144, 0.3)]
-    _radio.encMode = 2 -- Mode 2 is set by aircraft
-    _radio.encKey = _channel
-    _radio.enc = true
-
-end
 
 
     -- MIDS
@@ -4122,6 +4299,39 @@ end
     else
         -- engine off
         _data.ambient = {vol = 0, abType = 'fa18' }
+    end
+
+    -- Relay (RLY):
+    local commRelaySwitch = 350 -- 3-pos: PLAIN/OFF/CIPHER.
+    local commGuardXmit = 351 -- 3-pos: COMM1/OFF/COMM2.
+
+    -- If relay is not OFF, it creates a 2-way relay between COMM 1 and COMM 2.
+    local commRelaySwitchPosition = SR.getButtonPosition(commRelaySwitch)
+    if  commRelaySwitchPosition ~= 0 then
+        local comm1 = 2
+        local comm2 = 3
+        
+        local spacing = math.abs(_data.radios[comm1].freq - _data.radios[comm2].freq)
+        
+        local ky58Desired = commRelaySwitchPosition == 1
+        
+        -- we can retransmit if:
+        -- * The two radios are at least 10MHz apart.
+        -- * IF cipher is requested, KY-58 must be powered on.
+        if spacing >= 10e6 and (not ky58Desired or _ky58PoweredOn) then
+            -- Apply params on COMM 1 (index 2) and COMM 2 (index 3)
+            for commIdx=2,3 do
+                -- Force in-cockpit
+                _data.radios[commIdx].rtMode = 0
+                -- Set as relay
+                _data.radios[commIdx].retransmit = true
+                -- Pilot can no longer transmit on them.
+                _data.radios[commIdx].rxOnly = true
+
+                -- Keep encryption only if relaying through the KY-58.
+                _data.radios[commIdx].enc = _data.radios[commIdx].enc and ky58Desired
+            end
+        end
     end
 
     return _data
@@ -6874,9 +7084,9 @@ function SR.tableShow(tbl, loc, indent, tableshow_tbls) --based on serialize_slm
 end
 
 
-
 ---- Exporters init ----
 SR.exporters["UH-1H"] = SR.exportRadioUH1H
+SR.exporters["CH-47Fbl1"] = SR.exportRadioCH47F
 SR.exporters["Ka-50"] = SR.exportRadioKA50
 SR.exporters["Ka-50_3"] = SR.exportRadioKA50
 SR.exporters["Mi-8MT"] = SR.exportRadioMI8
@@ -7045,4 +7255,4 @@ end
 -- Load mods' SRS plugins
 SR.LoadModsPlugins()
 
-SR.log("Loaded SimpleRadio Standalone Export version: 2.1.0.8")
+SR.log("Loaded SimpleRadio Standalone Export version: 2.1.0.9")

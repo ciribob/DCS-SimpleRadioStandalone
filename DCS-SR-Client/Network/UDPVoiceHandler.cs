@@ -575,7 +575,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                 && receivingRadio.ReceivingRadio.retransmit
                 //check global
                 && !globalFrequencies.Any(freq => DCSPlayerRadioInfo.FreqCloseEnough(receivingRadio.ReceivingRadio.freq, freq))
-                && !receivingRadio.ReceivingState.IsSecondary).ToList();
+                && !receivingRadio.ReceivingState.IsSecondary
+                ).ToList();
 
             //didnt receive on any radios that we could decrypt
             //stop

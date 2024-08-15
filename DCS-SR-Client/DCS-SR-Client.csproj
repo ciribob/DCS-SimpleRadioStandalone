@@ -509,6 +509,9 @@
     <Content Include="AudioEffects\Ambient\C101.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="AudioEffects\Ambient\CH47.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="AudioEffects\Ambient\ChristenEagle.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

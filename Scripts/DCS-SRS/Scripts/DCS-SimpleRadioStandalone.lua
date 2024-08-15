@@ -270,7 +270,7 @@ function SR.exporter()
         _update = {
             name = "Unknown",
             ambient = {vol = 0.0, abType = ''},
-            unit = "CA",
+            unit = "Spectator",
             selected = 1,
             ptt = false,
             capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" },

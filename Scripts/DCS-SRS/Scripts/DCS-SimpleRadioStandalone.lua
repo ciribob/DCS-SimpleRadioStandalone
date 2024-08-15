@@ -297,16 +297,18 @@ function SR.exporter()
 
         if SR.lastKnownUnitType == 'artillery_commander' then
             _update.unit = "Artillery Command"
-            _update.unitId = 100000002
+            _update.unitId = (SR.lastKnownCoalition .. 100000002)
         elseif SR.lastKnownUnitType == 'forward_observer' then
             _update.unit = "Forward Observer"
-            _update.unitId = 100000002
+            _update.unitId = (SR.lastKnownCoalition .. 100000002)
         elseif SR.lastKnownUnitType == 'instructor' then
             _update.unit = "Instructor" -- Game Master
-            _update.unitId = 100000002
+            _update.unitId = (SR.lastKnownCoalition .. 100000002)
         elseif SR.lastKnownUnitType == 'observer' then
             _update.unit = "Observer"
-            _update.unitId = 100000002
+            _update.unitId = (SR.lastKnownCoalition .. 100000002)
+        else
+            _update.unitID = (SR.lastKnownCoalition .. 100000001)
         end
         
         local _latLng,_point = SR.exportCameraLocation()

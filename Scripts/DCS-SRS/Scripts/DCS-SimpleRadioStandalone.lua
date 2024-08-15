@@ -276,7 +276,7 @@ function SR.exporter()
             capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" },
             simultaneousTransmissionControl = 1,
             latLng = { lat = 0, lng = 0, alt = 0 },
-            unitId = 100000001, -- pass through starting unit id here
+            unitId = 100001001, -- pass through starting unit id here
             radios = {
                 --- Radio 0 is always intercom now -- disabled if AWACS panel isnt open
                 { name = "SATCOM", freq = 100, modulation = 2, volume = 1.0, secFreq = 0, freqMin = 100, freqMax = 100, encKey = 0, enc = false, encMode = 0, freqMode = 0, volMode = 1, expansion = false, rtMode = 2 },
@@ -297,18 +297,18 @@ function SR.exporter()
 
         if SR.lastKnownUnitType == 'artillery_commander' then
             _update.unit = "Artillery Command"
-            _update.unitId = (SR.lastKnownCoalition .. 100000002)
+            _update.unitId = (SR.lastKnownCoalition .. 100001002)
         elseif SR.lastKnownUnitType == 'forward_observer' then
             _update.unit = "Forward Observer"
-            _update.unitId = (SR.lastKnownCoalition .. 100000002)
+            _update.unitId = (SR.lastKnownCoalition .. 100001002)
         elseif SR.lastKnownUnitType == 'instructor' then
             _update.unit = "Instructor" -- Game Master
-            _update.unitId = (SR.lastKnownCoalition .. 100000002)
+            _update.unitId = (SR.lastKnownCoalition .. 100001002)
         elseif SR.lastKnownUnitType == 'observer' then
             _update.unit = "Observer"
-            _update.unitId = (SR.lastKnownCoalition .. 100000002)
+            _update.unitId = (SR.lastKnownCoalition .. 100001002)
         else
-            _update.unitID = (SR.lastKnownCoalition .. 100000001)
+            _update.unitID = (SR.lastKnownCoalition .. 100001001)
         end
         
         local _latLng,_point = SR.exportCameraLocation()

@@ -17,6 +17,9 @@ SR.LOS_HEIGHT_OFFSET_STEP = 20.0 -- Interval to "bend" in
 SR.unicast = true --DONT CHANGE THIS
 
 SR.lastKnownPos = { x = 0, y = 0, z = 0 }
+SR.lastKnownCoalition = 0
+SR.lastKnownUnitType = "?"
+SR.lastKnownSlot = 0
 SR.lastKnownSeat = 0
 
 SR.MIDS_FREQ = 1030.0 * 1000000 -- Start at UHF 300
@@ -343,8 +346,11 @@ function SR.readSeatSocket()
         local _decoded = SR.JSON:decode(_received)
 
         if _decoded then
+            SR.lastKnownCoalition = _decoded.side
+            SR.lastKnownUnitType = _decoded.type
+            SR.lastKnownSlot = _decoded.slot
             SR.lastKnownSeat = _decoded.seat
-            --SR.log("lastKnownSeat "..SR.lastKnownSeat)
+            SR.log("lastKnownCoalition: "..SR.lastKnownCoalition.." lastKnownUnitType: "..SR.lastKnownUnitType.." lastKnownSlot: "..SR.lastKnownSlot.." lastKnownSeat: "..SR.lastKnownSeat)
         end
 
     end

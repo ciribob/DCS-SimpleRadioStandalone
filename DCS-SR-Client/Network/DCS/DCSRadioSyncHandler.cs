@@ -260,13 +260,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
             if (!_clientStateSingleton.ShouldUseLotATCPosition())
             {
                 _clientStateSingleton.UpdatePlayerPosition(message.latLng);
-            }
-
-            var overrideFreqAndVol = false;
-
-            var newAircraft = playerRadioInfo.unitId != message.unitId || playerRadioInfo.seat != message.seat || !playerRadioInfo.IsCurrent();
-
-            overrideFreqAndVol = playerRadioInfo.unitId != message.unitId;
+            } 
+            
             
             //save unit id while catching the special exceptions
             var combinedArmsUnitId = DCSPlayerRadioInfo.UnitIdOffsetCombinedArms + (uint)_clientStateSingleton.IntercomOffset;
@@ -313,7 +308,29 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
             
             playerRadioInfo.seat = message.seat;
             
+            
+            var overrideFreqAndVol = false;
+            var newAircraft = playerRadioInfo.seat != message.seat || !playerRadioInfo.IsCurrent();
 
+            switch (playerRadioInfo.unitId)
+            {
+                case uint unitId when unitId >= DCSPlayerRadioInfo.UnitIdOffsetCombinedArms:
+                    newAircraft = playerRadioInfo.unitId != combinedArmsUnitId || newAircraft;
+                    overrideFreqAndVol = playerRadioInfo.unitId != combinedArmsUnitId;
+                    break;
+                case uint unitId when unitId < DCSPlayerRadioInfo.UnitIdOffsetCombinedArms
+                                      && unitId >= DCSPlayerRadioInfo.UnitIdOffset:
+                    var spectatorOffset = DCSPlayerRadioInfo.UnitIdOffset + (uint)_clientStateSingleton.IntercomOffset;
+                    newAircraft = playerRadioInfo.unitId != spectatorOffset || newAircraft;
+                    overrideFreqAndVol = playerRadioInfo.unitId != spectatorOffset;
+                    break;
+                
+                default:
+                    newAircraft = playerRadioInfo.unitId != message.unitId || newAircraft;
+                    overrideFreqAndVol = playerRadioInfo.unitId != message.unitId;
+                    break;
+            }
+            
             if (newAircraft)
             {
                 if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.AutoSelectSettingsProfile))

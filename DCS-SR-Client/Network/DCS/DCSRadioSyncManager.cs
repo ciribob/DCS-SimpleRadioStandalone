@@ -176,7 +176,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                 _clientStateSingleton.IntercomOffset = 1;
                 while (!_stopExternalAWACSMode )
                 {
-                    var unitId = DCSPlayerRadioInfo.UnitIdOffset + _clientStateSingleton.IntercomOffset;
+                    var externalunitId =
+                        _clientStateSingleton.GetExternalModeUnitID(
+                            _clientStateSingleton.PlayerCoaltionLocationMetadata);
+                    
+                    var unitId = externalunitId + _clientStateSingleton.IntercomOffset;
 
                     //save
                     _dcsRadioSyncHandler.ProcessRadioInfo(new DCSPlayerRadioInfo

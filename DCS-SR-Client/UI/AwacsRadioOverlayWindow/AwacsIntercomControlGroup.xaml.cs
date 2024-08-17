@@ -128,7 +128,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
 
                     RadioVolume.IsEnabled = currentRadio.volMode == RadioInformation.VolumeMode.OVERLAY;
 
-                    if (dcsPlayerRadioInfo.unitId >= DCSPlayerRadioInfo.UnitIdOffset)
+                    var externalModeUnitId =
+                        _clientStateSingleton.GetExternalModeUnitID(
+                            _clientStateSingleton.PlayerCoaltionLocationMetadata);
+
+                    if (dcsPlayerRadioInfo.unitId >= externalModeUnitId)
                     {
                         IntercomNumberSpinner.IsEnabled = true;
                         IntercomNumberSpinner.Value = _clientStateSingleton.IntercomOffset;
@@ -166,15 +170,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
                 return;
             }
             var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
-
+            var externalModeUnitId =
+                _clientStateSingleton.GetExternalModeUnitID(
+                    _clientStateSingleton.PlayerCoaltionLocationMetadata);
+            
             if ((dcsPlayerRadioInfo != null) && dcsPlayerRadioInfo.IsCurrent() &&
-                (dcsPlayerRadioInfo.unitId >= DCSPlayerRadioInfo.UnitIdOffset))
+                (dcsPlayerRadioInfo.unitId >= externalModeUnitId))
             {
                 try
                 {
                     _clientStateSingleton.IntercomOffset = (int)IntercomNumberSpinner.Value;
                     dcsPlayerRadioInfo.unitId =
-                        (uint)(DCSPlayerRadioInfo.UnitIdOffset + _clientStateSingleton.IntercomOffset);
+                        (uint)(externalModeUnitId + _clientStateSingleton.IntercomOffset);
                     _clientStateSingleton.LastSent = 0; //force refresh
                 }
                 catch (Exception)

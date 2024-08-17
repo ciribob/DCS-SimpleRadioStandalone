@@ -271,7 +271,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
             overrideFreqAndVol = playerRadioInfo.unitId != message.unitId;
             
             //save unit id
-            playerRadioInfo.unitId = message.unitId;
+            if (message.unitId >= DCSPlayerRadioInfo.UnitIdOffset)
+            {
+                var externalUnitID = _clientStateSingleton.GetExternalModeUnitID(
+                    _clientStateSingleton.PlayerCoaltionLocationMetadata);
+                playerRadioInfo.unitId = externalUnitID + (uint)_clientStateSingleton.IntercomOffset;
+            }
+            else
+            {
+                playerRadioInfo.unitId = message.unitId;
+            }
             playerRadioInfo.seat = message.seat;
             
 

@@ -62,6 +62,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
         [JsonIgnore]
         public readonly static uint UnitIdOffsetCombinedArms = UnitIdOffset + 2000; 
             // Offset for Combined Arms Slot types and External AWACS mode.
+            
+        [JsonIgnore]
+        public readonly static uint UnitIdOffsetCoalition = UnitIdOffset + 10000;
+            // Coalition Offset for Combined Arms Slot types and External AWACS mode.
 
         [JsonNetworkIgnoreSerialization]
         [JsonDCSIgnoreSerialization]

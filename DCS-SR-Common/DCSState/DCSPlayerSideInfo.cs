@@ -7,6 +7,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
         public string name = "";
         public int side = 0;
         public int seat = 0; // 0 is front / normal - 1 is back seat
+        public string type = ""; //Used to identify Combined Arms Slots.
 
         public DCSLatLngPosition LngLngPosition { get; set; } = new DCSLatLngPosition();
 
@@ -20,7 +21,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             return obj is DCSPlayerSideInfo info &&
                    name == info.name &&
                    side == info.side &&
-                   seat == info.seat;
+                   seat == info.seat && 
+                   type == info.type;
         }
 
         public void Reset()
@@ -29,6 +31,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             side = 0;
             seat = 0;
             LngLngPosition = new DCSLatLngPosition();
+            type = "";
         }
 
 

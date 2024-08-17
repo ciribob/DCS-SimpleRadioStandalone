@@ -256,9 +256,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
             }
 
             playerRadioInfo.simultaneousTransmissionControl = message.simultaneousTransmissionControl;
-
-            playerRadioInfo.unit = message.unit;
-
+            
             if (!_clientStateSingleton.ShouldUseLotATCPosition())
             {
                 _clientStateSingleton.UpdatePlayerPosition(message.latLng);
@@ -270,8 +268,49 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 
             overrideFreqAndVol = playerRadioInfo.unitId != message.unitId;
             
-            //save unit id
-            playerRadioInfo.unitId = message.unitId;
+            //save unit id while catching the special exceptions
+            var combinedArmsUnitId = DCSPlayerRadioInfo.UnitIdOffsetCombinedArms + (uint)_clientStateSingleton.IntercomOffset;
+            
+            switch (message.unit)
+            {
+                case "artillery_commander": 
+                    playerRadioInfo.unit = "Tactical cmdr";
+                    playerRadioInfo.unitId = combinedArmsUnitId; 
+                    break;
+                case "forward_observer": 
+                    playerRadioInfo.unit = "JTAC/Operator";
+                    playerRadioInfo.unitId = combinedArmsUnitId; 
+                    break;
+                case "instructor": 
+                    playerRadioInfo.unit = "Game Master";
+                    playerRadioInfo.unitId = combinedArmsUnitId; 
+                    break;
+                case "observer": 
+                    playerRadioInfo.unit = "Observer";
+                    playerRadioInfo.unitId = combinedArmsUnitId; 
+                    break;
+                case "EAM": 
+                    playerRadioInfo.unit = "EAM";
+                    playerRadioInfo.unitId = combinedArmsUnitId; 
+                    break;
+                
+                case "?": 
+                    //Spectators get put into a different bucket from Combined Arms units.
+                    playerRadioInfo.unit = "Spectator";
+                    playerRadioInfo.unitId = DCSPlayerRadioInfo.UnitIdOffset + (uint)_clientStateSingleton.IntercomOffset;
+                    break;
+                case "spectator": 
+                    //Spectators get put into a different bucket from Combined Arms units.
+                    playerRadioInfo.unit = "Spectator";
+                    playerRadioInfo.unitId = DCSPlayerRadioInfo.UnitIdOffset + (uint)_clientStateSingleton.IntercomOffset;
+                    break;
+                
+                default:
+                    playerRadioInfo.unit = message.unit;
+                    playerRadioInfo.unitId = message.unitId;
+                    break;
+            }
+            
             playerRadioInfo.seat = message.seat;
             
 

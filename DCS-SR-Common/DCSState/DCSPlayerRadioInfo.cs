@@ -44,6 +44,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
         
         public uint unitId;
 
+        public string unitType = ""; //Used to identify Combined Arms Slots.
+        
         [JsonNetworkIgnoreSerialization] [JsonDCSIgnoreSerialization]
         public int seat = 0;
 
@@ -55,7 +57,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 
         [JsonIgnore]
         public readonly static uint UnitIdOffset = 100000000
-            ; // this is where non aircraft "Unit" Ids start from for satcom intercom
+            ; // this is where non aircraft "Unit" Ids start from for satcom intercom (And Spectators)
+        
+        [JsonIgnore]
+        public readonly static uint UnitIdOffsetCombinedArms = UnitIdOffset + 2000; 
+            // Offset for Combined Arms Slot types and External AWACS mode.
 
         [JsonNetworkIgnoreSerialization]
         [JsonDCSIgnoreSerialization]

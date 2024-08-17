@@ -176,8 +176,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                 _clientStateSingleton.IntercomOffset = 1;
                 while (!_stopExternalAWACSMode )
                 {
-                    var unitId = DCSPlayerRadioInfo.UnitIdOffset + _clientStateSingleton.IntercomOffset;
-
                     //save
                     _dcsRadioSyncHandler.ProcessRadioInfo(new DCSPlayerRadioInfo
                     {
@@ -191,7 +189,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                         simultaneousTransmission = false,
                         simultaneousTransmissionControl = DCSPlayerRadioInfo.SimultaneousTransmissionControl.ENABLED_INTERNAL_SRS_CONTROLS,
                         unit = "EAM",
-                        unitId = (uint)unitId,
+                        unitType = "EAM",
+                        unitId = DCSPlayerRadioInfo.UnitIdOffsetCombinedArms, //Intercom offset is accounted for downstream.
                         inAircraft = false
                     });
 

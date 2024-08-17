@@ -21,8 +21,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             return obj is DCSPlayerSideInfo info &&
                    name == info.name &&
                    side == info.side &&
-                   seat == info.seat && 
-                   type == info.type;
+                   seat == info.seat;
         }
 
         public void Reset()

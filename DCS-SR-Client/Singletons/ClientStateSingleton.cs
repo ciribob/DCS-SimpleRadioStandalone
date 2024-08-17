@@ -169,7 +169,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
                 return _instance;
             }
         }
-
+        
         public int IntercomOffset { get; set; }
 
         private void NotifyPropertyChanged(string propertyName = "")
@@ -208,8 +208,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
         {
             PlayerCoaltionLocationMetadata.LngLngPosition = latLngPosition;
             DcsPlayerRadioInfo.latLng = latLngPosition;
-            
         }
 
+        public uint GetExternalModeUnitID(DCSPlayerSideInfo PlayerCoaltionLocationMetadata)
+        {
+            return uint.Parse(PlayerCoaltionLocationMetadata.side.ToString() + DCSPlayerRadioInfo.UnitIdOffset.ToString());
+        }
     }
 }

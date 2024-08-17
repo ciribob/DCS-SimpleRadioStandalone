@@ -260,11 +260,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
             if (!_clientStateSingleton.ShouldUseLotATCPosition())
             {
                 _clientStateSingleton.UpdatePlayerPosition(message.latLng);
-            } 
-            
+            }
+
+            var coalitionOffset = (uint)_clientStateSingleton.PlayerCoaltionLocationMetadata.side *
+                            DCSPlayerRadioInfo.UnitIdOffsetCoalition;
             
             //save unit id while catching the special exceptions
-            var combinedArmsUnitId = DCSPlayerRadioInfo.UnitIdOffsetCombinedArms + (uint)_clientStateSingleton.IntercomOffset;
+            var combinedArmsUnitId = DCSPlayerRadioInfo.UnitIdOffsetCombinedArms 
+                                     + coalitionOffset
+                                     + (uint)_clientStateSingleton.IntercomOffset;
             
             switch (message.unit)
             {
@@ -307,7 +311,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
             }
             
             playerRadioInfo.seat = message.seat;
-            
             
             var overrideFreqAndVol = false;
             var newAircraft = playerRadioInfo.seat != message.seat || !playerRadioInfo.IsCurrent();

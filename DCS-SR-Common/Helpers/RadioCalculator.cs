@@ -56,11 +56,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             return FriisMaximumTransmissionRange(frequency) > distance;
         }
 
-        public static double DegreeToRadian(double angle)
-        {
-            return Math.PI * angle / 180.0;
-        }
-
         public static double CalculateDistanceHaversine(DCSLatLngPosition myLatLng, DCSLatLngPosition clientLatLng)
         {
             if (myLatLng.lat == clientLatLng.lat || myLatLng.lng == clientLatLng.lng)
@@ -84,6 +79,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             return Math.Abs(PythagDistance(d, myLatLng.alt - clientLatLng.alt));
         }
 
+        private static double DegreeToRadian(double angle)
+        {
+            return Math.PI * angle / 180.0;
+        }
+        
         //we have haversine great circle distance - but as they're aircraft we need to offset for height as that gives the real distance
         private static double PythagDistance(double distance, double height)
         {
@@ -96,8 +96,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 
             //distance^2 and height^2 
             return Math.Sqrt((distance * distance) + (height * height));
-
         }
-      
     }
 }

@@ -256,25 +256,84 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
             }
 
             playerRadioInfo.simultaneousTransmissionControl = message.simultaneousTransmissionControl;
-
-            playerRadioInfo.unit = message.unit;
-
+            
             if (!_clientStateSingleton.ShouldUseLotATCPosition())
             {
                 _clientStateSingleton.UpdatePlayerPosition(message.latLng);
             }
 
-            var overrideFreqAndVol = false;
-
-            var newAircraft = playerRadioInfo.unitId != message.unitId || playerRadioInfo.seat != message.seat || !playerRadioInfo.IsCurrent();
-
-            overrideFreqAndVol = playerRadioInfo.unitId != message.unitId;
+            var coalitionOffset = (uint)_clientStateSingleton.PlayerCoaltionLocationMetadata.side *
+                            DCSPlayerRadioInfo.UnitIdOffsetCoalition;
             
-            //save unit id
-            playerRadioInfo.unitId = message.unitId;
+            //save unit id while catching the special exceptions
+            var combinedArmsUnitId = DCSPlayerRadioInfo.UnitIdOffsetCombinedArms 
+                                     + coalitionOffset
+                                     + (uint)_clientStateSingleton.IntercomOffset;
+            
+            switch (message.unit)
+            {
+                case "artillery_commander": 
+                    playerRadioInfo.unit = "Tactical cmdr";
+                    playerRadioInfo.unitId = combinedArmsUnitId; 
+                    break;
+                case "forward_observer": 
+                    playerRadioInfo.unit = "JTAC/Operator";
+                    playerRadioInfo.unitId = combinedArmsUnitId; 
+                    break;
+                case "instructor": 
+                    playerRadioInfo.unit = "Game Master";
+                    playerRadioInfo.unitId = combinedArmsUnitId; 
+                    break;
+                case "observer": 
+                    playerRadioInfo.unit = "Observer";
+                    playerRadioInfo.unitId = combinedArmsUnitId; 
+                    break;
+                case "EAM": 
+                    playerRadioInfo.unit = "EAM";
+                    playerRadioInfo.unitId = combinedArmsUnitId; 
+                    break;
+                
+                case "?": 
+                    //Spectators get put into a different bucket from Combined Arms units.
+                    playerRadioInfo.unit = "Spectator";
+                    playerRadioInfo.unitId = DCSPlayerRadioInfo.UnitIdOffset + (uint)_clientStateSingleton.IntercomOffset;
+                    break;
+                case "spectator": 
+                    //Spectators get put into a different bucket from Combined Arms units.
+                    playerRadioInfo.unit = "Spectator";
+                    playerRadioInfo.unitId = DCSPlayerRadioInfo.UnitIdOffset + (uint)_clientStateSingleton.IntercomOffset;
+                    break;
+                
+                default:
+                    playerRadioInfo.unit = message.unit;
+                    playerRadioInfo.unitId = message.unitId;
+                    break;
+            }
+            
             playerRadioInfo.seat = message.seat;
             
+            var overrideFreqAndVol = false;
+            var newAircraft = playerRadioInfo.seat != message.seat || !playerRadioInfo.IsCurrent();
 
+            switch (playerRadioInfo.unitId)
+            {
+                case uint unitId when unitId >= DCSPlayerRadioInfo.UnitIdOffsetCombinedArms:
+                    newAircraft = playerRadioInfo.unitId != combinedArmsUnitId || newAircraft;
+                    overrideFreqAndVol = playerRadioInfo.unitId != combinedArmsUnitId;
+                    break;
+                case uint unitId when unitId < DCSPlayerRadioInfo.UnitIdOffsetCombinedArms
+                                      && unitId >= DCSPlayerRadioInfo.UnitIdOffset:
+                    var spectatorOffset = DCSPlayerRadioInfo.UnitIdOffset + (uint)_clientStateSingleton.IntercomOffset;
+                    newAircraft = playerRadioInfo.unitId != spectatorOffset || newAircraft;
+                    overrideFreqAndVol = playerRadioInfo.unitId != spectatorOffset;
+                    break;
+                
+                default:
+                    newAircraft = playerRadioInfo.unitId != message.unitId || newAircraft;
+                    overrideFreqAndVol = playerRadioInfo.unitId != message.unitId;
+                    break;
+            }
+            
             if (newAircraft)
             {
                 if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.AutoSelectSettingsProfile))

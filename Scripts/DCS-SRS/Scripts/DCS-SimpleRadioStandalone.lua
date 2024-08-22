@@ -3987,7 +3987,9 @@ function SR.exportRadioFA18C(_data)
     -- reset state on aircraft switch
     if _lastUnitId ~= _data.unitId then
         _fa18.radio1.guard = 0
+        _fa18.radio1.channel = nil
         _fa18.radio2.guard = 0
+        _fa18.radio2.channel = nil
         _fa18.radio3.channel = 127 --127 is disabled for MIDS
         _fa18.radio4.channel = 127
         _fa18.iff = {status=-1,mode1=-1,mode2=-1,mode3=-1,mode4=true,control=0,expansion=false}
@@ -4059,6 +4061,25 @@ function SR.exportRadioFA18C(_data)
 
     end
 
+    local getCommChannel = function (currentDisplay, memorizedValue)
+        local maybeChannel = currentDisplay
+        
+        -- Cue, Guard, Manual, Sea - not channels.
+        if string.find(maybeChannel, "^[CGMS]$") then
+            return nil -- not channels.
+        end
+
+        -- ~0 = 20
+        if maybeChannel == "~0" then
+            maybeChannel = "20"
+        else
+            -- leading backtick `n -> 1n.
+            maybeChannel = string.gsub(maybeChannel, "^`", "1")
+        end
+
+        return tonumber(maybeChannel) or memorizedValue
+    end
+
     -- AN/ARC-210 - 1
     -- Set radio data
     local _radio = _data.radios[2]
@@ -4068,6 +4089,8 @@ function SR.exportRadioFA18C(_data)
     _radio.volume = SR.getRadioVolume(0, 108, { 0.0, 1.0 }, false)
     -- _radio.encMode = 2 -- Mode 2 is set by aircraft
 
+    _fa18.radio1.channel = getCommChannel(_ufc.UFC_Comm1Display, _fa18.radio1.channel)
+    _radio.channel = _fa18.radio1.channel
     _fa18.radio1.guard = getGuardFreq(_radio.freq, _fa18.radio1.guard, _radio.modulation)
     _radio.secFreq = _fa18.radio1.guard
 
@@ -4080,6 +4103,8 @@ function SR.exportRadioFA18C(_data)
     _radio.volume = SR.getRadioVolume(0, 123, { 0.0, 1.0 }, false)
     -- _radio.encMode = 2 -- Mode 2 is set by aircraft
 
+    _fa18.radio2.channel = getCommChannel(_ufc.UFC_Comm2Display, _fa18.radio2.channel)
+    _radio.channel = _fa18.radio2.channel
     _fa18.radio2.guard = getGuardFreq(_radio.freq, _fa18.radio2.guard, _radio.modulation)
     _radio.secFreq = _fa18.radio2.guard
 

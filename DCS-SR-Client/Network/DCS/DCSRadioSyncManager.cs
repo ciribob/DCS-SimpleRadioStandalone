@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
@@ -33,6 +34,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
         private readonly UDPCommandHandler _udpCommandHandler; 
         private readonly DCSRadioSyncHandler _dcsRadioSyncHandler;
 
+        private readonly GlobalSettingsStore _globalSettings = GlobalSettingsStore.Instance;
+
         public delegate void ClientSideUpdate();
         public delegate void SendRadioUpdate();
 
@@ -42,6 +45,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
         private DispatcherTimer _clearRadio;
 
         public bool IsListening { get; private set; }
+
+        private string PresetsFolder { get { return _globalSettings.GetClientSetting(GlobalSettingsKeys.LastPresetsFolder).RawValue; } }
 
         public DCSRadioSyncManager(SendRadioUpdate clientRadioUpdate, ClientSideUpdate clientSideUpdate,
            string guid, DCSRadioSyncHandler.NewAircraft _newAircraftCallback)
@@ -91,11 +96,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
             try
             {
                 string radioJson;
-                if (File.Exists(AWACS_RADIOS_CUSTOM_FILE))
+                var awacsRadiosFile = Path.Combine(PresetsFolder, AWACS_RADIOS_FILE);
+                var customAwacsRadiosFile = Path.Combine(PresetsFolder, AWACS_RADIOS_CUSTOM_FILE);
+                if (File.Exists(customAwacsRadiosFile))
                 {
                     try
                     {
-                        radioJson = File.ReadAllText(AWACS_RADIOS_CUSTOM_FILE);
+                        radioJson = File.ReadAllText(customAwacsRadiosFile);
                         awacsRadios = JsonConvert.DeserializeObject<RadioInformation[]>(radioJson);
 
                         foreach (var radio in awacsRadios)
@@ -115,17 +122,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                     }
                     catch (Exception ex)
                     {
-                        Logger.Warn(ex, $"Failed to load custom {AWACS_RADIOS_CUSTOM_FILE} radio file - loading standard file");
+                        Logger.Warn(ex, $"Failed to load custom {customAwacsRadiosFile} radio file - loading standard file");
                     }
                 }
                 else
                 {
-                    Logger.Info($"No Custom {AWACS_RADIOS_CUSTOM_FILE} present - Loading {AWACS_RADIOS_FILE}");
+                    Logger.Info($"No Custom {customAwacsRadiosFile} present - Loading {awacsRadiosFile}");
                 }
 
                 if (awacsRadios == null)
                 {
-                    radioJson = File.ReadAllText(AWACS_RADIOS_FILE);
+                    radioJson = File.ReadAllText(awacsRadiosFile);
                     awacsRadios = JsonConvert.DeserializeObject<RadioInformation[]>(radioJson);
 
                     foreach (var radio in awacsRadios)

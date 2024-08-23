@@ -15,6 +15,19 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.RadioChannels
     public class FilePresetChannelsStore : IPresetChannelsStore
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly GlobalSettingsStore _globalSettings = GlobalSettingsStore.Instance;
+
+        private string PresetsFolder { get
+            {
+                var folder = _globalSettings.GetClientSetting(GlobalSettingsKeys.LastPresetsFolder).RawValue;
+                if (string.IsNullOrWhiteSpace(folder))
+                {
+                    folder = Directory.GetCurrentDirectory();
+                }
+
+                return folder;
+            }
+        }
 
         public IEnumerable<PresetChannel> LoadFromStore(string radioName, bool mids = false)
         {
@@ -37,12 +50,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.RadioChannels
 
         public string CreatePresetFile(string radioName)
         {
-            var file = FindRadioFile(NormaliseString(radioName));
+            var normalisedName = NormaliseString(radioName);
+            var file = FindRadioFile(normalisedName);
 
             if (file == null)
             {
-                var path = Environment.CurrentDirectory + Path.DirectorySeparatorChar +
-                           NormaliseString(radioName) + ".txt";
+                var path = Path.ChangeExtension(Path.Combine(PresetsFolder, normalisedName), "txt");
                 try
                 {
                     File.Create(path);
@@ -175,7 +188,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.RadioChannels
 
         private string FindRadioFile(string radioName)
         {
-            var files = Directory.GetFiles(Environment.CurrentDirectory);
+            var files = Directory.EnumerateFiles(PresetsFolder);
 
             foreach (var fileAndPath in files)
             {

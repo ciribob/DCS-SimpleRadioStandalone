@@ -158,6 +158,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             Mic_VU.Value = -100;
 
             ExternalAWACSModeName.Text = _globalSettings.GetClientSetting(GlobalSettingsKeys.LastSeenName).RawValue;
+            UpdatePresetsFolderLabel();
 
             _audioManager = new AudioManager(AudioOutput.WindowsN);
             _audioManager.SpeakerBoost = VolumeConversionHelper.ConvertVolumeSliderToScale((float)SpeakerBoost.Value);
@@ -1950,6 +1951,21 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         }
 
+        private void UpdatePresetsFolderLabel()
+        {
+            var presetsFolder = _globalSettings.GetClientSetting(GlobalSettingsKeys.LastPresetsFolder).RawValue;
+            if (!string.IsNullOrWhiteSpace(presetsFolder))
+            {
+                PresetsFolderLabel.Content = Path.GetFileName(presetsFolder);
+                PresetsFolderLabel.ToolTip = presetsFolder;
+            }
+            else
+            {
+                PresetsFolderLabel.Content = "(default)";
+                PresetsFolderLabel.ToolTip = Directory.GetCurrentDirectory();
+            }
+        }
+
         private void AutoSelectInputProfile_OnClick(object sender, RoutedEventArgs e)
         {
             _globalSettings.SetClientSetting(GlobalSettingsKeys.AutoSelectSettingsProfile, ((bool)AutoSelectInputProfile.IsChecked).ToString());
@@ -2149,6 +2165,23 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         private void DisableExpansionRadios_OnClick(object sender, RoutedEventArgs e)
         {
             _globalSettings.ProfileSettingsStore.SetClientSettingBool(ProfileSettingsKeys.DisableExpansionRadios, (bool)DisableExpansionRadios.IsChecked);
+        }
+
+        private void PresetsFolderBrowseButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selectPresetsFolder = new System.Windows.Forms.FolderBrowserDialog();
+            selectPresetsFolder.SelectedPath = PresetsFolderLabel.ToolTip.ToString();
+            if (selectPresetsFolder.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                _globalSettings.SetClientSetting(GlobalSettingsKeys.LastPresetsFolder, selectPresetsFolder.SelectedPath);
+                UpdatePresetsFolderLabel();
+            }
+        }
+
+        private void PresetsFolderResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.LastPresetsFolder, string.Empty);
+            UpdatePresetsFolderLabel();
         }
     }
 }

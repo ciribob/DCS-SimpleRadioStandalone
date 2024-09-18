@@ -147,72 +147,85 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                 var ptt = false;
                 var intercomPtt = false;
+                var txInhibit = false;
                 foreach (var inputBindState in pressed)
                 {
                     if (inputBindState.IsActive)
                     {
-                        //radio switch?
-                        if ((int)inputBindState.MainDevice.InputBind >= (int)InputBinding.Intercom &&
-                            (int)inputBindState.MainDevice.InputBind <= (int)InputBinding.Switch10)
+                        switch ((int)inputBindState.MainDevice.InputBind)
                         {
-                            //gives you radio id if you minus 100
-                            var radioId = (int)inputBindState.MainDevice.InputBind - 100;
-
-                            if (radioId < _clientStateSingleton.DcsPlayerRadioInfo.radios.Length)
-                            {
-                                var clientRadio = _clientStateSingleton.DcsPlayerRadioInfo.radios[radioId];
-
-                                if (RadioHelper.SelectRadio(radioId))
+                            //radio switch?
+                            case int bind when (bind >= (int)InputBinding.Intercom && bind <= (int)InputBinding.Switch10):
                                 {
-                                    //turn on PTT
-                                    if (radioSwitchPttWhenValid || radioSwitchPtt)
+                                    //gives you radio id if you minus 100
+                                    var radioId = (int)inputBindState.MainDevice.InputBind - 100;
+
+                                    if (radioId < _clientStateSingleton.DcsPlayerRadioInfo.radios.Length)
                                     {
-                                        _lastPTTPress = DateTime.Now.Ticks;
-                                        ptt = true;
-                                        //Store last release time
+                                        var clientRadio = _clientStateSingleton.DcsPlayerRadioInfo.radios[radioId];
+
+                                        if (RadioHelper.SelectRadio(radioId))
+                                        {
+                                            //turn on PTT
+                                            if (radioSwitchPttWhenValid || radioSwitchPtt)
+                                            {
+                                                _lastPTTPress = DateTime.Now.Ticks;
+                                                ptt = true;
+                                                //Store last release time
+                                            }
+                                        }
+                                        else
+                                        {
+                                            //turn on PTT even if not valid radio switch
+                                            if (radioSwitchPtt)
+                                            {
+                                                _lastPTTPress = DateTime.Now.Ticks;
+                                                ptt = true;
+                                            }
+                                        }
+
                                     }
                                 }
-                                else
-                                {
-                                    //turn on PTT even if not valid radio switch
-                                    if (radioSwitchPtt)
-                                    {
-                                        _lastPTTPress = DateTime.Now.Ticks;
-                                        ptt = true;
-                                    }
-                                }
+                                break;
 
-                            }
-                        }
-                        else if (inputBindState.MainDevice.InputBind == InputBinding.Ptt)
-                        {
-                            _lastPTTPress = DateTime.Now.Ticks;
-                            ptt = true;
-                        }else if (inputBindState.MainDevice.InputBind == InputBinding.IntercomPTT)
-                        {
-                            intercomPtt = true;
+                            case (int)InputBinding.Ptt:
+                                _lastPTTPress = DateTime.Now.Ticks;
+                                ptt = true;
+                                break;
+
+                            case (int)InputBinding.IntercomPTT:
+                                intercomPtt = true;
+                                break;
+
+                            case (int)InputBinding.TXInhibit:
+                                txInhibit = true;
+                                break;
+                            default:
+                                // not ours to handle.
+                                break;
+
 
                         }
                     }
+                }
+
+                if (txInhibit)
+                {
+                    ptt = false;
+                    intercomPtt = false;
                 }
 
                 /**
              * Handle DELAYING PTT START
              */
 
-                if (!ptt)
-                {
-                    //reset
-                    _firstPTTPress = -1;
-                }
-
-                if (_firstPTTPress == -1 && ptt)
-                {
-                    _firstPTTPress = DateTime.Now.Ticks;
-                }
-
                 if (ptt)
                 {
+                    if (_firstPTTPress == -1)
+                    {
+                        _firstPTTPress = DateTime.Now.Ticks;
+                    }
+
                     //should inhibit for a bit
                     var startDiff = new TimeSpan(DateTime.Now.Ticks - _firstPTTPress);
 
@@ -225,6 +238,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                         _lastPTTPress = -1;
                         return;
                     }
+                }
+                else
+                {
+                    //reset
+                    _firstPTTPress = -1;
                 }
 
                 /**

@@ -502,6 +502,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             RadioVolumeDown.InputName = Properties.Resources.InputRadioVolumeDown;
             RadioVolumeDown.ControlInputBinding = InputBinding.RadioVolumeDown;
             RadioVolumeDown.InputDeviceManager = InputManager;
+
+            TXInhibit.InputName = Properties.Resources.TXInhibit;
+            TXInhibit.ControlInputBinding = InputBinding.TXInhibit;
+            TXInhibit.InputDeviceManager = InputManager;
         }
 
         private void OnProfileDropDownChanged(object sender, SelectionChangedEventArgs e)
@@ -581,6 +585,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             RadioVolumeUp.LoadInputSettings();
             RadioVolumeDown.LoadInputSettings();
             AwacsOverlayToggle.LoadInputSettings();
+            TXInhibit.LoadInputSettings();
         }
 
         private void ReloadRadioAudioChannelSettings()

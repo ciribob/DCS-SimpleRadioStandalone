@@ -216,8 +216,20 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
         ModifierIntercomPTT = 236,
 
         AwacsOverlayToggle = 137,
-        ModifierAwacsOverlayToggle = 237
+        ModifierAwacsOverlayToggle = 237,
+
+        TXInhibit = 138,
+        ModifierTXInhibit = 238,
     }
+
+    //REMEMBER TO UPDATE THIS WHEN NEW BINDINGS ARE ADDED
+    //MIN + MAX bind numbers
+    public class InputBindings
+    {
+        public static int FirstIndex { get { return (int)InputBinding.Intercom; } }
+        public static int LastIndex { get { return (int)InputBinding.TXInhibit; } }
+    }
+    
 
 
     public class GlobalSettingsStore

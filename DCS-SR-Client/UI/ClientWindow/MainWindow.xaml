@@ -384,6 +384,7 @@
                                 <RowDefinition />
                                 <RowDefinition />
                                 <RowDefinition />
+                                <RowDefinition />
                             </Grid.RowDefinitions>
 
 
@@ -624,8 +625,11 @@
                                                            Grid.ColumnSpan="5"
                                                            ControlInputBinding="{x:Static settings:InputBinding.AwacsOverlayToggle}"
                                                            InputName="AWACS Overlay Toggle" />
-
-
+                            <local:InputBindingControl x:Name="TXInhibit"
+                                                           Grid.Row="39"
+                                                           Grid.ColumnSpan="5"
+                                                           ControlInputBinding="{x:Static settings:InputBinding.TXInhibit}"
+                                                           InputName="TX Inhibit" />
                         </Grid>
 
                     </StackPanel>

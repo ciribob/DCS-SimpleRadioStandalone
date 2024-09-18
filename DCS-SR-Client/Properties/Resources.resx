@@ -1091,6 +1091,9 @@ Requires Tx or Rx Effects On</value>
   <data name="ToolTipTransponderMode4" xml:space="preserve">
     <value>Mode 4</value>
   </data>
+  <data name="TXInhibit" xml:space="preserve">
+    <value>TX Inhibit</value>
+  </data>
   <data name="UHFEffectVolume" xml:space="preserve">
     <value>UHF Effect Volume</value>
   </data>

@@ -918,9 +918,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             var bindStates = new List<InputBindState>();
             var currentInputProfile = _globalSettings.ProfileSettingsStore.GetCurrentInputProfile();
 
-            //REMEMBER TO UPDATE THIS WHEN NEW BINDINGS ARE ADDED
-            //MIN + MAX bind numbers
-            for (int i = (int)InputBinding.Intercom; i <= (int)InputBinding.AwacsOverlayToggle; i++)
+            
+            for (int i = InputBindings.FirstIndex; i <= InputBindings.LastIndex; i++)
             {
                 if (!currentInputProfile.ContainsKey((InputBinding)i))
                 {

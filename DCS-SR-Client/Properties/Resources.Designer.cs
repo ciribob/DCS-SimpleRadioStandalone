@@ -3082,6 +3082,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to TX Inhibit.
+        /// </summary>
+        public static string TXInhibit {
+            get {
+                return ResourceManager.GetString("TXInhibit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to UHF Effect Volume.
         /// </summary>
         public static string UHFEffectVolume {

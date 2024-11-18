@@ -114,18 +114,31 @@ end
 
 -- Function to load mods' SRS plugin script
 function SR.LoadModsPlugins()
-    local mode, errmsg
+    -- Check the 3 main Mods sub-folders
+    local aircraftModsPath = lfs.writedir() .. [[Mods\Aircraft]]
+    SR.ModsPuginsRecursiveSearch(aircraftModsPath)
 
-    -- Mod folder's path
-    local modsPath = lfs.writedir() .. [[Mods\Aircraft]]
-   
+    local TechModsPath = lfs.writedir() .. [[Mods\Tech]]
+    SR.ModsPuginsRecursiveSearch(TechModsPath)
+    
+    -- local ServicesModsPath = lfs.writedir() .. [[Mods\Services]]
+    -- SR.ModsPuginsRecursiveSearch(ServicesModsPath)
+end
+
+-- Performs a search of subfolders for SRS/autoload.lua
+-- compainion function to SR.LoadModsPlugins()
+function SR.ModsPuginsRecursiveSearch(modsPath)
+    local mode, errmsg
     mode, errmsg = lfs.attributes (modsPath, "mode")
    
     -- Check that Mod folder actually exists, if not then do nothing
     if mode == nil or mode ~= "directory" then
+        SR.log("Error: SR.RecursiveSearch(): modsPath is not a directory or is null: '"..modsPath)
         return
     end
-
+    
+    SR.log("Searching for mods in '"..modsPath)
+    
     -- Process each available Mod
     for modFolder in lfs.dir(modsPath) do
         modAutoloadPath = modsPath..[[\]]..modFolder..[[\SRS\autoload.lua]]

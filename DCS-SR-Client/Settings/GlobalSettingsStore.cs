@@ -99,7 +99,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
         VOXMinimumTime,
         VOXMinimumDB,
 
-        AllowXInputController
+        AllowXInputController,
+
+        LastPresetsFolder
     }
 
     public enum InputBinding
@@ -474,6 +476,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
 
 
             {GlobalSettingsKeys.AllowXInputController.ToString(), "false"},
+            {GlobalSettingsKeys.LastPresetsFolder.ToString(), string.Empty},
 
         };
 

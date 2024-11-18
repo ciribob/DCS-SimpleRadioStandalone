@@ -18,6 +18,7 @@ SR.unicast = true --DONT CHANGE THIS
 
 SR.lastKnownPos = { x = 0, y = 0, z = 0 }
 SR.lastKnownSeat = 0
+SR.lastKnownUnitType = "?"
 
 SR.MIDS_FREQ = 1030.0 * 1000000 -- Start at UHF 300
 SR.MIDS_FREQ_SEPARATION = 1.0 * 100000 -- 0.1 MHZ between MIDS channels
@@ -267,7 +268,7 @@ function SR.exporter()
         _update = {
             name = "Unknown",
             ambient = {vol = 0.0, abType = ''},
-            unit = "CA",
+            unit = "Spectator",
             selected = 1,
             ptt = false,
             capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" },
@@ -292,13 +293,16 @@ function SR.exporter()
             iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=0,control=0,expansion=false,mic=-1}
         }
 
+        _update.unit = SR.lastKnownUnitType
+
         -- Allows for custom radio's using the DCS-Plugin scheme.
         local aircraftExporter = SR.exporters["CA"]
         if aircraftExporter then
             _update = aircraftExporter(_update)
         end
-        
+
         local _latLng,_point = SR.exportCameraLocation()
+
 
         _update.latLng = _latLng
         SR.lastKnownPos = _point
@@ -350,9 +354,9 @@ function SR.readSeatSocket()
 
         if _decoded then
             SR.lastKnownSeat = _decoded.seat
-            --SR.log("lastKnownSeat "..SR.lastKnownSeat)
+            SR.lastKnownUnitType = _decoded.type
+            SR.log("lastKnownSeat "..SR.lastKnownSeat.." lastKnownUnitType "..SR.lastKnownUnitType)
         end
-
     end
 end
 

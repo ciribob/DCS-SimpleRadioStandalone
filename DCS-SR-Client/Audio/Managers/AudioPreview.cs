@@ -74,16 +74,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
             {
 
                 MMDevice speakers = null;
-                if (_audioOutputSingleton.SelectedAudioOutput.Value == null)
-                {
-                    speakers = WasapiOut.GetDefaultAudioEndpoint();
-                }
-                else
+                if (_audioOutputSingleton.SelectedAudioOutput.Value != null)
                 {
                     speakers = (MMDevice)_audioOutputSingleton.SelectedAudioOutput.Value;
                 }
 
-                _waveOut = new WasapiOut(speakers, AudioClientShareMode.Shared, true, 80, windowsN);
+                _waveOut = speakers != null? new WasapiOut(speakers, AudioClientShareMode.Shared, true, 80) : new WasapiOut(AudioClientShareMode.Shared, true, 80);
 
                 _buffBufferedWaveProvider =
                     new BufferedWaveProvider(new WaveFormat(AudioManager.OUTPUT_SAMPLE_RATE, 16, 1));
@@ -97,7 +93,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
                     (peak => SpeakerMax = peak));
                 _volumeSampleProvider.Volume = SpeakerBoost;
 
-                if (speakers.AudioClient.MixFormat.Channels == 1)
+                if (_waveOut.OutputWaveFormat.Channels == 1)
                 {
                     if (_volumeSampleProvider.WaveFormat.Channels == 2)
                     {

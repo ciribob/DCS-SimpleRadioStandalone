@@ -1002,7 +1002,10 @@ Requires Tx or Rx Effects On</value>
     <value>+/- %</value>
   </data>
   <data name="SpeakerLabel" xml:space="preserve">
-    <value>Speakers &amp; Optional Mic Output</value>
+    <value>Speaker Output</value>
+  </data>
+  <data name="PassthroughLabel" xml:space="preserve">
+    <value>Optional Passthrough Output</value>
   </data>
   <data name="SRSInterfaceHeader" xml:space="preserve">
     <value>SRS Interface</value>

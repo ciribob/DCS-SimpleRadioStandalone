@@ -18,12 +18,12 @@
                 <!--  accent resource  -->
                 <!--  change "Cobalt" to the accent color you want  -->
 
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/orange.xaml" />
 
                 <!--  theme resource  -->
                 <!--  change "BaseLight" to the theme you want  -->
                 <ResourceDictionary
-                    Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+                    Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/basedark.xaml" />
 
                 <ResourceDictionary Source="Themes\Styles.xaml" />
 

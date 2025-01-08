@@ -121,7 +121,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             Left = _globalSettings.GetPositionSetting(GlobalSettingsKeys.ClientX).DoubleValue;
             Top = _globalSettings.GetPositionSetting(GlobalSettingsKeys.ClientY).DoubleValue;
 
-            Title = Title + " - " + UpdaterChecker.VERSION;
+            Title = Title + " Adders Edition (" + UpdaterChecker.VERSION + ")";
 
             CheckWindowVisibility();
 

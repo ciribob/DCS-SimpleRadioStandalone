@@ -65,26 +65,55 @@
                             IsEnabled="{Binding AudioInput.MicrophoneAvailable}"
                             ToolTip="{Binding Path=AudioInput.MicrophoneAvailable, Converter={StaticResource MicAvailabilityTooltipConverter}}" />
 
-                    <Label x:Name="SpeakerLabel"
-                           HorizontalAlignment="Center"
-                           Content="{x:Static p:Resources.SpeakerLabel}" />
-                    <StackPanel Margin="0"
-                                HorizontalAlignment="Center"
-                                Orientation="Horizontal">
-                        <ComboBox x:Name="Speakers"
-                                  Width="200"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Top" Margin="0,0,5,0"
-                                  ItemsSource="{Binding Path=AudioOutput.OutputAudioDevices}"
-                                  SelectedItem="{Binding Path=AudioOutput.SelectedAudioOutput, Mode=TwoWay}" />
-                        <ComboBox x:Name="MicOutput"
-                                  Width="200"
-                                  HorizontalAlignment="Center"
-                                  VerticalAlignment="Top" Margin="5,0,0,0"
-                                  ItemsSource="{Binding Path=AudioOutput.MicOutputAudioDevices}"
-                                  SelectedItem="{Binding Path=AudioOutput.SelectedMicAudioOutput, Mode=TwoWay}" />
-                    </StackPanel>
-
+                    <Grid
+                        Margin="30,0,30,0"
+                        >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        
+                        <Label x:Name="SpeakerLabel"
+                               HorizontalAlignment="Center"
+                               Grid.Column="0"
+                               Grid.Row="0"
+                               Content="{x:Static p:Resources.SpeakerLabel}" />
+                        
+                        <Label x:Name="PassthroughLabel"
+                               HorizontalAlignment="Center"
+                               Grid.Column="1"
+                               Grid.Row="0"
+                               Content="{x:Static p:Resources.PassthroughLabel}" />
+                        <StackPanel Margin="0"
+                                    HorizontalAlignment="Center"
+                                    Grid.Column="0"
+                                    Grid.Row="1"
+                                    Orientation="Horizontal">
+                            <ComboBox x:Name="Speakers"
+                                      Width="200"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Top" Margin="0,0,5,0"
+                                      ItemsSource="{Binding Path=AudioOutput.OutputAudioDevices}"
+                                      SelectedItem="{Binding Path=AudioOutput.SelectedAudioOutput, Mode=TwoWay}" />
+                        </StackPanel>
+                        <StackPanel Margin="0"
+                            HorizontalAlignment="Center"
+                            Grid.Column="1"
+                            Grid.Row="1"
+                            Orientation="Horizontal">
+                            
+                            <ComboBox x:Name="MicOutput"
+                                      Width="200"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Top" Margin="5,0,0,0"
+                                      ItemsSource="{Binding Path=AudioOutput.MicOutputAudioDevices}"
+                                      SelectedItem="{Binding Path=AudioOutput.SelectedMicAudioOutput, Mode=TwoWay}" />
+                        </StackPanel>
+                    </Grid>
 
                     <StackPanel Margin="0"
                                 HorizontalAlignment="Center"

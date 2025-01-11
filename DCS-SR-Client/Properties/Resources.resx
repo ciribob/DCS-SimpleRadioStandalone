@@ -258,7 +258,7 @@
     <value>Please Support SRS through Patreon</value>
   </data>
   <data name="EAMExpanderHeader" xml:space="preserve">
-    <value>External AWACS Mode (EAM)</value>
+    <value>Voip Server Login</value>
   </data>
   <data name="EffectVolume0" xml:space="preserve">
     <value>0%</value>
@@ -273,10 +273,10 @@
     <value>Allow More Controller Input Devices</value>
   </data>
   <data name="ExternalAWACSModeNameLabel" xml:space="preserve">
-    <value>EAM name</value>
+    <value>Display Name</value>
   </data>
   <data name="ExternalAWACSModePasswordLabel" xml:space="preserve">
-    <value>EAM coalition password</value>
+    <value>Login Password</value>
   </data>
   <data name="FavAddEAM" xml:space="preserve">
     <value>EAM coalition password</value>
@@ -585,7 +585,10 @@ DCS In-game SRS Overlay</value>
     <value>Microphone Noise Suppression </value>
   </data>
   <data name="MicLabel" xml:space="preserve">
-    <value>Microphone</value>
+    <value>Microphone Settings</value>
+  </data>
+  <data name="MicVULabel" xml:space="preserve">
+    <value>Level</value>
   </data>
   <data name="MicrophoneHeader" xml:space="preserve">
     <value>Microphone</value>
@@ -805,7 +808,7 @@ By keeping this enabled I can judge the usage of SRS, and which versions are sti
     <value>Reset</value>
   </data>
   <data name="PreviewAudio" xml:space="preserve">
-    <value>Audio Preview</value>
+    <value>Preview</value>
   </data>
   <data name="PreviewAudioStop" xml:space="preserve">
     <value>Stop Preview</value>

@@ -66,7 +66,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
             if ((dcsPlayerRadioInfo == null) || !dcsPlayerRadioInfo.IsCurrent())
             {
                 RadioActive.Fill = new SolidColorBrush(Colors.Red);
-
+                
                 RadioVolume.IsEnabled = false;
 
                 //reset dragging just incase

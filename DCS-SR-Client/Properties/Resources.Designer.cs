@@ -512,7 +512,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to External AWACS Mode (EAM).
+        ///   Looks up a localized string similar to Voip Server Login.
         /// </summary>
         public static string EAMExpanderHeader {
             get {
@@ -557,7 +557,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to EAM name.
+        ///   Looks up a localized string similar to Display Name.
         /// </summary>
         public static string ExternalAWACSModeNameLabel {
             get {
@@ -566,7 +566,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to EAM coalition password.
+        ///   Looks up a localized string similar to Login Password.
         /// </summary>
         public static string ExternalAWACSModePasswordLabel {
             get {
@@ -1460,7 +1460,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Microphone.
+        ///   Looks up a localized string similar to Microphone Settings.
         /// </summary>
         public static string MicLabel {
             get {
@@ -1474,6 +1474,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         public static string MicrophoneHeader {
             get {
                 return ResourceManager.GetString("MicrophoneHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Level.
+        /// </summary>
+        public static string MicVULabel {
+            get {
+                return ResourceManager.GetString("MicVULabel", resourceCulture);
             }
         }
         
@@ -2094,7 +2103,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Audio Preview.
+        ///   Looks up a localized string similar to Preview.
         /// </summary>
         public static string PreviewAudio {
             get {

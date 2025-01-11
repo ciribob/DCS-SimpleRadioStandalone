@@ -224,7 +224,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
                 RadioActive.Fill = new SolidColorBrush(Colors.Red);
                 RadioLabel.Text = Properties.Resources.OverlayNoRadio;
                 RadioFrequency.Text = Properties.Resources.ValueUnknown;
-
+                
                 RadioVolume.IsEnabled = false;
 
                 TunedClients.Visibility = Visibility.Hidden;

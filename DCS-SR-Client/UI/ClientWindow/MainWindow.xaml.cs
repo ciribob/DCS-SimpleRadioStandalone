@@ -1806,6 +1806,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 return;
             }
 
+            if (EAMExpander.IsExpanded)
+            {
+                EAMExpander.IsExpanded = false;
+            }
+
             // Already connected, disconnect
             if (ClientState.ExternalAWACSModelSelected)
             {

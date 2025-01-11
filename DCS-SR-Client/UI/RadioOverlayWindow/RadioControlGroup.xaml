@@ -21,7 +21,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="TabItem">
-                            <Border Name="Border"
+                            <Border Name="ControlGroupBorder"
                                     Margin="0"
                                     BorderBrush="#ACACAC"
                                     BorderThickness="1,1,1,0"
@@ -34,10 +34,10 @@
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsSelected" Value="True">
-                                    <Setter TargetName="Border" Property="Background" Value="#595959" />
+                                    <Setter TargetName="ControlGroupBorder" Property="Background" Value="#595959" />
                                 </Trigger>
                                 <Trigger Property="IsSelected" Value="False">
-                                    <Setter TargetName="Border" Property="Background" Value="#3D3D3D" />
+                                    <Setter TargetName="ControlGroupBorder" Property="Background" Value="#3D3D3D" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>

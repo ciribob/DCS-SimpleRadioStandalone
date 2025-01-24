@@ -1,4 +1,4 @@
--- Version 2.1.0.10
+-- Version 2.1.1.0
 -- ONLY COPY THIS WHOLE FILE IS YOU ARE GOING TO HOST A SERVER!
 -- The file must be in Saved Games\DCS\Scripts\Hooks or Saved Games\DCS.openalpha\Scripts\Hooks
 -- Make sure you enter the correct address into SERVER_SRS_HOST and SERVER_SRS_PORT (5002 by default) below.
@@ -42,6 +42,7 @@ SRSAuto.unicast = true
 local HOST_PLAYER_ID = 1
 
 SRSAuto.MESSAGE_PREFIX = "SRS Running @ " -- DO NOT MODIFY!!!
+SRSAuto.MESSAGE_PREFIX_PORT = "SRS Running on " -- DO NOT MODIFY!!!
 
 package.path  = package.path..";.\\LuaSocket\\?.lua;"
 package.cpath = package.cpath..";.\\LuaSocket\\?.dll;"
@@ -67,16 +68,24 @@ function SRSAuto.log(str)
     end
 end
 
+function SRSAuto.sendAutoConnectMessage(id)
+    SRSAuto.log(string.format("Sending auto connect message to player %d on connect ", id))
+    if SRSAuto.SERVER_SRS_HOST_AUTO then
+        net.send_chat_to(SRSAuto.MESSAGE_PREFIX_PORT .. SRSAuto.SERVER_SRS_PORT, id)
+    else    
+        net.send_chat_to(SRSAuto.MESSAGE_PREFIX .. SRSAuto.SERVER_SRS_HOST .. ":" .. SRSAuto.SERVER_SRS_PORT, id)
+    end
+end
+
 -- Register callbacks --
 
 SRSAuto.onPlayerConnect = function(id)
 	if not DCS.isServer() then
         return
     end
-	if SRSAuto.SERVER_SEND_AUTO_CONNECT and id ~= HOST_PLAYER_ID then
-        SRSAuto.log(string.format("Sending auto connect message to player %d on connect ", id))
-		net.send_chat_to(string.format(SRSAuto.MESSAGE_PREFIX .. "%s", SRSAuto.SERVER_SRS_HOST..":"..SRSAuto.SERVER_SRS_PORT), id)
-	end
+    if SRSAuto.SERVER_SEND_AUTO_CONNECT and id ~= HOST_PLAYER_ID then
+        sendAutoConnectMessage(id)
+    end
 end
 
 SRSAuto.onPlayerChangeSlot = function(id)
@@ -84,9 +93,8 @@ SRSAuto.onPlayerChangeSlot = function(id)
         return
     end
     if SRSAuto.SERVER_SEND_AUTO_CONNECT and id ~= HOST_PLAYER_ID then
-        SRSAuto.log(string.format("Sending auto connect message to player %d on switch ", id))
-        net.send_chat_to(string.format(SRSAuto.MESSAGE_PREFIX .. "%s", SRSAuto.SERVER_SRS_HOST..":"..SRSAuto.SERVER_SRS_PORT), id)
-   end
+        sendAutoConnectMessage(id)
+    end
 end
 
 SRSAuto.trimStr = function(_str)
@@ -119,24 +127,6 @@ end
 local _lastSent = 0
 
 SRSAuto.onMissionLoadBegin = function()
-	local _status, _result = pcall( function()
-		if SRSAuto.SERVER_SRS_HOST_AUTO then
-			local ipLookupUrl = "https://ipv4.icanhazip.com"
-			local T, code, headers, status = socket.http.request(ipLookupUrl)
-
-			if T == nil or code == nil or code < 200 or code >= 300 then
-			   if code == nil then code = "??" end
-			   SRSAuto.log("Failed to lookup IP from "..ipLookupUrl..". Http Status: " .. code)
-			else
-				SRSAuto.SERVER_SRS_HOST = T
-				SRSAuto.log("SET IP automatically to "..SRSAuto.SERVER_SRS_HOST)
-			end
-		end
-	end)
-	
-	if not _status then
-		SRSAuto.log('ERROR: ' .. _result)
-	end
 end
 
 SRSAuto.onSimulationFrame = function()

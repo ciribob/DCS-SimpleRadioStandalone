@@ -257,6 +257,9 @@
   <data name="Donate_OnClick" xml:space="preserve">
     <value>Please Support SRS through Patreon</value>
   </data>
+  <data name="EAMExpanderHeader" xml:space="preserve">
+    <value>External AWACS Mode (EAM)</value>
+  </data>
   <data name="EffectVolume0" xml:space="preserve">
     <value>0%</value>
   </data>
@@ -794,6 +797,12 @@ By keeping this enabled I can judge the usage of SRS, and which versions are sti
   </data>
   <data name="PlayConnectionSounds" xml:space="preserve">
     <value>Play connection sounds</value>
+  </data>
+  <data name="PresetsFolderBrowseButton" xml:space="preserve">
+    <value>Browse Presets Folder...</value>
+  </data>
+  <data name="PresetsFolderResetButton" xml:space="preserve">
+    <value>Reset</value>
   </data>
   <data name="PreviewAudio" xml:space="preserve">
     <value>Audio Preview</value>

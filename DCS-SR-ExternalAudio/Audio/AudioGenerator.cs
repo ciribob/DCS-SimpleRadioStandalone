@@ -18,6 +18,10 @@ using NVorbis;
 using Google.Cloud.TextToSpeech.V1;
 using Grpc.Core;
 
+using Microsoft.CognitiveServices.Speech;
+using Microsoft.CognitiveServices.Speech.Audio;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
+
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.ExternalAudioClient.Audio
 {
@@ -116,7 +120,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.ExternalAudioClient.Audio
                     }
                 }
 
-                AudioConfig config = new AudioConfig
+                Google.Cloud.TextToSpeech.V1.AudioConfig config = new Google.Cloud.TextToSpeech.V1.AudioConfig
                 {
                     AudioEncoding = AudioEncoding.Linear16,
                     SampleRateHertz = INPUT_SAMPLE_RATE
@@ -155,14 +159,56 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.ExternalAudioClient.Audio
             }
             return new byte[0];
         }
-    
+
+        private async Task<byte[]> AzureTTS(string msg)
+        {
+            try
+            {
+                string[] connstring = opts.AzureCredentials.Split(';');
+                string speechKey = connstring[0];
+                string speechRegion = connstring[1];
+
+                var speechConfig = SpeechConfig.FromSubscription(speechKey, speechRegion);
+                // Set either the `SpeechSynthesisVoiceName` or `SpeechSynthesisLanguage`.
+                //speechConfig.SpeechSynthesisLanguage = "en-US";
+                speechConfig.SpeechSynthesisLanguage = opts.Voice.Substring(0, 5);
+                //speechConfig.SpeechSynthesisVoiceName = "en-US-AvaMultilingualNeural";
+                speechConfig.SpeechSynthesisVoiceName = opts.Voice;
+
+                var speechSynthesizer = new Microsoft.CognitiveServices.Speech.SpeechSynthesizer(speechConfig, null);
+
+                var result = await speechSynthesizer.SpeakTextAsync(msg);
+                var stream = AudioDataStream.FromResult(result);
+
+                var tempFile = Path.GetTempFileName();
+                await stream.SaveToWaveFileAsync(tempFile);
+
+                byte[] bytes = null;
+                using (var reader = new WaveFileReader(tempFile))
+                {
+                    bytes = new byte[reader.Length];
+                    var read = reader.Read(bytes, 0, bytes.Length);
+                    Logger.Info($"Success with Azure TTS - read {read} bytes");
+                }
+
+                //cleanup
+                File.Delete(tempFile);
+
+                return bytes;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, $"Error with Azure Text to Speech: {ex.Message}");
+            }
+            return new byte[0];
+        }
 
 
         private byte[] LocalTTS(string msg)
         {
             try
             {
-                using (var synth = new SpeechSynthesizer())
+                using (var synth = new System.Speech.Synthesis.SpeechSynthesizer())
                 using (var stream = new MemoryStream())
                 {
                     if (opts.Voice == null || opts.Voice.Length == 0)
@@ -297,6 +343,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.ExternalAudioClient.Audio
                 if (!string.IsNullOrEmpty(opts.GoogleCredentials))
                 {
                     resampledBytes = GoogleTTS(msg);
+                }
+                else if (!string.IsNullOrEmpty(opts.AzureCredentials))
+                {
+                    resampledBytes = AzureTTS(msg).GetAwaiter().GetResult();
                 }
                 else
                 {

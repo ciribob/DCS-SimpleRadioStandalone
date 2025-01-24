@@ -1,8 +1,8 @@
--- Version 2.1.0.10
+-- Version 2.1.1.0
 -- Make sure you COPY this file to the same location as the Export.lua as well! 
 -- Otherwise the Radio Might not work
 
-net.log("Loading - DCS-SRS GameGUI - Ciribob: 2.1.0.10")
+net.log("Loading - DCS-SRS GameGUI - Ciribob: 2.1.1.0")
 local SRS = {}
 
 SRS.CLIENT_ACCEPT_AUTO_CONNECT = true --- Set to false if you want to disable AUTO CONNECT
@@ -124,8 +124,9 @@ SRS.sendUpdate = function(playerID)
 	socket.try(SRS.UDPSendSocket:sendto(_jsonUpdate, "127.0.0.1", 9087))
 end
 
-SRS.MESSAGE_PREFIX_OLD = "This server is running SRS on - " -- DO NOT MODIFY!!!
-SRS.MESSAGE_PREFIX = "SRS Running @ " -- DO NOT MODIFY!!!
+SRS.MESSAGE_PATTERN_OLDER = "This server is running SRS on - (%d+%.%d+%.%d+%.%d+:?%d*)" -- DO NOT MODIFY!!!
+SRS.MESSAGE_PATTERN_OLD = "SRS Running @ (%d+%.%d+%.%d+%.%d+:?%d*)"                     -- DO NOT MODIFY!!!
+SRS.MESSAGE_PATTERN = "SRS Running on (%d+)"                                            -- DO NOT MODIFY!!!
 
 function string.startsWith(string, prefix)
     return string.sub(string, 1, string.len(prefix)) == prefix
@@ -135,16 +136,15 @@ function string.trim(_str)
     return string.format( "%s", _str:match( "^%s*(.-)%s*$" ) )
 end
 
-function SRS.isAutoConnectMessage(msg)
-    return string.startsWith(string.trim(msg), SRS.MESSAGE_PREFIX) or string.startsWith(string.trim(msg), SRS.MESSAGE_PREFIX_OLD)
+function SRS.getPortFromMessage(msg)
+	return msg:match(SRS.MESSAGE_PATTERN)
 end
 
 function SRS.getHostFromMessage(msg)
-	if string.startsWith(string.trim(msg), SRS.MESSAGE_PREFIX_OLD) then
-		return string.trim(string.sub(msg, string.len(SRS.MESSAGE_PREFIX_OLD) + 1))
-	else
-		return string.trim(string.sub(msg, string.len(SRS.MESSAGE_PREFIX) + 1))
-	end
+	local host = msg:match(SRS.MESSAGE_PATTERN_OLD)
+	if host ~= nil then return host end
+
+	return msg:match(SRS.MESSAGE_PATTERN_OLDER)
 end
 
 -- Register callbacks --
@@ -330,27 +330,33 @@ SRS.handleRadio = function(msg)
 end
 
 SRS.onChatMessage = function(msg, from)
+	-- Only accept auto connect message coming from host.
+	if SRS.CLIENT_ACCEPT_AUTO_CONNECT and from == 1 then
+		local host = nil
+		local port = SRS.getPortFromMessage(msg)
+		if port ~= nil then 
+			local ip = net.get_server_host()
+			host = ip .. ':' .. port
+		else
+			host = SRS.getHostFromMessage(msg)
+		end
+		if host == nil then 
+			SRS.log("Error getting host from message: " .. msg)
+			return
+		end
 
+		SRS.log(string.format("Got SRS Auto Connect message: %s", host))
 
-    -- Only accept auto connect message coming from host.
-    if SRS.CLIENT_ACCEPT_AUTO_CONNECT
-                        and from == 1
-            and  SRS.isAutoConnectMessage(msg) then
-        local host = SRS.getHostFromMessage(msg)
-        SRS.log(string.format("Got SRS Auto Connect message: %s", host))
-
-        local enabled = OptionsData.getPlugin("DCS-SRS","srsAutoLaunchEnabled")
-        if srs and enabled then
-            local path = srs.get_srs_path()
-            if path ~= "" then
-
-                net.log("Trying to Launch SRS @ "..path)
-                srs.start_srs(host)
-            end
-
-        end
-        SRS.sendConnect(host) 
-    end
+		local enabled = OptionsData.getPlugin("DCS-SRS", "srsAutoLaunchEnabled")
+		if srs and enabled then
+			local path = srs.get_srs_path()
+			if path ~= "" then
+				net.log("Trying to Launch SRS @ " .. path)
+				srs.start_srs(host)
+			end
+		end
+		SRS.sendConnect(host)
+	end
 
     -- MESSAGE FROM MYSELF
     if from == net.get_my_player_id() then
@@ -377,5 +383,5 @@ end
 
 DCS.setUserCallbacks(SRS)
 
-net.log("Loaded - DCS-SRS GameGUI - Ciribob: 2.1.0.10")
+net.log("Loaded - DCS-SRS GameGUI - Ciribob: 2.1.1.0")
 

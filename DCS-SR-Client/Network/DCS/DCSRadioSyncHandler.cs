@@ -262,14 +262,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                 _clientStateSingleton.UpdatePlayerPosition(message.latLng);
             }
 
+            
+            //prep and format the special cases UnitID. This Number includes a massive offset to
+            //de-conflict with typical units. See 'DCSPlayerRadioInfo.UnitIdOffset'
             var coalitionOffset = (uint)_clientStateSingleton.PlayerCoaltionLocationMetadata.side *
                             DCSPlayerRadioInfo.UnitIdOffsetCoalition;
-            
-            //save unit id while catching the special exceptions
             var combinedArmsUnitId = DCSPlayerRadioInfo.UnitIdOffsetCombinedArms 
                                      + coalitionOffset
                                      + (uint)_clientStateSingleton.IntercomOffset;
             
+            // If the Message says its part of any special class, set a special 'UnitID'
+            // If special case groups should be grouped, this would be were to do it.
+            // Todo: Determine if Special cases should be grouped or all together.
             switch (message.unit)
             {
                 case "artillery_commander": 
@@ -288,7 +292,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                     playerRadioInfo.unit = "Observer";
                     playerRadioInfo.unitId = combinedArmsUnitId; 
                     break;
-                case "EAM": 
+                case "EAM":  //EAM is grouped with Combined Arms, Game Masters, Observers, etc.
                     playerRadioInfo.unit = "EAM";
                     playerRadioInfo.unitId = combinedArmsUnitId; 
                     break;
@@ -304,7 +308,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                     playerRadioInfo.unitId = DCSPlayerRadioInfo.UnitIdOffset + (uint)_clientStateSingleton.IntercomOffset;
                     break;
                 
-                default:
+                default: //If the Message is not special, set the Unit to what it claims to be.
                     playerRadioInfo.unit = message.unit;
                     playerRadioInfo.unitId = message.unitId;
                     break;

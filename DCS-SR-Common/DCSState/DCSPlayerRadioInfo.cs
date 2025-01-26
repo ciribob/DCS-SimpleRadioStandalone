@@ -56,16 +56,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
         public Transponder iff = new Transponder();
 
         [JsonIgnore]
-        public readonly static uint UnitIdOffset = 100000000
-            ; // this is where non aircraft "Unit" Ids start from for satcom intercom (And Spectators)
+        public readonly static uint UnitIdOffset = 100000000; 
+            // this is where non aircraft "Unit" Ids start from for satcom intercom (And Spectators)
         
         [JsonIgnore]
         public readonly static uint UnitIdOffsetCombinedArms = UnitIdOffset + 2000; 
-            // Offset for Combined Arms Slot types and External AWACS mode.
-            
+            // A general unit Offset used for Combined Arms Slot types and External AWACS mode.
+        
         [JsonIgnore]
         public readonly static uint UnitIdOffsetCoalition = UnitIdOffset + 10000;
-            // Coalition Offset for Combined Arms Slot types and External AWACS mode.
+            // Coalition Offset used for Combined Arms Slot types and External AWACS mode.
 
         [JsonNetworkIgnoreSerialization]
         [JsonDCSIgnoreSerialization]

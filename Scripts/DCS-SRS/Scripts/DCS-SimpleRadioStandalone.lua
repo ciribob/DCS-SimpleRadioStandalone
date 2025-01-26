@@ -19,6 +19,7 @@ SR.unicast = true --DONT CHANGE THIS
 SR.lastKnownPos = { x = 0, y = 0, z = 0 }
 SR.lastKnownSeat = 0
 SR.lastKnownUnitType = "?"
+SR.lastKnownSlot = 0
 
 SR.MIDS_FREQ = 1030.0 * 1000000 -- Start at UHF 300
 SR.MIDS_FREQ_SEPARATION = 1.0 * 100000 -- 0.1 MHZ between MIDS channels
@@ -175,7 +176,8 @@ function SR.exporter()
         end
     end
 
-    if _data ~= nil then
+    -- _update.slot = -1 when in a Combined Arms and Spectator.
+    if _data ~= nil and (SR.lastKnownSlot > -1) then
 
         _update = {
             name = "",
@@ -368,7 +370,8 @@ function SR.readSeatSocket()
         if _decoded then
             SR.lastKnownSeat = _decoded.seat
             SR.lastKnownUnitType = _decoded.type
-            SR.log("lastKnownSeat "..SR.lastKnownSeat.." lastKnownUnitType "..SR.lastKnownUnitType)
+            SR.lastKnownSlot = _decoded.slot
+            -- SR.log("lastKnownSeat "..SR.lastKnownSeat.." lastKnownUnitType "..SR.lastKnownUnitType)
         end
     end
 end

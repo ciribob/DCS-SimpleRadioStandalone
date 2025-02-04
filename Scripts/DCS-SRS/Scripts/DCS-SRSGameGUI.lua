@@ -66,37 +66,82 @@ SRS.onSimulationFrame = function()
 
 end
 
+-- Slot Data Examples:
+-- 3271
+-- 12122
+-- 13312_2
+-- 13312_3
+-- forward_observer_blue_6
+-- artillery_commander_blue_1
+-- instructor_red_1
+-- Spectators are Null
+
 SRS.sendUpdate = function(playerID)
   
     local _update = {
         name = "",
         side = 0,
         seat = 0,
+		slotNum = 0,
+		slotName = "?",
     }
 
     _update.name = net.get_player_info(playerID, "name" )
-	_update.side = net.get_player_info(playerID,"side")
+	_update.side = net.get_player_info(playerID, "side")
 
-	local slot =  net.get_player_info(playerID,"slot")
+	local rawSlot =  net.get_player_info(playerID, "slot")
 
-	if slot and slot ~= '' then 
-		slot = tostring(slot)
+	if rawSlot and rawSlot ~= '' then
+		slot = tostring(rawSlot)
 	    
-	    -- Slot 2744_2 -- backseat slot is Unit ID  _2 
+	    -- If there is an Underscore in the Slot, then special cases:
 	    if string.find(tostring(slot), "_", 1, true) then
-	        --extract substring - get the seat ID
-	        slot = string.sub(slot, string.find(slot, "_", 1, true)+1, string.len(slot))
+            -- Deal with the special slots added by Combined Arms, Else Aircrew.
+            if string.find(rawSlot, 'artillery_commander') then
+                _update.slotNum = 0
+                _update.slotName = "Tactical Cmdr"
+            elseif string.find(rawSlot, 'instructor') then
+                _update.slotNum = 0
+                _update.slotName = "Game Master" --"Game Master"
+            elseif string.find(rawSlot, 'forward_observer') then
+                _update.slotNum = 0
+                _update.slotName = "JTAC/Operator" -- "JTAC"
+            elseif string.find(rawSlot, 'observer') then
+                _update.slotNum = 0
+                _update.slotName = "Observer"
+            else
+                -- extract Slot # from the start.
+                slotBeginning = string.sub(slot, 0, string.find(slot, "_", 1, true))
+                if slotBeginning ~= nil then
+                    _update.slotNum = tonumber(slotBeginning)
+                    _update.slotName = "Aircrew"
+                end
+            end
+            
+            -- Slot 2744_2 -- backseat slot is Unit ID  _2
+            -- forward_observer_blue_6 -- Seat 6
+            
+            --extract ending substring - get the seat ID
+            local last_underscore = string.find(string.reverse(slot), "_", 1, true)-2
+            slotEnding = string.sub(slot, string.len(slot)-last_underscore, string.len(slot))
 
-	        local slotNum = tonumber(slot)
+            seatNum = tonumber(slotEnding)
 
-	        if slotNum ~= nil and slotNum >= 1 then
-	        	_update.seat = slotNum -1 -- -1 as seat starts at 2
-	        end
-	    end
+            if seatNum ~= nil and seatNum >= 1 then
+                _update.seat = seatNum -1 -- -1 as seat starts at 2
+            end
+        else
+            -- Slot Data is valid, but does not have an Underscore.
+            _update.slotNum = slot
+            _update.slotName = "Pilot"
+        end
+    else
+        -- If Slot info is invalid, we must be a Spectator or similar.
+        _update.slotName = "Spectator"
 	end
 
 	local _jsonUpdate = SRS.JSON:encode(_update).." \n"
-    --SRS.log("Update -  Slot  ID:"..playerID.." Name: ".._update.name.." Side: ".._update.side)
+    --SRS.log("Update -  Slot  ID:"..playerID.." Name: ".._update.name.." Side: ".._update.side.." Seat: ".._update.seat.." slot #: ".._update.slotNum.." slotName: ".._update.slotName)
 	socket.try(SRS.UDPSendSocket:sendto(_jsonUpdate, "127.0.0.1", 5068))
 	socket.try(SRS.UDPSendSocket:sendto(_jsonUpdate, "127.0.0.1", 9087))
 end

@@ -224,13 +224,12 @@
                                 Margin="0,10,0,0"
                                 HorizontalAlignment="Center"
                                 Click="ToggleServerSettings_OnClick"
-                                Content="{x:Static p:Resources.ToggleServerSettings}"
+                                Content="{x:Static p:Resources.ToggleServerSettings}" />
 
                     </StackPanel>
                     <StackPanel Margin="0"
                                 HorizontalAlignment="Center"
-                                Orientation="Horizontal">
-                                IsEnabled="False" />
+                                Orientation="Horizontal" >
                         <Button x:Name="ShowOverlay"
                                 Width="125"
                                 Margin="0,15,20,0"
@@ -249,7 +248,7 @@
                                 HorizontalAlignment="Center"
                                 Click="ShowClientList_OnClick"
                                 Content="{x:Static p:Resources.ShowClientList}" />
-                    </UniformGrid>
+                    </StackPanel>
                     <StackPanel Margin="0,15,0,0"
                                 Orientation="Horizontal"
                                 HorizontalAlignment="Center">

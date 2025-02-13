@@ -18,6 +18,62 @@
                       ResizeMode="CanMinimize"
                       mc:Ignorable="d">
 
+    <Window.Resources>
+        <Style TargetType="{x:Type ToggleButton}"
+               BasedOn="{StaticResource MetroToggleButton}">
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="Content" Value="{x:Static p:Resources.ValueON}" />
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Content" Value="{x:Static p:Resources.ValueON}" />
+                </Trigger>
+                <Trigger Property="IsChecked" Value="False">
+                    <Setter Property="Content" Value="{x:Static p:Resources.ValueOFF}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="{x:Type Button}"
+               BasedOn="{StaticResource MahApps.Metro.Styles.MetroButton}">
+            <Setter Property="FontSize" Value="10" />
+            <Setter Property="BorderThickness" Value="2" />
+        </Style>
+        <Style TargetType="{x:Type ComboBox}"
+               BasedOn="{StaticResource MetroComboBox}">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="BorderThickness" Value="2" />
+        </Style>
+        <Style TargetType="{x:Type Slider}"
+               BasedOn="{StaticResource MetroSlider}">
+        </Style>
+        <Style TargetType="{x:Type ProgressBar}"
+               BasedOn="{StaticResource MetroProgressBar}">
+            <Setter Property="BorderThickness" Value="2" />
+        </Style>
+        <Style TargetType="{x:Type TextBox}"
+               BasedOn="{StaticResource MetroTextBox}">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="BorderThickness" Value="2" />
+        </Style>
+        <Style TargetType="{x:Type Label}"
+               BasedOn="{StaticResource MetroLabel}">
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+        <Style TargetType="{x:Type GroupBox}"
+               BasedOn="{StaticResource MetroGroupBox}" />
+        <Style TargetType="{x:Type DataGrid}" 
+               BasedOn="{StaticResource MetroDataGrid}" />
+        <Style TargetType="{x:Type DataGridCell}" 
+               BasedOn="{StaticResource MetroDataGridCell}">
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource MetroDataGrid.HighlightBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource MetroDataGrid.HighlightTextBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    
     <TabControl x:Name="TabControl" Margin="0,0,0,-16">
         <TabControl.Resources>
             <converters:MicAvailabilityTooltipConverter x:Key="MicAvailabilityTooltipConverter" />

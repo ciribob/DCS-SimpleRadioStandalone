@@ -88,8 +88,7 @@
                   ItemsSource="{Binding Path=Addresses}"
                   SelectedItem="{Binding Path=SelectedItem}"
                   SelectionMode="Single"
-                  AllowDrop="True"
-                    >
+                  AllowDrop="True" >
 
             <DataGrid.RowStyle>
                 <Style TargetType="{x:Type DataGridRow}">

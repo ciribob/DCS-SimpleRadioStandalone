@@ -172,7 +172,6 @@
                         <Label x:Name="SpeakerBoostLabel"
                                HorizontalAlignment="Center"
                                Content="{x:Static p:Resources.SpeakerBoostLabel}" />
-
                     </StackPanel>
 
                     <Label HorizontalAlignment="Center"

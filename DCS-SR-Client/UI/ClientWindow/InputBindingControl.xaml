@@ -10,8 +10,6 @@
              mc:Ignorable="d">
 
     <Grid>
-
-
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="2*" />
@@ -22,10 +20,8 @@
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
-
         </Grid.RowDefinitions>
-
-
+        
         <Label x:Name="DeviceLabel"
                Grid.Row="0"
                Grid.Column="0"
@@ -86,6 +82,4 @@
                 Click="ModifierClear_Click"
                 Content="{x:Static p:Resources.DeviceClear}" />
     </Grid>
-
-
 </UserControl>

@@ -10,7 +10,7 @@
              d:DataContext="{d:DesignInstance favourites:FavouriteServersViewModel,
                                               IsDesignTimeCreatable=False}"
              d:DesignHeight="300"
-             d:DesignWidth="300"
+             d:DesignWidth="600"
              mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>

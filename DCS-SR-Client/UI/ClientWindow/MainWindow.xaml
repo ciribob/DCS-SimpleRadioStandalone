@@ -261,8 +261,8 @@
                             <Label x:Name="PresetsFolderLabel" Width="220" HorizontalAlignment="Center"/>
                         </StackPanel>
                         <StackPanel Margin="0" Orientation="Horizontal" HorizontalAlignment="Right" IsEnabled="{Binding Path=ClientState.ExternalAWACSModeConnected, Converter={StaticResource BooleanInverterConverter}}">
-                            <Button x:Name="PresetsFolderBrowseButton" Content="{x:Static p:Resources.PresetsFolderBrowseButton}" Click="PresetsFolderBrowseButton_Click" Style="{DynamicResource SquareButtonStyle}"></Button>
-                            <Button x:Name="PresetsFolderResetButton" Content="{x:Static p:Resources.PresetsFolderResetButton}" Click="PresetsFolderResetButton_Click" Style="{DynamicResource SquareButtonStyle}" Margin="10,0,0,0"></Button>
+                            <Button x:Name="PresetsFolderBrowseButton" Content="{x:Static p:Resources.PresetsFolderBrowseButton}" Click="PresetsFolderBrowseButton_Click" />
+                            <Button x:Name="PresetsFolderResetButton" Content="{x:Static p:Resources.PresetsFolderResetButton}" Click="PresetsFolderResetButton_Click"  Margin="10,0,0,0" />
                         </StackPanel>
                     </StackPanel>
                     <StackPanel Margin="0,15,0,0"

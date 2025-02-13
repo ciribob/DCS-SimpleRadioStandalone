@@ -213,14 +213,14 @@
                                 HorizontalAlignment="Center"
                                 Orientation="Horizontal">
                         <Button x:Name="StartStop"
-                                Width="125"
+                                Width="140"
                                 Margin="0,10,20,0"
                                 HorizontalAlignment="Center"
                                 Command="{Binding Path=ConnectCommand}"
                                 Content="{x:Static p:Resources.StartStop}"
                                 ToolTip="{Binding Path=AudioInput.MicrophoneAvailable, Converter={StaticResource MicAvailabilityTooltipConverter}}" />
                         <Button x:Name="ToggleServerSettings"
-                                Width="125"
+                                Width="140"
                                 Margin="0,10,0,0"
                                 HorizontalAlignment="Center"
                                 Click="ToggleServerSettings_OnClick"
@@ -231,19 +231,19 @@
                                 HorizontalAlignment="Center"
                                 Orientation="Horizontal" >
                         <Button x:Name="ShowOverlay"
-                                Width="125"
-                                Margin="0,15,20,0"
+                                Width="140"
+                                Margin="0,15,10,0"
                                 HorizontalAlignment="Center"
                                 Click="ShowOverlay_OnClick"
                                 Content="{x:Static p:Resources.ShowOverlay}" />
                         <Button x:Name="ShowAwacsOverlay"
-                                Width="125"
-                                Margin="0,15,20,0"
+                                Width="140"
+                                Margin="0,15,10,0"
                                 HorizontalAlignment="Center"
                                 Click="ShowAwacsOverlay_OnClick"
                                 Content="{x:Static p:Resources.ShowAwacsOverlay}" />
                         <Button x:Name="ShowClientList"
-                                Width="125"
+                                Width="140"
                                 Margin="0,15,0,0"
                                 HorizontalAlignment="Center"
                                 Click="ShowClientList_OnClick"
@@ -404,7 +404,7 @@
 
                 <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Visible">
                     <StackPanel>
-                        <Button Width="150px" Content="{x:Static p:Resources.RescanInputDevices}" Click="RescanInputDevices" />
+                        <Button Width="220" Content="{x:Static p:Resources.RescanInputDevices}" Click="RescanInputDevices" />
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2*" />

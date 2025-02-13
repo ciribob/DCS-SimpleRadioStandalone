@@ -29,7 +29,7 @@
                              HorizontalAlignment="Right"
                              VerticalAlignment="Center"
                              Fill="{Binding ClientCoalitionColour}"
-                             Stroke="Black" />
+                             Stroke="{DynamicResource TextBrush}" />
                 </Grid>
             </DataTemplate>
         </ListBox.ItemTemplate>

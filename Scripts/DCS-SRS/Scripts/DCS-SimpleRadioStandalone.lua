@@ -2862,7 +2862,7 @@ function SR.exportRadioOH58D(_data)
     end
     
     if _mpdRight["CT"] == "IFF PAGE 1" then
-        Parsed = { mode1 = 01, mode2 = 1200, mode3 = 0300, mode4 = 1 } -- There is no way to change the defaults at the moment.
+        Parsed = { mode1 = 00, mode2 = 1200, mode3 = 0000, mode4 = 1 } -- There is no way to change the defaults at the moment.
 
         if _mpdRight["L2RIGHT_TEXT"] == "OFF" then _iffSettings.mode1 = -1 else _iffSettings.mode1 = Parsed.mode1 end -- Mode 1
         if _mpdRight["L3RIGHT_TEXT"] == "OFF" then _iffSettings.mode2 = -1 else _iffSettings.mode2 = Parsed.mode2 end -- Mode 2

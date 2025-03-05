@@ -1,50 +1,219 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Models;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers.Wave;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.DSP;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
 using MathNet.Filtering;
+using MathNet.Filtering.IIR;
 using NAudio.Dsp;
+using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
 {
+    namespace Wave
+    {
+        class OnlineFilterProvider : ISampleProvider
+        {
+
+            ISampleProvider Source;
+            IOnlineFilter Filter;
+            public WaveFormat WaveFormat => Source.WaveFormat;
+
+            public OnlineFilterProvider(ISampleProvider source, IOnlineFilter filter)
+            {
+                Source = source;
+                Filter = filter;
+            }
+
+            public int Read(float[] buffer, int offset, int count)
+            {
+                var samplesRead = Source.Read(buffer, offset, count);
+                for (int i = 0; i < count; ++i)
+                {
+                    buffer[offset + i] = (float)Filter.ProcessSample(buffer[offset + i]);
+                }
+
+                return samplesRead;
+            }
+        }
+
+        class BiQuadProvider : ISampleProvider
+        {
+            BiQuadFilter Filter;
+            ISampleProvider Source;
+
+            public BiQuadProvider(ISampleProvider source, BiQuadFilter filter)
+            {
+                Filter = filter;
+                Source = source;
+            }
+
+            public WaveFormat WaveFormat => Source.WaveFormat;
+
+            public int Read(float[] buffer, int offset, int count)
+            {
+                var samplesRead = Source.Read(buffer, offset, count);
+                for (int i = 0; i < count; ++i)
+                {
+                    buffer[offset + i] = Filter.Transform(buffer[offset + i]);
+                }
+
+                return samplesRead;
+            }
+        }
+        class TransmissionProvider : ISampleProvider
+        {
+            public WaveFormat WaveFormat => WaveFormat.CreateIeeeFloatWaveFormat(AudioManager.OUTPUT_SAMPLE_RATE, 1);
+            private float[] Buffer;
+            private int Offset;
+            public TransmissionProvider(float[] buffer, int offset)
+            {
+                Buffer = buffer;
+                Offset = offset;
+            }
+
+            public int Read(float[] buffer, int offset, int count)
+            {
+                count = Math.Min(Buffer.Length - Offset, count);
+                Array.Copy(Buffer, Offset, buffer, offset, count);
+
+                return count;
+            }
+        }
+        class CachedEffectProvider : ISampleProvider
+        {
+            public WaveFormat WaveFormat => WaveFormat.CreateIeeeFloatWaveFormat(AudioManager.OUTPUT_SAMPLE_RATE, 1);
+
+            public int Read(float[] buffer, int offset, int count)
+            {
+                var processed = 0;
+                do
+                {
+                    var availableSamples = Effect.AudioEffectFloat.Length - Position;
+                    var samplesToCopy = Math.Min(availableSamples, count - processed);
+                    Array.Copy(Effect.AudioEffectFloat, Position, buffer, offset + processed, samplesToCopy);
+                    Position += samplesToCopy;
+
+                    if (Position == Effect.AudioEffectFloat.Length)
+                    {
+                        Position = PositionRollover(Position, Effect.AudioEffectFloat.Length);
+                    }
+
+                    processed += samplesToCopy;
+                } while (processed < count);
+                
+                return processed;
+            }
+
+            public bool Enabled { get; set; } = true;
+            public bool Active => Enabled && Effect.Loaded;
+
+
+            private int Position { get; set; } = 0;
+
+
+            private CachedAudioEffect Effect;
+
+            public CachedEffectProvider(CachedAudioEffect Effect)
+            {
+                this.Effect = Effect;
+            }
+
+            protected virtual int PositionRollover(int position, int toneLength)
+            {
+                if (position == toneLength)
+                {
+                    position = 0;
+                }
+
+                return position;
+            }
+        }
+
+        class VolumeCachedEffectProvider : ISampleProvider
+        {
+            private readonly VolumeSampleProvider volumeProvider;
+            private readonly CachedEffectProvider effectProvider;
+
+            public WaveFormat WaveFormat => volumeProvider.WaveFormat;
+
+            public int Read(float[] buffer, int offset, int count)
+            {
+                return volumeProvider.Read(buffer, offset, count);
+            }
+
+            public VolumeCachedEffectProvider(CachedEffectProvider effectProvider)
+            {
+                this.effectProvider = effectProvider;
+                volumeProvider = new VolumeSampleProvider(effectProvider);
+            }
+
+            public float Volume
+            {
+                get { return volumeProvider.Volume; }
+                set
+                {
+                    volumeProvider.Volume = value;
+                }
+            }
+
+            public bool Enabled
+            {
+                get {  return effectProvider.Enabled; }
+                set {  effectProvider.Enabled = value; }
+            }
+
+            public bool Active => effectProvider.Active;
+        }
+
+        class ClippingProvider : ISampleProvider
+        {
+            private float Min { get; set; }
+            private float Max { get; set; }
+
+            public WaveFormat WaveFormat => Source.WaveFormat;
+
+            private ISampleProvider Source;
+
+            public ClippingProvider(ISampleProvider source, float min, float max)
+            {
+                Source = source;
+                Min = min;
+                Max = max;
+            }
+
+            public int Read(float[] buffer, int offset, int count)
+            {
+                int samplesRead = Source.Read(buffer, offset, count);
+                for (int i = 0; i < count; ++i)
+                {
+                    buffer[offset + i] = Math.Max(Math.Min(buffer[offset + i], Max), Min);
+                }
+                return samplesRead;
+            }
+        }
+    }
+   
+
     public class ClientEffectsPipeline
     {
         private readonly Random _random = new Random();
 
-        private OnlineFilter[] _filters;
+        private IOnlineFilter _bandpassFilter = OnlineIirFilter.CreateBandpass(ImpulseResponse.Finite, AudioManager.OUTPUT_SAMPLE_RATE, 560, 3900);
+        private Dictionary<CachedAudioEffect.AudioEffectTypes, VolumeCachedEffectProvider> _fxProviders = new Dictionary<CachedAudioEffect.AudioEffectTypes, VolumeCachedEffectProvider>();
 
         private readonly BiQuadFilter _highPassFilter;
         private readonly BiQuadFilter _lowPassFilter;
 
-        private static readonly double HQ_RESET_CHANCE = 0.8;
-
-        private int hqTonePosition = 0;
-        private int natoPosition = 0;
-        private int fmNoisePosition = 0;
-        private int vhfNoisePosition = 0;
-        private int uhfNoisePosition = 0;
-        private int hfNoisePosition = 0;
-
         private readonly CachedAudioEffectProvider effectProvider = CachedAudioEffectProvider.Instance;
 
-        private bool natoToneEnabled;
-        private bool hqToneEnabled;
         private bool radioEffectsEnabled;
         private bool clippingEnabled;
-        private float hqToneVolume;
-        private float natoToneVolume;
-
-        private float fmVol;
-        private float hfVol;
-        private float uhfVol;
-        private float vhfVol;
 
         private long lastRefresh = 0; //last refresh of settings
 
@@ -52,10 +221,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
 
         private bool radioEffects;
         private bool radioBackgroundNoiseEffect;
-
-        private CachedAudioEffect amCollisionEffect;
-        private int amEffectPosition = 0;
-        private float amCollisionVol = 1.0f;
 
         private bool irlRadioRXInterference = false;
 
@@ -66,18 +231,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
             profileSettings = Settings.GlobalSettingsStore.Instance.ProfileSettingsStore;
             serverSettings =  SyncedServerSettings.Instance;
 
-            _filters = new OnlineFilter[2];
-            _filters[0] =
-                OnlineFilter.CreateBandpass(ImpulseResponse.Finite, AudioManager.OUTPUT_SAMPLE_RATE, 560, 3900);
-            _filters[1] =
-                OnlineFilter.CreateBandpass(ImpulseResponse.Finite, AudioManager.OUTPUT_SAMPLE_RATE, 100, 4500);
+            _fxProviders.Add(CachedAudioEffect.AudioEffectTypes.NATO_TONE, new VolumeCachedEffectProvider(new CachedEffectProvider(effectProvider.NATOTone)));
+            _fxProviders.Add(CachedAudioEffect.AudioEffectTypes.HAVEQUICK_TONE, new VolumeCachedEffectProvider(new CachedEffectProvider(effectProvider.HAVEQUICKTone)));
+            _fxProviders.Add(CachedAudioEffect.AudioEffectTypes.UHF_NOISE, new VolumeCachedEffectProvider(new CachedEffectProvider(effectProvider.UHFNoise)));
+            _fxProviders.Add(CachedAudioEffect.AudioEffectTypes.VHF_NOISE, new VolumeCachedEffectProvider(new CachedEffectProvider(effectProvider.VHFNoise)));
+            _fxProviders.Add(CachedAudioEffect.AudioEffectTypes.HF_NOISE, new VolumeCachedEffectProvider(new CachedEffectProvider(effectProvider.HFNoise)));
+            _fxProviders.Add(CachedAudioEffect.AudioEffectTypes.FM_NOISE, new VolumeCachedEffectProvider(new CachedEffectProvider(effectProvider.FMNoise)));
+            _fxProviders.Add(CachedAudioEffect.AudioEffectTypes.AM_COLLISION, new VolumeCachedEffectProvider(new CachedEffectProvider(effectProvider.AMCollision)));
 
             _highPassFilter = BiQuadFilter.HighPassFilter(AudioManager.OUTPUT_SAMPLE_RATE, 520, 0.97f);
             _lowPassFilter = BiQuadFilter.LowPassFilter(AudioManager.OUTPUT_SAMPLE_RATE, 4130, 2.0f);
             RefreshSettings();
-
-            amCollisionEffect = effectProvider.AMCollision;
-           
         }
 
         private void RefreshSettings()
@@ -89,18 +253,19 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
             {
                 lastRefresh = now;
 
-                natoToneEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.NATOTone);
-                hqToneEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.HAVEQUICKTone);
+                _fxProviders[CachedAudioEffect.AudioEffectTypes.NATO_TONE].Enabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.NATOTone);
+                _fxProviders[CachedAudioEffect.AudioEffectTypes.NATO_TONE].Volume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.NATOToneVolume);
+
+                _fxProviders[CachedAudioEffect.AudioEffectTypes.HAVEQUICK_TONE].Enabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.HAVEQUICKTone);
+                _fxProviders[CachedAudioEffect.AudioEffectTypes.HAVEQUICK_TONE].Volume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.HQToneVolume);
+
                 radioEffectsEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEffects);
                 clippingEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEffectsClipping);
-                hqToneVolume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.HQToneVolume);
-                natoToneVolume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.NATOToneVolume);
-                amCollisionVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.AMCollisionVolume);
 
-                fmVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.FMNoiseVolume);
-                hfVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.HFNoiseVolume);
-                uhfVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.UHFNoiseVolume);
-                vhfVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.VHFNoiseVolume);
+                _fxProviders[CachedAudioEffect.AudioEffectTypes.UHF_NOISE].Volume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.UHFNoiseVolume);
+                _fxProviders[CachedAudioEffect.AudioEffectTypes.VHF_NOISE].Volume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.VHFNoiseVolume);
+                _fxProviders[CachedAudioEffect.AudioEffectTypes.HF_NOISE].Volume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.HFNoiseVolume);
+                _fxProviders[CachedAudioEffect.AudioEffectTypes.FM_NOISE].Volume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.FMNoiseVolume);
 
                 radioEffects = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEffects);
 
@@ -142,25 +307,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
                 {
                     //All AM is wrecked if more than one transmission
                     //For HQ - only if more than TWO transmissions and its totally fucked
-                    if (lastTransmission.Modulation == RadioInformation.Modulation.HAVEQUICK && transmissions.Count > 2 && amCollisionEffect.Loaded)
+                    var amCollisionProvider = _fxProviders[CachedAudioEffect.AudioEffectTypes.AM_COLLISION];
+                    if (lastTransmission.Modulation == RadioInformation.Modulation.HAVEQUICK && transmissions.Count > 2 && amCollisionProvider.Active)
                     {
+                        var collisionProvider = new VolumeSampleProvider(amCollisionProvider);
+                        collisionProvider.Volume = lastTransmission.Volume;
+
                         //replace the buffer with our own
-                        int outIndex = 0;
-                        while (outIndex < clientTransmissionLength)
-                        {
-                            var amByte = this.amCollisionEffect.AudioEffectFloat[amEffectPosition++];
-
-                            tempBuffer[outIndex++] = (amByte *amCollisionVol) * lastTransmission.Volume;
-
-                            if (amEffectPosition == amCollisionEffect.AudioEffectFloat.Length)
-                            {
-                                amEffectPosition = 0;
-                            }
-                        }
+                        collisionProvider.Read(tempBuffer, 0, clientTransmissionLength);
 
                         process = false;
                     }
-                    else if (lastTransmission.Modulation == RadioInformation.Modulation.AM && amCollisionEffect.Loaded)
+                    else if (lastTransmission.Modulation == RadioInformation.Modulation.AM && amCollisionProvider.Active)
                     {
                         //AM https://www.youtube.com/watch?v=yHRDjhkrDbo
                         //Heterodyne tone AND audio from multiple transmitters in a horrible mess
@@ -172,19 +330,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
                         process = false;
 
                         //apply heterodyne tone to the mixdown
-                        //replace the buffer with our own
-                        int outIndex = 0;
-                        while (outIndex < clientTransmissionLength)
-                        {
-                            var amByte = this.amCollisionEffect.AudioEffectFloat[amEffectPosition++];
-
-                            tempBuffer[outIndex++] += ((amByte * amCollisionVol) * lastTransmission.Volume);
-
-                            if (amEffectPosition == amCollisionEffect.AudioEffectFloat.Length)
+                        // TODO: merge into the mixer living in ProcessClientAudioSamples().
+                        var collisionMixer = new MixingSampleProvider(new List<ISampleProvider>{
+                            new VolumeSampleProvider(amCollisionProvider)
                             {
-                                amEffectPosition = 0;
-                            }
-                        }
+                                Volume = lastTransmission.Volume,
+                            },
+                            new TransmissionProvider(tempBuffer, clientTransmissionLength)
+                        });
+
+                        collisionMixer.Read(tempBuffer, 0, clientTransmissionLength);
                     }
                     else if (lastTransmission.Modulation == RadioInformation.Modulation.FM || lastTransmission.Modulation == RadioInformation.Modulation.SINCGARS)
                     {
@@ -194,11 +349,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
                         int index = _random.Next(transmissions.Count);
                         var transmission = transmissions[index];
 
-                        for (int i = 0; i < transmission.PCMAudioLength; i++)
-                        {
-                            tempBuffer[i] = transmission.PCMMonoAudio[i];
-                        }
-
+                        Array.Copy(transmission.PCMMonoAudio, tempBuffer, transmission.PCMMonoAudio.Length);
                         clientTransmissionLength = transmission.PCMMonoAudio.Length;
                     }
                 }
@@ -277,170 +428,91 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
             }
         }
 
+        private VolumeCachedEffectProvider GetToneProvider(RadioInformation.Modulation modulation)
+        {
+            switch (modulation)
+            {
+                case RadioInformation.Modulation.FM:
+                case RadioInformation.Modulation.SINCGARS:
+                    return _fxProviders[CachedAudioEffect.AudioEffectTypes.NATO_TONE];
+
+                case RadioInformation.Modulation.HAVEQUICK:
+                    return _fxProviders[CachedAudioEffect.AudioEffectTypes.HAVEQUICK_TONE];
+            }
+
+            return null;
+        }
+
+        private VolumeCachedEffectProvider GetNoiseProvider(RadioInformation.Modulation modulation, double freq)
+        {
+            switch (modulation)
+            {
+                case RadioInformation.Modulation.AM:
+                case RadioInformation.Modulation.HAVEQUICK:
+                    if (freq > 200e6) // UHF range
+                    {
+                        return _fxProviders[CachedAudioEffect.AudioEffectTypes.UHF_NOISE];
+                    }
+
+                    if (freq > 80e6)
+                    {
+                        return _fxProviders[CachedAudioEffect.AudioEffectTypes.VHF_NOISE];
+                    }
+
+                    return _fxProviders[CachedAudioEffect.AudioEffectTypes.HF_NOISE];
+                case RadioInformation.Modulation.FM:
+                case RadioInformation.Modulation.SINCGARS:
+                    return _fxProviders[CachedAudioEffect.AudioEffectTypes.FM_NOISE];
+            }
+
+            return null;
+        }
 
         private void AddRadioEffect(float[] buffer, int count, int offset, RadioInformation.Modulation modulation, double freq)
         {
-            int outputIndex = offset;
-             
-            while (outputIndex < offset + count)
+            // NAudio version.
+            // Chain of effects being applied.
+            // TODO: We should be able to precompute a lot of this.
+            ISampleProvider voiceProvider = new TransmissionProvider(buffer, offset);
+            if (radioEffectsEnabled)
             {
-                var audio = (double) buffer[outputIndex];
-
-                if (radioEffectsEnabled)
+                if (clippingEnabled)
                 {
-                    if (clippingEnabled)
-                    {
-                        if (audio > RadioFilter.CLIPPING_MAX)
-                        {
-                            audio = RadioFilter.CLIPPING_MAX;
-                        }
-                        else if (audio < RadioFilter.CLIPPING_MIN)
-                        {
-                            audio = RadioFilter.CLIPPING_MIN;
-                        }
-                    }
-
-                    //high and low pass filter
-                    for (int j = 0; j < _filters.Length; j++)
-                    {
-                        var filter = _filters[j];
-                        audio = filter.ProcessSample(audio);
-                        if (double.IsNaN(audio))
-                        {
-                            audio = (double)buffer[outputIndex];
-                        }
-
-                        audio *= RadioFilter.BOOST;
-                    }
+                    voiceProvider = new ClippingProvider(voiceProvider, RadioFilter.CLIPPING_MIN, RadioFilter.CLIPPING_MAX);
                 }
 
-                if ((modulation == RadioInformation.Modulation.FM || modulation == RadioInformation.Modulation.SINCGARS)
-                    && effectProvider.NATOTone.Loaded
-                    && natoToneEnabled)
-                {
-                    var natoTone = effectProvider.NATOTone.AudioEffectFloat;
-                    audio += ((natoTone[natoPosition]) * natoToneVolume);
-                    natoPosition++;
-
-                    if (natoPosition == natoTone.Length)
-                    {
-                        natoPosition = 0;
-                    }
-                }
-
-                if (modulation == RadioInformation.Modulation.HAVEQUICK
-                     && effectProvider.HAVEQUICKTone.Loaded
-                     && hqToneEnabled)
-                {
-                    var hqTone = effectProvider.HAVEQUICKTone.AudioEffectFloat;
-
-                    audio += ((hqTone[hqTonePosition]) * hqToneVolume);
-                    hqTonePosition++;
-
-                    if (hqTonePosition == hqTone.Length)
-                    {
-                        var reset = _random.NextDouble();
-
-                        if (reset > HQ_RESET_CHANCE)
-                        {
-                            hqTonePosition = 0;
-                        }
-                        else
-                        {
-                            //one back to try again
-                            hqTonePosition += -1;
-                        }
-                    }
-                }
-
-                audio = AddRadioBackgroundNoiseEffect(audio, modulation,freq);
-
-                // clip
-                if (audio > 1.0f)
-                    audio = 1.0f;
-                if (audio < -1.0f)
-                    audio = -1.0f;
-
-                buffer[outputIndex] = (float) audio;
-
-                outputIndex++;
+                voiceProvider = new OnlineFilterProvider(voiceProvider, _bandpassFilter);
             }
-        }
 
-        private double AddRadioBackgroundNoiseEffect(double audio, RadioInformation.Modulation modulation, double freq)
-        {
+            // Mix in the noise, tones, etc.
+            // Note that they are applied LIFO.
+            var fxMixer = new MixingSampleProvider(WaveFormat.CreateIeeeFloatWaveFormat(AudioManager.OUTPUT_SAMPLE_RATE, 1));
+
             if (radioBackgroundNoiseEffect)
             {
-                if (modulation == RadioInformation.Modulation.HAVEQUICK || modulation == RadioInformation.Modulation.AM)
+                var noise = GetNoiseProvider(modulation, freq);
+                if (noise != null && noise.Active)
                 {
-                    //mix in based on frequency
-                    if (freq >= 200d * 1000000)
-                    {
-                        if (effectProvider.UHFNoise.Loaded)
-                        {
-                            var noise = effectProvider.UHFNoise.AudioEffectFloat;
-                            //UHF Band?
-                            audio += ((noise[uhfNoisePosition]) * uhfVol);
-                            uhfNoisePosition++;
-
-                            if (uhfNoisePosition == noise.Length)
-                            {
-                                uhfNoisePosition = 0;
-                            }
-                        }
-                    }
-                    else if (freq > 80d * 1000000)
-                    {
-                        if (effectProvider.VHFNoise.Loaded)
-                        {
-                            //VHF Band? - Very rough
-                            var noise = effectProvider.VHFNoise.AudioEffectFloat;
-                            audio += ((noise[vhfNoisePosition]) * vhfVol);
-                            vhfNoisePosition++;
-
-                            if (vhfNoisePosition == noise.Length)
-                            {
-                                vhfNoisePosition = 0;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (effectProvider.HFNoise.Loaded)
-                        {
-                            //HF!
-                            var noise = effectProvider.HFNoise.AudioEffectFloat;
-                            audio += ((noise[hfNoisePosition]) * hfVol);
-                            hfNoisePosition++;
-
-                            if (hfNoisePosition == noise.Length)
-                            {
-                                hfNoisePosition = 0;
-                            }
-                        }
-                    }
-                }
-                else if (modulation == RadioInformation.Modulation.FM || modulation == RadioInformation.Modulation.SINCGARS)
-                {
-                    if (effectProvider.FMNoise.Loaded)
-                    {
-
-                        //FM picks up most of the 20-60 ish range + has a different effect
-                        //HF!
-                        var noise = effectProvider.FMNoise.AudioEffectFloat;
-                        //UHF Band?
-                        audio += ((noise[fmNoisePosition]) * fmVol);
-                        fmNoisePosition++;
-
-                        if (fmNoisePosition == noise.Length)
-                        {
-                            fmNoisePosition = 0;
-                        }
-                    }
+                    fxMixer.AddMixerInput(noise);
                 }
             }
 
-            return audio;
+            // Modulation tone, if applicable.
+            {
+                var tone = GetToneProvider(modulation);
+                if (tone != null && tone.Active)
+                {
+                    fxMixer.AddMixerInput(tone);
+                }
+            }
+
+            // And now the voice.
+            fxMixer.AddMixerInput(voiceProvider);
+
+            voiceProvider = new ClippingProvider(fxMixer, -1, 1);
+
+            // Apply the post processing to the voice!
+            voiceProvider.Read(buffer, offset, count);
         }
     }
 }

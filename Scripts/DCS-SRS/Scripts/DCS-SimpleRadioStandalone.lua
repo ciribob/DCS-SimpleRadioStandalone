@@ -2269,6 +2269,16 @@ function SR.exportRadioCH47F(_data)
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 3 -- Cockpit Toggle + Gui Enc key setting
 
+    -- Handle GUARD freq selection for the VHF Backup head.
+    local arc186FrequencySelectionDial = SR.getSelectorPosition(1221, 0.1)
+    if arc186FrequencySelectionDial == 0 then
+        _data.radios[4].freq = 40.5e6
+        _data.radios[4].modulation = 1
+    elseif arc186FrequencySelectionDial == 1 then
+        _data.radios[4].freq = 121.5e6
+        _data.radios[4].modulation = 0
+    end
+
 
     _data.radios[5].name = "ARC-220 HF" -- ARC_220
     _data.radios[5].freq = SR.getRadioFrequency(50)
@@ -2306,7 +2316,18 @@ function SR.exportRadioCH47F(_data)
 
         if _selector <= 6 then
             _data.selected = _selector
-        else
+        elseif _offset ~= 657 and _selector == 9 then -- BU
+            -- Look up the BKUP RAD SEL switch to know which radio we have.
+            local bkupRadSel = SR.getButtonPosition(1466)
+            if bkupRadSel < 0.5 then
+                -- Switch facing down: Pilot gets V3, Copilot U2.
+                _data.selected = _offset == 591 and 3 or 2
+            else
+                -- Other way around.
+                _data.selected = _offset == 591 and 2 or 3
+            end
+                
+        else -- 8 = RMT, TODO
             _data.selected = -1
         end
 
@@ -2344,7 +2365,7 @@ function SR.exportRadioCH47F(_data)
         
     elseif _seat == 2 then --657
         
-        _pilotCopilotRadios(591,-1)
+        _pilotCopilotRadios(657,-1)
 
         _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
     else
@@ -2365,6 +2386,34 @@ function SR.exportRadioCH47F(_data)
         _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
     end
+
+    -- EMER Guard switch.
+    -- If enabled, forces F1, U2, and V3 to GUARDs.
+    local manNormGuard = SR.getSelectorPosition(583, 0.1)
+    if manNormGuard > 1 then
+        _data.radios[2].freq = 40.5e6 -- F1
+        _data.radios[3].freq = 243e6 -- U2
+        _data.radios[4].freq = 121.5e6 -- V3
+    end
+
+    -- EMER IFF.
+    -- When enabled, toggles all transponders ON.
+    -- Since we currently can't change M1 and M2 codes in cockpit,
+    -- Set 3A to 7700, and enable S.
+    --[[ FIXME: Having issues handing over the controls back to the overlay.
+    local holdOffEmer = SR.getSelectorPosition(585, 0.1)
+    if holdOffEmer > 1 then
+        _data.iff = {
+        status = 1,
+        mode3 = 7700,
+        mode4 = true,
+        control = 0
+        }
+    else
+        -- Release control back to overlay.
+        _data.iff.control = 1
+    end
+    ]]
         
     -- engine on
     if SR.getAmbientVolumeEngine()  > 10 then

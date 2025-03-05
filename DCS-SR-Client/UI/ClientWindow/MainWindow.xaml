@@ -18,14 +18,15 @@
                       ResizeMode="CanMinimize"
                       mc:Ignorable="d">
 
-    <TabControl x:Name="TabControl" Margin="0,0,0,-16">
+    <TabControl x:Name="TabControl">
         <TabControl.Resources>
             <converters:MicAvailabilityTooltipConverter x:Key="MicAvailabilityTooltipConverter" />
         </TabControl.Resources>
         <TabItem Header="{x:Static p:Resources.GeneralTab}">
-            <GroupBox x:Name="GroupBox"
+            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="auto">
+                <GroupBox x:Name="GroupBox"
                       Margin="5,0,5,0"
-                      Header="{x:Static p:Resources.SetupHeader}" Height="676">
+                      Header="{x:Static p:Resources.SetupHeader}">
                 <StackPanel Margin="0">
                     <Label x:Name="MicLabel"
                            HorizontalAlignment="Center"
@@ -351,6 +352,7 @@
 
                 </StackPanel>
             </GroupBox>
+            </ScrollViewer>
         </TabItem>
 
         <TabItem Header="{x:Static p:Resources.ControlsTab}">

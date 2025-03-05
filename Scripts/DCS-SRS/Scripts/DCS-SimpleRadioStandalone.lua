@@ -18,6 +18,8 @@ SR.unicast = true --DONT CHANGE THIS
 
 SR.lastKnownPos = { x = 0, y = 0, z = 0 }
 SR.lastKnownSeat = 0
+SR.lastKnownSlotNum = 0
+SR.lastKnownSlotName = "?"
 
 SR.MIDS_FREQ = 1030.0 * 1000000 -- Start at UHF 300
 SR.MIDS_FREQ_SEPARATION = 1.0 * 100000 -- 0.1 MHZ between MIDS channels
@@ -174,7 +176,7 @@ function SR.exporter()
         end
     end
 
-    if _data ~= nil then
+    if _data ~= nil and SR.lastKnownSlotNum ~=0 then
 
         _update = {
             name = "",
@@ -217,7 +219,7 @@ function SR.exporter()
 
         _update.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=0,control=1,expansion=false,mic=-1}
 
-     --   SR.log(_update.unit.."\n\n")
+        --SR.log(_update.unit.."\n")
 
         local aircraftExporter = SR.exporters[_update.unit]
 
@@ -276,11 +278,11 @@ function SR.exporter()
         _lastUnitId = _update.unitId
         _lastUnitType = _data.Name
     else
-        --Ground Commander or spectator
+        -- spectator
         _update = {
             name = "Unknown",
             ambient = {vol = 0.0, abType = ''},
-            unit = "CA",
+            unit = "Spectator",
             selected = 1,
             ptt = false,
             capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" },
@@ -306,9 +308,11 @@ function SR.exporter()
         }
 
         -- Allows for custom radio's using the DCS-Plugin scheme.
+        -- Combined Arms Overrides spectators.
         local aircraftExporter = SR.exporters["CA"]
         if aircraftExporter then
             _update = aircraftExporter(_update)
+            _update.unit = SR.lastKnownSlotName
         end
         
         local _latLng,_point = SR.exportCameraLocation()
@@ -363,7 +367,10 @@ function SR.readSeatSocket()
 
         if _decoded then
             SR.lastKnownSeat = _decoded.seat
-            --SR.log("lastKnownSeat "..SR.lastKnownSeat)
+            SR.lastKnownSlotNum = _decoded.slotNum
+            SR.lastKnownSlotName = _decoded.slotName
+
+            --SR.log("lastKnownSeat: "..SR.lastKnownSeat.." lastKnownSlotNum: "..SR.lastKnownSlotNum.." lastKnownSlotName: "..SR.lastKnownSlotName)
         end
 
     end
@@ -2269,6 +2276,16 @@ function SR.exportRadioCH47F(_data)
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 3 -- Cockpit Toggle + Gui Enc key setting
 
+    -- Handle GUARD freq selection for the VHF Backup head.
+    local arc186FrequencySelectionDial = SR.getSelectorPosition(1221, 0.1)
+    if arc186FrequencySelectionDial == 0 then
+        _data.radios[4].freq = 40.5e6
+        _data.radios[4].modulation = 1
+    elseif arc186FrequencySelectionDial == 1 then
+        _data.radios[4].freq = 121.5e6
+        _data.radios[4].modulation = 0
+    end
+
 
     _data.radios[5].name = "ARC-220 HF" -- ARC_220
     _data.radios[5].freq = SR.getRadioFrequency(50)
@@ -2306,7 +2323,18 @@ function SR.exportRadioCH47F(_data)
 
         if _selector <= 6 then
             _data.selected = _selector
-        else
+        elseif _offset ~= 657 and _selector == 9 then -- BU
+            -- Look up the BKUP RAD SEL switch to know which radio we have.
+            local bkupRadSel = SR.getButtonPosition(1466)
+            if bkupRadSel < 0.5 then
+                -- Switch facing down: Pilot gets V3, Copilot U2.
+                _data.selected = _offset == 591 and 3 or 2
+            else
+                -- Other way around.
+                _data.selected = _offset == 591 and 2 or 3
+            end
+                
+        else -- 8 = RMT, TODO
             _data.selected = -1
         end
 
@@ -2344,7 +2372,7 @@ function SR.exportRadioCH47F(_data)
         
     elseif _seat == 2 then --657
         
-        _pilotCopilotRadios(591,-1)
+        _pilotCopilotRadios(657,-1)
 
         _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
     else
@@ -2365,6 +2393,34 @@ function SR.exportRadioCH47F(_data)
         _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
     end
+
+    -- EMER Guard switch.
+    -- If enabled, forces F1, U2, and V3 to GUARDs.
+    local manNormGuard = SR.getSelectorPosition(583, 0.1)
+    if manNormGuard > 1 then
+        _data.radios[2].freq = 40.5e6 -- F1
+        _data.radios[3].freq = 243e6 -- U2
+        _data.radios[4].freq = 121.5e6 -- V3
+    end
+
+    -- EMER IFF.
+    -- When enabled, toggles all transponders ON.
+    -- Since we currently can't change M1 and M2 codes in cockpit,
+    -- Set 3A to 7700, and enable S.
+    --[[ FIXME: Having issues handing over the controls back to the overlay.
+    local holdOffEmer = SR.getSelectorPosition(585, 0.1)
+    if holdOffEmer > 1 then
+        _data.iff = {
+        status = 1,
+        mode3 = 7700,
+        mode4 = true,
+        control = 0
+        }
+    else
+        -- Release control back to overlay.
+        _data.iff.control = 1
+    end
+    ]]
         
     -- engine on
     if SR.getAmbientVolumeEngine()  > 10 then
@@ -6257,23 +6313,121 @@ function SR.exportRadioF1BE(_data)
     return _data
 end
 
-local newJF17Interface = nil
-
+local _jf17 = nil
 function SR.exportRadioJF17(_data)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
-    _data.radios[2].name = "COMM1 VHF Radio"
-    _data.radios[2].freq = SR.getRadioFrequency(25)
-    _data.radios[2].modulation = SR.getRadioModulation(25)
-    _data.radios[2].volume = SR.getRadioVolume(0, 934, { 0.0, 1.0 }, false)
-    _data.radios[2].secFreq = GetDevice(25):get_guard_plus_freq()
+    -- reset state on aircraft switch
+    if _lastUnitId ~= _data.unitId or not _jf17 then
+        _jf17 = {
+            radios = {
+                [2] = {
+                    channel = 1,
+                    deviceId = 25,
+                    volumeKnobId = 934,
+                    enc = false,
+                    guard = false,
+                },
+                [3] = {
+                    channel = 1,
+                    deviceId = 26,
+                    volumeKnobId = 938,
+                    enc = false,
+                    guard = false,
+                },
+            }
+        }
+    end
 
-    _data.radios[3].name = "COMM2 UHF Radio"
-    _data.radios[3].freq = SR.getRadioFrequency(26)
-    _data.radios[3].modulation = SR.getRadioModulation(26)
-    _data.radios[3].volume = SR.getRadioVolume(0, 938, { 0.0, 1.0 }, false)
-    _data.radios[3].secFreq = GetDevice(26):get_guard_plus_freq()
+    -- Read ufcp lines.
+    local ufcp = {}
+
+    for line=3,6 do
+        ufcp[#ufcp + 1] = SR.getListIndicatorValue(line)["txt_win" .. (line - 2)]
+    end
+
+    -- Check the last line to see if we're editing a radio (and which one!)
+    -- Looking for "123   ." (editing left radio) or ".   123" (right radio)
+    local displayedRadio = nil
+
+    -- Most likely case - radio channels being displayed.
+    local comm1Channel, comm2Channel = string.match(ufcp[#ufcp], "^(%d%d%d)%s+(%d%d%d)$")
+    comm1Channel = tonumber(comm1Channel)
+    comm2Channel = tonumber(comm2Channel)
+    if comm1Channel == nil or comm2Channel == nil then
+        -- Check if we have a radio page up.
+        local commDot = nil
+        comm1Channel, commDot = string.match(ufcp[#ufcp], "^(%d%d%d)%s+(%.)$")
+        comm1Channel = tonumber(comm1Channel)
+        if comm1Channel ~= nil and commDot ~= nil then
+            -- COMM1 being showed on the UFCP.
+            displayedRadio = _jf17.radios[2]
+        else
+            commDot, comm2Channel = string.match(ufcp[#ufcp], "^(%.)%s+(%d%d%d)$")
+            comm2Channel = tonumber(comm2Channel)
+            if commDot ~= nil and comm2Channel ~= nil then
+                -- COMM2 showed on the UFCP.
+                displayedRadio = _jf17.radios[3]
+            end
+        end
+    end
+
+    -- Update channels if we have the info.
+    if comm1Channel ~= nil then
+        _jf17.radios[2].channel = comm1Channel
+    end
+    if comm2Channel ~= nil then
+        _jf17.radios[3].channel = comm2Channel
+    end
+
+    if displayedRadio then
+        -- Line 1: encryption.
+        -- Treat CMS as fixed frequency encryption only,
+        -- TRS as HAVEQUICK (frequency hopping) + encryption.
+        -- For encryption, use Line 3 MAST/SLAV to change encryption key.
+        if string.match(ufcp[1], "^PLN") then
+            displayedRadio.enc = false
+            displayedRadio.encKey = nil
+            displayedRadio.modulation = nil
+        elseif string.match(ufcp[1], "^CMS") then
+            displayedRadio.enc = true
+            displayedRadio.encKey = string.match(ufcp[3], "MAST$") and 2 or 1
+            displayedRadio.modulation = nil
+        elseif string.match(ufcp[1], "^TRS") then
+            displayedRadio.enc = true
+            displayedRadio.encKey = string.match(ufcp[3], "MAST$") and 4 or 3
+            -- treat as HAVEQUICK
+            displayedRadio.modulation = 4
+        elseif string.match(ufcp[1], "^DATA") then
+            displayedRadio.enc = false
+            displayedRadio.encKey = nil
+            -- Forcibly set to DISABLED - Datalink has the radio, can't talk on it!
+            displayedRadio.modulation = 3
+        end
+
+        -- Look at line 2 for RT+G.
+        displayedRadio.guard = string.match(ufcp[2], "^RT%+G%s+") ~= nil
+    end
+
+    for radioId=2,3 do
+        local state = _jf17.radios[radioId]
+        local dataRadio = _data.radios[radioId]
+        dataRadio.name = "R&S M3AR COMM" .. (radioId - 1)
+        dataRadio.freq = SR.getRadioFrequency(state.deviceId)
+        dataRadio.modulation = state.modulation or SR.getRadioModulation(state.deviceId)
+        dataRadio.volume = SR.getRadioVolume(0, state.volumeKnobId, { 0.0, 1.0 }, false)
+        dataRadio.encMode = 2 -- Controlled by aircraft.
+        dataRadio.channel = state.channel
+
+        -- NOTE: Used to be GetDevice(state.deviceId):get_guard_plus_freq(), but that seems borked.
+        if state.guard then
+            -- Figure out if we want VHF or UHF guard based on current freq.
+            dataRadio.secFreq = dataRadio.freq < 224e6 and 121.5e6 or 243e6
+        end
+        dataRadio.enc = state.enc
+        dataRadio.encKey = state.encKey
+    end
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "VHF/UHF Expansion"

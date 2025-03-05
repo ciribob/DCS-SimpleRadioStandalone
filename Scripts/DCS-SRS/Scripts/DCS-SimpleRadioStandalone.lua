@@ -2833,7 +2833,7 @@ function SR.exportRadioOH58D(_data)
 
     -- IFF START 
     local _iffSettings
-    if _iffSettings == nil then _iffSettings = { status = 1, mode1 = 01, mode2 = 1200, mode3 = 0300, mode4 = 1, control = 0, expansion = false, mic=-1 } end
+    if _iffSettings == nil then _iffSettings = { status = 1, mode1 = 00, mode2 = 1200, mode3 = 0000, mode4 = 1, control = 0, expansion = false, mic=-1 } end
         -- Status: 0 = off, 1 = on, 2 == ident
 
     local _HLP_IFF_Switch = SR.getButtonPosition(269) -- HLP_IFF Circuit Breaker, 2-Position Thumb, 0 or 1
@@ -2851,7 +2851,7 @@ function SR.exportRadioOH58D(_data)
         -- local _, _, Find_Mode1, Find_Mode2, Find_Mode3 = string.find(_mpdLeft["TEXT"], "M1 +([%d]+)\\nM2 +([%d]+)\\nM3A +([%d]+)")
         -- SR.log( "M1:".. Find_Mode1 .. " M2:" .. Find_Mode2 .. " M3:" .. Find_Mode3 )
         
-        Parsed = { mode1 = 01, mode2 = 1200, mode3 = 0300, mode4 = 1 } -- There is no way to change the defaults at the moment.
+        Parsed = { mode1 = 00, mode2 = 1200, mode3 = 0000, mode4 = 1 } -- There is no way to change the defaults at the moment.
 
         if _mpdLeft["L2RIGHT_TEXT"] == "OFF" then _iffSettings.mode1 = -1 else _iffSettings.mode1 = Parsed.mode1 end -- Mode 1
         if _mpdLeft["L3RIGHT_TEXT"] == "OFF" then _iffSettings.mode2 = -1 else _iffSettings.mode2 = Parsed.mode2 end -- Mode 2

@@ -98,8 +98,7 @@
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Path=Name}" Header="{x:Static p:Resources.FavListName}">
-                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding Path=Name}" Header="{x:Static p:Resources.FavListName}" />
                 <DataGridTextColumn Binding="{Binding Path=Address}" Header="{x:Static p:Resources.FavListServer}" />
                 <DataGridTextColumn Binding="{Binding Path=EAMCoalitionPassword}" Header="{x:Static p:Resources.FavListEAM}" />
                 <DataGridTemplateColumn Header="{x:Static p:Resources.FavListDefault}">

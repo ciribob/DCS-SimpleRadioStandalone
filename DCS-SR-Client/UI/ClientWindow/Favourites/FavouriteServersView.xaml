@@ -89,7 +89,7 @@
                   SelectedItem="{Binding Path=SelectedItem}"
                   SelectionMode="Single"
                   AllowDrop="True"
-                    >
+                  >
 
             <DataGrid.RowStyle>
                 <Style TargetType="{x:Type DataGridRow}">
@@ -104,13 +104,11 @@
                 <DataGridTemplateColumn Header="{x:Static p:Resources.FavListDefault}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="ui:ServerAddress">
-
                             <Button Name="Button"
                                     Command="{Binding ElementName=FavouritesGrid,
                                                       Path=DataContext.OnDefaultChangedCommand}"
                                     CommandParameter="{Binding}"    
                                     Padding="0" />
-
                             <DataTemplate.Triggers>
                                 <DataTrigger Binding="{Binding Path=IsDefault}" Value="True">
                                     <DataTrigger.Setters>

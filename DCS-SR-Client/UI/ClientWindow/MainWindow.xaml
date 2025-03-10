@@ -330,9 +330,11 @@
 
                     <Button Content="{x:Static p:Resources.Donate_OnClick}"
                             Click="Donate_OnClick"
-                            Width="220"
                             Margin="5" 
-                            controls:ControlsHelper.ContentCharacterCasing="Normal" />
+                            HorizontalAlignment="Center"
+                            controls:ControlsHelper.ContentCharacterCasing="Normal" 
+                            Foreground="{DynamicResource MahApps.Brushes.ThemeBackground}"
+                            Background="{DynamicResource MahApps.Brushes.Accent}" />
                 </StackPanel>
             </GroupBox>
         </TabItem>

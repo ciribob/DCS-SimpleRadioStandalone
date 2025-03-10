@@ -101,6 +101,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                         {
                             TransponderHelper.SetMode1(message.Code);
                         }
+                        else if (message?.Command == UDPInterfaceCommand.UDPCommandType.TRANSPONDER_M2_CODE)
+                        {
+                            TransponderHelper.SetMode2(message.Code);
+                        }
                         else if (message?.Command == UDPInterfaceCommand.UDPCommandType.TRANSPONDER_M3_CODE)
                         {
                             TransponderHelper.SetMode3(message.Code);

@@ -253,9 +253,10 @@ function srsOverlay.updateRadio()
         local _radioInfo  =_radioState.RadioInfo
 
         -- IFF_STATUS:  OFF = 0,  NORMAL = 1 , or IDENT = 2 (IDENT means Blink on LotATC) , 3 DISABLED
-        -- M1:-1 = OFF, any other number on 
+        -- M1: -1 = OFF, any other number on
+        -- M2: -1 = OFF, any other number on 
         -- M3: -1 = OFF, any other number on 
-        -- M4: 1 = ON or 0 = OFF
+        -- M4:  1 = ON or 0 = OFF
         -- EXPANSION: only enabled if IFF Expansion is enabled
         -- CONTROL: 0 - COCKPIT / Realistic, 1 - OVERLAY / SRS, 
         --IFF STATUS{"control":1,"expansion":false,"mode1":51,"mode3":7700,"mode4":1,"status":2}
@@ -277,8 +278,10 @@ function srsOverlay.updateRadio()
                      _iff = _iff .. string.format(" M1:%02d",_radioInfo.iff.mode1)
                 end
 
-                if _radioInfo.iff.mode2 ~= -1 then
-                     _iff = _iff.." M2:ON"
+                if _radioInfo.iff.mode2 == -1 then
+                     _iff = _iff.." M2:OFF"
+                else 
+                     _iff = _iff .. string.format(" M2:%04d",_radioInfo.iff.mode2)
                 end
 
                 if _radioInfo.iff.mode3 == -1 then

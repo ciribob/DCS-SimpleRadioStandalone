@@ -24,6 +24,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
             TRANSPONDER_IDENT = 10,
             GUARD = 11, // SET guard
             FREQUENCY_SET = 12,
+            TRANSPONDER_M2_CODE = 13,
         }
 
         public int RadioId { get; set; }

@@ -204,7 +204,7 @@ SRS.handleTransponder = function(msg)
 	
 	end
 
-	local keys =  {"POWER","PWR","M1","M3","M4","IDENT"}
+	local keys =  {"POWER","PWR","M1","M2","M3","M4","IDENT"}
 
 	local commands = {}
 
@@ -230,8 +230,20 @@ SRS.handleTransponder = function(msg)
 					if code ~= nil then
 						table.insert(commands, {Command = 7, Code = code})
 					end
-				end
-			
+				end			
+				elseif key == "M2" then
+					 if val == "OFF" then
+						--Command 13 matches to Enum in the UDPInterfaceCommand Enum
+						table.insert(commands, {Command = 13, Code = -1})
+					else
+						local code = tonumber(val)
+	   
+						if code ~= nil then
+							--Command 13 matches to Enum in the UDPInterfaceCommand Enum
+							table.insert(commands, {Command = 13, Code = code})
+						end
+					end
+				
 			elseif key == "M3" then
 				 if val == "OFF" then
 					table.insert(commands, {Command = 8, Code = -1})

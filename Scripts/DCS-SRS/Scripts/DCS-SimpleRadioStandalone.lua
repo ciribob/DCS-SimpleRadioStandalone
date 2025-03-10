@@ -80,7 +80,6 @@ local _prevLuaExportBeforeNextFrame = LuaExportBeforeNextFrame
 
 local _lastUnitId = "" -- used for a10c volume
 local _lastUnitType = ""    -- used for F/A-18C ENT button
-local _fa18ent = false      -- saves ENT button state (needs to be declared before LuaExportBeforeNextFrame)
 local _tNextSRS = 0
 
 SR.exporters = {}   -- exporter table. Initialized at the end
@@ -4144,10 +4143,10 @@ function SR.exportRadioFA18C(_data)
         _fa18.radio3.channel = 127 --127 is disabled for MIDS
         _fa18.radio4.channel = 127
         _fa18.iff = {status=-1,mode1=-1,mode2=-1,mode3=-1,mode4=true,control=0,expansion=false}
-        _fa18ent = false
-        _fa18.enttries = 0
         _fa18.mode3opt = ""
         _fa18.identEnd = 0
+        _fa18.link16 = false
+        _fa18.scratchpad = {}
     end
 
     local getGuardFreq = function (freq,currentGuard,modulation)
@@ -4290,7 +4289,7 @@ function SR.exportRadioFA18C(_data)
     _radio.encMode = 2 -- Mode 2 is set by aircraft
 
     local midsAChannel = _fa18.radio3.channel
-    if midsAChannel < 127 then
+    if midsAChannel < 127 and _fa18.link16 then
         _radio.freq = SR.MIDS_FREQ +  (SR.MIDS_FREQ_SEPARATION * midsAChannel)
         _radio.channel = midsAChannel
     else
@@ -4306,7 +4305,7 @@ function SR.exportRadioFA18C(_data)
     _radio.encMode = 2 -- Mode 2 is set by aircraft
 
     local midsBChannel = _fa18.radio4.channel
-    if midsBChannel < 127 then
+    if midsBChannel < 127 and _fa18.link16 then
         _radio.freq = SR.MIDS_FREQ +  (SR.MIDS_FREQ_SEPARATION * midsBChannel)
         _radio.channel = midsBChannel
     else
@@ -4315,10 +4314,9 @@ function SR.exportRadioFA18C(_data)
     end
 
     -- IFF
-    local iff = _fa18.iff
 
     -- set initial IFF status based on cold/hot start since it can't be read directly off the panel
-    if iff.status == -1 then
+    if _fa18.iff.status == -1 then
         local batterySwitch = SR.getButtonPosition(404)
 
         if batterySwitch == 0 then
@@ -4328,46 +4326,113 @@ function SR.exportRadioFA18C(_data)
             -- hot start, M4 on
             _fa18.iff = {status=1,mode1=-1,mode2=-1,mode3=-1,mode4=true,control=0,expansion=false}
         end
-
-        iff = _fa18.iff
     end
 
-    -- Check if XP UFC is being displayed
-    if _ufc and _ufc.UFC_OptionDisplay2 == "2   " then
-        -- Check if on XP
-        if _ufc.UFC_ScratchPadString1Display == "X" then
-            if iff.status <= 0 then
-                iff.status = 1
-            end
-            if _ufc.UFC_OptionCueing1 == ":" then
-                local code = string.match(_ufc.UFC_OptionDisplay1, "1-%d%d")    -- actual code is displayed in the option display
-                if code then
-                    iff.mode1 = code
-                end
-            else
-                iff.mode1 = -1
-            end
-            if _ufc.UFC_OptionCueing3 == ":" then
-                if iff.mode3 == -1 or _fa18.mode3opt ~= _ufc.UFC_OptionDisplay3  then     -- just turned on
-                    local code = string.match(_ufc.UFC_ScratchPadNumberDisplay, "3-[0-7][0-7][0-7][0-7]")
-                    if code then
-                        iff.mode3 = code
-                    end
-                    _fa18.mode3opt = _ufc.UFC_OptionDisplay3
-                end
-            else
-                iff.mode3 = -1
-            end
-            iff.mode4 = _ufc.UFC_OptionCueing4 == ":"
+    local iff = _fa18.iff
 
-        -- Check if on AI
-        elseif _ufc.UFC_ScratchPadString1Display == "A" then
-            if iff.status <= 0 then
-                iff.status = 1
+    if _ufc then
+        -- Update current state.
+        local scratchpadString = _ufc.UFC_ScratchPadString1Display .. _ufc.UFC_ScratchPadString2Display
+        if _ufc.UFC_OptionDisplay4 == "VOCA" then
+            -- Link16
+            _fa18.link16 = scratchpadString == "ON"
+        elseif _ufc.UFC_OptionDisplay2 == "2   " then
+            -- IFF transponder
+            if scratchpadString == "XP" then
+                if iff.status <= 0 then
+                    iff.status = 1
+                end
+
+                -- Update Mode 1
+                if _ufc.UFC_OptionCueing1 == ":" then
+                    -- 3-bit digit, followed by a 2-bit one, 5-bit total.
+                    local code = string.match(_ufc.UFC_OptionDisplay1, "1%-([0-7][0-3])")    -- actual code is displayed in the option display
+                    if code then
+                        iff.mode1 = tonumber(code)
+                    end
+                else
+                    iff.mode1 = -1
+                end
+
+                -- Update Mode 2 and 3
+                for modeNumber = 2,3 do
+                    local mode = "mode" .. modeNumber
+                    if _ufc["UFC_OptionCueing" .. modeNumber] == ":" then
+                        local optionDisplay = _ufc["UFC_OptionDisplay" .. modeNumber]
+                        if iff[mode] == -1 or _fa18[mode .. "opt"] ~= optionDisplay then -- just turned on
+                            local code = string.match(_ufc.UFC_ScratchPadNumberDisplay, modeNumber .. "%-([0-7]+)")
+                            if code then
+                                iff[mode] = tonumber(code)
+                            end
+                            _fa18[mode .. "opt"] = optionDisplay
+                        end
+                    else
+                        iff[mode] = -1
+                    end
+                end
+
+                -- Update Mode 4
+                iff.mode4 = _ufc.UFC_OptionCueing4 == ":"
+
+            elseif scratchpadString == "AI" then
+                if iff.status <= 0 then
+                    iff.status = 1
+                end
+            else
+                iff.status = 0
             end
-        -- Check if it is OFF
+        end
+
+        -- Process any updates.
+        local clrPressed = SR.getButtonPosition(121) > 0
+        if not clrPressed then
+            local scratchpad = _ufc.UFC_ScratchPadNumberDisplay
+            if scratchpad ~= "" then
+                local scratchError = scratchpad == "ERROR"
+                if _fa18.scratchpad.blanked then
+                    _fa18.scratchpad.blanked = false
+                    if not scratchError then
+                        -- Updated value valid, try and parse based on what's currently required.
+                        -- Find what we're updating.
+                        if _ufc.UFC_OptionDisplay4 == "VOCA" then
+                            -- Link16
+                            if scratchpadString == "ON" then
+                                -- Link16 ON
+                                local targetRadio = nil
+
+                                if _ufc.UFC_OptionCueing4 == ":" then
+                                    targetRadio = "radio3"
+                                elseif _ufc.UFC_OptionCueing5 == ":" then
+                                    targetRadio = "radio4"
+                                end
+
+                                if targetRadio then
+                                    local channel = tonumber(scratchpad)
+                                    if channel then
+                                        _fa18[targetRadio].channel = channel
+                                    end
+                                end
+                            end
+                        elseif scratchpadString == "XP" then
+                            -- IFF
+                            local mode, code = string.match(scratchpad, "([23])%-([0-7]+)")
+                            if mode and code then
+                                _fa18.iff["mode".. mode] = tonumber(code)
+                            end
+                            -- Mode 1 is read from the 'cueing' panels (see above)
+                        end
+                    end
+                elseif not scratchError then
+                    -- Register that a value is pending confirmation.
+                    _fa18.scratchpad.pending = true
+                end
+            elseif not _fa18.scratchpad.blanked and _fa18.scratchpad.pending then
+                -- Hold value until the screen flashes back
+                _fa18.scratchpad.blanked = true
+            end
         else
-            iff.status = 0
+            -- CLR pressed, reset scratchpad.
+            _fa18.scratchpad = {}
         end
     end
 
@@ -4383,54 +4448,6 @@ function SR.exportRadioFA18C(_data)
 
     -- set current IFF settings
     _data.iff = _fa18.iff
-
-    -- Parse ENT keypress
-    if _fa18ent and _ufc then
-        _fa18ent = false
-        -- Check if on D/L page and D/L ON
-        if _ufc.UFC_OptionDisplay4 == "VOCA" and _ufc.UFC_ScratchPadString1Display == "O" and _ufc.UFC_ScratchPadString2Display == "N" then
-            -- Check if setting VOCA
-            if _ufc.UFC_OptionCueing4 ==":" then
-                local chan = tonumber(_ufc.UFC_ScratchPadNumberDisplay)
-                if chan then
-                    _fa18.radio3.channel = chan
-                else
-                    _fa18ent = true     -- wait until UFC scratchpad repopulates
-                end
-            -- Check if setting VOCB
-            elseif _ufc.UFC_OptionCueing5 ==":" then
-                local chan = tonumber(_ufc.UFC_ScratchPadNumberDisplay)
-                if chan then
-                    _fa18.radio4.channel = chan
-                else
-                    _fa18ent = true     -- wait until UFC scratchpad repopulates
-                end
-            end
-        -- Check if on IFF XP page
-        elseif _ufc.UFC_OptionDisplay2 == "2   " and _ufc.UFC_ScratchPadString1Display == "X" then
-            local editingMode = string.sub(_ufc.UFC_ScratchPadNumberDisplay, 0, 2)
-            if editingMode == "3-" then
-                local code = string.match(_ufc.UFC_ScratchPadNumberDisplay, "3-[0-7][0-7][0-7][0-7]")
-                if code then
-                    _fa18.iff.mode3 = code
-                else
-                    _fa18ent = true     -- wait until UFC scratchpad repopulates
-                end
-            elseif editingMode == "" then
-                _fa18ent = true     -- wait until UFC scratchpad repopulates
-            end
-        end
-
-        if _fa18ent then
-            _fa18.enttries = _fa18.enttries + 1
-            if _fa18.enttries > 5 then
-                _fa18ent = 0
-                _fa18.enttries = 0
-            end
-        else
-            _fa18.enttries = 0
-        end
-    end
 
     if SR.getAmbientVolumeEngine()  > 10 then
         -- engine on
@@ -7473,19 +7490,6 @@ LuaExportBeforeNextFrame = function()
 
     if not _status then
         SR.log('ERROR LuaExportBeforeNextFrame readSeatSocket SRS: ' .. SR.debugDump(_result))
-    end
-
-    -- Check F/A-18C ENT keypress (needs to be checked in LuaExportBeforeNextFrame not to be missed)
-    if _lastUnitType == "FA-18C_hornet" 
-        or _lastUnitType == "FA-18E"
-        or _lastUnitType == "FA-18F"
-        or _lastUnitType == "EA-18G" then
-        if not _fa18ent then
-            local st, rv = pcall(SR.getButtonPosition, 122)     -- pcall to prevent dcs.log error after ejection
-            if st and rv > 0 then
-                _fa18ent = true
-            end
-        end
     end
 
     -- call original

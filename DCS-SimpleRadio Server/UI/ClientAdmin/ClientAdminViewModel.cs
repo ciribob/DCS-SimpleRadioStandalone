@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Threading;
 using Caliburn.Micro;
 using Ciribob.DCS.SimpleRadio.Standalone.Server.Network;
@@ -22,7 +23,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.UI.ClientAdmin
         {
             //Thread.CurrentThread.CurrentUICulture = new CultureInfo("zh-CN");
             _eventAggregator = eventAggregator;
-            _eventAggregator.Subscribe(this);
+            _eventAggregator.SubscribeOnPublishedThread(this);
 
             DisplayName = $"{Properties.Resources.TitleClientList}";
 
@@ -32,28 +33,29 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.UI.ClientAdmin
 
         public ObservableCollection<ClientViewModel> Clients { get; } = new ObservableCollection<ClientViewModel>();
 
-        protected override void OnActivate()
+        protected override Task OnActivateAsync(CancellationToken token)
         {
             _updateTimer?.Start();
-
-            base.OnActivate();
+            return Task.CompletedTask;
         }
 
-        protected override void OnDeactivate(bool close)
+        protected override Task OnDeactivateAsync(bool close, CancellationToken token)
         {
             if (close)
             {
                 _updateTimer?.Stop();
             }
 
-            base.OnDeactivate(close);
+            return Task.CompletedTask;
         }
 
-        public void Handle(ServerStateMessage message)
+        public Task HandleAsync(ServerStateMessage message, CancellationToken token)
         {
             Clients.Clear();
 
             message.Clients.Apply(client => Clients.Add(new ClientViewModel(client, _eventAggregator)));
+
+            return Task.CompletedTask;
         }
 
         private void _updateTimer_Tick(object sender, EventArgs e)

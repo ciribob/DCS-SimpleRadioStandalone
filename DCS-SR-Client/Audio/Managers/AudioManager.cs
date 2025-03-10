@@ -120,11 +120,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
             guid = ClientStateSingleton.Instance.ShortGUID;
 
             MMDevice speakers = null;
-            if (_audioOutputSingleton.SelectedAudioOutput.Value == null)
-            {
-                speakers = WasapiOut.GetDefaultAudioEndpoint();
-            }
-            else 
+            if (_audioOutputSingleton.SelectedAudioOutput.Value != null)
             {
                 speakers = (MMDevice)_audioOutputSingleton.SelectedAudioOutput.Value;
             }
@@ -148,14 +144,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 //Audio manager should start / stop and cleanup based on connection successfull and disconnect
                 //Should use listeners to synchronise all the state
 
-                _waveOut = new WasapiOut(speakers, AudioClientShareMode.Shared, true, 40,windowsN);
+                _waveOut = speakers != null ? new WasapiOut(speakers, AudioClientShareMode.Shared, true, 40) : new WasapiOut(AudioClientShareMode.Shared, 40);
 
                 //add final volume boost to all mixed audio
                 _volumeSampleProvider = new VolumeSampleProviderWithPeak(_finalMixdown,
                     (peak => SpeakerMax = peak));
                 _volumeSampleProvider.Volume = SpeakerBoost;
 
-                if (speakers.AudioClient.MixFormat.Channels == 1)
+                
+
+                if (_waveOut.OutputWaveFormat.Channels == 1)
                 {
                     if (_volumeSampleProvider.WaveFormat.Channels == 2)
                     {
@@ -205,7 +203,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
             {
                 try
                 {
-                    _micWaveOut = new WasapiOut(micOutput, AudioClientShareMode.Shared, true, 40,windowsN);
+                    _micWaveOut = new WasapiOut(micOutput, AudioClientShareMode.Shared, true, 40);
 
                     _micWaveOutBuffer = new BufferedWaveProvider(WaveFormat.CreateIeeeFloatWaveFormat(OUTPUT_SAMPLE_RATE, 1));
                     _micWaveOutBuffer.ReadFully = true;
@@ -213,7 +211,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
                     var sampleProvider = _micWaveOutBuffer.ToSampleProvider();
 
-                    if (micOutput.AudioClient.MixFormat.Channels == 1)
+                    if (_micWaveOut.OutputWaveFormat.Channels == 1)
                     {
                         if (sampleProvider.WaveFormat.Channels == 2)
                         {

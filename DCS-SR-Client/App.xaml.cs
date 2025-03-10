@@ -259,29 +259,31 @@ namespace DCS_SR_Client
             {
                 return;
             }
-            System.Windows.Forms.MenuItem notifyIconContextMenuShow = new System.Windows.Forms.MenuItem
+            System.Windows.Forms.ToolStripMenuItem notifyIconContextMenuShow = new System.Windows.Forms.ToolStripMenuItem
             {
-                Index = 0,
                 Text = "Show"
             };
             notifyIconContextMenuShow.Click += new EventHandler(NotifyIcon_Show);
 
-            System.Windows.Forms.MenuItem notifyIconContextMenuQuit = new System.Windows.Forms.MenuItem
+            System.Windows.Forms.ToolStripMenuItem notifyIconContextMenuQuit = new System.Windows.Forms.ToolStripMenuItem
             {
-                Index = 1,
                 Text = "Quit"
             };
             notifyIconContextMenuQuit.Click += new EventHandler(NotifyIcon_Quit);
 
-            System.Windows.Forms.ContextMenu notifyIconContextMenu = new System.Windows.Forms.ContextMenu();
-            notifyIconContextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] { notifyIconContextMenuShow, notifyIconContextMenuQuit });
+            // TODO ContextMenu is no longer supported. Use ContextMenuStrip instead. For more details see https://docs.microsoft.com/en-us/dotnet/core/compatibility/winforms#removed-controls
+            System.Windows.Forms.ContextMenuStrip notifyIconContextMenu = new System.Windows.Forms.ContextMenuStrip();
+
+            // TODO MenuItem is no longer supported. Use ToolStripMenuItem instead. For more details see https://docs.microsoft.com/en-us/dotnet/core/compatibility/winforms#removed-controls
+            notifyIconContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripMenuItem[] { notifyIconContextMenuShow, notifyIconContextMenuQuit });
 
             _notifyIcon = new System.Windows.Forms.NotifyIcon
             {
                 Icon = Ciribob.DCS.SimpleRadio.Standalone.Client.Properties.Resources.audio_headset,
                 Visible = true
             };
-            _notifyIcon.ContextMenu = notifyIconContextMenu;
+
+            _notifyIcon.ContextMenuStrip = notifyIconContextMenu;
             _notifyIcon.DoubleClick += new EventHandler(NotifyIcon_Show);
 
         }

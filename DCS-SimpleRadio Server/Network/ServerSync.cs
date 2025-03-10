@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
@@ -51,7 +52,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
             
         }
 
-        public void Handle(ServerSettingsChangedMessage message)
+        public Task HandleAsync(ServerSettingsChangedMessage message, CancellationToken token)
         {
             try
             {
@@ -61,6 +62,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
             {
                 Logger.Error(ex, "Exception Sending Server Settings ");
             }
+
+            return Task.CompletedTask;
         }
 
         protected override TcpSession CreateSession() { return new SRSClientSession(this, _clients, _bannedIps); }
@@ -117,7 +120,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
 
                 try
                 {
-                    _eventAggregator.PublishOnUIThread(
+                    _eventAggregator.PublishOnUIThreadAsync(
                         new ServerStateMessage(true, new List<SRClient>(_clients.Values)));
                 }
                 catch (Exception ex)
@@ -219,7 +222,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
                 state.SRSGuid = srClient.ClientGuid;
                 
 
-                _eventAggregator.PublishOnUIThread(new ServerStateMessage(true,
+                _eventAggregator.PublishOnUIThreadAsync(new ServerStateMessage(true,
                     new List<SRClient>(_clients.Values)));
             }
 
@@ -288,7 +291,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
                     // Only redraw client admin UI of server if really needed
                     if (redrawClientAdminList)
                     {
-                        _eventAggregator.PublishOnUIThread(new ServerStateMessage(true,
+                        _eventAggregator.PublishOnUIThreadAsync(new ServerStateMessage(true,
                             new List<SRClient>(_clients.Values)));
                     }
                 }
@@ -442,7 +445,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
                 _clients[client.ClientGuid].Coalition = clientCoalition;
                 _clients[client.ClientGuid].Name = client.Name;
 
-                _eventAggregator.PublishOnUIThread(new ServerStateMessage(true,
+                _eventAggregator.PublishOnUIThreadAsync(new ServerStateMessage(true,
                     new List<SRClient>(_clients.Values)));
             }
 
@@ -482,7 +485,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
                 _clients[client.ClientGuid].Coalition = 0;
                 _clients[client.ClientGuid].Name = "";
 
-                _eventAggregator.PublishOnUIThread(new ServerStateMessage(true,
+                _eventAggregator.PublishOnUIThreadAsync(new ServerStateMessage(true,
                     new List<SRClient>(_clients.Values)));
 
                 var message = new NetworkMessage

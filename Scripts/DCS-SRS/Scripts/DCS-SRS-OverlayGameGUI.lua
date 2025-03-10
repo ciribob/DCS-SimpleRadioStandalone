@@ -99,6 +99,90 @@ srsOverlay.module_specific["UH-60L"] = function(radios) -- for ARC-201 scanning 
 		end
 	end
 
+-- Display the COMM cues (inverted 'v' triangles on the channel display when active)
+srsOverlay.module_specific["FA-18C_hornet"] = function(radios)
+    if DCS.isMultiplayer() then
+        local _serverSettings = net.get_server_settings()
+        if (_serverSettings.advanced.voice_chat_server == true) then
+            -- Do nothing, to avoid potential conflicts with in game VoIP.
+            return
+        end
+    end
+
+
+    -- THROTTLE_COMMS_X_VOIP
+    local commands = {
+
+        -- PRI (COMM1)
+        [2] = {
+            id = 3046,
+            value = 0.2
+        },
+
+        -- AUX (COMM2)
+        [3] = {
+            id = 3047,
+            value = 0.4
+        },
+
+        -- Currently do nothing, but ready to hit the ground running.
+        -- MIDS A
+        [4] = {
+            id = 3048,
+            value = 0.3
+        },
+
+        -- MIDS B
+        [5] = {
+            id = 3049,
+            value = 0.1
+        }
+    }
+
+    
+    if srsOverlay.module_specific.fa18queue == nil then
+        srsOverlay.module_specific.fa18queue = { }
+        -- Initialize the round robin with all radios.
+        for _i, _ in pairs(commands) do
+            table.insert(srsOverlay.module_specific.fa18queue, _i)
+        end
+    end
+    local roundrobin = srsOverlay.module_specific.fa18queue
+
+    local _hotasDevice = base.Export.GetDevice(13)
+
+    -- Find active radios, clear the state of every one as we go.
+    local activeRadios = {}
+    local anyActive = false
+    for _i, _details in pairs(commands) do
+        local _radio = radios[_i]
+        if _radio then
+            _hotasDevice:SetCommand(_details.id, 0)
+            
+            local _isReceiving = srsOverlay.isReceiving(_i)
+            local _isTransmitting = srsOverlay.isTransmitting(_i, _radio)
+            local isActive = _isReceiving > 0 or _isTransmitting
+            if isActive then
+                activeRadios[_i] = _details
+                anyActive = true
+            end
+        end
+    end
+
+    -- Limitation - we can currently only show one active radio at a time.
+    -- If multiple radios are transmitting simultaneously, take turn showing the activity indicator.
+    if anyActive then
+
+        -- Locate the first radio at the head of the round-robin that happens to be active.
+        local priorityRadio = nil
+        repeat
+            priorityRadio = table.remove(roundrobin)
+            table.insert(roundrobin, 1, priorityRadio)
+        until activeRadios[priorityRadio]
+
+        _hotasDevice:SetCommand(activeRadios[priorityRadio].id, activeRadios[priorityRadio].value)
+    end
+end
 
 function srsOverlay.loadConfiguration()
     srsOverlay.log("Loading config file...")
@@ -409,6 +493,12 @@ function srsOverlay.isReceiving(_radioPos )
 
     return 0,""
 
+end
+
+function srsOverlay.isTransmitting(_radioPos, _radio)
+    return _radioState.RadioSendingState and
+                                    _radioState.RadioSendingState.IsSending and
+                                    (_radioState.RadioSendingState.SendingOn+1 == _radioPos or _radio.simul)
 end
 
 

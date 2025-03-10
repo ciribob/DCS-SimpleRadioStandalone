@@ -112,7 +112,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
             //create an instance of serverState to actually start the server
             _simpleContainer.GetInstance(typeof(ServerState), null);
 
-            DisplayRootViewFor<MainViewModel>(settings);
+            DisplayRootViewForAsync<MainViewModel>(settings);
 
             UpdaterChecker.CheckForUpdate(Settings.ServerSettingsStore.Instance.GetServerSetting(Common.Setting.ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).BoolValue);
         }

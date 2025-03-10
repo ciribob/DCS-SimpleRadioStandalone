@@ -69,7 +69,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.UI.ClientAdmin
                 MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                _eventAggregator.PublishOnBackgroundThread(new KickClientMessage(Client));
+                _eventAggregator.PublishOnBackgroundThreadAsync(new KickClientMessage(Client));
             }
         }
 
@@ -79,7 +79,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.UI.ClientAdmin
                 MessageBoxButton.YesNo);
             if (messageBoxResult == MessageBoxResult.Yes)
             {
-                _eventAggregator.PublishOnBackgroundThread(new BanClientMessage(Client));
+                _eventAggregator.PublishOnBackgroundThreadAsync(new BanClientMessage(Client));
             }
         }
 

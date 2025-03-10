@@ -1,22 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{57B6F9D9-C410-4EB7-8003-60F894F358A4}</ProjectGuid>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Installer</RootNamespace>
-    <AssemblyName>Installer</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -31,40 +17,26 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE;/MANIFESTUAC:level=requireAdministrator</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Installer.App</StartupObject>
   </PropertyGroup>
-  <PropertyGroup />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Full Release|AnyCPU'">
     <OutputPath>bin\Full Release\</OutputPath>
     <DefineConstants>TRACE;/MANIFESTUAC:level=requireAdministrator</DefineConstants>
     <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
@@ -73,145 +45,25 @@
     <ApplicationIcon>generic_installer_by_philosoraptus.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Full Release|x64'">
     <OutputPath>bin\x64\Full Release\</OutputPath>
     <DefineConstants>TRACE;/MANIFESTUAC:level=requireAdministrator</DefineConstants>
     <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Costura, Version=1.6.2.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Costura.Fody.1.6.2\lib\dotnet\Costura.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="MahApps.Metro, Version=1.5.0.23, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
-      <HintPath>..\packages\MahApps.Metro.1.5.0\lib\net45\MahApps.Metro.dll</HintPath>
-    </Reference>
-    <Reference Include="NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.5.0.2\lib\net46\NLog.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\MahApps.Metro.1.5.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-  </ItemGroup>
-  <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="ProgressDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Resources\Icons.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resources\IconsNonShared.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ProgressDialog.xaml.cs">
-      <DependentUpon>ProgressDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.zh-CN.Designer.cs">
-      <DependentUpon>Resources.zh-CN.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.zh-CN.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.zh-CN.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <None Include="packages.config" />
-    <None Include="Properties\app.manifest" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
     <AppDesigner Include="Properties\" />
     <Resource Include="Resources\Entypo.ttf" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -226,16 +78,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="FodyWeavers.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="generic_installer_by_philosoraptus.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DCS-SR-Common\DCS-SR-Common.csproj">
-      <Project>{CF8DA5C1-0105-4486-9E28-CB2321D8F122}</Project>
-      <Name>DCS-SR-Common</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\DCS-SR-Common\DCS-SR-Common.csproj" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="IWshRuntimeLibrary">
@@ -254,47 +100,48 @@
   <ItemGroup>
     <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <PackageReference Include="Costura.Fody" Version="6.0.0" />
+    <PackageReference Include="Fody" Version="6.9.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="MahApps.Metro" Version="2.4.10" />
+    <PackageReference Include="MahApps.Metro.Resources" Version="0.6.1.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="NLog" Version="5.0.2" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.2" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="8.1.1" />
+    <PackageReference Include="System.ServiceModel.Http" Version="8.1.1" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="6.0.0" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="8.1.1" />
+    <PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />
+    <PackageReference Include="System.ServiceModel.Federation" Version="8.1.1" />
+  </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>if not exist "$(SolutionDir)install-build\Scripts" mkdir "$(SolutionDir)install-build\Scripts"
 if not exist "$(SolutionDir)install-build\AudioEffects" mkdir "$(SolutionDir)install-build\AudioEffects"
-copy /Y "$(SolutionDir)DCS-SimpleRadio Server\bin\x64\Release\SR-Server.exe" "$(SolutionDir)install-build\SR-Server.exe"
-copy /Y "$(SolutionDir)DCS-SR-Client\bin\x64\Release\SR-ClientRadio.exe" "$(SolutionDir)install-build\SR-ClientRadio.exe"
-copy /Y "$(SolutionDir)DCS-SR-Client\bin\x64\Release\opus.dll" "$(SolutionDir)install-build\opus.dll"
-copy /Y "$(SolutionDir)DCS-SR-Client\bin\x64\Release\speexdsp.dll" "$(SolutionDir)install-build\speexdsp.dll"
-copy /Y "$(SolutionDir)DCS-SR-Client\bin\x64\Release\awacs-radios.json" "$(SolutionDir)install-build\awacs-radios.json"
+copy /Y "$(SolutionDir)DCS-SimpleRadio Server\bin\Release\$(TargetFramework)\SR-Server.exe" "$(SolutionDir)install-build\SR-Server.exe"
+copy /Y "$(SolutionDir)DCS-SR-Client\bin\x64\Release\$(TargetFramework)\SR-ClientRadio.exe" "$(SolutionDir)install-build\SR-ClientRadio.exe"
+copy /Y "$(SolutionDir)DCS-SR-Client\bin\Release\$(TargetFramework)\opus.dll" "$(SolutionDir)install-build\opus.dll"
+copy /Y "$(SolutionDir)DCS-SR-Client\bin\Release\$(TargetFramework)\speexdsp.dll" "$(SolutionDir)install-build\speexdsp.dll"
+copy /Y "$(SolutionDir)DCS-SR-Client\bin\Release\$(TargetFramework)\awacs-radios.json" "$(SolutionDir)install-build\awacs-radios.json"
 xcopy /Y /e "$(SolutionDir)DCS-SR-Client\AudioEffects" "$(SolutionDir)install-build\AudioEffects"
-copy /Y "$(SolutionDir)Installer\bin\x64\Release\Installer.exe" "$(SolutionDir)install-build\Installer.exe"
-copy /Y "$(SolutionDir)AutoUpdater\bin\Release\SRS-AutoUpdater.exe" "$(SolutionDir)install-build\SRS-AutoUpdater.exe" 
-copy /Y "$(SolutionDir)DCS-SR-ExternalAudio\bin\Release\DCS-SR-ExternalAudio.exe" "$(SolutionDir)install-build\DCS-SR-ExternalAudio.exe" 
-copy /Y "$(SolutionDir)DCS-SR-ExternalAudio\bin\Release\grpc_csharp_ext.x64.dll" "$(SolutionDir)install-build\grpc_csharp_ext.x64.dll" 
-copy /Y "$(SolutionDir)DCS-SR-Client\bin\x64\Release\libmp3lame.32.dll" "$(SolutionDir)install-build\libmp3lame.32.dll"
-copy /Y "$(SolutionDir)DCS-SR-Client\bin\x64\Release\libmp3lame.64.dll" "$(SolutionDir)install-build\libmp3lame.64.dll"
-copy /Y "$(SolutionDir)DCS-SR-Client\bin\x64\Release\WebRTCVad.dll" "$(SolutionDir)install-build\WebRTCVad.dll"  
+copy /Y "$(SolutionDir)Installer\bin\Release\$(TargetFramework)\Installer.exe" "$(SolutionDir)install-build\Installer.exe"
+copy /Y "$(SolutionDir)AutoUpdater\bin\Release\$(TargetFramework)\SRS-AutoUpdater.exe" "$(SolutionDir)install-build\SRS-AutoUpdater.exe" 
+copy /Y "$(SolutionDir)DCS-SR-ExternalAudio\bin\Release\$(TargetFramework)\DCS-SR-ExternalAudio.exe" "$(SolutionDir)install-build\DCS-SR-ExternalAudio.exe" 
+copy /Y "$(SolutionDir)DCS-SR-ExternalAudio\bin\Release\$(TargetFramework)\grpc_csharp_ext.x64.dll" "$(SolutionDir)install-build\grpc_csharp_ext.x64.dll" 
+copy /Y "$(SolutionDir)DCS-SR-Client\bin\Release\$(TargetFramework)\libmp3lame.32.dll" "$(SolutionDir)install-build\libmp3lame.32.dll"
+copy /Y "$(SolutionDir)DCS-SR-Client\bin\Release\$(TargetFramework)\libmp3lame.64.dll" "$(SolutionDir)install-build\libmp3lame.64.dll"
+copy /Y "$(SolutionDir)DCS-SR-Client\bin\Release\$(TargetFramework)\WebRTCVad.dll" "$(SolutionDir)install-build\WebRTCVad.dll"  
 xcopy /Y /e "$(SolutionDir)Scripts" "$(SolutionDir)install-build\Scripts"
 if not exist "$(SolutionDir)install-build\Scripts\DCS-SRS\bin\" mkdir "$(SolutionDir)install-build\Scripts\DCS-SRS\bin\"
 copy /Y "$(SolutionDir)x64\Release\srs.dll" "$(SolutionDir)install-build\Scripts\DCS-SRS\bin\srs.dll"
 
 if not exist "$(SolutionDir)install-build\zh-CN" mkdir "$(SolutionDir)install-build\zh-CN"
-copy /Y "$(SolutionDir)DCS-SR-Client\bin\x64\Release\zh-CN\SR-ClientRadio.resources.dll" "$(SolutionDir)install-build\zh-CN\SR-ClientRadio.resources.dll"
-copy /Y "$(SolutionDir)DCS-SimpleRadio Server\bin\x64\Release\zh-CN\SR-Server.resources.dll" "$(SolutionDir)install-build\zh-CN\SR-Server.resources.dll"
-copy /Y "$(SolutionDir)DCS-SR-Client\bin\x64\Release\zh-CN\DCS-SR-Common.resources.dll" "$(SolutionDir)install-build\zh-CN\DCS-SR-Common.resources.dll"
-copy /Y "$(SolutionDir)Installer\bin\x64\Release\zh-CN\Installer.resources.dll" "$(SolutionDir)install-build\zh-CN\Installer.resources.dll"</PostBuildEvent>
+copy /Y "$(SolutionDir)DCS-SR-Client\bin\Release\$(TargetFramework)\zh-CN\SR-ClientRadio.resources.dll" "$(SolutionDir)install-build\zh-CN\SR-ClientRadio.resources.dll"
+copy /Y "$(SolutionDir)DCS-SimpleRadio Server\bin\Release\$(TargetFramework)\zh-CN\SR-Server.resources.dll" "$(SolutionDir)install-build\zh-CN\SR-Server.resources.dll"
+copy /Y "$(SolutionDir)DCS-SR-Client\bin\Release\$(TargetFramework)\zh-CN\DCS-SR-Common.resources.dll" "$(SolutionDir)install-build\zh-CN\DCS-SR-Common.resources.dll"
+copy /Y "$(SolutionDir)Installer\bin\Release\$(TargetFramework)\zh-CN\Installer.resources.dll" "$(SolutionDir)install-build\zh-CN\Installer.resources.dll"</PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\Fody.2.1.2\build\netstandard1.0\Fody.targets" Condition="Exists('..\packages\Fody.2.1.2\build\netstandard1.0\Fody.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Fody.2.1.2\build\netstandard1.0\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.2.1.2\build\netstandard1.0\Fody.targets'))" />
-    <Error Condition="!Exists('..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets'))" />
-  </Target>
-  <Import Project="..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets" Condition="Exists('..\packages\Costura.Fody.1.6.2\build\dotnet\Costura.Fody.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

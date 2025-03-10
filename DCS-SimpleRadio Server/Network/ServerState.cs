@@ -41,36 +41,40 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
         public ServerState(IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
-            _eventAggregator.Subscribe(this);
+            _eventAggregator.SubscribeOnPublishedThread(this);
 
             StartServer();
         }
 
-        public void Handle(BanClientMessage message)
+        public Task HandleAsync(BanClientMessage message, CancellationToken token)
         {
             WriteBanIP(message.Client);
 
             KickClient(message.Client);
+
+            return Task.CompletedTask;
         }
 
-        public void Handle(KickClientMessage message)
+        public Task HandleAsync(KickClientMessage message, CancellationToken token)
         {
             var client = message.Client;
             KickClient(client);
+
+            return Task.CompletedTask;
         }
 
-        public void Handle(StartServerMessage message)
+        public Task HandleAsync(StartServerMessage message, CancellationToken token)
         {
             StartServer();
-            _eventAggregator.PublishOnUIThread(new ServerStateMessage(true,
-                new List<SRClient>(_connectedClients.Values)));
+            return _eventAggregator.PublishOnUIThreadAsync(new ServerStateMessage(true,
+                new List<SRClient>(_connectedClients.Values)), token);
         }
 
-        public void Handle(StopServerMessage message)
+        public Task HandleAsync(StopServerMessage message, CancellationToken token)
         {
             StopServer();
-            _eventAggregator.PublishOnUIThread(new ServerStateMessage(false,
-                new List<SRClient>(_connectedClients.Values)));
+            return _eventAggregator.PublishOnUIThreadAsync(new ServerStateMessage(false,
+                new List<SRClient>(_connectedClients.Values)), token);
         }
 
         private void StartExport()

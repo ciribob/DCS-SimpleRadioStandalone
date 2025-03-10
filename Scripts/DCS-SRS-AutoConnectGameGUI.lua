@@ -84,7 +84,7 @@ SRSAuto.onPlayerConnect = function(id)
         return
     end
     if SRSAuto.SERVER_SEND_AUTO_CONNECT and id ~= HOST_PLAYER_ID then
-        sendAutoConnectMessage(id)
+        SRSAuto.sendAutoConnectMessage(id)
     end
 end
 
@@ -93,7 +93,7 @@ SRSAuto.onPlayerChangeSlot = function(id)
         return
     end
     if SRSAuto.SERVER_SEND_AUTO_CONNECT and id ~= HOST_PLAYER_ID then
-        sendAutoConnectMessage(id)
+        SRSAuto.sendAutoConnectMessage(id)
     end
 end
 

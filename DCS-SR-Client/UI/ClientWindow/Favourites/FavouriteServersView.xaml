@@ -95,12 +95,6 @@
                 <Style TargetType="{x:Type DataGridRow}">
                     <EventSetter Event="MouseMove" Handler="DataGridRow_MouseMove"/>
                     <EventSetter Event="Drop" Handler="DataGridRow_Drop" />
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Background" Value="{x:Static SystemColors.HighlightBrush}"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                        </Trigger>
-                    </Style.Triggers>
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>

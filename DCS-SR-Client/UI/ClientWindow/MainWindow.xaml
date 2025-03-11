@@ -1026,27 +1026,12 @@
                                           HorizontalContentAlignment="Center"
                                           VerticalContentAlignment="Center"
                                           Click="AllowTransmissionsRecord_OnClick"
-                                          ToolTipService.ShowOnDisabled="True">
-                                        <ToggleButton.Style>
-                                            <Style TargetType="{x:Type ToggleButton}">
-                                                <Setter Property="Content" Value="{x:Static p:Resources.ValueON}" />
-                                                <Style.Triggers>
-                                                    <Trigger Property="IsChecked" Value="True">
-                                                        <Setter Property="Content" Value="{x:Static p:Resources.ValueON}" />
-                                                    </Trigger>
-                                                    <Trigger Property="IsChecked" Value="False">
-                                                        <Setter Property="Content" Value="{x:Static p:Resources.ValueOFF}" />
-                                                    </Trigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </ToggleButton.Style>
-
-                                    </ToggleButton>
+                                          ToolTipService.ShowOnDisabled="True" />
                                     <Label Grid.Row="1"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.RecordTransmissions}" />
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           VerticalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.RecordTransmissions}" />
 
                                     <ToggleButton Name="RecordTransmissions"
                                           Grid.Row="1"
@@ -1057,10 +1042,10 @@
                                           ToolTipService.ShowOnDisabled="True" />
 
                                     <Label Grid.Row="2"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.SingleFileMixdown}" />
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           VerticalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.SingleFileMixdown}" />
 
                                     <ToggleButton Name="SingleFileMixdown"
                                           Grid.Row="2"
@@ -1069,14 +1054,13 @@
                                           VerticalContentAlignment="Center"
                                           Click="SingleFileMixdown_OnClick"
                                           ToolTip="{x:Static p:Resources.ToolTipRecordQuality}"
-                                          ToolTipService.ShowOnDisabled="True"
-                                           />
+                                          ToolTipService.ShowOnDisabled="True" />
 
                                     <Label Grid.Row="3"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.RecordingQuality}" />
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           VerticalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.RecordingQuality}" />
                                     <StackPanel Grid.Row="3"
                                                 Grid.Column="1" Margin="10">
 
@@ -1107,10 +1091,10 @@
                                     </StackPanel>
 
                                     <Label Grid.Row="4"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.DisallowedAudioTone}" />
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           VerticalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.DisallowedAudioTone}" />
                                     <ToggleButton Name="DisallowedAudioTone"
                                           Grid.Row="4"
                                           Grid.Column="1"
@@ -1168,26 +1152,25 @@
                                         <RowDefinition />
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
-
-
+                                    
                                     <Label Grid.Row="0"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.AutoSelectInputProfile}" />
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           VerticalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.AutoSelectInputProfile}" />
 
                                     <ToggleButton Name="AutoSelectInputProfile"
-                                          Grid.Row="0"
-                                          Grid.Column="1"
-                                          HorizontalContentAlignment="Center"
-                                          VerticalContentAlignment="Center"
-                                          Click="AutoSelectInputProfile_OnClick" />
+                                                  Grid.Row="0"
+                                                  Grid.Column="1"
+                                                  HorizontalContentAlignment="Center"
+                                                  VerticalContentAlignment="Center"
+                                                  Click="AutoSelectInputProfile_OnClick" />
 
                                     <Label Grid.Row="1"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.CheckForBetaUpdates}" />
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           VerticalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.CheckForBetaUpdates}" />
 
                                     <ToggleButton Name="CheckForBetaUpdates"
                                           Grid.Row="1"
@@ -1195,39 +1178,37 @@
                                           HorizontalContentAlignment="Center"
                                           VerticalContentAlignment="Center"
                                           Click="CheckForBetaUpdates_OnClick" />
-
-
-
+                                    
                                     <Label Grid.Row="2"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.SetSRSPath}" />
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           VerticalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.SetSRSPath}" />
 
                                     <Button Grid.Row="2"
-                                    Grid.Column="1"
-                                    HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center"
-                                    Click="SetSRSPath_Click"
-                                    Content="{x:Static p:Resources.SetSRSPathBtn}" />
+                                            Grid.Column="1"
+                                            HorizontalContentAlignment="Center"
+                                            VerticalContentAlignment="Center"
+                                            Click="SetSRSPath_Click"
+                                            Content="{x:Static p:Resources.SetSRSPathBtn}" />
 
                                     <Label Grid.Row="3"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.RequireAdminToggle}" />
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           VerticalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.RequireAdminToggle}" />
 
                                     <ToggleButton Name="RequireAdminToggle"
-                                          Grid.Row="3"
-                                          Grid.Column="1"
-                                          HorizontalContentAlignment="Center"
-                                          VerticalContentAlignment="Center"
-                                          Click="RequireAdminToggle_OnClick" />
+                                                  Grid.Row="3"
+                                                  Grid.Column="1"
+                                                  HorizontalContentAlignment="Center"
+                                                  VerticalContentAlignment="Center"
+                                                  Click="RequireAdminToggle_OnClick" />
                                     <Label Grid.Row="4"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.VAICOMTXInhibitEnabled}" />
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           VerticalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.VAICOMTXInhibitEnabled}" />
 
                                     <ToggleButton Name="VAICOMTXInhibitEnabled"
                                           Grid.Row="4"
@@ -1238,10 +1219,10 @@
 
 
                                     <Label Grid.Row="5"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.AllowAnonymousUsage}" />
+                                           Grid.Column="0"
+                                           HorizontalContentAlignment="Center"
+                                           VerticalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.AllowAnonymousUsage}" />
 
                                     <ToggleButton Name="AllowAnonymousUsage"
                                           Grid.Row="5"
@@ -1469,21 +1450,7 @@
                                                   Grid.Column="1"
                                                   HorizontalContentAlignment="Center"
                                                   VerticalContentAlignment="Center"
-                                                  Click="AllowRotaryIncrement_OnClick">
-                                        <ToggleButton.Style>
-                                            <Style TargetType="{x:Type ToggleButton}">
-                                                <Setter Property="Content" Value="{x:Static p:Resources.ValueOFF}" />
-                                                <Style.Triggers>
-                                                    <Trigger Property="IsChecked" Value="True">
-                                                        <Setter Property="Content" Value="{x:Static p:Resources.ValueON}" />
-                                                    </Trigger>
-                                                    <Trigger Property="IsChecked" Value="False">
-                                                        <Setter Property="Content" Value="{x:Static p:Resources.ValueOFF}" />
-                                                    </Trigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </ToggleButton.Style>
-                                    </ToggleButton>
+                                                  Click="AllowRotaryIncrement_OnClick" />
 
                                     <Label Grid.Row="6"
                                            Grid.Column="0"
@@ -1622,40 +1589,12 @@
                                         <ToggleButton Name="RadioRxStartToggle"
                                                       HorizontalContentAlignment="Center"
                                                       VerticalContentAlignment="Center"
-                                                      Click="RadioRxStart_Click">
-                                            <ToggleButton.Style>
-                                                <Style TargetType="{x:Type ToggleButton}">
-                                                    <Setter Property="Content" Value="{x:Static p:Resources.ValueON}" />
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsChecked" Value="True">
-                                                            <Setter Property="Content" Value="{x:Static p:Resources.ValueON}" />
-                                                        </Trigger>
-                                                        <Trigger Property="IsChecked" Value="False">
-                                                            <Setter Property="Content" Value="{x:Static p:Resources.ValueOFF}" />
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </ToggleButton.Style>
-                                        </ToggleButton>
+                                                      Click="RadioRxStart_Click" />
                                         <Label Content="{x:Static p:Resources.RadioRxEnd}" />
                                         <ToggleButton Name="RadioRxEndToggle"
                                                       HorizontalContentAlignment="Center"
                                                       VerticalContentAlignment="Center"
-                                                      Click="RadioRxEnd_Click">
-                                            <ToggleButton.Style>
-                                                <Style TargetType="{x:Type ToggleButton}">
-                                                    <Setter Property="Content" Value="{x:Static p:Resources.ValueON}" />
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsChecked" Value="True">
-                                                            <Setter Property="Content" Value="{x:Static p:Resources.ValueON}" />
-                                                        </Trigger>
-                                                        <Trigger Property="IsChecked" Value="False">
-                                                            <Setter Property="Content" Value="{x:Static p:Resources.ValueOFF}" />
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </ToggleButton.Style>
-                                        </ToggleButton>
+                                                      Click="RadioRxEnd_Click" />
                                     </WrapPanel>
 
 
@@ -1677,40 +1616,12 @@
                                             <ToggleButton Name="RadioTxStartToggle"
                                                           HorizontalContentAlignment="Center"
                                                           VerticalContentAlignment="Center"
-                                                          Click="RadioTxStart_Click">
-                                                <ToggleButton.Style>
-                                                    <Style TargetType="{x:Type ToggleButton}">
-                                                        <Setter Property="Content" Value="{x:Static p:Resources.ValueON}" />
-                                                        <Style.Triggers>
-                                                            <Trigger Property="IsChecked" Value="True">
-                                                                <Setter Property="Content" Value="{x:Static p:Resources.ValueON}" />
-                                                            </Trigger>
-                                                            <Trigger Property="IsChecked" Value="False">
-                                                                <Setter Property="Content" Value="{x:Static p:Resources.ValueOFF}" />
-                                                            </Trigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </ToggleButton.Style>
-                                            </ToggleButton>
+                                                          Click="RadioTxStart_Click" />
                                             <Label Content="{x:Static p:Resources.RadioTxEnd}" />
                                             <ToggleButton Name="RadioTxEndToggle"
                                                           HorizontalContentAlignment="Center"
                                                           VerticalContentAlignment="Center"
-                                                          Click="RadioTxEnd_Click">
-                                                <ToggleButton.Style>
-                                                    <Style TargetType="{x:Type ToggleButton}">
-                                                        <Setter Property="Content" Value="{x:Static p:Resources.ValueON}" />
-                                                        <Style.Triggers>
-                                                            <Trigger Property="IsChecked" Value="True">
-                                                                <Setter Property="Content" Value="{x:Static p:Resources.ValueON}" />
-                                                            </Trigger>
-                                                            <Trigger Property="IsChecked" Value="False">
-                                                                <Setter Property="Content" Value="{x:Static p:Resources.ValueOFF}" />
-                                                            </Trigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </ToggleButton.Style>
-                                            </ToggleButton>
+                                                          Click="RadioTxEnd_Click" />
                                         </WrapPanel>
 
                                     </WrapPanel>
@@ -1834,21 +1745,7 @@
                                         <ToggleButton Name="NATORadioToneToggle"
                                                       HorizontalContentAlignment="Center"
                                                       VerticalContentAlignment="Center"
-                                                      Click="NATORadioTone_Click">
-                                            <ToggleButton.Style>
-                                                <Style TargetType="{x:Type ToggleButton}">
-                                                    <Setter Property="Content" Value="{x:Static p:Resources.ValueON}" />
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsChecked" Value="True">
-                                                            <Setter Property="Content" Value="{x:Static p:Resources.ValueON}" />
-                                                        </Trigger>
-                                                        <Trigger Property="IsChecked" Value="False">
-                                                            <Setter Property="Content" Value="{x:Static p:Resources.ValueOFF}" />
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </ToggleButton.Style>
-                                        </ToggleButton>
+                                                      Click="NATORadioTone_Click" />
 
                                         <Slider x:Name="NATOToneVolume"
                                                 TickPlacement="BottomRight"
@@ -1889,21 +1786,7 @@
                                         <ToggleButton Name="HQEffectToggle"
                                                       HorizontalContentAlignment="Center"
                                                       VerticalContentAlignment="Center"
-                                                      Click="HQEffect_Click">
-                                            <ToggleButton.Style>
-                                                <Style TargetType="{x:Type ToggleButton}">
-                                                    <Setter Property="Content" Value="{x:Static p:Resources.ValueON}" />
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsChecked" Value="True">
-                                                            <Setter Property="Content" Value="{x:Static p:Resources.ValueON}" />
-                                                        </Trigger>
-                                                        <Trigger Property="IsChecked" Value="False">
-                                                            <Setter Property="Content" Value="{x:Static p:Resources.ValueOFF}" />
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </ToggleButton.Style>
-                                        </ToggleButton>
+                                                      Click="HQEffect_Click" />
 
                                         <Slider x:Name="HQToneVolume"
                                                 TickPlacement="BottomRight"

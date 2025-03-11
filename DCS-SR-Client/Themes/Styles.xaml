@@ -216,6 +216,7 @@
         <Style.Triggers>
             <Trigger Property="IsChecked" Value="True">
                 <Setter Property="Content" Value="{x:Static p:Resources.ValueON}" />
+                <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Accent2}" />
             </Trigger>
             <Trigger Property="IsChecked" Value="False">
                 <Setter Property="Content" Value="{x:Static p:Resources.ValueOFF}" />

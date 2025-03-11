@@ -49,14 +49,12 @@
                 Grid.Row="0"
                 Grid.Column="3"
                 Click="Device_Click"
-                Content="{x:Static p:Resources.DeviceSet}"
-                Style="{DynamicResource SquareButtonStyle}" />
+                Content="{x:Static p:Resources.DeviceSet}" />
         <Button x:Name="DeviceClear"
                 Grid.Row="0"
                 Grid.Column="4"
                 Click="DeviceClear_Click"
-                Content="{x:Static p:Resources.DeviceClear}"
-                Style="{DynamicResource SquareButtonStyle}" />
+                Content="{x:Static p:Resources.DeviceClear}" />
 
         <Label x:Name="ModifierLabel"
                Grid.Row="1"
@@ -81,14 +79,12 @@
                 Grid.Row="1"
                 Grid.Column="3"
                 Click="Modifier_Click"
-                Content="{x:Static p:Resources.DeviceSet}"
-                Style="{DynamicResource SquareButtonStyle}" />
+                Content="{x:Static p:Resources.DeviceSet}" />
         <Button x:Name="ModifierButtonClear"
                 Grid.Row="1"
                 Grid.Column="4"
                 Click="ModifierClear_Click"
-                Content="{x:Static p:Resources.DeviceClear}"
-                Style="{DynamicResource SquareButtonStyle}" />
+                Content="{x:Static p:Resources.DeviceClear}" />
 
     </Grid>
 

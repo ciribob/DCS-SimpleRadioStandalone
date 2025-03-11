@@ -2050,8 +2050,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         {
             try
             {
-                Process.Start(
-                    "https://www.patreon.com/ciribob");
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "https://www.patreon.com/ciribob",
+                    UseShellExecute = true
+                } );
             }
             catch (Exception)
             {

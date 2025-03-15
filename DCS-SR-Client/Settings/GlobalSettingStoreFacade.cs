@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using SharpConfig;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.Old;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SharpConfig;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.Old;
 
 public class ProfileSettingStoreFacade
 {

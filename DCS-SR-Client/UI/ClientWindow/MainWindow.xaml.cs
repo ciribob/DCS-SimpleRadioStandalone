@@ -80,30 +80,26 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         private ServerAddress _serverAddress;
         private readonly DelegateCommand _connectCommand;
 
-        private readonly GlobalSettingsStore _globalSettings = GlobalSettingsStore.Instance;
+        private readonly GlobalSettingStoreFacade _globalSettings = Ioc.Default.GetRequiredService<ISrsSettings>().GlobalSettingStore;
 
         /// <remarks>Used in the XAML for DataBinding many things</remarks>
-        public ClientStateSingleton ClientState { get; } = ClientStateSingleton.Instance;
+        public ClientStateSingleton ClientState { get; } = Ioc.Default.GetRequiredService<ClientStateSingleton>();
 
         /// <remarks>Used in the XAML for DataBinding the connected client count</remarks>
-        public ConnectedClientsSingleton Clients { get; } = ConnectedClientsSingleton.Instance;
+        public ConnectedClientsSingleton Clients { get; } = Ioc.Default.GetRequiredService<ConnectedClientsSingleton>();
 
         /// <remarks>Used in the XAML for DataBinding input audio related UI elements</remarks>
-        public AudioInputSingleton AudioInput { get; } = AudioInputSingleton.Instance;
+        public AudioInputSingleton AudioInput { get; } = Ioc.Default.GetRequiredService<AudioInputSingleton>();
 
         /// <remarks>Used in the XAML for DataBinding output audio related UI elements</remarks>
-        public AudioOutputSingleton AudioOutput { get; } = AudioOutputSingleton.Instance;
+        public AudioOutputSingleton AudioOutput { get; } = Ioc.Default.GetRequiredService<AudioOutputSingleton>();
 
-        private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
+        private readonly SynchedServerSettingsFacade _serverSettings = Ioc.Default.GetRequiredService<ISrsSettings>().SynchedServerSettings;
 
         public MainWindow()
         {
             GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
-            
-            _globalSettings = Ioc.Default.GetRequiredService<ISrsSettings>();
-            
-            
-
+ 
             InitializeComponent();
 
             // Initialize ToolTip controls

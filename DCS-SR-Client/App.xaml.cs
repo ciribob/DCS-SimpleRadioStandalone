@@ -10,7 +10,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.UI;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using MahApps.Metro.Controls;
+using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
@@ -28,6 +32,11 @@ namespace DCS_SR_Client
         private bool loggingReady = false;
         private static Logger Logger = LogManager.GetCurrentClassLogger();
 
+        /// <summary>
+        /// Gets the <see cref="IServiceProvider"/> instance to resolve application services.
+        /// </summary>
+        public IServiceProvider Services { get; }
+        
         public App()
         {
             //Thread.CurrentThread.CurrentUICulture = new CultureInfo("zh-CN");
@@ -57,6 +66,8 @@ namespace DCS_SR_Client
 
                 Environment.Exit(1);
             }
+            Services = ConfigureServices();
+            Ioc.Default.ConfigureServices(Services);
 
             SetupLogging();
 
@@ -103,7 +114,37 @@ namespace DCS_SR_Client
             RequireAdmin();
 
             InitNotificationIcon();
+            
+            InitializeComponent();
+            
+            // Todo: Switch to MVVM
+            // Boostrap the DataContext for MVVM.
+            //var viewModel = Services.GetRequiredService<IMainViewModel>();
+            var mainWindow = new MainWindow()
+            {
+                //DataContext = viewModel
+            };
+            mainWindow.Show();
+        }
+        
+        /// <summary>
+        /// Configures the services for the application.
+        /// </summary>
+        private static IServiceProvider ConfigureServices()
+        {
+            var services = new ServiceCollection();
 
+            // Services
+            services.AddSingleton<ISrsSettings, SrsSettingsService>();
+            services.AddSingleton(AudioInputSingleton.Instance);
+            services.AddSingleton(AudioOutputSingleton.Instance);
+            services.AddSingleton(ClientStateSingleton.Instance);
+            services.AddSingleton(ConnectedClientsSingleton.Instance);
+            
+            // ViewModels
+             //services.AddSingleton<IMainViewModel, MainWindowViewModel>();
+            
+            return services.BuildServiceProvider();
         }
 
         private void ListArgs()

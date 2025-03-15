@@ -1,8 +1,7 @@
 ﻿<Application x:Class="DCS_SR_Client.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:DCS_SR_Client"
-             StartupUri="UI/ClientWindow/MainWindow.xaml">
+             xmlns:local="clr-namespace:DCS_SR_Client" >
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

@@ -301,9 +301,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Costura.Fody" Version="6.0.0" />
     <PackageReference Include="Easy.MessageHub" Version="3.2.1" />
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25103.5738" />

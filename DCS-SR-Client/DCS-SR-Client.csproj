@@ -352,6 +352,20 @@
     <Compile Remove="UI\ClientWindow\InputBindingListControl.xaml.cs" />
     <Page Remove="UI\ClientWindow\InputBindingListControl.xaml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <CustomToolNamespace>Ciribob.DCS.SimpleRadio.Standalone.Client.Properties</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Properties\Resources.ru-RU.resx">
+      <CustomToolNamespace>Ciribob.DCS.SimpleRadio.Standalone.Client.Properties</CustomToolNamespace>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Properties\Resources.zh-CN.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <CustomToolNamespace>Ciribob.DCS.SimpleRadio.Standalone.Client.Properties</CustomToolNamespace>
+    </EmbeddedResource>
+  </ItemGroup>
   <Target AfterTargets="AfterBuild;NonWinFodyTarget" Name="CleanReferenceCopyLocalPaths">
     <Delete Files="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')" />
   </Target>

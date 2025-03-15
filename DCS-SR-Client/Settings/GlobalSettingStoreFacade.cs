@@ -6,6 +6,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 
 public class GlobalSettingStoreFacade
 {
+	public ProfileSettingStoreFacade ProfileSettingsStore { get; } = new ProfileSettingStoreFacade();
+	
 	// Gobal Setting Store
 	public int GetClientSettingInt(GlobalSettingsKeys key)
 	{

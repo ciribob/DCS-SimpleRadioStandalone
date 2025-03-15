@@ -15,4 +15,7 @@ public interface ISrsSettings
 	IRelayCommand<string> RenameProfileCommand { get; }
 	IRelayCommand<string> DuplicateProfileCommand { get; }
 	IRelayCommand<string> DeleteProfileCommand { get; }
+	
+	public GlobalSettingStoreFacade GlobalSettingStore { get; }
+	public SynchedServerSettingsFacade SynchedServerSettings { get; }
 }

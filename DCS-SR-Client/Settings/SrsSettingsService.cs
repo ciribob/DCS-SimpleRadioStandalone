@@ -159,6 +159,9 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 
 	public void Receive(SettingChangingMessage message)
 	{ }
+	
+	public GlobalSettingStoreFacade GlobalSettingStore { get; } = new GlobalSettingStoreFacade();
+	public SynchedServerSettingsFacade SynchedServerSettings { get; } = new SynchedServerSettingsFacade();
 }
 
 

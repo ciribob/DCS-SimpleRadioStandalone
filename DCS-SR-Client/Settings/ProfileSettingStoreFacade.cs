@@ -7,6 +7,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 public class ProfileSettingStoreFacade
 {
 	// Profile Setting Store
+	public Dictionary<string, Dictionary<InputBinding, InputDevice>> InputProfiles { get; set; } = new Dictionary<string, Dictionary<InputBinding, InputDevice>>();
+	public string CurrentProfileName;
+	public List<string> ProfileNames;
+	
 	public List<string> GetProfiles()
 	{
 		throw new NotImplementedException();

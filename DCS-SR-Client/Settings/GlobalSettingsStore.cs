@@ -10,7 +10,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using NLog;
 using SharpConfig;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
+namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.Old
 {
   
     public enum GlobalSettingsKeys

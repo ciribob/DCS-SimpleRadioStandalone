@@ -11,7 +11,7 @@ using Microsoft.Win32;
 using NLog;
 using SharpConfig;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
+namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.Old
 {
     public enum ProfileSettingsKeys
     {
@@ -359,7 +359,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             configuration.Add(new Section(device.InputBind.ToString()));
 
             //create the sections
-            var section = configuration[device.InputBind.ToString()];
+            var section = configuration[(string)device.InputBind.ToString()];
 
             section.Add(new Setting("name", device.DeviceName.Replace("\0", "")));
             section.Add(new Setting("button", device.Button));

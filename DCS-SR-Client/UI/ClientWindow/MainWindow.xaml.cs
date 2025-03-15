@@ -35,6 +35,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Overlay;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using MahApps.Metro.Controls;
 using Microsoft.Win32;
 using NAudio.CoreAudioApi;
@@ -98,6 +99,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         public MainWindow()
         {
             GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
+            
+            _globalSettings = Ioc.Default.GetRequiredService<ISrsSettings>();
+            
+            
 
             InitializeComponent();
 

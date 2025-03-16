@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -17,6 +18,7 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 {
 	const string ClientSettingsFileName = "ClientSettings";
 	const string ProfileFileNameSuffix = "Profile";
+	private readonly string _configurationDirectoryPath = "\\Configuration\\";
 	
 	private readonly Logger Logger = LogManager.GetCurrentClassLogger();
 	
@@ -26,6 +28,7 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 	[ObservableProperty]
 	[NotifyPropertyChangedFor(nameof(CurrentProfileName))]
 	private ClientSettingsModel _clientSettings = new ClientSettingsModel();
+
 	private Dictionary<string, ProfileSettingsModel> _profileSettings = new Dictionary<string, ProfileSettingsModel>();
 	
 	public ProfileSettingsModel CurrentProfile
@@ -67,17 +70,23 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 			.AddJsonFile(ClientSettingsFileName, reloadOnChange: false, optional: true)
 			.Build();
 		
-		foreach (string RelativePathToFiles in Directory.EnumerateFiles(@"./", $"*_{ProfileFileNameSuffix}.json",
-			         SearchOption.AllDirectories))
+		if (Directory.Exists(_configurationDirectoryPath))
 		{
-			string text = File.ReadAllText(RelativePathToFiles);
-			var profilejson = JsonConvert.DeserializeObject<ProfileSettingsModel>(text, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
-			
-			string[] ProfileNameParts = RelativePathToFiles.Split($"_{ProfileFileNameSuffix}.json"); 
-			
-			_profileSettings.Add(ProfileNameParts[0], profilejson);
+			foreach (string relativePathToFiles in Directory.EnumerateFiles(_configurationDirectoryPath,
+				         $"*_{ProfileFileNameSuffix}.json",
+				         SearchOption.AllDirectories))
+			{
+				string text = File.ReadAllText(relativePathToFiles);
+				var profilejson = JsonConvert.DeserializeObject<ProfileSettingsModel>(text,
+					new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto });
+
+				string[] NameWithoutFolder = relativePathToFiles.Split(_configurationDirectoryPath);
+				string[] ProfileNameParts = NameWithoutFolder[1].Split($"_{ProfileFileNameSuffix}.json");
+
+				_profileSettings.Add(ProfileNameParts[0], profilejson);
+			}
 		}
-		
+
 		_configuration.GetSection("GlobalSettings").Bind(ClientSettings);
 		_configuration.GetSection("ProfileSettings").Bind(_profileSettings);
 		
@@ -94,10 +103,10 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 			switch (m.ChangeType)
 			{
 				case SettingCatagory.Client:
-					SaveSettings(ClientSettings, $"./{ClientSettingsFileName}.json");
+					SaveSettings(ClientSettings, $"{ClientSettingsFileName}.json");
 					break;
 				case SettingCatagory.Profile:
-					SaveSettings(CurrentProfile, $"./{CurrentProfile}_{ProfileFileNameSuffix}.json");
+					SaveSettings(CurrentProfile, $"{CurrentProfileName}_{ProfileFileNameSuffix}.json");
 					break;
 			}
 		});
@@ -155,15 +164,18 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 		if (isSaving) { return; }
 		try
 		{
+			if (!Directory.Exists(_configurationDirectoryPath))
+			{
+				Directory.CreateDirectory(_configurationDirectoryPath);
+			};
+			var path = Path.Join(_configurationDirectoryPath, Filename); 
+			
 			isSaving = true;
 			string json = JsonConvert.SerializeObject(ModelToSave, Formatting.Indented);
-			File.WriteAllTextAsync(Filename, json, Encoding.UTF8);
+			File.WriteAllTextAsync(path, json, Encoding.UTF8);
 			isSaving = false;
 		}
-		catch (Exception e)
-		{
-			
-		}
+		catch (Exception e) { }
 	}
 	
 	public void CreateNewAppSettings()

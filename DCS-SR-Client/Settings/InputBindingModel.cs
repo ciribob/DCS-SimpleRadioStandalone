@@ -15,19 +15,20 @@ public partial class InputBindingModel : ObservableObject, ICloneable
 		base.OnPropertyChanging(e);
 	}
 	
-	[ObservableProperty] private string _inputName = "InputName";
 	[ObservableProperty] private InputDevice _primary = null;
 	[ObservableProperty] private InputDevice _modifier = null;
-	[JsonIgnore] public Action BindingAction { get; init; }
+	[JsonIgnore] 
+	public Action BindingAction { get; init; }
 	
 	/// <summary>
 	/// Is active when Primary (and Modifier, if not null) is pressed.
 	/// </summary>
+	[JsonIgnore] 
 	public bool IsBindingPressed
 	{
 		get
 		{
-			if (HasModifier)
+			if (_modifier != null)
 			{
 				return IsPrimaryPressed && IsModifiedPressed;
 			}
@@ -35,13 +36,10 @@ public partial class InputBindingModel : ObservableObject, ICloneable
 		}
 	}
 	
+	[JsonIgnore] 
 	public bool IsPrimaryPressed { get; set; }
+	[JsonIgnore] 
 	public bool IsModifiedPressed { get; set; }
-	
-#pragma warning disable MVVMTK0034
-	// We need this to easily set Binding Pressed.
-	public bool HasModifier => _modifier != null;
-#pragma warning restore MVVMTK0034
 	
 	public object Clone()
 	{

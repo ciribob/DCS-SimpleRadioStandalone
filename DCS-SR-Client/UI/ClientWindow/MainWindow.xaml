@@ -2684,17 +2684,15 @@
                                         <RowDefinition />
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
-
-
+                                    
                                     <Label Grid.Row="0"
                                            Grid.Column="0"
                                            HorizontalContentAlignment="Center"
                                            VerticalContentAlignment="Center"
                                            Content="{x:Static p:Resources.Radio1Config}" />
-                                    <local:RadioChannelConfigUi x:Name="Radio1Config"
-                                                                Grid.Row="0" Grid.Column="1"
-                                                                SliderValue="{Binding GlobalSettings.CurrentProfile.BalanceRadio01}"/>
-
+                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="1"
+                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio01}" />
+<!-- SliderValue="{Binding GlobalSettings.CurrentProfile.BalanceRadio01}"
                                     <Label Grid.Row="1"
                                            Grid.Column="0"
                                            HorizontalContentAlignment="Center"
@@ -2777,6 +2775,7 @@
                                     <local:RadioChannelConfigUi x:Name="IntercomConfig"
                                                                 Grid.Row="10" Grid.Column="1"
                                                                 SliderValue="{Binding GlobalSettings.CurrentProfile.BalanceIntercom}" />
+                                                                -->
                                 </Grid>
                             </GroupBox>
                         </Grid>

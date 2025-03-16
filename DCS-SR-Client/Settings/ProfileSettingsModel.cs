@@ -128,7 +128,8 @@ public partial class ProfileSettingsModel : ObservableObject, ICloneable
 	/// <summary>
 	/// A list of All InputBindingModel's that are special/handled by the UDPVoiceHandler instead of InputDeviceManager.
 	/// </summary>
-	[JsonIgnore] public List<InputBindingModel> RadioAndPttBindingsList => new()
+	[JsonIgnore] 
+	public List<InputBindingModel> RadioAndPttBindingsList => new()
 	{
 		InputIntercom,
 		InputSwitch01, InputSwitch02, InputSwitch03, InputSwitch04, InputSwitch05, 
@@ -144,9 +145,10 @@ public partial class ProfileSettingsModel : ObservableObject, ICloneable
 	};
 
 	/// <summary>
-	/// Todo: Move to portable Delates instead of stricly coded actions
+	/// Todo: Move to portable Delegates instead of strictly coded actions
 	/// </summary>
-	[JsonIgnore] public Dictionary<InputBindingModel, Action> InputActionList => new()
+	[JsonIgnore] 
+	public Dictionary<InputBindingModel, Action> InputActionList => new()
 	{
 		{ InputIntercom, OnInputIntercomPressed },
 		{ InputSwitch01, OnInputSwitch01Pressed },

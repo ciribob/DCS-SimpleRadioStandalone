@@ -4,14 +4,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.UI"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:settings="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Settings"
 			 xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Properties"
              d:DesignHeight="100"
              d:DesignWidth="300"
-             mc:Ignorable="d">
-
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance settings:InputBindingModel, IsDesignTimeCreatable=True}">
     <Grid>
-
-
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="2*" />
@@ -22,68 +21,57 @@
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
-
         </Grid.RowDefinitions>
-
-
-        <Label x:Name="DeviceLabel"
-               Grid.Row="0"
-               Grid.Column="0"
+	    
+        <Label x:Name="PrimaryDeviceLabel"
+               Grid.Row="0" Grid.Column="0"
                VerticalContentAlignment="Center"
                Content="{x:Static p:Resources.DeviceControl}" />
-        <TextBox x:Name="Device"
-                 Grid.Row="0"
-                 Grid.Column="1"
+        <TextBox Grid.Row="0" Grid.Column="1"
                  VerticalContentAlignment="Center"
                  IsEnabled="False"
-                 Text="None"
+                 Text="{Binding Primary.DeviceName}"
+                 MaxLength="30"
                  TextAlignment="Center" />
-        <TextBox x:Name="DeviceText"
-                 Grid.Row="0"
-                 Grid.Column="2"
+        <TextBox Grid.Row="0" Grid.Column="2"
                  VerticalContentAlignment="Center"
                  IsEnabled="False"
-                 Text="None"
+                 Text="{Binding Primary.Button}"
+                 MaxLength="5"
                  TextAlignment="Center" />
-        <Button x:Name="DeviceButton"
-                Grid.Row="0"
-                Grid.Column="3"
-                Click="Device_Click"
+        <Button x:Name="PrimarySetButton"
+                Grid.Row="0" Grid.Column="3"
+                Click="PrimarySet_Click"
                 Content="{x:Static p:Resources.DeviceSet}"
                 Style="{DynamicResource SquareButtonStyle}" />
-        <Button x:Name="DeviceClear"
-                Grid.Row="0"
-                Grid.Column="4"
-                Click="DeviceClear_Click"
+        <Button x:Name="PrimaryClearButton"
+                Grid.Row="0" Grid.Column="4"
+                Click="PrimaryClear_Click"
                 Content="{x:Static p:Resources.DeviceClear}"
                 Style="{DynamicResource SquareButtonStyle}" />
 
-        <Label x:Name="ModifierLabel"
-               Grid.Row="1"
-               Grid.Column="0"
+        <Label x:Name="ModifierDeviceLabel"
+               Grid.Row="1" Grid.Column="0"
                VerticalContentAlignment="Center"
                Content="{x:Static p:Resources.DeviceControl}" />
-        <TextBox x:Name="ModifierDevice"
-                 Grid.Row="1"
-                 Grid.Column="1"
+        <TextBox Grid.Row="1" Grid.Column="1"
                  VerticalContentAlignment="Center"
                  IsEnabled="False"
-                 Text="None"
+                 Text="{Binding Modifier.DeviceName}"
+                 MaxLength="30"
                  TextAlignment="Center" />
-        <TextBox x:Name="ModifierText"
-                 Grid.Row="1"
-                 Grid.Column="2"
+        <TextBox Grid.Row="1" Grid.Column="2"
                  VerticalContentAlignment="Center"
                  IsEnabled="False"
-                 Text="None"
+                 Text="{Binding Modifier.Button}"
+                 MaxLength="5"
                  TextAlignment="Center" />
-        <Button x:Name="ModifierButton"
-                Grid.Row="1"
-                Grid.Column="3"
-                Click="Modifier_Click"
+        <Button x:Name="ModifierSetButton"
+                Grid.Row="1" Grid.Column="3"
+                Click="ModifierSet_Click"
                 Content="{x:Static p:Resources.DeviceSet}"
                 Style="{DynamicResource SquareButtonStyle}" />
-        <Button x:Name="ModifierButtonClear"
+        <Button x:Name="ModifierClearButton"
                 Grid.Row="1"
                 Grid.Column="4"
                 Click="ModifierClear_Click"

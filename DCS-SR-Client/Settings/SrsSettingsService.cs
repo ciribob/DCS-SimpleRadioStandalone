@@ -59,11 +59,12 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 	
 	public SrsSettingsService()
 	{
-		if (!File.Exists(ClientSettingsFileName)) { CreateNewAppSettings(); }			
-		if (File.ReadAllBytes(ClientSettingsFileName).Length <= 10) { CreateNewAppSettings(); }
+		if (!File.Exists(ClientSettingsFileName) || 
+		    File.ReadAllBytes(ClientSettingsFileName).Length <= 10) 
+		{ CreateNewAppSettings(); }
 
 		_configuration = new ConfigurationBuilder()
-			.AddJsonFile(ClientSettingsFileName, reloadOnChange: false, optional: false)
+			.AddJsonFile(ClientSettingsFileName, reloadOnChange: false, optional: true)
 			.Build();
 		
 		foreach (string RelativePathToFiles in Directory.EnumerateFiles(@"./", $"*_{ProfileFileNameSuffix}.json",

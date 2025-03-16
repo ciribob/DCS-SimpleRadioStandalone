@@ -44,7 +44,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         private readonly CancellationTokenSource _pingStop = new CancellationTokenSource();
         private readonly int _port;
         
-        private ISrsSettings GlobalSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>();
+        private ISrsSettings GlobalSettings => Ioc.Default.GetRequiredService<ISrsSettings>();
+        private ProfileSettingsModel ProfileSettings => Ioc.Default.GetRequiredService<ISrsSettings>().CurrentProfile;
+        
         private ServerSettingsModel ServerSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>().CurrentServerSettings;
         
         private readonly CancellationTokenSource _stopFlag = new CancellationTokenSource();
@@ -138,10 +140,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             var settings = GlobalSettingsStore.Instance;
             _inputManager.StartDetectPtt(pressed =>
             {
-                var radios = _clientStateSingleton.DcsPlayerRadioInfo;
+                DCSPlayerRadioInfo radios = _clientStateSingleton.DcsPlayerRadioInfo;
 
-                var radioSwitchPtt = GlobalSettings.CurrentProfile.RadioSwitchIsPtt;
-                var radioSwitchPttWhenValid = GlobalSettings.CurrentProfile.RadioSwitchIsPttOnlyWhenValid;
+                var radioSwitchPtt = ProfileSettings.RadioSwitchIsPtt;
+                var radioSwitchPttWhenValid = ProfileSettings.RadioSwitchIsPttOnlyWhenValid;
 
                 //store the current PTT state and radios
                 var currentRadioId = radios.selected;
@@ -149,55 +151,79 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                 var ptt = false;
                 var intercomPtt = false;
-                foreach (var inputBindState in pressed)
+
+                // We are going to do this check a lot in a moment,
+                // so lets pull it out to make it easier for humans read.
+                Action<int> switchOnlyWhenValid = (radioNumber) =>
                 {
-                    if (inputBindState.IsActive)
+                    if (radioSwitchPttWhenValid)
                     {
-                        //radio switch?
-                        if ((int)inputBindState.MainDevice.InputBind >= (int)InputBinding.Intercom &&
-                            (int)inputBindState.MainDevice.InputBind <= (int)InputBinding.Switch10)
+                        // Wait for Radio to be ready
+                        if (RadioHelper.SelectRadio(radioNumber))
                         {
-                            //gives you radio id if you minus 100
-                            var radioId = (int)inputBindState.MainDevice.InputBind - 100;
-
-                            if (radioId < _clientStateSingleton.DcsPlayerRadioInfo.radios.Length)
-                            {
-                                var clientRadio = _clientStateSingleton.DcsPlayerRadioInfo.radios[radioId];
-
-                                if (RadioHelper.SelectRadio(radioId))
-                                {
-                                    //turn on PTT
-                                    if (radioSwitchPttWhenValid || radioSwitchPtt)
-                                    {
-                                        _lastPTTPress = DateTime.Now.Ticks;
-                                        ptt = true;
-                                        //Store last release time
-                                    }
-                                }
-                                else
-                                {
-                                    //turn on PTT even if not valid radio switch
-                                    if (radioSwitchPtt)
-                                    {
-                                        _lastPTTPress = DateTime.Now.Ticks;
-                                        ptt = true;
-                                    }
-                                }
-
-                            }
+                            // _lastPTTPress stores the last release time to give good "Button Holding" behavior.
+                            _lastPTTPress = DateTime.Now.Ticks;
+                            ptt = true;
                         }
-                        else if (inputBindState.MainDevice.InputBind == InputBinding.Ptt)
+                    }
+                    else
+                    {
+                        // Yolo, slam the active state and hope the radio selects in time.
+                        RadioHelper.SelectRadio(radioNumber);
+                        _lastPTTPress = DateTime.Now.Ticks;
+                        ptt = true;
+                    }
+                };
+                
+                if (radioSwitchPtt)
+                {
+                    if (ProfileSettings.InputIntercom.IsBindingPressed) switchOnlyWhenValid.Invoke(0);
+                    if (ProfileSettings.InputSwitch01.IsBindingPressed) switchOnlyWhenValid.Invoke(1);
+                    if (ProfileSettings.InputSwitch02.IsBindingPressed) switchOnlyWhenValid.Invoke(2);
+                    if (ProfileSettings.InputSwitch03.IsBindingPressed) switchOnlyWhenValid.Invoke(3);
+                    if (ProfileSettings.InputSwitch04.IsBindingPressed) switchOnlyWhenValid.Invoke(4);
+                    if (ProfileSettings.InputSwitch05.IsBindingPressed) switchOnlyWhenValid.Invoke(5);
+                    if (ProfileSettings.InputSwitch06.IsBindingPressed) switchOnlyWhenValid.Invoke(6);
+                    if (ProfileSettings.InputSwitch07.IsBindingPressed) switchOnlyWhenValid.Invoke(7);
+                    if (ProfileSettings.InputSwitch08.IsBindingPressed) switchOnlyWhenValid.Invoke(8);
+                    if (ProfileSettings.InputSwitch09.IsBindingPressed) switchOnlyWhenValid.Invoke(9);
+                    if (ProfileSettings.InputSwitch10.IsBindingPressed) switchOnlyWhenValid.Invoke(10);
+                } else if (ProfileSettings.InputPushToTalk.IsBindingPressed)
+                {
+                    _lastPTTPress = DateTime.Now.Ticks;
+                    ptt = true;
+                } else if (ProfileSettings.InputIntercomPtt.IsBindingPressed)
+                {
+                    intercomPtt = true;
+                }
+                
+                /*
+                if (radioId < _clientStateSingleton.DcsPlayerRadioInfo.radios.Length)
+                {
+                    var clientRadio = _clientStateSingleton.DcsPlayerRadioInfo.radios[radioId];
+                    
+                    if (RadioHelper.SelectRadio(radioId))
+                    {
+                        //turn on PTT
+                        if (radioSwitchPttWhenValid || radioSwitchPtt)
                         {
                             _lastPTTPress = DateTime.Now.Ticks;
                             ptt = true;
-                        }else if (inputBindState.MainDevice.InputBind == InputBinding.IntercomPTT)
+                            //Store last release time
+                        }
+                    }
+                    else
+                    {
+                        //turn on PTT even if not valid radio switch
+                        if (radioSwitchPtt)
                         {
-                            intercomPtt = true;
-
+                            _lastPTTPress = DateTime.Now.Ticks;
+                            ptt = true;
                         }
                     }
                 }
-
+                */
+                
                 /**
              * Handle DELAYING PTT START
              */

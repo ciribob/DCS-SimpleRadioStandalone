@@ -23,7 +23,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
     {
         public delegate void DetectButton(InputDevice inputDevice);
 
-        public delegate void DetectPttCallback(List<InputBindState> buttonStates);
+        public delegate void DetectPttCallback(List<InputBindingModel> buttonStates);
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -70,11 +70,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
         private volatile bool _detectPtt;
 
         //used to trigger the update to a frequency
-        private InputBinding _lastActiveBinding = InputBinding.ModifierIntercom
-            ; //intercom used to represent null as we cant
+        private InputBindingModel _lastActiveBinding; 
+        //intercom used to represent null as we cant
 
-        private ISrsSettings GlobalSettings = Ioc.Default.GetRequiredService<ISrsSettings>();
-
+        private ISrsSettings GlobalSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>();
+        private ProfileSettingsModel ProfileSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>().CurrentProfile;
 
         public InputDeviceManager(Window window, MainWindow.ToggleOverlayCallback _toggleOverlayCallback)
         {
@@ -91,8 +91,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             LoadBlackList();
 
             InitDevices();
-
-
         }
 
         public void InitDevices()
@@ -421,7 +419,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
                                         {
                                             DeviceName = "XInputController",
                                             Button = (int)values[j],
-                                            InstanceGuid = deviceList[i].Information.InstanceGuid,
+                                            Guid = deviceList[i].Information.InstanceGuid,
                                             ButtonValue = buttonState
                                         };
 
@@ -452,7 +450,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
                                                 DeviceName =
                                                     deviceList[i].Information.ProductName.Trim().Replace("\0", ""),
                                                 Button = j,
-                                                InstanceGuid = deviceList[i].Information.InstanceGuid,
+                                                Guid = deviceList[i].Information.InstanceGuid,
                                                 ButtonValue = pov[j - 128]
                                             };
                                             Application.Current.Dispatcher.Invoke(
@@ -473,7 +471,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
                                                 DeviceName =
                                                     deviceList[i].Information.ProductName.Trim().Replace("\0", ""),
                                                 Button = j,
-                                                InstanceGuid = deviceList[i].Information.InstanceGuid,
+                                                Guid = deviceList[i].Information.InstanceGuid,
                                                 ButtonValue = buttonState
                                             };
 
@@ -502,7 +500,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
                                             DeviceName =
                                                 deviceList[i].Information.ProductName.Trim().Replace("\0", ""),
                                             Button = j,
-                                            InstanceGuid = deviceList[i].Information.InstanceGuid,
+                                            Guid = deviceList[i].Information.InstanceGuid,
                                             ButtonValue = 1
                                         };
 
@@ -538,7 +536,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
                                             DeviceName =
                                                 deviceList[i].Information.ProductName.Trim().Replace("\0", ""),
                                             Button = j,
-                                            InstanceGuid = deviceList[i].Information.InstanceGuid,
+                                            Guid = deviceList[i].Information.InstanceGuid,
                                             ButtonValue = buttonState
                                         };
 
@@ -564,20 +562,20 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
         }
         
 
-        private void PollDevices(List<InputBindState> states)
+        private void PollDevices(List<InputBindingModel> states)
         {
             //generate a unique list of devices - only poll once around the loop - not for each keybind
             var uniqueDevices = new HashSet<Guid>();
 
             foreach (var inputBindState in states)
             {
-                if (inputBindState.MainDevice != null)
+                if (inputBindState.Primary != null)
                 {
-                    uniqueDevices.Add(inputBindState.MainDevice.InstanceGuid);
+                    uniqueDevices.Add(inputBindState.Primary.Guid);
                 }
-                if (inputBindState.ModifierDevice != null)
+                if (inputBindState.Modifier != null)
                 {
-                    uniqueDevices.Add(inputBindState.ModifierDevice.InstanceGuid);
+                    uniqueDevices.Add(inputBindState.Modifier.Guid);
                 }
             }
 
@@ -612,199 +610,81 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             //detect the state of all current buttons
             var pttInputThread = new Thread(() =>
             {
-            while (_detectPtt)
-            {
-                var bindStates = GenerateBindStateList();
-
-                //Poll devices with all current binds
-                PollDevices(bindStates);
-
-
-                for (var i = 0; i < bindStates.Count; i++)
+                while (_detectPtt)
                 {
-                    //contains main binding and optional modifier binding + states of each
-                    var bindState = bindStates[i];
-
-                        bindState.MainDeviceState = GetButtonState(bindState.MainDevice);
-
-                    if (bindState.ModifierDevice != null)
+                    var allBinding = ProfileSettings.InputBindingsList;
+                    
+                    //Poll devices with all current binds
+                    PollDevices(allBinding);
+                    
+                    foreach (var bindState in allBinding)
                     {
-                            bindState.ModifierState = GetButtonState(bindState.ModifierDevice);
-
-                        bindState.IsActive = bindState.MainDeviceState && bindState.ModifierState;
-                    }
-                    else
-                    {
-                        bindState.IsActive = bindState.MainDeviceState;
-                    }
-
-                    //now check this is the best binding and no previous ones are better
-                    //Means you can have better binds like PTT  = Space and Radio 1 is Space +1 - holding space +1 will actually trigger radio 1 not PTT
-                        if (bindState.IsActive)
-                    {
-                        for (int j = 0; j < i; j++)
+                        bindState.IsPrimaryPressed = GetButtonState(bindState.Primary);
+                        bindState.IsModifiedPressed = GetButtonState(bindState.Modifier);
+                        
+                        //now check this is the best binding and no previous ones are better
+                        //Means you can have better binds like PTT  = Space and Radio 1 is Space +1 - holding space +1 will actually trigger radio 1 not PTT
+                        if (bindState.IsBindingPressed)
                         {
-                            //check previous bindings
-                            var previousBind = bindStates[j];
-
-                            if (!previousBind.IsActive)
+                            foreach (var otherBindState in allBinding.Where(x => x.IsBindingPressed))
                             {
-                                continue;
-                            }
-
-                            if (previousBind.ModifierDevice == null && bindState.ModifierDevice != null)
-                            {
-                                //set previous bind to off if previous bind Main == main or modifier of bindstate
-                                if (previousBind.MainDevice.IsSameBind(bindState.MainDevice))
-                                {
-                                    previousBind.IsActive = false;
-                                    break;
-                                }
-                                if (previousBind.MainDevice.IsSameBind(bindState.ModifierDevice))
-                                {
-                                    previousBind.IsActive = false;
-                                    break;
-                                }
-                            }
-                            else if (previousBind.ModifierDevice != null && bindState.ModifierDevice == null)
-                            {
-                                if (previousBind.MainDevice.IsSameBind(bindState.MainDevice))
-                                {
-                                    bindState.IsActive = false;
-                                    break;
-                                }
-                                if (previousBind.ModifierDevice.IsSameBind(bindState.MainDevice))
-                                {
-                                    bindState.IsActive = false;
-                                    break;
-                                }
+                                if(otherBindState == bindState) break;
+                                otherBindState.IsPrimaryPressed = false;
                             }
                         }
                     }
-                }
 
-                callback(bindStates);
-                //handle overlay
-
-                foreach (var bindState in bindStates)
-                {
-                    if (bindState.IsActive && bindState.MainDevice.InputBind == InputBinding.OverlayToggle)
+                    callback(allBinding);
+                    
+                    //handle overlay
+                    var dcsPlayerRadioInfo = ClientStateSingleton.Instance.DcsPlayerRadioInfo;
+                    if (ProfileSettings.OverlayToggle.IsBindingPressed)
                     {
                         //run on main
                         Application.Current.Dispatcher.Invoke(
                             () => { _toggleOverlayCallback(false,false); });
-                        break;
                     }
-                    else if (bindState.IsActive && bindState.MainDevice.InputBind == InputBinding.AwacsOverlayToggle)
+                    if (ProfileSettings.AwacsOverlayToggle.IsBindingPressed)
                     {
                         //run on main
                         Application.Current.Dispatcher.Invoke(
                             () => { _toggleOverlayCallback(false, true); });
-                        break;
                     }
-                    else if ((int)bindState.MainDevice.InputBind >= (int)InputBinding.Up100 &&
-                             (int)bindState.MainDevice.InputBind <= (int)InputBinding.AwacsOverlayToggle)
+                    if (dcsPlayerRadioInfo != null && dcsPlayerRadioInfo.IsCurrent())
                     {
-                        if (bindState.MainDevice.InputBind == _lastActiveBinding && !bindState.IsActive)
-                        {
-                            //Assign to a totally different binding to mark as unassign
-                            _lastActiveBinding = InputBinding.ModifierIntercom;
-                        }
-                        //key repeat
-                        if (bindState.IsActive && (bindState.MainDevice.InputBind != _lastActiveBinding))
-                        {
-                            _lastActiveBinding = bindState.MainDevice.InputBind;
-
-                                var dcsPlayerRadioInfo = ClientStateSingleton.Instance.DcsPlayerRadioInfo;
-
-                            if (dcsPlayerRadioInfo != null && dcsPlayerRadioInfo.IsCurrent())
-                            {
-                                switch (bindState.MainDevice.InputBind)
-                                {
-                                    case InputBinding.Up100:
-                                        RadioHelper.UpdateRadioFrequency(100, dcsPlayerRadioInfo.selected);
-                                        break;
-                                    case InputBinding.Up10:
-                                        RadioHelper.UpdateRadioFrequency(10, dcsPlayerRadioInfo.selected);
-                                        break;
-                                    case InputBinding.Up1:
-                                        RadioHelper.UpdateRadioFrequency(1, dcsPlayerRadioInfo.selected);
-                                        break;
-                                    case InputBinding.Up01:
-                                        RadioHelper.UpdateRadioFrequency(0.1, dcsPlayerRadioInfo.selected);
-                                        break;
-                                    case InputBinding.Up001:
-                                        RadioHelper.UpdateRadioFrequency(0.01, dcsPlayerRadioInfo.selected);
-                                        break;
-                                    case InputBinding.Up0001:
-                                        RadioHelper.UpdateRadioFrequency(0.001, dcsPlayerRadioInfo.selected);
-                                        break;
-                                    case InputBinding.Down100:
-                                        RadioHelper.UpdateRadioFrequency(-100, dcsPlayerRadioInfo.selected);
-                                        break;
-                                    case InputBinding.Down10:
-                                        RadioHelper.UpdateRadioFrequency(-10, dcsPlayerRadioInfo.selected);
-                                        break;
-                                    case InputBinding.Down1:
-                                        RadioHelper.UpdateRadioFrequency(-1, dcsPlayerRadioInfo.selected);
-                                        break;
-                                    case InputBinding.Down01:
-                                        RadioHelper.UpdateRadioFrequency(-0.1, dcsPlayerRadioInfo.selected);
-                                        break;
-                                    case InputBinding.Down001:
-                                        RadioHelper.UpdateRadioFrequency(-0.01, dcsPlayerRadioInfo.selected);
-                                        break;
-                                    case InputBinding.Down0001:
-                                        RadioHelper.UpdateRadioFrequency(-0.001, dcsPlayerRadioInfo.selected);
-                                        break;
-                                    case InputBinding.ToggleGuard:
-                                        RadioHelper.ToggleGuard(dcsPlayerRadioInfo.selected);
-                                        break;
-                                    case InputBinding.ToggleEncryption:
-                                        RadioHelper.ToggleEncryption(dcsPlayerRadioInfo.selected);
-                                        break;
-                                    case InputBinding.NextRadio:
-                                        RadioHelper.SelectNextRadio();
-                                        break;
-                                    case InputBinding.PreviousRadio:
-                                        RadioHelper.SelectPreviousRadio();
-                                        break;
-                                    case InputBinding.EncryptionKeyIncrease:
-                                        RadioHelper.IncreaseEncryptionKey(dcsPlayerRadioInfo.selected);
-                                        break;
-                                    case InputBinding.EncryptionKeyDecrease:
-                                        RadioHelper.DecreaseEncryptionKey(dcsPlayerRadioInfo.selected);
-                                        break;
-                                    case InputBinding.RadioChannelUp:
-                                        RadioHelper.RadioChannelUp(dcsPlayerRadioInfo.selected);
-                                        break;
-                                    case InputBinding.RadioChannelDown:
-                                        RadioHelper.RadioChannelDown(dcsPlayerRadioInfo.selected);
-                                        break;
-                                    case InputBinding.TransponderIDENT:
-                                        TransponderHelper.ToggleIdent();
-                                        break;
-                                    case InputBinding.RadioVolumeUp:
-                                        RadioHelper.RadioVolumeUp(dcsPlayerRadioInfo.selected);
-                                        break;
-                                    case InputBinding.RadioVolumeDown:
-                                        RadioHelper.RadioVolumeDown(dcsPlayerRadioInfo.selected);
-                                        break;
-
-
-                                    default:
-                                        break;
-                                }
-                            }
-
-
-                            break;
-                        }
-                    }
+                        if(ProfileSettings.InputUp100.IsBindingPressed) RadioHelper.UpdateRadioFrequency(100, dcsPlayerRadioInfo.selected);
+                        if(ProfileSettings.InputUp10.IsBindingPressed) RadioHelper.UpdateRadioFrequency(10, dcsPlayerRadioInfo.selected);
+                        if(ProfileSettings.InputUp1.IsBindingPressed) RadioHelper.UpdateRadioFrequency(1, dcsPlayerRadioInfo.selected);
+                        if(ProfileSettings.InputUp01.IsBindingPressed) RadioHelper.UpdateRadioFrequency(0.1, dcsPlayerRadioInfo.selected);
+                        if(ProfileSettings.InputUp001.IsBindingPressed) RadioHelper.UpdateRadioFrequency(0.01, dcsPlayerRadioInfo.selected);
+                        if(ProfileSettings.InputUp0001.IsBindingPressed) RadioHelper.UpdateRadioFrequency(0.001, dcsPlayerRadioInfo.selected);
+                        
+                        if(ProfileSettings.InputDown100.IsBindingPressed) RadioHelper.UpdateRadioFrequency(-100, dcsPlayerRadioInfo.selected);
+                        if(ProfileSettings.InputDown10.IsBindingPressed) RadioHelper.UpdateRadioFrequency(-10, dcsPlayerRadioInfo.selected);
+                        if(ProfileSettings.InputDown1.IsBindingPressed) RadioHelper.UpdateRadioFrequency(-1, dcsPlayerRadioInfo.selected);
+                        if(ProfileSettings.InputDown01.IsBindingPressed) RadioHelper.UpdateRadioFrequency(-0.1, dcsPlayerRadioInfo.selected);
+                        if(ProfileSettings.InputDown001.IsBindingPressed) RadioHelper.UpdateRadioFrequency(-0.01, dcsPlayerRadioInfo.selected);
+                        if(ProfileSettings.InputDown0001.IsBindingPressed) RadioHelper.UpdateRadioFrequency(-0.001, dcsPlayerRadioInfo.selected);
+                        
+                        if(ProfileSettings.GuardToggle.IsBindingPressed) RadioHelper.ToggleGuard(dcsPlayerRadioInfo.selected);
+                        if(ProfileSettings.EncryptionToggle.IsBindingPressed) RadioHelper.ToggleEncryption(dcsPlayerRadioInfo.selected);
+                        
+                        if(ProfileSettings.RadioNext.IsBindingPressed) RadioHelper.SelectNextRadio();
+                        if(ProfileSettings.RadioPrevious.IsBindingPressed) RadioHelper.SelectPreviousRadio();
+                        
+                        if(ProfileSettings.EncryptionKeyUp.IsBindingPressed) RadioHelper.IncreaseEncryptionKey(dcsPlayerRadioInfo.selected);
+                        if(ProfileSettings.EncryptionKeyDown.IsBindingPressed) RadioHelper.DecreaseEncryptionKey(dcsPlayerRadioInfo.selected);
+                        
+                        if(ProfileSettings.RadioChannelUp.IsBindingPressed) RadioHelper.RadioChannelUp(dcsPlayerRadioInfo.selected);
+                        if(ProfileSettings.RadioChannelDown.IsBindingPressed) RadioHelper.RadioChannelDown(dcsPlayerRadioInfo.selected);
+                        
+                        if(ProfileSettings.TransponderIdent.IsBindingPressed) TransponderHelper.ToggleIdent();
+                        
+                        if(ProfileSettings.RadioVolumeUp.IsBindingPressed) RadioHelper.RadioVolumeUp(dcsPlayerRadioInfo.selected);
+                        if(ProfileSettings.RadioVolumeDown.IsBindingPressed) RadioHelper.RadioVolumeDown(dcsPlayerRadioInfo.selected);
+                    } 
+                    Thread.Sleep(100);
                 }
-
-                Thread.Sleep(40);
-            }
             });
             pttInputThread.Start();
         }
@@ -822,7 +702,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
                 var device = kpDevice.Value;
                 if (device == null ||
                     device.IsDisposed ||
-                    !device.Information.InstanceGuid.Equals(inputDeviceBinding.InstanceGuid))
+                    !device.Information.InstanceGuid.Equals(inputDeviceBinding.Guid))
                 {
                     continue;
                 }
@@ -912,43 +792,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             });
-        }
-
-        public List<InputBindState> GenerateBindStateList()
-        {
-            var bindStates = new List<InputBindState>();
-            ProfileSettingsModel currentInputProfile = GlobalSettings.CurrentProfile;
-
-            //REMEMBER TO UPDATE THIS WHEN NEW BINDINGS ARE ADDED
-            //MIN + MAX bind numbers
-            for (int i = (int)InputBinding.Intercom; i <= (int)InputBinding.AwacsOverlayToggle; i++)
-            {
-                if (!currentInputProfile.ContainsKey((InputBinding)i))
-                {
-                    continue;
-                }
-
-                var input = currentInputProfile[(InputBinding)i];
-                //construct InputBindState
-
-                var bindState = new InputBindState()
-                {
-                    IsActive = false,
-                    MainDevice = input,
-                    MainDeviceState = false,
-                    ModifierDevice = null,
-                    ModifierState = false
-                };
-
-                if (currentInputProfile.ContainsKey((InputBinding)i + 100))
-                {
-                    bindState.ModifierDevice = currentInputProfile[(InputBinding)i + 100];
-                }
-
-                bindStates.Add(bindState);
-            }
-
-            return bindStates;
         }
     }
 }

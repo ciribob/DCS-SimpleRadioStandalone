@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 
@@ -15,12 +16,32 @@ public partial class InputBindingModel : ObservableObject, ICloneable
 	}
 	
 	[ObservableProperty] private string _inputName = "InputName";
-	[ObservableProperty] private InputDevice _primary = new InputDevice();
-	[ObservableProperty] private InputDevice _modifier = new InputDevice();
-
-	public bool IsEnabled { get; set; }
+	[ObservableProperty] private InputDevice _primary = null;
+	[ObservableProperty] private InputDevice _modifier = null;
+	[JsonIgnore] public Action BindingAction { get; init; }
+	
+	/// <summary>
+	/// Is active when Primary (and Modifier, if not null) is pressed.
+	/// </summary>
+	public bool IsBindingPressed
+	{
+		get
+		{
+			if (HasModifier)
+			{
+				return IsPrimaryPressed && IsModifiedPressed;
+			}
+			return IsPrimaryPressed;
+		}
+	}
+	
 	public bool IsPrimaryPressed { get; set; }
 	public bool IsModifiedPressed { get; set; }
+	
+#pragma warning disable MVVMTK0034
+	// We need this to easily set Binding Pressed.
+	public bool HasModifier => _modifier != null;
+#pragma warning restore MVVMTK0034
 	
 	public object Clone()
 	{

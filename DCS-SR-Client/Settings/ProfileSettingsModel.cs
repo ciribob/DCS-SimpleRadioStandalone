@@ -70,54 +70,53 @@ public partial class ProfileSettingsModel : ObservableObject, ICloneable
 	[ObservableProperty] private float _balanceRadio08 = 0.0f;
 	[ObservableProperty] private float _balanceRadio09 = 0.0f;
 	[ObservableProperty] private float _balanceRadio10 = 0.0f;
-	
-	[ObservableProperty] private InputBindingModel _inputIntercom = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputSwitch01 = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputSwitch02 = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputSwitch03 = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputSwitch04 = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputSwitch05 = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputSwitch06 = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputSwitch07 = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputSwitch08 = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputSwitch09 = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputSwitch10 = new InputBindingModel();
-	
-	[ObservableProperty] private InputBindingModel _radioNext = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _radioPrevious = new InputBindingModel();
-	
-	[ObservableProperty] private InputBindingModel _inputIntercomPtt = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputPushToTalk = new InputBindingModel();
-	
-	[ObservableProperty] private InputBindingModel _awacsOverlayToggle = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _overlayToggle = new InputBindingModel();
 
-	[ObservableProperty] private InputBindingModel _inputUp100 = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputUp10 = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputUp1 = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputUp01 = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputUp001 = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputUp0001 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputIntercom = new();
+	[ObservableProperty] private InputBindingModel _inputSwitch01 = new();
+	[ObservableProperty] private InputBindingModel _inputSwitch02 = new();
+	[ObservableProperty] private InputBindingModel _inputSwitch03 = new();
+	[ObservableProperty] private InputBindingModel _inputSwitch04 = new();
+	[ObservableProperty] private InputBindingModel _inputSwitch05 = new();
+	[ObservableProperty] private InputBindingModel _inputSwitch06 = new();
+	[ObservableProperty] private InputBindingModel _inputSwitch07 = new();
+	[ObservableProperty] private InputBindingModel _inputSwitch08 = new();
+	[ObservableProperty] private InputBindingModel _inputSwitch09 = new();
+	[ObservableProperty] private InputBindingModel _inputSwitch10 = new();
+	
+	[ObservableProperty] private InputBindingModel _radioNext = new();
+	[ObservableProperty] private InputBindingModel _radioPrevious = new();
+	
+	[ObservableProperty] private InputBindingModel _inputIntercomPtt = new();
+	[ObservableProperty] private InputBindingModel _inputPushToTalk = new();
+	
+	[ObservableProperty] private InputBindingModel _awacsOverlayToggle = new();
+	[ObservableProperty] private InputBindingModel _overlayToggle = new();
 
-	[ObservableProperty] private InputBindingModel _inputDown100 = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputDown10 = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputDown1 = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputDown01 = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputDown001 = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _inputDown0001 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputUp100 = new();
+	[ObservableProperty] private InputBindingModel _inputUp10 = new();
+	[ObservableProperty] private InputBindingModel _inputUp1 = new();
+	[ObservableProperty] private InputBindingModel _inputUp01 = new();
+	[ObservableProperty] private InputBindingModel _inputUp001 = new();
+	[ObservableProperty] private InputBindingModel _inputUp0001 = new();
+
+	[ObservableProperty] private InputBindingModel _inputDown100 = new();
+	[ObservableProperty] private InputBindingModel _inputDown10 = new();
+	[ObservableProperty] private InputBindingModel _inputDown1 = new();
+	[ObservableProperty] private InputBindingModel _inputDown01 = new();
+	[ObservableProperty] private InputBindingModel _inputDown001 = new();
+	[ObservableProperty] private InputBindingModel _inputDown0001 = new();
 	
-	[ObservableProperty] private InputBindingModel _transponderIdent = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _guardToggle = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _encryptionToggle = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _encryptionKeyUp = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _encryptionKeyDown = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _transponderIdent = new();
+	[ObservableProperty] private InputBindingModel _guardToggle = new();
+	[ObservableProperty] private InputBindingModel _encryptionToggle = new();
+	[ObservableProperty] private InputBindingModel _encryptionKeyUp = new();
+	[ObservableProperty] private InputBindingModel _encryptionKeyDown = new();
 	
-	[ObservableProperty] private InputBindingModel _radioChannelUp = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _radioChannelDown = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _radioChannelUp = new();
+	[ObservableProperty] private InputBindingModel _radioChannelDown = new();
 	
-	[ObservableProperty] private InputBindingModel _radioVolumeUp = new InputBindingModel();
-	[ObservableProperty] private InputBindingModel _radioVolumeDown = new InputBindingModel();
-	
+	[ObservableProperty] private InputBindingModel _radioVolumeUp = new();
+	[ObservableProperty] private InputBindingModel _radioVolumeDown = new();
 	
 	[JsonIgnore] // Make a list of All InputBindingModel's with the Magic of LINQ
 	public List<InputBindingModel> InputBindingsList => 
@@ -126,15 +125,153 @@ public partial class ProfileSettingsModel : ObservableObject, ICloneable
 			.Select(x => (InputBindingModel)x.GetValue(this))
 			.ToList();
 
+	/// <summary>
+	/// A list of All InputBindingModel's that are special/handled by the UDPVoiceHandler instead of InputDeviceManager.
+	/// </summary>
+	[JsonIgnore] public List<InputBindingModel> RadioAndPttBindingsList => new()
+	{
+		InputIntercom,
+		InputSwitch01, InputSwitch02, InputSwitch03, InputSwitch04, InputSwitch05, 
+		InputSwitch06, InputSwitch07, InputSwitch08, InputSwitch09, InputSwitch10, 
+		InputIntercomPtt, InputPushToTalk
+	};
+
 	[JsonIgnore]
 	public List<float> RadioBalanceList => new(){
 		BalanceIntercom, 
 		BalanceRadio01, BalanceRadio02, BalanceRadio03, BalanceRadio04, BalanceRadio05, 
 		BalanceRadio06, BalanceRadio07, BalanceRadio08, BalanceRadio09, BalanceRadio10
 	};
-	
-	public object Clone()
+
+	/// <summary>
+	/// Todo: Move to portable Delates instead of stricly coded actions
+	/// </summary>
+	[JsonIgnore] public Dictionary<InputBindingModel, Action> InputActionList => new()
 	{
-		return this.MemberwiseClone();
-	}
+		{ InputIntercom, OnInputIntercomPressed },
+		{ InputSwitch01, OnInputSwitch01Pressed },
+		{ InputSwitch02, OnInputSwitch02Pressed },
+		{ InputSwitch03, OnInputSwitch03Pressed },
+		{ InputSwitch04, OnInputSwitch04Pressed },
+		{ InputSwitch05, OnInputSwitch05Pressed },
+		{ InputSwitch06, OnInputSwitch06Pressed },
+		{ InputSwitch07, OnInputSwitch07Pressed },
+		{ InputSwitch08, OnInputSwitch08Pressed },
+		{ InputSwitch09, OnInputSwitch09Pressed },
+		{ InputSwitch10, OnInputSwitch10Pressed },
+		
+		{ RadioNext, OnRadioNextPressed },
+		{ RadioPrevious, OnRadioPreviousPressed },
+		
+		{ InputIntercomPtt, OnInputIntercomPttPressed },
+		{ InputPushToTalk, OnInputPushToTalkPressed },
+		
+		{ AwacsOverlayToggle, OnAwacsOverlayTogglePressed },
+		{ OverlayToggle, OnOverlayTogglePressed },
+		
+		{ InputUp100, OnInputUp100Pressed },
+		{ InputUp10, OnInputUp10Pressed },
+		{ InputUp1, OnInputUp1Pressed },
+		{ InputUp01, OnInputUp01Pressed },
+		{ InputUp001, OnInputUp001Pressed },
+		{ InputUp0001, OnInputUp0001Pressed },
+		
+		{ InputDown100, OnInputDown100Pressed },
+		{ InputDown10, OnInputDown10Pressed },
+		{ InputDown1, OnInputDown1Pressed },
+		{ InputDown01, OnInputDown01Pressed },
+		{ InputDown001, OnInputDown001Pressed },
+		{ InputDown0001, OnInputDown0001Pressed },
+		
+		{ TransponderIdent, OnTransponderIdentPressed },
+		{ GuardToggle, OnGuardTogglePressed },
+		{ EncryptionToggle, OnEncryptionTogglePressed },
+		{ EncryptionKeyUp, OnEncryptionKeyUpPressed },
+		{ EncryptionKeyDown, OnEncryptionKeyDownPressed },
+		
+		{ RadioChannelUp, OnRadioChannelUpPressed },
+		{ RadioChannelDown, OnRadioChannelDownPressed },
+		
+		{ RadioVolumeUp, OnRadioVolumeUpPressed },
+		{ RadioVolumeDown, OnRadioVolumeDownPressed },
+	};
+	
+	private static void OnInputIntercomPressed() { }
+
+	private static void OnInputSwitch01Pressed() { }
+
+    private static void OnInputSwitch02Pressed() { }
+
+    private static void OnInputSwitch03Pressed() { }
+
+    private static void OnInputSwitch04Pressed() { }
+
+    private static void OnInputSwitch05Pressed() { }
+
+    private static void OnInputSwitch06Pressed() { }
+
+    private static void OnInputSwitch07Pressed() { }
+
+    private static void OnInputSwitch08Pressed() { }
+
+    private static void OnInputSwitch09Pressed() { }
+    private static void OnInputSwitch10Pressed() { }
+
+    private static void OnRadioNextPressed() { }
+
+    private static void OnRadioPreviousPressed() { }
+
+    private static void OnInputIntercomPttPressed() { }
+
+    private static void OnInputPushToTalkPressed() { }
+
+    private static void OnAwacsOverlayTogglePressed() { }
+
+    private static void OnOverlayTogglePressed() { }
+
+    private static void OnInputUp100Pressed() { }
+
+    private static void OnInputUp10Pressed() { }
+
+    private static void OnInputUp1Pressed() { }
+
+    private static void OnInputUp01Pressed() { }
+
+    private static void OnInputUp001Pressed() { }
+
+    private static void OnInputUp0001Pressed() { }
+
+    private static void OnInputDown100Pressed() { }
+
+    private static void OnInputDown10Pressed() { }
+
+    private static void OnInputDown1Pressed() { }
+
+    private static void OnInputDown01Pressed() { }
+
+    private static void OnInputDown001Pressed() { }
+
+    private static void OnInputDown0001Pressed() { }
+
+    private static void OnTransponderIdentPressed() { }
+
+    private static void OnGuardTogglePressed() { }
+
+    private static void OnEncryptionTogglePressed() { }
+
+    private static void OnEncryptionKeyUpPressed() { }
+
+    private static void OnEncryptionKeyDownPressed() { }
+
+    private static void OnRadioChannelUpPressed() { }
+    private static void OnRadioChannelDownPressed() { }
+
+    private static void OnRadioVolumeUpPressed() { }
+
+    private static void OnRadioVolumeDownPressed() { }
+    
+    public object Clone()
+    {
+	    return this.MemberwiseClone();
+    }
 }

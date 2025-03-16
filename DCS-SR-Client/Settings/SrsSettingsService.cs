@@ -157,6 +157,109 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 		File.WriteAllText(SettingsFileName, json, Encoding.UTF8);
 	}
 
+	
+	public void Decode(Dictionary<string, string> encodedServerSettings)
+	{
+		ServerSettingsModel incomingSettings = new ServerSettingsModel();
+		foreach (KeyValuePair<string, string> kvp in encodedServerSettings)
+		{
+			switch (kvp.Key)
+			{
+				case "0": case "SERVER_PORT":
+					incomingSettings.ServerPort = int.Parse(kvp.Value);
+					break;
+				case "1": case "COALITION_AUDIO_SECURITY": 
+					incomingSettings.IsCoalitionAudioSeperated = bool.Parse(kvp.Value);
+					break; 
+				case "2": case "SPECTATORS_AUDIO_DISABLED":
+					incomingSettings.IsSpectatorsAudioDisabled = bool.Parse(kvp.Value);
+					break;
+				case "3": case "CLIENT_EXPORT_ENABLED":
+					incomingSettings.IsClientExportAllowed = bool.Parse(kvp.Value);
+					break;
+				case "4": case "LOS_ENABLED":
+					incomingSettings.IsLineOfSightCheckingEnabled = bool.Parse(kvp.Value);
+					break;
+				case "5": case "DISTANCE_ENABLED": 
+					incomingSettings.IsDistanceCheckingEnabled = bool.Parse(kvp.Value);
+					break;
+				case "6": case "IRL_RADIO_TX": 
+					incomingSettings.IsRadioTxEffectsEnabled = bool.Parse(kvp.Value);
+					break;
+				case "7": case "IRL_RADIO_RX_INTERFERENCE": 
+					incomingSettings.IsRadioRxInterferenceEnabled = bool.Parse(kvp.Value);
+					break;
+				case "8": case "IRL_RADIO_STATIC": 
+					incomingSettings.IsRadioStaticEffectsEnabled = bool.Parse(kvp.Value);
+					break;
+				case "9": case "RADIO_EXPANSION": 
+					incomingSettings.IsExpandedRadiosAllowed = bool.Parse(kvp.Value);
+					break;
+				case "10": case "EXTERNAL_AWACS_MODE": 
+					incomingSettings.IsExternalModeAllowed = bool.Parse(kvp.Value);
+					break;
+				case "11": case "EXTERNAL_AWACS_MODE_BLUE_PASSWORD": 
+					incomingSettings.ExternalModeBluePassword = kvp.Value;
+					break;
+				case "12": case "EXTERNAL_AWACS_MODE_RED_PASSWORD": 
+					incomingSettings.ExternalModeRedPassword = kvp.Value;
+					break;
+				case "13": case "CLIENT_EXPORT_FILE_PATH": 
+					incomingSettings.ClientExportFileName = kvp.Value;
+					break;
+				case "14": case "CHECK_FOR_BETA_UPDATES": 
+					incomingSettings.CheckForBetaUpdates = bool.Parse(kvp.Value);
+					break;
+				case "15": case "ALLOW_RADIO_ENCRYPTION": 
+					incomingSettings.IsRadioEncryptionAllowed = bool.Parse(kvp.Value);
+					break;
+				case "16": case "TEST_FREQUENCIES": 
+					incomingSettings.TestFrequencies = kvp.Value;
+					break;
+				case "17": case "SHOW_TUNED_COUNT": 
+					incomingSettings.IsShowTunedListenerCount = bool.Parse(kvp.Value);
+					break;
+				case "18": case "GLOBAL_LOBBY_FREQUENCIES": 
+					incomingSettings.GlobalLobbyFrequencies = kvp.Value;
+					break;
+				case "19": case "SHOW_TRANSMITTER_NAME": 
+					incomingSettings.IsShowTransmitterNameEnabled = bool.Parse(kvp.Value);
+					break;
+				case "20": case "LOTATC_EXPORT_ENABLED": 
+					incomingSettings.IsLotAtcExportEnabled = bool.Parse(kvp.Value);
+					break;
+				case "21": case "LOTATC_EXPORT_PORT": 
+					incomingSettings.LotAtcExportPort = int.Parse(kvp.Value);
+					break;
+				case "22": case "LOTATC_EXPORT_IP": 
+					incomingSettings.LotAtcExportIp = kvp.Value;
+					break;
+				case "23": case "UPNP_ENABLED": 
+					incomingSettings.IsUpnpEnabled = bool.Parse(kvp.Value);
+					break;
+				case "24": case "RETRANSMISSION_NODE_LIMIT": 
+					incomingSettings.RetransmissionNodeLimit = int.Parse(kvp.Value);
+					break;
+				case "25": case "STRICT_RADIO_ENCRYPTION": 
+					incomingSettings.IsStrictRadioEncryptionEnabled = bool.Parse(kvp.Value);
+					break;
+				case "26": case "TRANSMISSION_LOG_ENABLED": 
+					incomingSettings.IsTransmissionLogEnabled = bool.Parse(kvp.Value);
+					break;
+				case "27": case "TRANSMISSION_LOG_RETENTION": 
+					incomingSettings.TransmissionLogRetentionLimit = int.Parse(kvp.Value);
+					break;
+				case "28": case "RADIO_EFFECT_OVERRIDE": 
+					incomingSettings.IsRadioEffectOverrideEnabled = bool.Parse(kvp.Value);
+					break;
+				case "29": case "SERVER_IP": 
+					incomingSettings.ServerIp = kvp.Value;
+					break;
+			}
+		}
+		CurrentServerSettings = incomingSettings;
+	}
+	
 	public void Receive(SettingChangingMessage message)
 	{ }
 }

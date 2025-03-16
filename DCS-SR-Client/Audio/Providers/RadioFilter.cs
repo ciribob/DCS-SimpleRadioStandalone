@@ -1,4 +1,5 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using MathNet.Filtering;
 using MathNet.Filtering.FIR;
 using MathNet.Filtering.Windowing;
@@ -14,7 +15,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.DSP
         private OnlineFilter[] _filters;
         //    private Stopwatch _stopwatch;
 
-        private Settings.GlobalSettingsStore _globalSettings = Settings.GlobalSettingsStore.Instance;
+        private ProfileSettingsModel ProfileSettings = Ioc.Default.GetRequiredService<ISrsSettings>().CurrentProfile;
 
         public RadioFilter(ISampleProvider sampleProvider)
         {
@@ -52,7 +53,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.DSP
         public int Read(float[] buffer, int offset, int sampleCount)
         {
             var samplesRead = _source.Read(buffer, offset, sampleCount);
-            if (!_globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.RadioEffects) || samplesRead <= 0)
+            if (!ProfileSettings.RadioEffects || samplesRead <= 0)
             {
                 return samplesRead;
             }
@@ -66,7 +67,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.DSP
                 }
                 // because we have silence in one channel (if a user picks radio left or right ear) we don't want to transform it or it'll play in both
 
-                if (_globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.RadioEffectsClipping))
+                if (ProfileSettings.RadioEffectsClipping)
                 {
                     if (audio > CLIPPING_MAX)
                     {

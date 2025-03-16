@@ -19,6 +19,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Easy.MessageHub;
 using Newtonsoft.Json;
 using NLog;
@@ -45,7 +46,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         private TcpClient _tcpClient;
 
         private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
-        private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
+        private ServerSettingsModel ServerSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>().CurrentServerSettings;
+        private ClientSettingsModel ClientSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>().ClientSettings;
         private readonly ConnectedClientsSingleton _clients = ConnectedClientsSingleton.Instance;
         
         private DCSRadioSyncManager _radioDCSSync = null;
@@ -70,7 +72,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         private void CheckIfIdleTimeOut(object sender, EventArgs e)
         {
-            var timeout = GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.IdleTimeOut).IntValue;
+            var timeout = ClientSettings.IdleTimeOut;
             if (_lastSent != -1 && TimeSpan.FromTicks(DateTime.Now.Ticks - _lastSent).TotalSeconds > timeout)
             {
                 Logger.Warn("Disconnecting - Idle Time out");
@@ -109,7 +111,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     Name = sideInfo.name,
                     LatLngPosition = sideInfo.LngLngPosition,
                     ClientGuid = _guid,
-                    AllowRecord = GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.AllowRecording)
+                    AllowRecord = ClientSettings.AllowRecording
                 },
                 ExternalAWACSModePassword = password,
                 MsgType = NetworkMessage.MessageType.EXTERNAL_AWACS_MODE_PASSWORD
@@ -222,12 +224,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     Seat = sideInfo.seat,
                     ClientGuid = _guid,
                     RadioInfo = _clientStateSingleton.DcsPlayerRadioInfo,
-                    AllowRecord = GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.AllowRecording)
+                    AllowRecord = ClientSettings.AllowRecording
                 },
                 MsgType = NetworkMessage.MessageType.RADIO_UPDATE
             };
 
-            var needValidPosition = _serverSettings.GetSettingAsBool(ServerSettingsKeys.DISTANCE_ENABLED) || _serverSettings.GetSettingAsBool(ServerSettingsKeys.LOS_ENABLED);
+            var needValidPosition = ServerSettings.IsDistanceCheckingEnabled || ServerSettings.IsLineOfSightCheckingEnabled;
 
             if (needValidPosition)
             {
@@ -253,12 +255,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     Name = sideInfo.name,
                     Seat = sideInfo.seat,
                     ClientGuid = _guid,
-                    AllowRecord = GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.AllowRecording)
+                    AllowRecord = ClientSettings.AllowRecording
                 },
                 MsgType = NetworkMessage.MessageType.UPDATE
             };
 
-            var needValidPosition = _serverSettings.GetSettingAsBool(ServerSettingsKeys.DISTANCE_ENABLED) || _serverSettings.GetSettingAsBool(ServerSettingsKeys.LOS_ENABLED);
+            var needValidPosition = ServerSettings.IsDistanceCheckingEnabled || ServerSettings.IsLineOfSightCheckingEnabled;
 
             if (needValidPosition)
             {
@@ -331,7 +333,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                             LatLngPosition = sideInfo.LngLngPosition,
                             ClientGuid = _guid,
                             RadioInfo = _clientStateSingleton.DcsPlayerRadioInfo,
-                            AllowRecord = GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.AllowRecording)
+                            AllowRecord = ClientSettings.AllowRecording
                         },
                         MsgType = NetworkMessage.MessageType.SYNC,
                     });
@@ -411,7 +413,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                         }
 
                                         if (_clientStateSingleton.ExternalAWACSModelSelected &&
-                                            !_serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE))
+                                            !ServerSettings.IsExternalModeAllowed)
                                         {
                                             DisconnectExternalAWACSMode();
                                         }
@@ -461,7 +463,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                         _serverSettings.Decode(serverMessage.ServerSettings);
 
                                         if (_clientStateSingleton.ExternalAWACSModelSelected &&
-                                            !_serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE))
+                                            !ServerSettings.IsExternalModeAllowed)
                                         {
                                             DisconnectExternalAWACSMode();
                                         }
@@ -476,7 +478,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                         ServerVersion = serverMessage.Version;
 
                                         if (_clientStateSingleton.ExternalAWACSModelSelected &&
-                                            !_serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE))
+                                            !ServerSettings.IsExternalModeAllowed)
                                         {
                                             DisconnectExternalAWACSMode();
                                         }

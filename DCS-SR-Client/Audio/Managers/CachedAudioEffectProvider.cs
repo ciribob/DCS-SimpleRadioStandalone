@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
-using Ciribob.DCS.SimpleRadio.Standalone.Common;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 {
@@ -20,8 +18,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         private Dictionary<string, CachedAudioEffect> _ambientAudioEffects { get; } =
             new Dictionary<string, CachedAudioEffect>();
 
-
-
+        private ProfileSettingsModel ProfileSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>().CurrentProfile;
+        
         private static CachedAudioEffectProvider _instance;
 
         public static CachedAudioEffectProvider Instance
@@ -43,8 +41,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         {
             get
             {
-                var selectedTone = GlobalSettingsStore.Instance.ProfileSettingsStore
-                    .GetClientSettingString(ProfileSettingsKeys.RadioTransmissionStartSelection).ToLowerInvariant();
+                var selectedTone = ProfileSettings.RadioTransmissionEndEffectName.ToLowerInvariant();
 
                 foreach (var startEffect in RadioTransmissionStart)
                 {
@@ -62,8 +59,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         {
             get
             {
-                var selectedTone = GlobalSettingsStore.Instance.ProfileSettingsStore
-                    .GetClientSettingString(ProfileSettingsKeys.RadioTransmissionEndSelection).ToLowerInvariant();
+                var selectedTone = ProfileSettings.RadioTransmissionStartEffectName.ToLowerInvariant();
 
                 foreach (var endEffect in RadioTransmissionEnd)
                 {
@@ -81,8 +77,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         {
             get
             {
-                var selectedTone = GlobalSettingsStore.Instance.ProfileSettingsStore
-                    .GetClientSettingString(ProfileSettingsKeys.IntercomTransmissionStartSelection).ToLowerInvariant();
+                var selectedTone = ProfileSettings.IntercomTransmissionStartEffectName.ToLowerInvariant();
 
                 foreach (var startEffect in IntercomTransmissionStart)
                 {
@@ -100,8 +95,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         {
             get
             {
-                var selectedTone = GlobalSettingsStore.Instance.ProfileSettingsStore
-                    .GetClientSettingString(ProfileSettingsKeys.IntercomTransmissionEndSelection).ToLowerInvariant();
+                var selectedTone = ProfileSettings.IntercomTransmissionEndEffectName.ToLowerInvariant();
 
                 foreach (var endEffect in IntercomTransmissionEnd)
                 {

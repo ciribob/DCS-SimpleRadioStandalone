@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
 {
@@ -60,8 +61,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
         private List<AudioDeviceListItem> BuildNormalAudioOutputs()
         {
             Logger.Info("Building Normal Audio Outputs");
-            Logger.Info("Audio Output - Saved ID " +
-                         GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.AudioOutputDeviceId).RawValue);
+            Logger.Info("Audio Output - Saved ID " + 
+                        Ioc.Default.GetRequiredService<ISrsSettings>().ClientSettings.AudioOutputDeviceId);
 
             return BuildAudioOutputs(Properties.Resources.DefaultSpeakers, false);
         }
@@ -70,7 +71,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
         {
             Logger.Info("Building Microphone Audio Outputs");
             Logger.Info("Mic Audio Output - Saved ID " +
-                                   GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId).RawValue);
+                        Ioc.Default.GetRequiredService<ISrsSettings>().ClientSettings.AudioInputDeviceId);
 
             return BuildAudioOutputs(Properties.Resources.DefaultNoPassthru, true);
         }
@@ -89,11 +90,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             string savedDeviceId;
             if (micOutput)
             {
-                savedDeviceId = GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId).RawValue;
+                savedDeviceId = Ioc.Default.GetRequiredService<ISrsSettings>().ClientSettings.AudioInputDeviceId;
                 SelectedMicAudioOutput = outputs[0];
             } else
             {
-                savedDeviceId = GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.AudioOutputDeviceId).RawValue;
+                savedDeviceId = Ioc.Default.GetRequiredService<ISrsSettings>().ClientSettings.AudioOutputDeviceId;
                 SelectedAudioOutput = outputs[0];
             }
 

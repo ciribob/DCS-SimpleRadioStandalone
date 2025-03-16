@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.Messaging;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 
-public partial class GlobalSettingsModel : ObservableObject
+public partial class ClientSettingsModel : ObservableObject
 {
 	protected override void OnPropertyChanging(PropertyChangingEventArgs e)
 	{

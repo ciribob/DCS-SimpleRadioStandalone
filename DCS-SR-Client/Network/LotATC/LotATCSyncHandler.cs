@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -8,14 +7,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS.Models;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.LotATC.Models;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
-using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Newtonsoft.Json;
 using NLog;
 
@@ -26,8 +24,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.LotATC
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private static readonly long UPDATE_SYNC_RATE = 5*1000 * 10000; //There are 10,000 ticks in a millisecond, or 10 million ticks in a second. Update every 5 seconds
         private UdpClient _lotATCPositionListener;
-        private readonly GlobalSettingsStore _globalSettings = GlobalSettingsStore.Instance;
-        private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
+        private ClientSettingsModel ClientSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>().ClientSettings;
+        private ServerSettingsModel ServerSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>().CurrentServerSettings;
         private volatile bool _stop = false;
         private readonly ClientStateSingleton _clientStateSingleton;
         private readonly DCSRadioSyncManager.ClientSideUpdate _clientSideUpdate;
@@ -43,7 +41,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.LotATC
             _guid = guid;
             _clientStateSingleton = ClientStateSingleton.Instance;
 
-            _heightOffset = _globalSettings.GetClientSetting(GlobalSettingsKeys.LotATCHeightOffset).DoubleValue;
+            _heightOffset = ClientSettings.LotAtcHeightOffset;
         }
 
         public void Start()
@@ -58,14 +56,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.LotATC
                     
                     try
                     {
-                        var localEp = new IPEndPoint(IPAddress.Any,
-                            _globalSettings.GetNetworkSetting(GlobalSettingsKeys.LotATCIncomingUDP));
+                        var localEp = new IPEndPoint(IPAddress.Any, ClientSettings.LotAtcIncomingUdp);
                         _lotATCPositionListener = new UdpClient(localEp);
                         break;
                     }
                     catch (Exception ex)
                     {
-                        Logger.Warn(ex, $"Unable to bind to the LotATC Export Listener Socket Port: {_globalSettings.GetNetworkSetting(GlobalSettingsKeys.LotATCIncomingUDP)}");
+                        Logger.Warn(ex, $"Unable to bind to the LotATC Export Listener Socket Port: {ClientSettings.LotAtcIncomingUdp}");
                         Thread.Sleep(500);
                     }
                 }
@@ -126,7 +123,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.LotATC
             _clientStateSingleton.LotATCLastReceived = DateTime.Now.Ticks;
 
             //only send update if position and line of sight are enabled
-            var shouldUpdate = _serverSettings.GetSettingAsBool(ServerSettingsKeys.DISTANCE_ENABLED) || _serverSettings.GetSettingAsBool(ServerSettingsKeys.LOS_ENABLED);
+            var shouldUpdate = ServerSettings.IsDistanceCheckingEnabled || ServerSettings.IsLineOfSightCheckingEnabled;
 
             if (_clientStateSingleton.ShouldUseLotATCPosition())
             {
@@ -157,7 +154,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.LotATC
         private void StartLotATCLOSSender()
         {
             var _udpSocket = new UdpClient();
-            var _host = new IPEndPoint(IPAddress.Loopback, _globalSettings.GetNetworkSetting(GlobalSettingsKeys.LotATCOutgoingUDP));
+            var _host = new IPEndPoint(IPAddress.Loopback, ClientSettings.LotAtcOutgoingUdp);
 
 
             Task.Factory.StartNew(() =>
@@ -218,7 +215,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.LotATC
             if (_clientStateSingleton.PlayerCoaltionLocationMetadata.LngLngPosition != null
                 && _clientStateSingleton.PlayerCoaltionLocationMetadata.LngLngPosition.isValid()
                 && _clientStateSingleton.ShouldUseLotATCPosition() 
-                && _serverSettings.GetSettingAsBool(ServerSettingsKeys.LOS_ENABLED))
+                && ServerSettings.IsLineOfSightCheckingEnabled)
             {
                 foreach (var client in clients)
                 {

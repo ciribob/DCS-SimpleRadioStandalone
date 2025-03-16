@@ -1,20 +1,13 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.LotATC.Models;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.VAICOM.Models;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Newtonsoft.Json;
 using NLog;
 
@@ -24,8 +17,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.VAICOM
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private UdpClient _vaicomUDPListener;
-        private readonly GlobalSettingsStore _globalSettings = GlobalSettingsStore.Instance;
-        private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
+        private ClientSettingsModel ClientSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>().ClientSettings;
+        private ServerSettingsModel ServerSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>().CurrentServerSettings;
         private volatile bool _stop = false;
         private readonly ClientStateSingleton _clientStateSingleton;
 
@@ -45,14 +38,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.VAICOM
                    
                     try
                     {
-                        var localEp = new IPEndPoint(IPAddress.Any,
-                            _globalSettings.GetNetworkSetting(GlobalSettingsKeys.VAICOMIncomingUDP));
+                        var localEp = new IPEndPoint(IPAddress.Any, ClientSettings.VaicomIncomingUdp);
                         _vaicomUDPListener = new UdpClient(localEp);
                         break;
                     }
                     catch (Exception ex)
                     {
-                        Logger.Warn(ex, $"Unable to bind to the VAICOM Listener Socket Port: {_globalSettings.GetNetworkSetting(GlobalSettingsKeys.VAICOMIncomingUDP)}");
+                        Logger.Warn(ex, $"Unable to bind to the VAICOM Listener Socket Port: {ClientSettings.VaicomIncomingUdp}");
                         Thread.Sleep(500);
                     }
                 }
@@ -71,7 +63,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.VAICOM
                             {
                                 if (vaicomMessageWrapper.MessageType == 1)
                                 {
-                                    if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.VAICOMTXInhibitEnabled))
+                                    if (ClientSettings.VaicomTxInhibitEnabled)
                                     {
                                         vaicomMessageWrapper.LastReceivedAt = DateTime.Now.Ticks;
                                         _clientStateSingleton.InhibitTX = vaicomMessageWrapper;

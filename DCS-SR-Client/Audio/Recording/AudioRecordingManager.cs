@@ -16,6 +16,7 @@ using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using System.IO;
 using System.Diagnostics;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Recording
 {
@@ -235,7 +236,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Recording
 
         public void Start()
         {
-            if (!GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.RecordAudio))
+            if (!Ioc.Default.GetRequiredService<ISrsSettings>().ClientSettings.RecordAudio)
             {
                 _processThreadDone = true;
                 _logger.Info("Transmission recording disabled");
@@ -276,7 +277,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Recording
  
             _audioRecordingWriter?.Stop();
 
-            if (GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.SingleFileMixdown))
+            if (Ioc.Default.GetRequiredService<ISrsSettings>().ClientSettings.SingleFileMixdown)
             {
                 // write single mixed file. create a writer with a single stream source: a mixer
                 // that combines all per-radio streams.
@@ -318,7 +319,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Recording
         public void AppendPlayerAudio(float[] transmission, int radioId)
         {
             //only record if we need too
-            if (GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.RecordAudio) && !_stop)
+            if (Ioc.Default.GetRequiredService<ISrsSettings>().ClientSettings.RecordAudio && !_stop)
             {
                 _playerRawQueues[radioId]?.Write(transmission, 0, transmission.Length);
             }
@@ -327,7 +328,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Recording
         public void AppendClientAudio(List<DeJitteredTransmission> mainAudio, List<DeJitteredTransmission> secondaryAudio, int radioId)
         {
             //only record if we need too
-            if (GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.RecordAudio) && !_stop)
+            if (Ioc.Default.GetRequiredService<ISrsSettings>().ClientSettings.RecordAudio && !_stop)
             {
                 mainAudio = FilterTransmisions(mainAudio);
                 secondaryAudio = FilterTransmisions(secondaryAudio);
@@ -358,7 +359,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Recording
                     {
                         filteredTransmisions.Add(transmission);
                     }
-                    else if (GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.DisallowedAudioTone))
+                    else if (Ioc.Default.GetRequiredService<ISrsSettings>().ClientSettings.DisallowedAudioTone)
                     {
                         DeJitteredTransmission toneTransmission = new DeJitteredTransmission
                         {

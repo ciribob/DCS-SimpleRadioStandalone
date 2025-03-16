@@ -6,8 +6,10 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.Old;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
@@ -28,8 +30,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
             ; //when false and we're in spectator mode / not in an aircraft the other 7 radios will be disabled
 
         private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
-
-        private Settings.GlobalSettingsStore _globalSettings = Settings.GlobalSettingsStore.Instance;
+        private ClientSettingsModel ClientSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>().ClientSettings;
 
         public RadioOverlayWindow()
         {
@@ -41,8 +42,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
             InitializeComponent();
 
             this.WindowStartupLocation = WindowStartupLocation.Manual;
-            this.Left = _globalSettings.GetPositionSetting(GlobalSettingsKeys.AwacsX).DoubleValue;
-            this.Top = _globalSettings.GetPositionSetting(GlobalSettingsKeys.AwacsY).DoubleValue;
+            this.Left = ClientSettings.AwacsX;
+            this.Top = ClientSettings.AwacsY;
 
             _aspectRatio = MinWidth / MinHeight;
 
@@ -135,8 +136,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            _globalSettings.SetPositionSetting(GlobalSettingsKeys.AwacsX,this.Left);
-            _globalSettings.SetPositionSetting(GlobalSettingsKeys.AwacsY, this.Top);
+            ClientSettings.AwacsX = this.Left;
+            ClientSettings.AwacsY = this.Top;
 
             base.OnClosing(e);
 
@@ -148,7 +149,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
         {
             // Minimising a window without a taskbar icon leads to the window's menu bar still showing up in the bottom of screen
             // Since controls are unusable, but a very small portion of the always-on-top window still showing, we're closing it instead, similar to toggling the overlay
-            if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.RadioOverlayTaskbarHide))
+            if (ClientSettings.RadioOverlayTaskbarHide)
             {
                 Close();
             }

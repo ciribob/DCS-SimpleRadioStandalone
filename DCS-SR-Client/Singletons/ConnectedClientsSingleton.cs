@@ -6,7 +6,7 @@ using System.Linq;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
 {
@@ -16,7 +16,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
         private static volatile ConnectedClientsSingleton _instance;
         private static object _lock = new Object();
         private readonly string _guid = ClientStateSingleton.Instance.ShortGUID;
-        private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
+        private ServerSettingsModel _serverSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>().CurrentServerSettings;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -106,14 +106,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
 
         public int ClientsOnFreq(double freq, RadioInformation.Modulation modulation)
         {
-            if (!_serverSettings.GetSettingAsBool(ServerSettingsKeys.SHOW_TUNED_COUNT))
+            if (!_serverSettings.IsShowTunedListenerCount)
             {
                 return 0;
             }
             var currentClientPos = ClientStateSingleton.Instance.PlayerCoaltionLocationMetadata;
             var currentUnitId = ClientStateSingleton.Instance.DcsPlayerRadioInfo.unitId;
-            var coalitionSecurity = SyncedServerSettings.Instance.GetSettingAsBool(ServerSettingsKeys.COALITION_AUDIO_SECURITY);
-            var globalFrequencies = _serverSettings.GlobalFrequencies;
+            var coalitionSecurity = _serverSettings.IsCoalitionAudioSeperated;
+            List<double> globalFrequencies = _serverSettings.GlobalLobbyFrequenciesList;
             var global = globalFrequencies.Contains(freq);
             int count = 0;
 

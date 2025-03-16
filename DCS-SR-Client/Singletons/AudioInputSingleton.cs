@@ -5,6 +5,7 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using NAudio.CoreAudioApi;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
@@ -52,7 +53,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
         private List<AudioDeviceListItem> BuildAudioInputs()
         {
             Logger.Info("Audio Input - Saved ID " +
-                        GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.AudioInputDeviceId).RawValue);
+                        Ioc.Default.GetRequiredService<ISrsSettings>().ClientSettings.AudioInputDeviceId);
 
             var inputs = new List<AudioDeviceListItem>();
 
@@ -96,7 +97,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
 
                     inputs.Add(input);
 
-                    if (item.ID.Trim().Equals(GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.AudioInputDeviceId).RawValue.Trim()))
+                    if (item.ID.Trim().Equals(Ioc.Default.GetRequiredService<ISrsSettings>().ClientSettings.AudioInputDeviceId.Trim()))
                     {
                         SelectedAudioInput = input;
                         Logger.Info("Audio Input - Found Saved ");

@@ -11,6 +11,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Newtonsoft.Json;
 using NLog;
 
@@ -20,12 +21,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly DCSRadioSyncManager.ClientSideUpdate _clientSideUpdate;
-        private readonly GlobalSettingsStore _globalSettings = GlobalSettingsStore.Instance;
+        private ISrsSettings GlobalSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>();
         private volatile bool _stop = false;
         private UdpClient _dcsGameGuiUdpListener;
 
         private ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
-        private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
 
         public DCSGameGuiHandler(DCSRadioSyncManager.ClientSideUpdate clientSideUpdate)
         {
@@ -42,15 +42,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                 {
                     try
                     {
-                        var localEp = new IPEndPoint(IPAddress.Any,
-                            _globalSettings.GetNetworkSetting(GlobalSettingsKeys.DCSIncomingGameGUIUDP));
+                        var localEp = new IPEndPoint(IPAddress.Any, GlobalSettings.ClientSettings.DcsIncomingGameGuiUdp);
 
                         _dcsGameGuiUdpListener = new UdpClient(localEp);
                         break;
                     }
                     catch (Exception ex)
                     {
-                        Logger.Warn(ex, $"Unable to bind to the DCS GameGUI Socket Port: {_globalSettings.GetNetworkSetting(GlobalSettingsKeys.DCSIncomingGameGUIUDP)}");
+                        Logger.Warn(ex, $"Unable to bind to the DCS GameGUI Socket Port: {GlobalSettings.ClientSettings.DcsIncomingGameGuiUdp}");
                         Thread.Sleep(500);
                     }
 
@@ -70,7 +69,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 
                         if (updatedPlayerInfo != null)
                         {
-                            var shouldUpdate = _serverSettings.GetSettingAsBool(ServerSettingsKeys.DISTANCE_ENABLED) || _serverSettings.GetSettingAsBool(ServerSettingsKeys.LOS_ENABLED);
+                            var shouldUpdate = GlobalSettings.CurrentServerSettings.IsDistanceCheckingEnabled || GlobalSettings.CurrentServerSettings.IsLineOfSightCheckingEnabled;
 
                             var currentInfo = _clientStateSingleton.PlayerCoaltionLocationMetadata;
 

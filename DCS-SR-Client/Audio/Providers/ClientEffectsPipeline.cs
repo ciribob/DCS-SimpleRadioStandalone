@@ -9,6 +9,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.DSP;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using MathNet.Filtering;
 using NAudio.Dsp;
 
@@ -48,7 +49,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
 
         private long lastRefresh = 0; //last refresh of settings
 
-        private readonly Settings.ProfileSettingsStore profileSettings;
+        private ProfileSettingsModel ProfileSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>().CurrentProfile;
 
         private bool radioEffects;
         private bool radioBackgroundNoiseEffect;
@@ -59,13 +60,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
 
         private bool irlRadioRXInterference = false;
 
-        private readonly SyncedServerSettings serverSettings;
-        
+        private ServerSettingsModel ServerSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>().CurrentServerSettings;
+
         public ClientEffectsPipeline()
         {
-            profileSettings = Settings.GlobalSettingsStore.Instance.ProfileSettingsStore;
-            serverSettings =  SyncedServerSettings.Instance;
-
             _filters = new OnlineFilter[2];
             _filters[0] =
                 OnlineFilter.CreateBandpass(ImpulseResponse.Finite, AudioManager.OUTPUT_SAMPLE_RATE, 560, 3900);
@@ -89,24 +87,24 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
             {
                 lastRefresh = now;
 
-                natoToneEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.NATOTone);
-                hqToneEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.HAVEQUICKTone);
-                radioEffectsEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEffects);
-                clippingEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEffectsClipping);
-                hqToneVolume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.HQToneVolume);
-                natoToneVolume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.NATOToneVolume);
-                amCollisionVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.AMCollisionVolume);
+                natoToneEnabled = ProfileSettings.NatoFmTone;
+                hqToneEnabled = ProfileSettings.HaveQuickTone;
+                radioEffectsEnabled = ProfileSettings.RadioEffects;
+                clippingEnabled = ProfileSettings.RadioEffectsClipping;
+                hqToneVolume = ProfileSettings.HqToneVolume;
+                natoToneVolume = ProfileSettings.NatoFmToneVolume;
+                amCollisionVol = ProfileSettings.AmCollisionToneVolume;
 
-                fmVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.FMNoiseVolume);
-                hfVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.HFNoiseVolume);
-                uhfVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.UHFNoiseVolume);
-                vhfVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.VHFNoiseVolume);
+                fmVol = ProfileSettings.FmNoiseVolume;
+                hfVol = ProfileSettings.HfNoiseVolume;
+                uhfVol = ProfileSettings.UhfNoiseVolume;
+                vhfVol = ProfileSettings.VhfNoiseVolume;
 
-                radioEffects = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEffects);
+                radioEffects = ProfileSettings.RadioEffects;
 
-                radioBackgroundNoiseEffect = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioBackgroundNoiseEffect) ;
+                radioBackgroundNoiseEffect = ProfileSettings.RadioBackgroundNoiseEffect;
 
-                irlRadioRXInterference = serverSettings.GetSettingAsBool(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE);
+                irlRadioRXInterference = ServerSettings.IsRadioRxInterferenceEnabled;
             }
         }
 

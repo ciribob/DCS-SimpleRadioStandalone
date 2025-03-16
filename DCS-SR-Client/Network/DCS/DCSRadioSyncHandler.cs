@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -12,14 +9,12 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Newtonsoft.Json;
 using NLog;
 using System.Threading;
-using Newtonsoft.Json.Linq;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 {
@@ -29,7 +24,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
-        private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
+        private ServerSettingsModel ServerSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>().CurrentServerSettings;
         private readonly ConnectedClientsSingleton _clients = ConnectedClientsSingleton.Instance;
 
         private static readonly int RADIO_UPDATE_PING_INTERVAL = 60; //send update regardless of change every X seconds
@@ -38,7 +33,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
         private UdpClient _dcsUdpListener;
         private UdpClient _dcsRadioUpdateSender;
 
-        private readonly GlobalSettingsStore _globalSettings = GlobalSettingsStore.Instance;
+        private ISrsSettings GlobalSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>();
 
         private volatile bool _stop;
 
@@ -66,13 +61,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                     
                     try
                     {
-                        var localEp = new IPEndPoint(IPAddress.Any, _globalSettings.GetNetworkSetting(GlobalSettingsKeys.DCSIncomingUDP));
+                        var localEp = new IPEndPoint(IPAddress.Any, GlobalSettings.ClientSettings.DcsIncomingUdp);
                         _dcsUdpListener = new UdpClient(localEp);
                         break;
                     }
                     catch (Exception ex)
                     {
-                        Logger.Warn(ex, $"Unable to bind to the DCS Export Listener Socket Port: {_globalSettings.GetNetworkSetting(GlobalSettingsKeys.DCSIncomingUDP)}");
+                        Logger.Warn(ex, $"Unable to bind to the DCS Export Listener Socket Port: {GlobalSettings.ClientSettings.DcsIncomingUdp}");
                         Thread.Sleep(500);
                     }
                 }
@@ -205,12 +200,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                 //Logger.Info("Sending Update over UDP 7080 DCS - 7082 Flight Panels: \n"+message);
 
                 _dcsRadioUpdateSender.Send(byteData, byteData.Length,
-                    new IPEndPoint(IPAddress.Parse("127.0.0.1"),
-                        _globalSettings.GetNetworkSetting(GlobalSettingsKeys.OutgoingDCSUDPInfo))); //send to DCS
+                    new IPEndPoint(IPAddress.Parse("127.0.0.1"), GlobalSettings.ClientSettings.OutgoingDcsUdpInfo)); //send to DCS
                 _dcsRadioUpdateSender.Send(byteData, byteData.Length,
-                    new IPEndPoint(IPAddress.Parse("127.0.0.1"),
-                        _globalSettings.GetNetworkSetting(GlobalSettingsKeys
-                            .OutgoingDCSUDPOther))); // send to Flight Control Panels
+                    new IPEndPoint(IPAddress.Parse("127.0.0.1"), GlobalSettings.ClientSettings.OutgoingDcsUdpOther)); // send to Flight Control Panels
             }
             catch (Exception e)
             {
@@ -220,12 +212,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 
         private bool UpdateRadio(DCSPlayerRadioInfo message)
         {
-            var expansion = _serverSettings.GetSettingAsBool(ServerSettingsKeys.RADIO_EXPANSION);
+            var expansion = ServerSettings.IsExpandedRadiosAllowed;
 
             if (expansion)
             {
                 //override the server side setting
-                expansion = !_globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.DisableExpansionRadios);
+                expansion = !GlobalSettings.CurrentProfile.DisableExpansionRadios;
             }
 
             var playerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
@@ -245,7 +237,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
             //TODO check this
             playerRadioInfo.ambient.vol = playerRadioInfo.ambient.vol; // (float)(Math.Round(playerRadioInfo.ambient.vol / 10f, MidpointRounding.AwayFromZero) * 10.0f);
 
-            if (_globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.AlwaysAllowHotasControls))
+            if (GlobalSettings.CurrentProfile.AlwaysAllowHotasControls)
             {
                 message.control = DCSPlayerRadioInfo.RadioSwitchControls.HOTAS;
                 playerRadioInfo.control = DCSPlayerRadioInfo.RadioSwitchControls.HOTAS;
@@ -277,7 +269,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 
             if (newAircraft)
             {
-                if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.AutoSelectSettingsProfile))
+                if (GlobalSettings.ClientSettings.AutoSelectSettingsProfile)
                 {
                     _newAircraftCallback(message.unit, message.seat);
                 }
@@ -374,7 +366,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                     clientRadio.rtMode = updateRadio.rtMode;
                     clientRadio.rxOnly = updateRadio.rxOnly;
 
-                    if (_serverSettings.GetSettingAsBool(ServerSettingsKeys.ALLOW_RADIO_ENCRYPTION))
+                    if (ServerSettings.IsRadioEncryptionAllowed)
                     {
                         clientRadio.encMode = updateRadio.encMode;
                     }
@@ -499,7 +491,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 
                             clientRadio.channel = -1; //reset channel
 
-                            if (_globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.AutoSelectPresetChannel))
+                            if (GlobalSettings.CurrentProfile.AutoSelectPresetChannel)
                             {
                                 RadioHelper.RadioChannelUp(i);
                             }
@@ -531,7 +523,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
             }
 
             //change PTT last
-            if (!_globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.AllowDCSPTT))
+            if (!GlobalSettings.CurrentProfile.AllowDcsPtt)
             {
                 playerRadioInfo.ptt = false;
             }
@@ -544,8 +536,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
             //TODO tidy up the IFF/Transponder handling and this giant function in general as its silly big :(
 
 
-            if (_globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys
-                .AlwaysAllowTransponderOverlay))
+            if (GlobalSettings.CurrentProfile.AlwaysAllowTransponderOverlay)
             {
                 if (message.iff.control != Transponder.IFFControlMode.DISABLED)
                 {

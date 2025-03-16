@@ -1,19 +1,14 @@
 ﻿using System;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
-using Ciribob.DCS.SimpleRadio.Standalone.Common;
-using MathNet.Filtering;
-using NAudio.Dsp;
 using NAudio.Wave;
-using NAudio.Wave.SampleProviders;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.DSP;
 using FragLabs.Audio.Codecs;
 using NLog;
 using static Ciribob.DCS.SimpleRadio.Standalone.Common.RadioInformation;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Recording;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using System.Collections.Generic;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client
 {
@@ -40,7 +35,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
         private bool ambientCockpitEffectEnabled = true;
         private bool ambientCockpitIntercomEffectEnabled = true;
 
-        private ProfileSettingsStore settingsStore = GlobalSettingsStore.Instance.ProfileSettingsStore;
+        private ProfileSettingsModel ProfileSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>().CurrentProfile;
         private double lastLoaded = 0;
 
         public ClientAudioProvider(bool passThrough = false)
@@ -237,11 +232,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             if ((now - lastLoaded) > 30000000)
             {
                 lastLoaded = now;
-                ambientCockpitEffectEnabled = settingsStore.GetClientSettingBool(ProfileSettingsKeys.AmbientCockpitNoiseEffect);
-                ambientCockpitEffectVolume =
-                    settingsStore.GetClientSettingFloat(ProfileSettingsKeys.AmbientCockpitNoiseEffectVolume);
-                ambientCockpitIntercomEffectEnabled =
-                    settingsStore.GetClientSettingBool(ProfileSettingsKeys.AmbientCockpitIntercomNoiseEffect);
+                ambientCockpitEffectEnabled = ProfileSettings.AmbientCockpitNoiseEffect;
+                ambientCockpitEffectVolume = ProfileSettings.AmbientCockpitNoiseEffectVolume;
+                ambientCockpitIntercomEffectEnabled = ProfileSettings.AmbientCockpitIntercomNoiseEffect;
             }
                 
         }

@@ -12,6 +12,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using DCS_SR_Client;
 using NLog;
 using SharpDX.DirectInput;
@@ -72,7 +73,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
         private InputBinding _lastActiveBinding = InputBinding.ModifierIntercom
             ; //intercom used to represent null as we cant
 
-        private Settings.GlobalSettingsStore _globalSettings = Settings.GlobalSettingsStore.Instance;
+        private ISrsSettings GlobalSettings = Ioc.Default.GetRequiredService<ISrsSettings>();
 
 
         public InputDeviceManager(Window window, MainWindow.ToggleOverlayCallback _toggleOverlayCallback)
@@ -96,9 +97,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
 
         public void InitDevices()
         {
-            var allowXInput = _globalSettings.GetClientSettingBool(GlobalSettingsKeys.AllowXInputController);
+            var allowXInput = GlobalSettings.ClientSettings.AllowXInputController;
             Logger.Info("Starting Device Search. Expand Search: " +
-            (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.ExpandControls)) +
+            (GlobalSettings.ClientSettings.ExpandControls) +
             ". Use XInput (for Xbox controllers): " + allowXInput);
 
 
@@ -178,7 +179,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
 
                     _inputDevices.Add(deviceInstance.InstanceGuid, device);
                 }
-                else if (GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.ExpandControls))
+                else if (GlobalSettings.ClientSettings.ExpandControls)
                 {
                     Logger.Info("Adding (Expanded Devices) ID:" + deviceInstance.ProductGuid + " " +
                                 deviceInstance.ProductName.Trim().Replace("\0", ""));
@@ -916,7 +917,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
         public List<InputBindState> GenerateBindStateList()
         {
             var bindStates = new List<InputBindState>();
-            var currentInputProfile = _globalSettings.ProfileSettingsStore.GetCurrentInputProfile();
+            ProfileSettingsModel currentInputProfile = GlobalSettings.CurrentProfile;
 
             //REMEMBER TO UPDATE THIS WHEN NEW BINDINGS ARE ADDED
             //MIN + MAX bind numbers

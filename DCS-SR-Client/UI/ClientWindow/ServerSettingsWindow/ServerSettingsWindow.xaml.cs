@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Threading;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using MahApps.Metro.Controls;
 using NLog;
 
@@ -17,8 +17,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly DispatcherTimer _updateTimer;
-
-        private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
+        private ServerSettingsModel _serverSettings { get; } =
+            Ioc.Default.GetRequiredService<ISrsSettings>().CurrentServerSettings;
 
         public ServerSettingsWindow()
         {
@@ -37,38 +37,37 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             try
             {
-                SpectatorAudio.Content = settings.GetSettingAsBool(ServerSettingsKeys.SPECTATORS_AUDIO_DISABLED)
+                SpectatorAudio.Content = settings.IsSpectatorsAudioDisabled
                     ? Properties.Resources.ValueDISABLED
                     : Properties.Resources.ValueENABLED;
 
-                CoalitionSecurity.Content = settings.GetSettingAsBool(ServerSettingsKeys.COALITION_AUDIO_SECURITY)
+                CoalitionSecurity.Content = settings.IsCoalitionAudioSeperated
                     ? Properties.Resources.ValueON
                     : Properties.Resources.ValueOFF;
 
-                LineOfSight.Content = settings.GetSettingAsBool(ServerSettingsKeys.LOS_ENABLED) ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
+                LineOfSight.Content = settings.IsLineOfSightCheckingEnabled ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
 
-                Distance.Content = settings.GetSettingAsBool(ServerSettingsKeys.DISTANCE_ENABLED) ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
+                Distance.Content = settings.IsDistanceCheckingEnabled ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
 
-                RealRadio.Content = settings.GetSettingAsBool(ServerSettingsKeys.IRL_RADIO_TX) ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
+                RealRadio.Content = settings.IsRadioTxEffectsEnabled ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
 
-                RadioRXInterference.Content =
-                    settings.GetSettingAsBool(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE) ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
+                RadioRXInterference.Content = settings.IsRadioRxInterferenceEnabled ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
 
-                RadioExpansion.Content = settings.GetSettingAsBool(ServerSettingsKeys.RADIO_EXPANSION) ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
+                RadioExpansion.Content = settings.IsExpandedRadiosAllowed ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
 
-                ExternalAWACSMode.Content = settings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE) ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
+                ExternalAWACSMode.Content = settings.IsExternalModeAllowed ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
 
-                AllowRadioEncryption.Content = settings.GetSettingAsBool(ServerSettingsKeys.ALLOW_RADIO_ENCRYPTION) ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
+                AllowRadioEncryption.Content = settings.IsRadioEncryptionAllowed ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
 
-                StrictRadioEncryption.Content = settings.GetSettingAsBool(ServerSettingsKeys.STRICT_RADIO_ENCRYPTION) ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
+                StrictRadioEncryption.Content = settings.IsStrictRadioEncryptionEnabled ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
 
-                TunedClientCount.Content = settings.GetSettingAsBool(ServerSettingsKeys.SHOW_TUNED_COUNT) ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
+                TunedClientCount.Content = settings.IsShowTunedListenerCount ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
 
-                ShowTransmitterName.Content = settings.GetSettingAsBool(ServerSettingsKeys.SHOW_TRANSMITTER_NAME) ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
+                ShowTransmitterName.Content = settings.IsShowTransmitterNameEnabled ? Properties.Resources.ValueON : Properties.Resources.ValueOFF;
 
                 ServerVersion.Content = SRSClientSyncHandler.ServerVersion;
 
-                NodeLimit.Content = settings.RetransmitNodeLimit;
+                NodeLimit.Content = settings.RetransmissionNodeLimit;
             }
             catch (IndexOutOfRangeException)
             {

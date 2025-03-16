@@ -4,13 +4,12 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Newtonsoft.Json;
 using NLog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 {
@@ -18,7 +17,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private UdpClient _udpCommandListener;
-        private readonly GlobalSettingsStore _globalSettings = GlobalSettingsStore.Instance;
+        private ClientSettingsModel ClientSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>().ClientSettings;
         private volatile bool _stop  = false;
 
         public void Start()
@@ -37,13 +36,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     
                     try
                     {
-                        var localEp = new IPEndPoint(IPAddress.Any, _globalSettings.GetNetworkSetting(GlobalSettingsKeys.CommandListenerUDP));
+                        var localEp = new IPEndPoint(IPAddress.Any,  ClientSettings.CommandListenerUdp);
                         _udpCommandListener = new UdpClient(localEp);
                         break;
                     }
                     catch (Exception ex)
                     {
-                        Logger.Warn(ex, $"Unable to bind to the UDP Command Listener Socket Port: {_globalSettings.GetNetworkSetting(GlobalSettingsKeys.CommandListenerUDP)}");
+                        Logger.Warn(ex, $"Unable to bind to the UDP Command Listener Socket Port: {ClientSettings.CommandListenerUdp}");
                         Thread.Sleep(500);
                     }
                 }

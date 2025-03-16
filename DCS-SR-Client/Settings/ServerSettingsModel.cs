@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using Newtonsoft.Json;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 
@@ -23,13 +25,16 @@ public partial class ServerSettingsModel : ObservableObject
 	
 	[ObservableProperty] private bool _isExpandedRadiosAllowed = false;
 	[ObservableProperty] private bool _isClientExportAllowed = false;
-	[ObservableProperty] private bool _isCoalitionAudioSeperated = false;
-	[ObservableProperty] private bool _isDistanceCheckingEnabled = false;
+	[ObservableProperty] private bool _isRadioEncryptionAllowed = false;
 	[ObservableProperty] private bool _isExternalModeAllowed = false;
 	[ObservableProperty] private string _externalModeBluePassword = string.Empty;
 	[ObservableProperty] private string _externalModeRedPassword = string.Empty;
-	[ObservableProperty] private bool _isRadioRxInterferenceEnabled = false;
 	
+	[ObservableProperty] private bool _isCoalitionAudioSeperated = false;
+	
+	[ObservableProperty] private bool _isDistanceCheckingEnabled = false;
+	[ObservableProperty] private bool _isRadioRxInterferenceEnabled = false;
+	[ObservableProperty] private bool _isLineOfSightCheckingEnabled = false;
 	/// <summary>
 	/// Not Used.
 	/// </summary>
@@ -58,4 +63,19 @@ public partial class ServerSettingsModel : ObservableObject
 	/// TODO: Document what this setting does.
 	/// </summary>
 	[ObservableProperty] private bool _isRadioEffectOverrideEnabled = false;
+
+	[JsonIgnore] public List<double> GlobalLobbyFrequenciesList => FreqStringToList(GlobalLobbyFrequencies);
+	[JsonIgnore] public List<double> TestFrequenciesList => FreqStringToList(TestFrequencies);
+	
+	private List<double> FreqStringToList(string freqString)
+	{
+		List<double> frequencies = new List<double>();
+		foreach (var freq in freqString.Split(','))
+		{
+			freq.Trim();
+			frequencies.Add(double.Parse(freq));
+		}
+		
+		return frequencies;
+	}
 }

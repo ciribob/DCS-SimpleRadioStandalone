@@ -1,7 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Windows.Documents;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using Newtonsoft.Json;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 
@@ -113,6 +117,21 @@ public partial class ProfileSettingsModel : ObservableObject, ICloneable
 	
 	[ObservableProperty] private InputSettingModel _radioVolumeUp = new InputSettingModel();
 	[ObservableProperty] private InputSettingModel _radioVolumeDown = new InputSettingModel();
+	
+	
+	[JsonIgnore]
+	public List<InputSettingModel> InputSettingsList 
+	{
+		get
+		{
+			var temp = GetType().GetProperties()
+				.Where(property => property.PropertyType == typeof(InputSettingModel))
+				.Select(x => (InputSettingModel)x.GetValue(this))
+				.ToList();
+
+			return temp;
+		} 
+	}
 	
 	public object Clone()
 	{

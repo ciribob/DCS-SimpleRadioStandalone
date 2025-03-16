@@ -13,6 +13,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Newtonsoft.Json;
 using NLog;
 
@@ -20,10 +21,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 {
     public class DCSLineOfSightHandler
     {
-        private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
         private readonly ConnectedClientsSingleton _clients = ConnectedClientsSingleton.Instance;
         private readonly string _guid;
-        private readonly GlobalSettingsStore _globalSettings = GlobalSettingsStore.Instance;
+        private ISrsSettings GlobalSettings = Ioc.Default.GetRequiredService<ISrsSettings>();
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private volatile bool _stop = false;
         private UdpClient _dcsLOSListener;
@@ -53,13 +53,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                     
                     try
                     {
-                        var localEp = new IPEndPoint(IPAddress.Any, _globalSettings.GetNetworkSetting(GlobalSettingsKeys.DCSLOSIncomingUDP));
+                        var localEp = new IPEndPoint(IPAddress.Any, GlobalSettings.ClientSettings.DcsLosIncomingUdp);
                         _dcsLOSListener = new UdpClient(localEp);
                         break;
                     }
                     catch (Exception ex)
                     {
-                        Logger.Warn(ex, $"Unable to bind to the DCS LOS Listner Socket Port: {_globalSettings.GetNetworkSetting(GlobalSettingsKeys.DCSLOSIncomingUDP)}");
+                        Logger.Warn(ex, $"Unable to bind to the DCS LOS Listner Socket Port: {GlobalSettings.ClientSettings.DcsLosIncomingUdp}");
                         Thread.Sleep(500);
                     }
 
@@ -120,7 +120,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
         private void StartDCSLOSSender()
         {
             var _udpSocket = new UdpClient();
-            var _host = new IPEndPoint(IPAddress.Loopback, _globalSettings.GetNetworkSetting(GlobalSettingsKeys.DCSLOSOutgoingUDP));
+            var _host = new IPEndPoint(IPAddress.Loopback, GlobalSettings.ClientSettings.DcsLosOutgoingUdp);
 
 
             Task.Factory.StartNew(() =>
@@ -178,7 +178,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 
             var playerLocation = ClientStateSingleton.Instance.PlayerCoaltionLocationMetadata;
 
-            if (_serverSettings.GetSettingAsBool(ServerSettingsKeys.LOS_ENABLED) 
+            if (GlobalSettings.CurrentServerSettings.IsLineOfSightCheckingEnabled
                 && playerLocation != null
                 && playerLocation.LngLngPosition  !=null
                 && playerLocation.LngLngPosition.isValid())

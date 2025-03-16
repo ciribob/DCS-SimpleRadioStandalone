@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.PresetChannels;
-using Newtonsoft.Json.Linq;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.RadioChannels
@@ -15,11 +12,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.RadioChannels
     public class FilePresetChannelsStore : IPresetChannelsStore
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private static readonly GlobalSettingsStore _globalSettings = GlobalSettingsStore.Instance;
+        private ClientSettingsModel _clientSettings = Ioc.Default.GetRequiredService<ISrsSettings>().ClientSettings;
 
         private string PresetsFolder { get
             {
-                var folder = _globalSettings.GetClientSetting(GlobalSettingsKeys.LastPresetsFolder).RawValue;
+                var folder = _clientSettings.LastPresetsFolder;
                 if (string.IsNullOrWhiteSpace(folder))
                 {
                     folder = Directory.GetCurrentDirectory();

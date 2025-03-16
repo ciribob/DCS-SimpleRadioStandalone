@@ -9,12 +9,15 @@ using System.Windows;
 using System.Windows.Threading;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 {
     public class DCSAutoConnectHandler
     {
+        private ClientSettingsModel ClientSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>().ClientSettings;
+
         private readonly MainWindow.ReceivedAutoConnect _receivedAutoConnect;
         private readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private UdpClient _dcsUdpListener;
@@ -51,14 +54,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                 {
                     try
                     {
-                        var localEp = new IPEndPoint(IPAddress.Any,
-                            GlobalSettingsStore.Instance.GetNetworkSetting(GlobalSettingsKeys.DCSAutoConnectUDP));
+                        var localEp = new IPEndPoint(IPAddress.Any, ClientSettings.DcsAutoConnectUdp);
                         _dcsUdpListener = new UdpClient(localEp);
                         break;
                     }
                     catch(Exception ex)
                     {
-                        Logger.Warn(ex, $"Unable to bind to the AutoConnect Socket Port: {GlobalSettingsStore.Instance.GetNetworkSetting(GlobalSettingsKeys.DCSAutoConnectUDP)}");
+                        Logger.Warn(ex, $"Unable to bind to the AutoConnect Socket Port: {ClientSettings.DcsAutoConnectUdp}");
                         Thread.Sleep(500);
                     }
                     

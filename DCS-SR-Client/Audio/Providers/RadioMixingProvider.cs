@@ -6,6 +6,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Recording;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using NAudio.Utils;
 using NAudio.Wave;
 
@@ -19,8 +20,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
 
         private ClientEffectsPipeline pipeline = new ClientEffectsPipeline();
 
-        private readonly Settings.ProfileSettingsStore profileSettings =
-            Settings.GlobalSettingsStore.Instance.ProfileSettingsStore;
+        private ProfileSettingsModel ProfileSettings { get; } = Ioc.Default.GetRequiredService<ISrsSettings>().CurrentProfile;
 
         private float[] mixBuffer;
         private float[] secondaryMixBuffer;
@@ -260,12 +260,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
 
         private void PlaySoundEffectEndReceive(RadioInformation.Modulation modulation)
         {
-            if (!profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioRxEffects_End))
+            if (!ProfileSettings.RadioRxEffects_End)
             {
                 return;
             }
 
-            bool midsTone = profileSettings.GetClientSettingBool(ProfileSettingsKeys.MIDSRadioEffect);
+            bool midsTone = ProfileSettings.MidsRadioEffect;
 
             if (radioId == 0)
             {
@@ -296,12 +296,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
 
         public void PlaySoundEffectStartReceive(bool encrypted, RadioInformation.Modulation modulation)
         {
-            if (!profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioRxEffects_Start))
+            if (!ProfileSettings.RadioRxEffects_Start)
             {
                 return;
             }
 
-            bool midsTone = profileSettings.GetClientSettingBool(ProfileSettingsKeys.MIDSRadioEffect);
+            bool midsTone = ProfileSettings.MidsRadioEffect;
 
             if (modulation == RadioInformation.Modulation.MIDS && midsTone)
             {
@@ -318,9 +318,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
                     effectsBuffer.Write(effect.AudioEffectFloat, 0, effect.AudioEffectFloat.Length);
                 }
             }
-            else if (encrypted &&
-                     profileSettings.GetClientSettingBool(ProfileSettingsKeys
-                         .RadioEncryptionEffects))
+            else if (encrypted && ProfileSettings.RadioEncryptionEffects)
             {
                 var effect = _cachedAudioEffectsProvider.KY58EncryptionEndTone;
                 if (effect.Loaded)
@@ -343,12 +341,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
             lastModulation = modulation;
             lastVolume = volume;
 
-            if (!profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioTxEffects_Start))
+            if (!ProfileSettings.RadioTxEffectsStart)
             {
                 return;
             }
 
-            bool midsTone = profileSettings.GetClientSettingBool(ProfileSettingsKeys.MIDSRadioEffect);
+            bool midsTone = ProfileSettings.MidsRadioEffect;
 
             if (radioId == 0)
             {
@@ -358,7 +356,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
                     effectsBuffer.Write(effect.AudioEffectFloat, 0, effect.AudioEffectFloat.Length);
                 }
             }
-            else if (encrypted && (profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEncryptionEffects)))
+            else if (encrypted && ProfileSettings.RadioEncryptionEffects)
             {
                 var effect = _cachedAudioEffectsProvider.KY58EncryptionTransmitTone;
                 if (effect.Loaded)
@@ -390,12 +388,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
             lastModulation = modulation;
             lastVolume = volume;
 
-            if (!profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioTxEffects_End))
+            if (!ProfileSettings.RadioTxEffectsEnd)
             {
                 return;
             }
 
-            bool midsTone = profileSettings.GetClientSettingBool(ProfileSettingsKeys.MIDSRadioEffect);
+            bool midsTone = ProfileSettings.MidsRadioEffect;
 
             if (radioId == 0)
             {

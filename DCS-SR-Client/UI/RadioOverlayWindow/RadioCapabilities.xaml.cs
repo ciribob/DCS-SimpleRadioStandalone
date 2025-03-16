@@ -17,6 +17,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.Old;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
 {
@@ -44,7 +46,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
         {
             var radioInfo = ClientStateSingleton.Instance.DcsPlayerRadioInfo;
 
-            var profile = GlobalSettingsStore.Instance.ProfileSettingsStore;
+            var profile = Ioc.Default.GetRequiredService<ISrsSettings>().CurrentProfile;
 
             try
             {
@@ -57,7 +59,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
                     {
                         DCSPTT.Content = Properties.Resources.OverlayAvailableCockpit;
 
-                        if (!profile.GetClientSettingBool(ProfileSettingsKeys.AllowDCSPTT))
+                        if (!profile.AllowDcsPtt)
                         {
                             DCSPTT.Content += " " + Properties.Resources.OverlayDisabledSRS;
                         }
@@ -72,7 +74,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
                     {
                         DCSRadioSwitch.Content = Properties.Resources.OverlayAvailableCockpit;
 
-                        if (profile.GetClientSettingBool(ProfileSettingsKeys.AlwaysAllowHotasControls))
+                        if (profile.AlwaysAllowHotasControls)
                         {
                             DCSRadioSwitch.Content += " " + Properties.Resources.OverlayDisabledSRS;
                         }
@@ -87,7 +89,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
                     {
                         DCSIFF.Content = Properties.Resources.OverlayAvailableCockpit;
 
-                        if (profile.GetClientSettingBool(ProfileSettingsKeys.AlwaysAllowTransponderOverlay))
+                        if (profile.AlwaysAllowTransponderOverlay)
                         {
                             DCSIFF.Content += " " + Properties.Resources.OverlayDisabledSRS;
                         }
@@ -102,7 +104,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
                     {
                         IntercomHotMic.Content = Properties.Resources.OverlayAvailableCockpit;
 
-                        if (!profile.GetClientSettingBool(ProfileSettingsKeys.AllowDCSPTT) || profile.GetClientSettingBool(ProfileSettingsKeys.AlwaysAllowHotasControls))
+                        if (!profile.AllowDcsPtt || profile.AlwaysAllowHotasControls)
                         {
                             IntercomHotMic.Content += " " + Properties.Resources.OverlayDisabledSRS;
                         }

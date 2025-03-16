@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using NAudio.Wave;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Utility
@@ -325,15 +326,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Utility
                 if (count > 125 || force)
                 {
                     //only check settings store every 5 seconds
-                    var settingsStore = GlobalSettingsStore.Instance;
+                    ClientSettingsModel settingsStore = Ioc.Default.GetRequiredService<ISrsSettings>().ClientSettings;
 
-                    var agc = settingsStore.GetClientSettingBool(GlobalSettingsKeys.AGC);
-                    var agcTarget = settingsStore.GetClientSetting(GlobalSettingsKeys.AGCTarget).IntValue;
-                    var agcDecrement = settingsStore.GetClientSetting(GlobalSettingsKeys.AGCDecrement).IntValue;
-                    var agcLevelMax = settingsStore.GetClientSetting(GlobalSettingsKeys.AGCLevelMax).IntValue;
+                    bool agc = settingsStore.AutomaticGainControl;
+                    int agcTarget = settingsStore.AgcTarget;
+                    int agcDecrement = settingsStore.AgcDecrement;
+                    int agcLevelMax = settingsStore.AgcLevelMax;
 
-                    var denoise = settingsStore.GetClientSettingBool(GlobalSettingsKeys.Denoise);
-                    var denoiseAttenuation = settingsStore.GetClientSetting(GlobalSettingsKeys.DenoiseAttenuation).IntValue;
+                    bool denoise = settingsStore.Denoise;
+                    int denoiseAttenuation = settingsStore.DenoiseAttenuation;
 
                     //From https://github.com/mumble-voip/mumble/blob/a189969521081565b8bda93d253670370778d471/src/mumble/Settings.cpp
                     //and  https://github.com/mumble-voip/mumble/blob/3ffd9ad3ed18176774d8e1c64a96dffe0de69655/src/mumble/AudioInput.cpp#L605

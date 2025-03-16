@@ -15,8 +15,8 @@ public partial class InputBindingModel : ObservableObject, ICloneable
 	}
 	
 	[ObservableProperty] private string _inputName = "InputName";
-	[ObservableProperty] private InputModel _primary = new InputModel();
-	[ObservableProperty] private InputModel _modifier = new InputModel();
+	[ObservableProperty] private InputDevice _primary = new InputDevice();
+	[ObservableProperty] private InputDevice _modifier = new InputDevice();
 
 	public bool IsEnabled { get; set; }
 	public bool IsPrimaryPressed { get; set; }
@@ -28,7 +28,7 @@ public partial class InputBindingModel : ObservableObject, ICloneable
 	}
 }
 
-public partial class InputModel : ObservableObject, ICloneable
+public partial class InputDevice : ObservableObject, ICloneable
 {
 	protected override void OnPropertyChanging(PropertyChangingEventArgs e)
 	{
@@ -46,7 +46,7 @@ public partial class InputModel : ObservableObject, ICloneable
 		return this.MemberwiseClone();
 	}
 	
-	public bool IsSameBind(InputModel compare)
+	public bool IsSameBind(InputDevice compare)
 	{
 		return Button == compare.Button &&
 		       compare.Guid == Guid &&

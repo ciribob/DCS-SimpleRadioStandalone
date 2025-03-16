@@ -119,19 +119,12 @@ public partial class ProfileSettingsModel : ObservableObject, ICloneable
 	[ObservableProperty] private InputBindingModel _radioVolumeDown = new InputBindingModel();
 	
 	
-	[JsonIgnore]
-	public List<InputBindingModel> InputSettingsList 
-	{
-		get
-		{
-			var temp = GetType().GetProperties()
-				.Where(property => property.PropertyType == typeof(InputBindingModel))
-				.Select(x => (InputBindingModel)x.GetValue(this))
-				.ToList();
-
-			return temp;
-		} 
-	}
+	[JsonIgnore] // Make a list of All InputBindingModel's with the Magic of LINQ
+	public List<InputBindingModel> InputSettingsList => 
+		GetType().GetProperties()
+			.Where(property => property.PropertyType == typeof(InputBindingModel))
+			.Select(x => (InputBindingModel)x.GetValue(this))
+			.ToList();
 
 	[JsonIgnore]
 	public List<float> RadioBalanceList => new(){

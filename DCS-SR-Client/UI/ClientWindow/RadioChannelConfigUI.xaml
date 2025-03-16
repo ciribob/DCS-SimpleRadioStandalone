@@ -8,21 +8,28 @@
         Name="RadioChannelConfig"
         d:DesignHeight="50"
         d:DesignWidth="200"
-        mc:Ignorable="d">
+        mc:Ignorable="d" >
         <Slider.Style>
             <Style TargetType="{x:Type Slider}" BasedOn="{StaticResource MahApps.Styles.Slider}">
+                <Setter Property="Maximum" Value="1.0" />
+                <Setter Property="Minimum" Value="-1.0" />
+                <Setter Property="TickPlacement" Value="BottomRight" />
+                <Setter Property="SmallChange" Value="0.1" />
+                <Setter Property="LargeChange" Value="0.3" />
+                <Setter Property="IsSnapToTickEnabled" Value="True" />
+                <Setter Property="TickFrequency" Value="0.1" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Slider}">
                             <StackPanel>
-                                <Slider Maximum="1.0"
-                                    Minimum="-1.0"
-                                    Value="{TemplateBinding Property=Value}" 
-                                    TickPlacement="BottomRight"
-                                    SmallChange="0.1" 
-                                    LargeChange="0.3"
-                                    IsSnapToTickEnabled="True"
-                                    TickFrequency="0.1"/>
+                                <Slider Value="{Binding Value, RelativeSource={RelativeSource TemplatedParent}}" 
+                                        Maximum="1.0"
+                                        Minimum="-1.0"
+                                        TickPlacement="BottomRight"
+                                        SmallChange="0.1" 
+                                        LargeChange="0.3"
+                                        IsSnapToTickEnabled="True"
+                                        TickFrequency="0.1"/>
                                 <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />

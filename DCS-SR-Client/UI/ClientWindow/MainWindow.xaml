@@ -2661,58 +2661,62 @@
                                       Grid.Row="2"
                                       Grid.Column="0"
                                       Grid.ColumnSpan="2">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="2*" />
-                                        <ColumnDefinition Width="2*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                    </Grid.RowDefinitions>
-                                    
-                                    <Label Grid.Row="0"
-                                           Grid.Column="0"
+                                <UniformGrid Columns="2">
+                                    <Label VerticalContentAlignment="Center"
                                            HorizontalContentAlignment="Center"
-                                           VerticalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.IntercomConfig}" />
+                                    <local:RadioChannelConfigUi Value="{Binding GlobalSettings.CurrentProfile.BalanceIntercom}" />
+                                    
+                                    <Label VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"
                                            Content="{x:Static p:Resources.Radio1Config}" />
-                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="0"
-                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceIntercom}" />
-                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="1"
-                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio01}" />
-                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="2"
-                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio02}" />
-                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="3"
-                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio03}" />
-                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="4"
-                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio04}" />
-                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="5"
-                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio05}" />
-                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="6"
-                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio06}" />
-                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="7"
-                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio07}" />
-                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="8"
-                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio08}" />
-                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="9"
-                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio09}" />
-                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="10"
-                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio10}" />
-                                </Grid>
+                                    <local:RadioChannelConfigUi Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio01}" />
+                                    
+                                    <Label VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.Radio2Config}" />
+                                    <local:RadioChannelConfigUi Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio02}" />
+                                    
+                                    <Label VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.Radio3Config}" />
+                                    <local:RadioChannelConfigUi Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio03}" />
+                                    
+                                    <Label VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.Radio4Config}" />
+                                    <local:RadioChannelConfigUi Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio04}" />
+                                    
+                                    <Label VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.Radio5Config}" />
+                                    <local:RadioChannelConfigUi Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio05}" />
+                                    
+                                    <Label VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.Radio6Config}" />
+                                    <local:RadioChannelConfigUi Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio06}" />
+                                    
+                                    <Label VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.Radio7Config}" />
+                                    <local:RadioChannelConfigUi Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio07}" />
+                                    
+                                    <Label VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.Radio8Config}" />
+                                    <local:RadioChannelConfigUi Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio08}" />
+                                    
+                                    <Label VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.Radio9Config}" />
+                                    <local:RadioChannelConfigUi Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio09}" />
+                                    
+                                    <Label VerticalContentAlignment="Center"
+                                           HorizontalContentAlignment="Center"
+                                           Content="{x:Static p:Resources.Radio10Config}" />
+                                    <local:RadioChannelConfigUi Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio10}" />
+                                </UniformGrid>
                             </GroupBox>
                         </Grid>
                     </GroupBox>

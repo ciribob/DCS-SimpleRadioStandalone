@@ -17,7 +17,7 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 {
 	const string ClientSettingsFileName = "ClientSettings";
 	const string ProfileFileNameSuffix = "Profile";
-	private readonly string _configurationDirectoryPath = "\\Configuration\\";
+	private readonly string _configurationDirectoryPath = ".\\Configuration\\";
 	
 	private readonly Logger Logger = LogManager.GetCurrentClassLogger();
 	
@@ -61,14 +61,29 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 	
 	public SrsSettingsService()
 	{
-		if (!File.Exists(ClientSettingsFileName) || 
-		    File.ReadAllBytes(ClientSettingsFileName).Length <= 10) 
-		{ CreateNewAppSettings(); }
+		#region Verify that Config Files Exist.
+		
+		string ClientConfigPath = Path.Combine(_configurationDirectoryPath, $"{ClientSettingsFileName}.json");
+		
+		if (!File.Exists(ClientConfigPath) || File.ReadAllBytes(ClientConfigPath).Length <= 10) 
+		{ SaveSettings(new ClientSettingsModel(), $"{ClientSettingsFileName}.json"); }
 
+		string defaultConfigPath = Path.Join(_configurationDirectoryPath, $"default_{ProfileFileNameSuffix}.json");
+		
+		if (!File.Exists(defaultConfigPath) || File.ReadAllBytes(defaultConfigPath).Length <= 10) 
+		{ SaveSettings(new ProfileSettingsModel(), $"default_{ProfileFileNameSuffix}.json"); }
+
+		#endregion
+		
+		#region Configuraiong Builder to Flatten different sources.
 		_configuration = new ConfigurationBuilder()
 			.AddJsonFile(ClientSettingsFileName, reloadOnChange: false, optional: true)
 			.Build();
-		
+		// Add line arguments and stuff here.
+		#endregion
+
+		#region Populate the Profile List from whats in file.
+
 		if (Directory.Exists(_configurationDirectoryPath))
 		{
 			foreach (string relativePathToFiles in Directory.EnumerateFiles(_configurationDirectoryPath,
@@ -86,6 +101,9 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 			}
 		}
 
+		#endregion
+		
+
 		_configuration.GetSection("GlobalSettings").Bind(ClientSettings);
 		_configuration.GetSection("ProfileSettings").Bind(_profileSettings);
 		
@@ -95,7 +113,9 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 		
 		if (!_profileSettings.ContainsKey(ClientSettings.LastUsedProfileName)) { ClientSettings.LastUsedProfileName = "default"; }
 		OnPropertyChanged(nameof(CurrentProfileName));
-		
+
+		#region WeakReferenceMessenger  
+		// Use WeakReferenceManager from the MVVM Toolkit to notify the top level when a change has occurred.
 		WeakReferenceMessenger.Default.Register<SettingChangingMessage>(this, (r, m) =>
 		{
 			OnPropertyChanging();
@@ -109,6 +129,7 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 					break;
 			}
 		});
+		#endregion
 	}
 	
 	public class SettingsModel
@@ -171,16 +192,10 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 			
 			isSaving = true;
 			string json = JsonConvert.SerializeObject(ModelToSave, Formatting.Indented);
-			File.WriteAllTextAsync(path, json, Encoding.UTF8);
+			File.WriteAllText(path, json, Encoding.UTF8);
 			isSaving = false;
 		}
 		catch (Exception e) { }
-	}
-	
-	public void CreateNewAppSettings()
-	{
-		string json = JsonConvert.SerializeObject(new SettingsModel(), Formatting.Indented);
-		File.WriteAllText($"./{ClientSettingsFileName}.json", json, Encoding.UTF8);
 	}
 
 	public void Receive(SettingChangingMessage message)

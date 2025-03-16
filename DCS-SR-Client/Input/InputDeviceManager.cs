@@ -566,13 +566,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
 
             foreach (var inputBindState in states)
             {
-                if (inputBindState.Primary != null)
+                if (inputBindState.PrimaryDevice != null)
                 {
-                    uniqueDevices.Add(inputBindState.Primary.Guid);
+                    uniqueDevices.Add(inputBindState.PrimaryDevice.Guid);
                 }
-                if (inputBindState.Modifier != null)
+                if (inputBindState.ModifierDevice != null)
                 {
-                    uniqueDevices.Add(inputBindState.Modifier.Guid);
+                    uniqueDevices.Add(inputBindState.ModifierDevice.Guid);
                 }
             }
 
@@ -616,8 +616,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
                     
                     foreach (var bindState in allBinding)
                     {
-                        bindState.IsPrimaryPressed = GetButtonState(bindState.Primary);
-                        bindState.IsModifiedPressed = GetButtonState(bindState.Modifier);
+                        bindState.IsPrimaryPressed = GetButtonState(bindState.PrimaryDevice);
+                        bindState.IsModifiedPressed = GetButtonState(bindState.ModifierDevice);
                         
                         //now check this is the best binding and no previous ones are better
                         //Means you can have better binds like PTT  = Space and Radio 1 is Space +1 - holding space +1 will actually trigger radio 1 not PTT

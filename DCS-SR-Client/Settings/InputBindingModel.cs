@@ -1,8 +1,8 @@
 using System;
 using System.ComponentModel;
-using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using Newtonsoft.Json;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 
@@ -15,8 +15,8 @@ public partial class InputBindingModel : ObservableObject, ICloneable
 		base.OnPropertyChanging(e);
 	}
 	
-	[ObservableProperty] private InputDevice _primary = null;
-	[ObservableProperty] private InputDevice _modifier = null;
+	[ObservableProperty] private InputDevice _primaryDevice = null;
+	[ObservableProperty] private InputDevice _modifierDevice = null;
 	[JsonIgnore] 
 	public Action BindingAction { get; init; }
 	
@@ -28,7 +28,7 @@ public partial class InputBindingModel : ObservableObject, ICloneable
 	{
 		get
 		{
-			if (_modifier != null)
+			if (_modifierDevice != null)
 			{
 				return IsPrimaryPressed && IsModifiedPressed;
 			}

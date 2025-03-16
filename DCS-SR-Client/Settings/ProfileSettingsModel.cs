@@ -15,7 +15,14 @@ public partial class ProfileSettingsModel : ObservableObject, ICloneable
 		WeakReferenceMessenger.Default.Send(new SettingChangingMessage(SettingCatagory.Profile));
 		base.OnPropertyChanging(e);
 	}
-	
+
+	#region Bulk Fields
+	/// <summary>
+	/// This section contains only fields. The ObservableProperty attributes, provided by the MVVM Toolkit,
+	/// use codegen to build properties.
+	/// These properties are a able to be traded around and pointed to more consistently.
+	/// </summary>
+
 	[ObservableProperty] private bool _radioEffects = true;
 	[ObservableProperty] private bool _radioEffectsClipping = false;
 	[ObservableProperty] private bool _radioEncryptionEffects = true;
@@ -116,6 +123,8 @@ public partial class ProfileSettingsModel : ObservableObject, ICloneable
 	
 	[ObservableProperty] private InputBindingModel _radioVolumeUp = new();
 	[ObservableProperty] private InputBindingModel _radioVolumeDown = new();
+	
+	#endregion
 	
 	[JsonIgnore] // Make a list of All InputBindingModel's with the Magic of LINQ
 	public List<InputBindingModel> InputBindingsList => 

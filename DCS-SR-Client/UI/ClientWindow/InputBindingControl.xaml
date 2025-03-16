@@ -30,13 +30,13 @@
         <TextBox Grid.Row="0" Grid.Column="1"
                  VerticalContentAlignment="Center"
                  IsEnabled="False"
-                 Text="{Binding Primary.DeviceName}"
+                 Text="{Binding PrimaryDevice.DeviceName}"
                  MaxLength="30"
                  TextAlignment="Center" />
         <TextBox Grid.Row="0" Grid.Column="2"
                  VerticalContentAlignment="Center"
                  IsEnabled="False"
-                 Text="{Binding Primary.Button}"
+                 Text="{Binding PrimaryDevice.Button}"
                  MaxLength="5"
                  TextAlignment="Center" />
         <Button x:Name="PrimarySetButton"
@@ -57,13 +57,13 @@
         <TextBox Grid.Row="1" Grid.Column="1"
                  VerticalContentAlignment="Center"
                  IsEnabled="False"
-                 Text="{Binding Modifier.DeviceName}"
+                 Text="{Binding ModifierDevice.DeviceName}"
                  MaxLength="30"
                  TextAlignment="Center" />
         <TextBox Grid.Row="1" Grid.Column="2"
                  VerticalContentAlignment="Center"
                  IsEnabled="False"
-                 Text="{Binding Modifier.Button}"
+                 Text="{Binding ModifierDevice.Button}"
                  MaxLength="5"
                  TextAlignment="Center" />
         <Button x:Name="ModifierSetButton"

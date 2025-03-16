@@ -42,13 +42,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 PrimaryClearButton.IsEnabled = true;
                 PrimarySetButton.IsEnabled = true;
 
-                ((InputBindingModel)DataContext).Primary = foundDevice;
+                ((InputBindingModel)DataContext).PrimaryDevice = foundDevice;
             });
         }
 
         private void PrimaryClear_Click(object sender, RoutedEventArgs e)
         {
-            ((InputBindingModel)DataContext).Primary = new InputDevice();
+            ((InputBindingModel)DataContext).PrimaryDevice = new InputDevice();
         }
 
         private void ModifierSet_Click(object sender, RoutedEventArgs e)
@@ -61,13 +61,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 ModifierSetButton.IsEnabled = true;
                 ModifierClearButton.IsEnabled = true;
 
-                ((InputBindingModel)DataContext).Modifier = foundDevice;
+                ((InputBindingModel)DataContext).ModifierDevice = foundDevice;
             });
         }
 
         private void ModifierClear_Click(object sender, RoutedEventArgs e)
         {
-            ((InputBindingModel)DataContext).Modifier = new InputDevice();
+            ((InputBindingModel)DataContext).ModifierDevice = new InputDevice();
         }
     }
 }

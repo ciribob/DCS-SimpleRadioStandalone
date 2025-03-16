@@ -71,62 +71,62 @@ public partial class ProfileSettingsModel : ObservableObject, ICloneable
 	[ObservableProperty] private float _balanceRadio09 = 0.0f;
 	[ObservableProperty] private float _balanceRadio10 = 0.0f;
 	
-	[ObservableProperty] private InputSettingModel _inputIntercom = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputSwitch01 = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputSwitch02 = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputSwitch03 = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputSwitch04 = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputSwitch05 = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputSwitch06 = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputSwitch07 = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputSwitch08 = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputSwitch09 = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputSwitch10 = new InputSettingModel();
+	[ObservableProperty] private InputBindingModel _inputIntercom = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputSwitch01 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputSwitch02 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputSwitch03 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputSwitch04 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputSwitch05 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputSwitch06 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputSwitch07 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputSwitch08 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputSwitch09 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputSwitch10 = new InputBindingModel();
 	
-	[ObservableProperty] private InputSettingModel _radioNext = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _radioPrevious = new InputSettingModel();
+	[ObservableProperty] private InputBindingModel _radioNext = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _radioPrevious = new InputBindingModel();
 	
-	[ObservableProperty] private InputSettingModel _inputIntercomPtt = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputPushToTalk = new InputSettingModel();
+	[ObservableProperty] private InputBindingModel _inputIntercomPtt = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputPushToTalk = new InputBindingModel();
 	
-	[ObservableProperty] private InputSettingModel _awacsOverlayToggle = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _overlayToggle = new InputSettingModel();
+	[ObservableProperty] private InputBindingModel _awacsOverlayToggle = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _overlayToggle = new InputBindingModel();
 
-	[ObservableProperty] private InputSettingModel _inputUp100 = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputUp10 = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputUp1 = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputUp01 = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputUp001 = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputUp0001 = new InputSettingModel();
+	[ObservableProperty] private InputBindingModel _inputUp100 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputUp10 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputUp1 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputUp01 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputUp001 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputUp0001 = new InputBindingModel();
 
-	[ObservableProperty] private InputSettingModel _inputDown100 = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputDown10 = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputDown1 = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputDown01 = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputDown001 = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _inputDown0001 = new InputSettingModel();
+	[ObservableProperty] private InputBindingModel _inputDown100 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputDown10 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputDown1 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputDown01 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputDown001 = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _inputDown0001 = new InputBindingModel();
 	
-	[ObservableProperty] private InputSettingModel _transponderIdent = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _guardToggle = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _encryptionToggle = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _encryptionKeyUp = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _encryptionKeyDown = new InputSettingModel();
+	[ObservableProperty] private InputBindingModel _transponderIdent = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _guardToggle = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _encryptionToggle = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _encryptionKeyUp = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _encryptionKeyDown = new InputBindingModel();
 	
-	[ObservableProperty] private InputSettingModel _radioChannelUp = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _radioChannelDown = new InputSettingModel();
+	[ObservableProperty] private InputBindingModel _radioChannelUp = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _radioChannelDown = new InputBindingModel();
 	
-	[ObservableProperty] private InputSettingModel _radioVolumeUp = new InputSettingModel();
-	[ObservableProperty] private InputSettingModel _radioVolumeDown = new InputSettingModel();
+	[ObservableProperty] private InputBindingModel _radioVolumeUp = new InputBindingModel();
+	[ObservableProperty] private InputBindingModel _radioVolumeDown = new InputBindingModel();
 	
 	
 	[JsonIgnore]
-	public List<InputSettingModel> InputSettingsList 
+	public List<InputBindingModel> InputSettingsList 
 	{
 		get
 		{
 			var temp = GetType().GetProperties()
-				.Where(property => property.PropertyType == typeof(InputSettingModel))
-				.Select(x => (InputSettingModel)x.GetValue(this))
+				.Where(property => property.PropertyType == typeof(InputBindingModel))
+				.Select(x => (InputBindingModel)x.GetValue(this))
 				.ToList();
 
 			return temp;

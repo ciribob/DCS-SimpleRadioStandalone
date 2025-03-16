@@ -429,225 +429,225 @@
                             <local:InputBindingControl x:Name="Radio1"
                                                        Grid.Row="1" Grid.ColumnSpan="5"
                                                        InputName="Radio 1"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputSwitch01}"/>
                             <local:InputBindingControl x:Name="Radio2"
                                                        Grid.Row="2"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Radio 2"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputSwitch02}"/>
                             <local:InputBindingControl x:Name="Radio3"
                                                        Grid.Row="3"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Radio 3"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputSwitch03}"/>
                             <local:InputBindingControl x:Name="PTT"
                                                        Grid.Row="4"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Common PTT"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputPushToTalk}"/>
                             <local:InputBindingControl x:Name="Intercom"
                                                        Grid.Row="5"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Intercom Select"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputIntercom}"/>
 
                             <local:InputBindingControl x:Name="IntercomPTT"
                                                        Grid.Row="6"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Special Intercom Select &amp; PTT"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputIntercomPtt}"/>
 
                             <local:InputBindingControl x:Name="RadioOverlay"
                                                        Grid.Row="7"
                                                        Grid.ColumnSpan="6"
                                                        InputName="Overlay Toggle"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.OverlayToggle}"/>
 
                             <local:InputBindingControl x:Name="Radio4"
                                                        Grid.Row="8"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Radio 4"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputSwitch04}"/>
                             <local:InputBindingControl x:Name="Radio5"
                                                        Grid.Row="9"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Radio 5"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputSwitch05}"/>
                             <local:InputBindingControl x:Name="Radio6"
                                                        Grid.Row="10"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Radio 6"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputSwitch06}"/>
 
                             <local:InputBindingControl x:Name="Radio7"
                                                        Grid.Row="11"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Radio 7"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputSwitch07}"/>
 
                             <local:InputBindingControl x:Name="Radio8"
                                                        Grid.Row="12"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Radio 8"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputSwitch08}"/>
 
                             <local:InputBindingControl x:Name="Radio9"
                                                        Grid.Row="13"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Radio 9"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputSwitch09}"/>
 
                             <local:InputBindingControl x:Name="Radio10"
                                                        Grid.Row="14"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Radio 10"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputSwitch10}"/>
 
 
                             <local:InputBindingControl x:Name="Up100"
                                                        Grid.Row="15"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Up 100MHz"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputUp100}"/>
 
                             <local:InputBindingControl x:Name="Up10"
                                                        Grid.Row="16"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Up 10MHz"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputUp10}"/>
 
                             <local:InputBindingControl x:Name="Up1"
                                                        Grid.Row="17"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Up 1MHz"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputUp1}"/>
 
                             <local:InputBindingControl x:Name="Up01"
                                                        Grid.Row="18"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Up 0.1MHz"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputUp01}"/>
 
                             <local:InputBindingControl x:Name="Up001"
                                                        Grid.Row="19"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Up 0.01MHz"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputUp001}"/>
 
                             <local:InputBindingControl x:Name="Up0001"
                                                        Grid.Row="20"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Up 0.001MHz"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputUp0001}"/>
 
 
                             <local:InputBindingControl x:Name="Down100"
                                                        Grid.Row="21"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Down 100MHz"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputDown100}"/>
 
                             <local:InputBindingControl x:Name="Down10"
                                                        Grid.Row="22"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Down 10MHz"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputDown10}"/>
 
                             <local:InputBindingControl x:Name="Down1"
                                                        Grid.Row="23"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Down 1MHz"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputDown1}"/>
 
                             <local:InputBindingControl x:Name="Down01"
                                                        Grid.Row="24"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Down 0.1MHz"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputDown01}"/>
 
                             <local:InputBindingControl x:Name="Down001"
                                                        Grid.Row="25"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Down 0.01MHz"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputDown001}"/>
 
                             <local:InputBindingControl x:Name="Down0001"
                                                        Grid.Row="26"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Down 0.001MHz"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.InputDown0001}"/>
 
                             <local:InputBindingControl x:Name="ToggleGuard"
                                                        Grid.Row="27"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Toggle Guard"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.GuardToggle}"/>
 
                             <local:InputBindingControl x:Name="NextRadio"
                                                        Grid.Row="28"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Next Radio"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.RadioNext}"/>
 
 
                             <local:InputBindingControl x:Name="PreviousRadio"
                                                        Grid.Row="29"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Previous Radio"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.RadioPrevious}"/>
 
                             <local:InputBindingControl x:Name="ToggleEncryption"
                                                        Grid.Row="30"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Toggle Encryption"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.EncryptionToggle}"/>
 
                             <local:InputBindingControl x:Name="EncryptionKeyIncrease"
                                                        Grid.Row="31"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Encryption Key Increase"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.EncryptionKeyUp}"/>
 
                             <local:InputBindingControl x:Name="EncryptionKeyDecrease"
                                                        Grid.Row="32"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Encryption Key Decrease"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.EncryptionKeyDown}"/>
 
                             <local:InputBindingControl x:Name="RadioChannelUp"
                                                        Grid.Row="33"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Radio Channel Up"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.RadioChannelUp}"/>
                             <local:InputBindingControl x:Name="RadioChannelDown"
                                                        Grid.Row="34"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Radio Channel Down"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.RadioChannelDown}"/>
 
                             <local:InputBindingControl x:Name="TransponderIDENT"
                                                        Grid.Row="35"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Transponder IDENT"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.TransponderIdent}"/>
 
                             <local:InputBindingControl x:Name="RadioVolumeUp"
                                                        Grid.Row="36"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Radio Volume Up"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.RadioVolumeUp}"/>
 
                             <local:InputBindingControl x:Name="RadioVolumeDown"
                                                        Grid.Row="37"
                                                        Grid.ColumnSpan="5"
                                                        InputName="Radio Volume Down"
-                                                       DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                       DataContext="{Binding GlobalSettings.CurrentProfile.RadioVolumeDown}"/>
 
                             <local:InputBindingControl x:Name="AwacsOverlayToggle"
                                                            Grid.Row="38"
                                                            Grid.ColumnSpan="5"
                                                            InputName="AWACS Overlay Toggle"
-                                                           DataContext="{Binding GlobalSettings.CurrentProfile}"/>
+                                                           DataContext="{Binding GlobalSettings.CurrentProfile.AwacsOverlayToggle}"/>
 
 
                         </Grid>
@@ -2690,92 +2690,28 @@
                                            HorizontalContentAlignment="Center"
                                            VerticalContentAlignment="Center"
                                            Content="{x:Static p:Resources.Radio1Config}" />
+                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="0"
+                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceIntercom}" />
                                     <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="1"
                                                                 Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio01}" />
-<!-- SliderValue="{Binding GlobalSettings.CurrentProfile.BalanceRadio01}"
-                                    <Label Grid.Row="1"
-                                           Grid.Column="0"
-                                           HorizontalContentAlignment="Center"
-                                           VerticalContentAlignment="Center"
-                                           Content="{x:Static p:Resources.Radio2Config}" />
-                                    <local:RadioChannelConfigUi x:Name="Radio2Config"
-                                                                Grid.Row="1" Grid.Column="1"
-                                                                SliderValue="{Binding GlobalSettings.CurrentProfile.BalanceRadio02}" />
-
-                                    <Label Grid.Row="2"
-                                           Grid.Column="0"
-                                           HorizontalContentAlignment="Center"
-                                           VerticalContentAlignment="Center"
-                                           Content="{x:Static p:Resources.Radio3Config}" />
-                                    <local:RadioChannelConfigUi x:Name="Radio3Config"
-                                                                Grid.Row="2" Grid.Column="1"
-                                                                SliderValue="{Binding GlobalSettings.CurrentProfile.BalanceRadio03}" />
-                                    <Label Grid.Row="3"
-                                           Grid.Column="0"
-                                           HorizontalContentAlignment="Center"
-                                           VerticalContentAlignment="Center"
-                                           Content="{x:Static p:Resources.Radio4Config}" />
-                                    <local:RadioChannelConfigUi x:Name="Radio4Config"
-                                                                Grid.Row="3" Grid.Column="1"
-                                                                SliderValue="{Binding GlobalSettings.CurrentProfile.BalanceRadio04}" />
-                                    <Label Grid.Row="4"
-                                           Grid.Column="0"
-                                           HorizontalContentAlignment="Center"
-                                           VerticalContentAlignment="Center"
-                                           Content="{x:Static p:Resources.Radio5Config}" />
-                                    <local:RadioChannelConfigUi x:Name="Radio5Config"
-                                                                Grid.Row="4" Grid.Column="1"
-                                                                SliderValue="{Binding GlobalSettings.CurrentProfile.BalanceRadio05}" />
-                                    <Label Grid.Row="5"
-                                           Grid.Column="0"
-                                           HorizontalContentAlignment="Center"
-                                           VerticalContentAlignment="Center"
-                                           Content="{x:Static p:Resources.Radio6Config}" />
-                                    <local:RadioChannelConfigUi x:Name="Radio6Config"
-                                                                Grid.Row="5" Grid.Column="1"
-                                                                SliderValue="{Binding GlobalSettings.CurrentProfile.BalanceRadio06}" />
-                                    <Label Grid.Row="6"
-                                           Grid.Column="0"
-                                           HorizontalContentAlignment="Center"
-                                           VerticalContentAlignment="Center"
-                                           Content="{x:Static p:Resources.Radio7Config}" />
-                                    <local:RadioChannelConfigUi x:Name="Radio7Config"
-                                                                Grid.Row="6" Grid.Column="1"
-                                                                SliderValue="{Binding GlobalSettings.CurrentProfile.BalanceRadio07}" />
-                                    <Label Grid.Row="7"
-                                           Grid.Column="0"
-                                           HorizontalContentAlignment="Center"
-                                           VerticalContentAlignment="Center"
-                                           Content="{x:Static p:Resources.Radio8Config}" />
-                                    <local:RadioChannelConfigUi x:Name="Radio8Config"
-                                                                Grid.Row="7" Grid.Column="1"
-                                                                SliderValue="{Binding GlobalSettings.CurrentProfile.BalanceRadio08}" />
-                                    <Label Grid.Row="8"
-                                           Grid.Column="0"
-                                           HorizontalContentAlignment="Center"
-                                           VerticalContentAlignment="Center"
-                                           Content="{x:Static p:Resources.Radio9Config}" />
-                                    <local:RadioChannelConfigUi x:Name="Radio9Config"
-                                                                Grid.Row="8" Grid.Column="1"
-                                                                SliderValue="{Binding GlobalSettings.CurrentProfile.BalanceRadio09}" />
-                                    <Label Grid.Row="9"
-                                           Grid.Column="0"
-                                           HorizontalContentAlignment="Center"
-                                           VerticalContentAlignment="Center"
-                                           Content="{x:Static p:Resources.Radio10Config}" />
-                                    <local:RadioChannelConfigUi x:Name="Radio10Config"
-                                                                Grid.Row="9" Grid.Column="1"
-                                                                SliderValue="{Binding GlobalSettings.CurrentProfile.BalanceRadio10}" />
-
-                                    <Label Grid.Row="10"
-                                           Grid.Column="0"
-                                           HorizontalContentAlignment="Center"
-                                           VerticalContentAlignment="Center"
-                                           Content="{x:Static p:Resources.IntercomConfig}" />
-                                    <local:RadioChannelConfigUi x:Name="IntercomConfig"
-                                                                Grid.Row="10" Grid.Column="1"
-                                                                SliderValue="{Binding GlobalSettings.CurrentProfile.BalanceIntercom}" />
-                                                                -->
+                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="2"
+                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio02}" />
+                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="3"
+                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio03}" />
+                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="4"
+                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio04}" />
+                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="5"
+                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio05}" />
+                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="6"
+                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio06}" />
+                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="7"
+                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio07}" />
+                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="8"
+                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio08}" />
+                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="9"
+                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio09}" />
+                                    <local:RadioChannelConfigUi Grid.Row="0" Grid.Column="10"
+                                                                Value="{Binding GlobalSettings.CurrentProfile.BalanceRadio10}" />
                                 </Grid>
                             </GroupBox>
                         </Grid>

@@ -1,8 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using SharpDX.DirectInput;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 {
@@ -22,11 +20,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             }
         }
         public string InputName { get; set; }
-        private InputBindingModel InputBinding { get; init; }
 
         public InputBindingControl()
         {
-            InputBinding = (InputBindingModel)DataContext;
             InitializeComponent();
         }
         
@@ -46,13 +42,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 PrimaryClearButton.IsEnabled = true;
                 PrimarySetButton.IsEnabled = true;
 
-                InputBinding.Primary = foundDevice;
+                ((InputBindingModel)DataContext).Primary = foundDevice;
             });
         }
 
         private void PrimaryClear_Click(object sender, RoutedEventArgs e)
         {
-            InputBinding.Primary = new InputDevice();
+            ((InputBindingModel)DataContext).Primary = new InputDevice();
         }
 
         private void ModifierSet_Click(object sender, RoutedEventArgs e)
@@ -65,13 +61,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 ModifierSetButton.IsEnabled = true;
                 ModifierClearButton.IsEnabled = true;
 
-                InputBinding.Modifier = foundDevice;
+                ((InputBindingModel)DataContext).Modifier = foundDevice;
             });
         }
 
         private void ModifierClear_Click(object sender, RoutedEventArgs e)
         {
-            InputBinding.Modifier = new InputDevice();
+            ((InputBindingModel)DataContext).Modifier = new InputDevice();
         }
     }
 }

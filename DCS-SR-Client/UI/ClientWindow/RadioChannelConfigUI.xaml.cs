@@ -9,7 +9,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
     /// <summary>
     ///     Interaction logic for RadioChannelConfigUI.xaml
     /// </summary>
-    public partial class RadioChannelConfigUi : UserControl
+    public partial class RadioChannelConfigUi : Slider
     {
         public float SliderValue { get; set; }
         

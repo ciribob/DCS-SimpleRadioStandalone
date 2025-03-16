@@ -24,20 +24,20 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 	// Global Application Settings
 	[ObservableProperty]
 	[NotifyPropertyChangedFor(nameof(CurrentProfileName))]
-	private GlobalSettingsModel _globalSettings = new GlobalSettingsModel();
+	private ClientSettingsModel _clientSettings = new ClientSettingsModel();
 	private Dictionary<string, ProfileSettingsModel> _profileSettings = new Dictionary<string, ProfileSettingsModel>();
 	
-	partial void OnGlobalSettingsChanged(GlobalSettingsModel value)
+	partial void OnClientSettingsChanged(ClientSettingsModel value)
 	{
 		SaveSettings();
 	}
 	public ProfileSettingsModel CurrentProfile
 	{
-		get => _profileSettings[GlobalSettings.CurrentProfileName];
+		get => _profileSettings[ClientSettings.CurrentProfileName];
 		set
 		{
-			Logger.Info(GlobalSettings.CurrentProfileName + " - Profile now in use");
-			_profileSettings[GlobalSettings.CurrentProfileName] = value;
+			Logger.Info(ClientSettings.CurrentProfileName + " - Profile now in use");
+			_profileSettings[ClientSettings.CurrentProfileName] = value;
 		}
 	}
 
@@ -51,7 +51,7 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 	
 	partial void OnCurrentProfileNameChanged(string value)
 	{
-		GlobalSettings.CurrentProfileName = value;
+		ClientSettings.CurrentProfileName = value;
 	}
 
 	// Connected Server Settings
@@ -70,14 +70,14 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 			.AddJsonFile(SettingsFileName, reloadOnChange: false, optional: false)
 			.Build();
 
-		_configuration.GetSection("GlobalSettings").Bind(GlobalSettings);
+		_configuration.GetSection("GlobalSettings").Bind(ClientSettings);
 		_configuration.GetSection("ProfileSettings").Bind(_profileSettings);
 		
 		var objValue = Registry.GetValue("HKEY_CURRENT_USER\\SOFTWARE\\DCS-SR-Standalone", "SRSAnalyticsOptOut", "FALSE");
-		if (objValue != null && objValue == "TRUE") { GlobalSettings.AllowAnonymousUsage = true; }
-		else { GlobalSettings.AllowAnonymousUsage = false; }
+		if (objValue != null && objValue == "TRUE") { ClientSettings.AllowAnonymousUsage = true; }
+		else { ClientSettings.AllowAnonymousUsage = false; }
 		
-		if (!_profileSettings.ContainsKey(GlobalSettings.CurrentProfileName)) { GlobalSettings.CurrentProfileName = "default"; }
+		if (!_profileSettings.ContainsKey(ClientSettings.CurrentProfileName)) { ClientSettings.CurrentProfileName = "default"; }
 		OnPropertyChanged(nameof(CurrentProfileName));
 		
 		WeakReferenceMessenger.Default.Register<SettingChangingMessage>(this, (r, m) =>
@@ -90,7 +90,7 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 	public class SettingsModel
 	{
 		public string SettingsVersion = "1.0";
-		public GlobalSettingsModel GlobalSettings = new GlobalSettingsModel();
+		public ClientSettingsModel ClientSettings = new ClientSettingsModel();
 		public Dictionary<string, ProfileSettingsModel> ProfileSettings =
 			new() { {"default", new ProfileSettingsModel() } };
 	}
@@ -140,7 +140,7 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 		try
 		{
 			isSaving = true;
-			SettingsModel temp = new SettingsModel() { GlobalSettings = GlobalSettings, ProfileSettings = _profileSettings };
+			SettingsModel temp = new SettingsModel() { ClientSettings = ClientSettings, ProfileSettings = _profileSettings };
 			string json = JsonConvert.SerializeObject(temp, Formatting.Indented);
 			File.WriteAllText(SettingsFileName, json, Encoding.UTF8);
 			isSaving = false;
@@ -159,9 +159,6 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 
 	public void Receive(SettingChangingMessage message)
 	{ }
-	
-	public GlobalSettingStoreFacade GlobalSettingStore { get; } = new GlobalSettingStoreFacade();
-	public SynchedServerSettingsFacade SynchedServerSettings { get; } = new SynchedServerSettingsFacade();
 }
 
 

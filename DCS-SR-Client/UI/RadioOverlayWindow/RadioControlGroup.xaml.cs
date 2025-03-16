@@ -12,6 +12,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.PresetChan
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
 {
@@ -472,10 +473,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
 
         public void HandleRetransmitStatus()
         {
-            var serverSettings = SyncedServerSettings.Instance;
+            ServerSettingsModel serverSettings = Ioc.Default.GetRequiredService<ISrsSettings>().CurrentServerSettings;
             var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
 
-            if ((dcsPlayerRadioInfo != null) && dcsPlayerRadioInfo.IsCurrent() && serverSettings.RetransmitNodeLimit > 0)
+            if ((dcsPlayerRadioInfo != null) && dcsPlayerRadioInfo.IsCurrent() && serverSettings.RetransmissionNodeLimit > 0)
             {
                 var currentRadio = dcsPlayerRadioInfo.radios[RadioId];
 

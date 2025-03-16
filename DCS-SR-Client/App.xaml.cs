@@ -111,7 +111,7 @@ namespace DCS_SR_Client
             }
 #endif
 
-            RequireAdmin();
+            RequireAdmin( Services.GetService<ISrsSettings>().ClientSettings.RequireAdmin );
 
             InitNotificationIcon();
             
@@ -157,9 +157,9 @@ namespace DCS_SR_Client
             }
         }
 
-        private void RequireAdmin()
+        private void RequireAdmin(bool requireAdmin)
         {
-            if (!GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.RequireAdmin))
+            if (!requireAdmin)
             {
                 return;
             }
@@ -167,7 +167,7 @@ namespace DCS_SR_Client
             WindowsPrincipal principal = new WindowsPrincipal(WindowsIdentity.GetCurrent());
             bool hasAdministrativeRight = principal.IsInRole(WindowsBuiltInRole.Administrator);
 
-            if (!hasAdministrativeRight && GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.RequireAdmin))
+            if (!hasAdministrativeRight && requireAdmin)
             {
                 Task.Factory.StartNew(() =>
                 {

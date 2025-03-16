@@ -8,6 +8,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.PresetChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using MathNet.Numerics.Distributions;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Utils
@@ -89,8 +90,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Utils
                         {
                             return false;
                         }
-
-                        if (GlobalSettingsStore.Instance.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.RotaryStyleIncrement))
+                        if (Ioc.Default.GetRequiredService<ISrsSettings>().CurrentProfile.RotaryStyleIncrement)
                         {
                             // Easier to simply shift the decimal place value to the ones position for finding numeral at specific position
                             double adjustedFrequency = Math.Abs((int)Math.Round(radio.freq / frequency));

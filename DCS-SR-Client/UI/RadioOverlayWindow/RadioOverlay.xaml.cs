@@ -9,11 +9,13 @@ using System.Windows.Threading;
 using Ciribob.DCS.SimpleRadio.Standalone.Client;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.Old;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow;
 using NLog;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
 {
@@ -32,7 +34,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
 
         private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
 
-        private readonly GlobalSettingsStore _globalSettings = GlobalSettingsStore.Instance;
+        private readonly ISrsSettings _globalSettings = Ioc.Default.GetRequiredService<ISrsSettings>();
 
         private readonly double _originalMinHeight;
 
@@ -56,7 +58,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
             _radioHeight = Radio1.Height;
 
             AllowsTransparency = true;
-            Opacity = _globalSettings.GetPositionSetting(GlobalSettingsKeys.RadioOpacity).DoubleValue;
+            Opacity = _globalSettings.ClientSettings.RadioOpacity;
             WindowOpacitySlider.Value = Opacity;
 
             radioControlGroup[0] = Radio1;
@@ -68,11 +70,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
             //allows click and drag anywhere on the window
             ContainerPanel.MouseLeftButtonDown += WrapPanel_MouseLeftButtonDown;
 
-            Left = _globalSettings.GetPositionSetting(GlobalSettingsKeys.RadioX).DoubleValue;
-            Top = _globalSettings.GetPositionSetting(GlobalSettingsKeys.RadioY).DoubleValue;
+            Left = _globalSettings.ClientSettings.RadioX;
+            Top = _globalSettings.ClientSettings.RadioY;
 
-            Width = _globalSettings.GetPositionSetting(GlobalSettingsKeys.RadioWidth).DoubleValue;
-            Height = _globalSettings.GetPositionSetting(GlobalSettingsKeys.RadioHeight).DoubleValue;
+            Width = _globalSettings.ClientSettings.RadioWidth;
+            Height = _globalSettings.ClientSettings.RadioHeight;
 
             //  Window_Loaded(null, null);
             CalculateScale();
@@ -205,7 +207,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
 
         private void FocusDCS()
         {
-            if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.RefocusDCS))
+            if (_globalSettings.ClientSettings.RefocusDcs)
             {
                 var overlayWindow = new WindowInteropHelper(this).Handle;
 
@@ -237,11 +239,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            _globalSettings.SetPositionSetting(GlobalSettingsKeys.RadioWidth, Width);
-            _globalSettings.SetPositionSetting(GlobalSettingsKeys.RadioHeight,Height);
-            _globalSettings.SetPositionSetting(GlobalSettingsKeys.RadioOpacity,Opacity);
-            _globalSettings.SetPositionSetting(GlobalSettingsKeys.RadioX,Left);
-            _globalSettings.SetPositionSetting(GlobalSettingsKeys.RadioY, Top);
+            _globalSettings.ClientSettings.RadioWidth = Width;
+            _globalSettings.ClientSettings.RadioHeight = Height;
+            _globalSettings.ClientSettings.RadioOpacity = Opacity;
+            _globalSettings.ClientSettings.RadioX = Left;
+            _globalSettings.ClientSettings.RadioY = Top;
             base.OnClosing(e);
 
             _updateTimer.Stop();
@@ -251,7 +253,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
         {
             // Minimising a window without a taskbar icon leads to the window's menu bar still showing up in the bottom of screen
             // Since controls are unusable, but a very small portion of the always-on-top window still showing, we're closing it instead, similar to toggling the overlay
-            if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.RadioOverlayTaskbarHide))
+            if (_globalSettings.ClientSettings.RadioOverlayTaskbarHide)
             {
                 Close();
             }

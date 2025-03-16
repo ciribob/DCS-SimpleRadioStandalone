@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
+namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.Old
 {
     abstract public class InputDeviceBase
     {

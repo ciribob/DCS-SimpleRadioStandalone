@@ -275,28 +275,25 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
 
         private void PollAllDevices()
         {
-            var deviceList = _inputDevices.Values.ToList();
-
-            for (var i = 0; i < deviceList.Count; i++)
+            foreach (var singleDevice in _inputDevices.Values.ToList())
             {
-                if (deviceList[i] == null || deviceList[i].IsDisposed)
+                if (singleDevice == null || singleDevice.IsDisposed)
                 {
                     continue;
                 }
 
                 try
                 {
-                    deviceList[i].Poll();
+                    singleDevice.Poll();
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex, $"Failed to get current state of input device {deviceList[i].Information.ProductName.Trim().Replace("\0", "")} " +
-                                    $"(ID: {deviceList[i].Information.ProductGuid}) while assigning button, ignoring until next restart/rediscovery");
+                    Logger.Error(ex, $"Failed to get current state of input device {singleDevice.Information.ProductName.Trim().Replace("\0", "")} " +
+                                    $"(ID: {singleDevice.Information.ProductGuid}) while assigning button, ignoring until next restart/rediscovery");
                     try
                     {
-                        deviceList[i].Unacquire();
-                        deviceList[i].Dispose();
-                        deviceList[i] = null;
+                        singleDevice.Unacquire();
+                        singleDevice.Dispose();
                     }
                     catch (Exception)
                     {

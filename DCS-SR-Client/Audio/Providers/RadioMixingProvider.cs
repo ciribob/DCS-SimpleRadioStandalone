@@ -260,7 +260,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
 
         private void PlaySoundEffectEndReceive(RadioInformation.Modulation modulation)
         {
-            if (!ProfileSettings.RadioRxEffects_End)
+            if (!ProfileSettings.IsRadioRxEndEffectsEnabled)
             {
                 return;
             }
@@ -296,7 +296,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
 
         public void PlaySoundEffectStartReceive(bool encrypted, RadioInformation.Modulation modulation)
         {
-            if (!ProfileSettings.RadioRxEffects_Start)
+            if (!ProfileSettings.IsRadioRxStartEffectsEnabled)
             {
                 return;
             }
@@ -341,7 +341,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
             lastModulation = modulation;
             lastVolume = volume;
 
-            if (!ProfileSettings.RadioTxEffectsStart)
+            if (!ProfileSettings.IsRadioTxStartEffectsEnabled)
             {
                 return;
             }
@@ -388,7 +388,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
             lastModulation = modulation;
             lastVolume = volume;
 
-            if (!ProfileSettings.RadioTxEffectsEnd)
+            if (!ProfileSettings.IsRadioTxEndEffectsEnabled)
             {
                 return;
             }

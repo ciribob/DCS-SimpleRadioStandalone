@@ -111,7 +111,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     Name = sideInfo.name,
                     LatLngPosition = sideInfo.LngLngPosition,
                     ClientGuid = _guid,
-                    AllowRecord = ClientSettings.AllowRecording
+                    AllowRecord = ClientSettings.IsAllowRecordingEnabled
                 },
                 ExternalAWACSModePassword = password,
                 MsgType = NetworkMessage.MessageType.EXTERNAL_AWACS_MODE_PASSWORD
@@ -224,7 +224,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     Seat = sideInfo.seat,
                     ClientGuid = _guid,
                     RadioInfo = _clientStateSingleton.DcsPlayerRadioInfo,
-                    AllowRecord = ClientSettings.AllowRecording
+                    AllowRecord = ClientSettings.IsAllowRecordingEnabled
                 },
                 MsgType = NetworkMessage.MessageType.RADIO_UPDATE
             };
@@ -255,7 +255,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     Name = sideInfo.name,
                     Seat = sideInfo.seat,
                     ClientGuid = _guid,
-                    AllowRecord = ClientSettings.AllowRecording
+                    AllowRecord = ClientSettings.IsAllowRecordingEnabled
                 },
                 MsgType = NetworkMessage.MessageType.UPDATE
             };
@@ -333,7 +333,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                             LatLngPosition = sideInfo.LngLngPosition,
                             ClientGuid = _guid,
                             RadioInfo = _clientStateSingleton.DcsPlayerRadioInfo,
-                            AllowRecord = ClientSettings.AllowRecording
+                            AllowRecord = ClientSettings.IsAllowRecordingEnabled
                         },
                         MsgType = NetworkMessage.MessageType.SYNC,
                     });

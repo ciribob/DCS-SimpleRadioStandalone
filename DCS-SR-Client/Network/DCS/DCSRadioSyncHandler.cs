@@ -217,7 +217,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
             if (expansion)
             {
                 //override the server side setting
-                expansion = !GlobalSettings.CurrentProfile.DisableExpansionRadios;
+                expansion = !GlobalSettings.CurrentProfile.IsExpansionRadiosDisabled;
             }
 
             var playerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;

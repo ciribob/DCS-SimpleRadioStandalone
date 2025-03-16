@@ -232,9 +232,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             if ((now - lastLoaded) > 30000000)
             {
                 lastLoaded = now;
-                ambientCockpitEffectEnabled = ProfileSettings.AmbientCockpitNoiseEffect;
+                ambientCockpitEffectEnabled = ProfileSettings.IsAmbientCockpitNoiseEffectEnabled;
                 ambientCockpitEffectVolume = ProfileSettings.AmbientCockpitNoiseEffectVolume;
-                ambientCockpitIntercomEffectEnabled = ProfileSettings.AmbientCockpitIntercomNoiseEffect;
+                ambientCockpitIntercomEffectEnabled = ProfileSettings.IsAmbientCockpitIntercomNoiseEffectEnabled;
             }
                 
         }

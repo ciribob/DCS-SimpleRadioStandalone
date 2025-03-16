@@ -30,11 +30,11 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 	
 	public ProfileSettingsModel CurrentProfile
 	{
-		get => _profileSettings[ClientSettings.CurrentProfileName];
+		get => _profileSettings[ClientSettings.LastUsedProfileName];
 		set
 		{
-			Logger.Info(ClientSettings.CurrentProfileName + " - Profile now in use");
-			_profileSettings[ClientSettings.CurrentProfileName] = value;
+			Logger.Info(ClientSettings.LastUsedProfileName + " - Profile now in use");
+			_profileSettings[ClientSettings.LastUsedProfileName] = value;
 		}
 	}
 	
@@ -47,7 +47,7 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 	private string _currentProfileName = "default";
 	partial void OnCurrentProfileNameChanged(string value)
 	{
-		ClientSettings.CurrentProfileName = value;
+		ClientSettings.LastUsedProfileName = value;
 	}
 
 	// Connected Server Settings
@@ -84,7 +84,7 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 		if (objValue != null && objValue == "TRUE") { ClientSettings.AllowAnonymousUsage = true; }
 		else { ClientSettings.AllowAnonymousUsage = false; }
 		
-		if (!_profileSettings.ContainsKey(ClientSettings.CurrentProfileName)) { ClientSettings.CurrentProfileName = "default"; }
+		if (!_profileSettings.ContainsKey(ClientSettings.LastUsedProfileName)) { ClientSettings.LastUsedProfileName = "default"; }
 		OnPropertyChanged(nameof(CurrentProfileName));
 		
 		WeakReferenceMessenger.Default.Register<SettingChangingMessage>(this, (r, m) =>

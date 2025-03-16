@@ -11,7 +11,7 @@ public interface ISrsSettings
 	ServerSettingsModel CurrentServerSettings { get; }
 	
 	List<string> ProfileNames { get; }
-	string CurrentProfileName { get; }
+	string CurrentProfileName { get; set; }
 
 	IRelayCommand<string> CreateProfileCommand { get; }
 	IRelayCommand<string> RenameProfileCommand { get; }

@@ -57,7 +57,7 @@ public partial class InputDevice : ObservableObject, ICloneable
 		base.OnPropertyChanging(e);
 	}
 	
-	[ObservableProperty] private string _deviceName = string.Empty;
+	[ObservableProperty] private string _deviceName = "None";
 	[ObservableProperty] private int _button = (int)0;
 	public int ButtonValue { get; internal set; } = (int)0;
 	public Guid Guid { get; internal set; } = Guid.Empty;

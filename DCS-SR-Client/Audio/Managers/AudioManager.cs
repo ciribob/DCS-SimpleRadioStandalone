@@ -346,7 +346,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                         //check for voice before any pre-processing
                         bool voice = true;
 
-                        if (ClientSettings.Vox)
+                        if (ClientSettings.IsVoxEnabled)
                         {
                             Buffer.BlockCopy(_pcmShort, 0, _pcmBytes, 0, _pcmBytes.Length);
                             voice = DoesFrameContainSpeech(_pcmBytes, _pcmShort);
@@ -387,7 +387,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
                             // _beforeWaveFile.Write(pcmBytes, 0, pcmBytes.Length);
 
-                            if (clientAudio != null && (_micWaveOutBuffer != null || ClientSettings.RecordAudio))
+                            if (clientAudio != null && (_micWaveOutBuffer != null || ClientSettings.IsRecordAudioEnabled))
                             {
 
                                 //todo see if we can fix the resample / opus decode
@@ -430,7 +430,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                                         _micWaveOutBuffer.AddSamples(_tempMicOutputBuffer, 0, tempFloat.Length * 4);
                                     }
 
-                                    if (ClientSettings.RecordAudio)
+                                    if (ClientSettings.IsRecordAudioEnabled)
                                     {
                                         ///TODO cache this to avoid the contant lookup
                                         _audioRecordingManager.AppendPlayerAudio(tempFloat, jitterBufferAudio.ReceivedRadio);

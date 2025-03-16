@@ -21,17 +21,17 @@ public partial class ProfileSettingsModel : ObservableObject, ICloneable
 	[ObservableProperty] private bool _radioEffectsClipping = false;
 	[ObservableProperty] private bool _radioEncryptionEffects = true;
 	[ObservableProperty] private bool _natoFmTone = true;
-	[ObservableProperty] private bool _haveQuickTone = true;
-	[ObservableProperty] private bool _radioRxEffects_Start = true;
-	[ObservableProperty] private bool _radioRxEffects_End = true;
+	[ObservableProperty] private bool _isHaveQuickToneEnabled = true;
 	
 	[ObservableProperty] private string _radioTransmissionStartEffectName = "";
 	[ObservableProperty] private string _radioTransmissionEndEffectName = "";
 	[ObservableProperty] private string _intercomTransmissionStartEffectName = "";
 	[ObservableProperty] private string _intercomTransmissionEndEffectName = "";
 	
-	[ObservableProperty] private bool _radioTxEffectsStart = true;
-	[ObservableProperty] private bool _radioTxEffectsEnd = true;
+	[ObservableProperty] private bool _isRadioTxStartEffectsEnabled = true;
+	[ObservableProperty] private bool _isRadioTxEndEffectsEnabled = true;
+	[ObservableProperty] private bool _isRadioRxStartEffectsEnabled = true;
+	[ObservableProperty] private bool _isRadioRxEndEffectsEnabled = true;
 	[ObservableProperty] private bool _midsRadioEffect = true;
 	
 	[ObservableProperty] private bool _autoSelectPresetChannel = true;
@@ -44,10 +44,10 @@ public partial class ProfileSettingsModel : ObservableObject, ICloneable
 
 	[ObservableProperty] private float _pttReleaseDelay = 0.0f;
 	[ObservableProperty] private float _pttStartDelay = 0.0f;
-	[ObservableProperty] private bool _radioBackgroundNoiseEffect = false;
+	[ObservableProperty] private bool _isRadioBackgroundNoiseEffectEnabled = false;
 	
 	[ObservableProperty] private float _natoFmToneVolume = 1.2f;
-	[ObservableProperty] private float _hqToneVolume = 0.3f;
+	[ObservableProperty] private float _haveQuickToneVolume = 0.3f;
 	[ObservableProperty] private float _vhfNoiseVolume = 0.15f;
 	[ObservableProperty] private float _hfNoiseVolume = 0.15f;
 	[ObservableProperty] private float _uhfNoiseVolume = 0.15f;
@@ -55,10 +55,10 @@ public partial class ProfileSettingsModel : ObservableObject, ICloneable
 	
 	[ObservableProperty] private float _amCollisionToneVolume = 1.0f;
 	[ObservableProperty] private bool _rotaryStyleIncrement = false;
-	[ObservableProperty] private bool _ambientCockpitNoiseEffect = true;
+	[ObservableProperty] private bool _isAmbientCockpitNoiseEffectEnabled = true;
 	[ObservableProperty] private float _ambientCockpitNoiseEffectVolume = 1.0f;
-	[ObservableProperty] private bool _ambientCockpitIntercomNoiseEffect = false;
-	[ObservableProperty] private bool _disableExpansionRadios = false;
+	[ObservableProperty] private bool _isAmbientCockpitIntercomNoiseEffectEnabled = false;
+	[ObservableProperty] private bool _isExpansionRadiosDisabled = false;
 	[ObservableProperty] private float _balanceIntercom = 0.0f;
 	[ObservableProperty] private float _balanceRadio01 = 0.0f;
 	[ObservableProperty] private float _balanceRadio02 = 0.0f;

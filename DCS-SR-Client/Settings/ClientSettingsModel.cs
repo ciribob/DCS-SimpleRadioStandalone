@@ -80,7 +80,7 @@ public partial class ClientSettingsModel : ObservableObject
 	[ObservableProperty] private bool _requireAdmin = true;
 	[ObservableProperty] private bool _allowAnonymousUsage = false;
 	
-	[ObservableProperty] private string _currentProfileName  = "default";
+	[ObservableProperty] private string _lastUsedProfileName  = "default";
 
 	[ObservableProperty] private bool _autoSelectSettingsProfile = false;
 	
@@ -94,13 +94,13 @@ public partial class ClientSettingsModel : ObservableObject
 	
 	[ObservableProperty] private int _idleTimeOut = (int)600;
 	
-	[ObservableProperty] private bool _allowRecording = false;
-	[ObservableProperty] private bool _recordAudio = false;
-	[ObservableProperty] private bool _singleFileMixdown = false;
+	[ObservableProperty] private bool _isAllowRecordingEnabled = false;
+	[ObservableProperty] private bool _isRecordAudioEnabled = false;
+	[ObservableProperty] private bool _isSingleFileMixdownEnabled = false;
 	[ObservableProperty] private int _recordingQuality = (int)3;
-	[ObservableProperty] private bool _disallowedAudioTone = false;
+	[ObservableProperty] private bool _isDisallowedAudioToneEnabled = false;
 	
-	[ObservableProperty] private bool _vox = false;
+	[ObservableProperty] private bool _isVoxEnabled = false;
 	[ObservableProperty] private int _voxMode = (int)3;
 	[ObservableProperty] private int _voxMinimumTime = (int)300;
 	[ObservableProperty] private double _voxMinimumDb = (double)-59.0;

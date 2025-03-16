@@ -88,10 +88,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
                 lastRefresh = now;
 
                 natoToneEnabled = ProfileSettings.NatoFmTone;
-                hqToneEnabled = ProfileSettings.HaveQuickTone;
+                hqToneEnabled = ProfileSettings.IsHaveQuickToneEnabled;
                 radioEffectsEnabled = ProfileSettings.RadioEffects;
                 clippingEnabled = ProfileSettings.RadioEffectsClipping;
-                hqToneVolume = ProfileSettings.HqToneVolume;
+                hqToneVolume = ProfileSettings.HaveQuickToneVolume;
                 natoToneVolume = ProfileSettings.NatoFmToneVolume;
                 amCollisionVol = ProfileSettings.AmCollisionToneVolume;
 
@@ -102,7 +102,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
 
                 radioEffects = ProfileSettings.RadioEffects;
 
-                radioBackgroundNoiseEffect = ProfileSettings.RadioBackgroundNoiseEffect;
+                radioBackgroundNoiseEffect = ProfileSettings.IsRadioBackgroundNoiseEffectEnabled;
 
                 irlRadioRXInterference = ServerSettings.IsRadioRxInterferenceEnabled;
             }

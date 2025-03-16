@@ -132,6 +132,13 @@ public partial class ProfileSettingsModel : ObservableObject, ICloneable
 			return temp;
 		} 
 	}
+
+	[JsonIgnore]
+	public List<float> RadioBalanceList => new(){
+		BalanceIntercom, 
+		BalanceRadio01, BalanceRadio02, BalanceRadio03, BalanceRadio04, BalanceRadio05, 
+		BalanceRadio06, BalanceRadio07, BalanceRadio08, BalanceRadio09, BalanceRadio10
+	};
 	
 	public object Clone()
 	{

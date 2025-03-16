@@ -420,73 +420,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
                 }
             }
         }
-
-
-
+        
         public float[] SeparateAudio(float[] srcFloat, int srcCount, int srcOffset, float[] dstFloat, int dstOffset,
             int radioId)
         {
-            var settingType = ProfileSettingsKeys.Radio1Channel;
-
-            if (radioId == 0)
-            {
-                settingType = ProfileSettingsKeys.IntercomChannel;
-            }
-            else if (radioId == 1)
-            {
-                settingType = ProfileSettingsKeys.Radio1Channel;
-            }
-            else if (radioId == 2)
-            {
-                settingType = ProfileSettingsKeys.Radio2Channel;
-            }
-            else if (radioId == 3)
-            {
-                settingType = ProfileSettingsKeys.Radio3Channel;
-            }
-            else if (radioId == 4)
-            {
-                settingType = ProfileSettingsKeys.Radio4Channel;
-            }
-            else if (radioId == 5)
-            {
-                settingType = ProfileSettingsKeys.Radio5Channel;
-            }
-            else if (radioId == 6)
-            {
-                settingType = ProfileSettingsKeys.Radio6Channel;
-            }
-            else if (radioId == 7)
-            {
-                settingType = ProfileSettingsKeys.Radio7Channel;
-            }
-            else if (radioId == 8)
-            {
-                settingType = ProfileSettingsKeys.Radio8Channel;
-            }
-            else if (radioId == 9)
-            {
-                settingType = ProfileSettingsKeys.Radio9Channel;
-            }
-            else if (radioId == 10)
-            {
-                settingType = ProfileSettingsKeys.Radio10Channel;
-            }
-            else
-            {
-                return CreateBalancedMix(srcFloat, srcCount, srcOffset, dstFloat, dstOffset, 0);
-            }
-
-            float balance = 0;
-            try
-            {
-                balance = profileSettings.GetClientSettingFloat(settingType);
-            }
-            catch (Exception)
-            {
-                //ignore
-            }
-
+            float balance = ProfileSettings.RadioBalanceList[radioId];
             return CreateBalancedMix(srcFloat, srcCount, srcOffset, dstFloat, dstOffset, balance);
         }
 

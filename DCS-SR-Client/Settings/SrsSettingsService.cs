@@ -83,7 +83,15 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 		WeakReferenceMessenger.Default.Register<SettingChangingMessage>(this, (r, m) =>
 		{
 			OnPropertyChanging();
-			SaveSettings();
+			switch (m.ChangeType)
+			{
+				case SettingCatagory.Client:
+					SaveSettings(ClientSettings, $"./{ClientSettingsFileName}.json");
+					break;
+				case SettingCatagory.Profile:
+					SaveSettings(CurrentProfile, $"./{CurrentProfile}_{ProfileFileNameSuffix}.json");
+					break;
+			}
 		});
 	}
 	

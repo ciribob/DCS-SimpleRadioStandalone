@@ -136,15 +136,18 @@ namespace DCS_SR_Client
 
             // Services
             services.AddSingleton<ISrsSettings, SrsSettingsService>();
+            
+            /* These Need ISrsSettings to be set, so they cant be here yet.
             services.AddSingleton(AudioInputSingleton.Instance);
             services.AddSingleton(AudioOutputSingleton.Instance);
             services.AddSingleton(ClientStateSingleton.Instance);
             services.AddSingleton(ConnectedClientsSingleton.Instance);
+            */
             
             // ViewModels
              //services.AddSingleton<IMainViewModel, MainWindowViewModel>();
-            
-            return services.BuildServiceProvider();
+
+             return services.BuildServiceProvider();
         }
 
         private void ListArgs()

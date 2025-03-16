@@ -77,16 +77,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         public ISrsSettings GlobalSettings => Ioc.Default.GetRequiredService<ISrsSettings>();
 
         /// <remarks>Used in the XAML for DataBinding many things</remarks>
-        public ClientStateSingleton ClientState { get; } = Ioc.Default.GetRequiredService<ClientStateSingleton>();
+        public ClientStateSingleton ClientState { get; } = ClientStateSingleton.Instance;
 
         /// <remarks>Used in the XAML for DataBinding the connected client count</remarks>
-        public ConnectedClientsSingleton Clients { get; } = Ioc.Default.GetRequiredService<ConnectedClientsSingleton>();
+        public ConnectedClientsSingleton Clients { get; } = ConnectedClientsSingleton.Instance;
 
         /// <remarks>Used in the XAML for DataBinding input audio related UI elements</remarks>
-        public AudioInputSingleton AudioInput { get; } = Ioc.Default.GetRequiredService<AudioInputSingleton>();
+        public AudioInputSingleton AudioInput { get; } = AudioInputSingleton.Instance;
 
         /// <remarks>Used in the XAML for DataBinding output audio related UI elements</remarks>
-        public AudioOutputSingleton AudioOutput { get; } = Ioc.Default.GetRequiredService<AudioOutputSingleton>();
+        public AudioOutputSingleton AudioOutput { get; } = AudioOutputSingleton.Instance;
         
         public MainWindow()
         {

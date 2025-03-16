@@ -10,7 +10,7 @@ public partial class ServerSettingsModel : ObservableObject
 {
 	protected override void OnPropertyChanging(PropertyChangingEventArgs e)
 	{
-		WeakReferenceMessenger.Default.Send(new SettingChangingMessage());
+		WeakReferenceMessenger.Default.Send(new SettingChangingMessage(SettingCatagory.Server));
 		base.OnPropertyChanging(e);
 	}
 	

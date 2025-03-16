@@ -13,7 +13,7 @@ public partial class ProfileSettingsModel : ObservableObject, ICloneable
 {
 	protected override void OnPropertyChanging(PropertyChangingEventArgs e)
 	{
-		WeakReferenceMessenger.Default.Send(new SettingChangingMessage());
+		WeakReferenceMessenger.Default.Send(new SettingChangingMessage(SettingCatagory.Profile));
 		base.OnPropertyChanging(e);
 	}
 	

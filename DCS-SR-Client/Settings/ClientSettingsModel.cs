@@ -9,7 +9,7 @@ public partial class ClientSettingsModel : ObservableObject
 {
 	protected override void OnPropertyChanging(PropertyChangingEventArgs e)
 	{
-		WeakReferenceMessenger.Default.Send(new SettingChangingMessage());
+		WeakReferenceMessenger.Default.Send(new SettingChangingMessage( SettingCatagory.Client));
 		base.OnPropertyChanging(e);
 	}
 

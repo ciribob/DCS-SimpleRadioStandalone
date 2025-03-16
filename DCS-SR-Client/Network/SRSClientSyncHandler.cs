@@ -358,7 +358,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                                         if (serverMessage.ServerSettings != null)
                                         {
-                                            _serverSettings.Decode(serverMessage.ServerSettings);
+                                            ServerSettings.Decode(serverMessage.ServerSettings);
                                         }
                                         
                                         if (_clients.ContainsKey(serverMessage.Client.ClientGuid))
@@ -460,7 +460,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                             }
                                         }
                                         //add server settings
-                                        _serverSettings.Decode(serverMessage.ServerSettings);
+                                        ServerSettings.Decode(serverMessage.ServerSettings);
 
                                         if (_clientStateSingleton.ExternalAWACSModelSelected &&
                                             !ServerSettings.IsExternalModeAllowed)
@@ -474,7 +474,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                                     case NetworkMessage.MessageType.SERVER_SETTINGS:
 
-                                        _serverSettings.Decode(serverMessage.ServerSettings);
+                                        ServerSettings.Decode(serverMessage.ServerSettings);
                                         ServerVersion = serverMessage.Version;
 
                                         if (_clientStateSingleton.ExternalAWACSModelSelected &&

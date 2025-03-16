@@ -168,7 +168,7 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 	public void CreateNewAppSettings()
 	{
 		string json = JsonConvert.SerializeObject(new SettingsModel(), Formatting.Indented);
-		File.WriteAllText(SettingsFileName, json, Encoding.UTF8);
+		File.WriteAllText($"./{ClientSettingsFileName}.json", json, Encoding.UTF8);
 	}
 
 	public void Receive(SettingChangingMessage message)

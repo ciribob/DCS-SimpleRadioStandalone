@@ -142,6 +142,10 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 	private void CreateProfile(string profileName)
 	{
 		ProfileSettingsModel newProfile = new ProfileSettingsModel();
+		if (ProfileNames.Contains(profileName))
+		{
+			profileName = $"{profileName}1";
+		}
 		
 		_profileSettings.Add(profileName, newProfile);
 		CurrentProfileName = $"{profileName}";
@@ -152,6 +156,12 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 	{
 		string oldProfileName = CurrentProfileName;
 		ProfileSettingsModel newProfile = (ProfileSettingsModel)CurrentProfile.Clone();
+		
+		if (ProfileNames.Contains(profileName))
+		{
+			profileName = $"{profileName}1";
+		}
+		
 		_profileSettings.Add(profileName, newProfile);
 		_profileSettings.Remove(oldProfileName);
 		
@@ -162,6 +172,11 @@ public partial class SrsSettingsService : ObservableRecipient, ISrsSettings
 	[RelayCommand] private void DuplicateProfile(string profileName)
 	{
 		ProfileSettingsModel newProfile = (ProfileSettingsModel)CurrentProfile.Clone();
+		
+		if (ProfileNames.Contains(profileName))
+		{
+			profileName = $"{profileName}1";
+		}
 		
 		_profileSettings.Add(profileName, newProfile);
 		CurrentProfileName = $"{profileName}";

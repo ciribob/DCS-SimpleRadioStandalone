@@ -1632,7 +1632,9 @@
                             <ComboBox x:Name="ControlsProfile"
                                       Width="200"
                                       HorizontalAlignment="Center"
-                                      VerticalAlignment="Top" Margin="5" Padding="5" />
+                                      VerticalAlignment="Top" Margin="5" Padding="5"
+                                      ItemsSource="{Binding GlobalSettings.ProfileNames}"
+                                      SelectedValue="{Binding GlobalSettings.CurrentProfileName}"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
                                 <Button Margin="5" Padding="5" Content="{x:Static p:Resources.CreateProfile}" Click="CreateProfile" />
                                 <Button Margin="5" Padding="5" Content="{x:Static p:Resources.CopyProfile}" Click="CopyProfile" />

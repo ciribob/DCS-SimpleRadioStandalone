@@ -134,7 +134,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             InitSettingsScreen();
 
-            InitSettingsProfiles();
             ReloadProfile();
 
             InitInput();
@@ -300,26 +299,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             ServerAddress = FavouriteServersViewModel.DefaultServerAddress;
         }
 
-        private void InitSettingsProfiles()
-        {
-            ControlsProfile.IsEnabled = false;
-            ControlsProfile.Items.Clear();
-            foreach (var profile in GlobalSettings.ProfileNames)
-            {
-                ControlsProfile.Items.Add(profile);
-            }
-            ControlsProfile.IsEnabled = true;
-            ControlsProfile.SelectedIndex = 0;
-
-            CurrentProfile.Content = GlobalSettings.CurrentProfileName;
-
-        }
-
         void ReloadProfile()
         {
             //switch profiles
-            Logger.Info(ControlsProfile.SelectedValue as string + " - Profile now in use");
-            GlobalSettings.CurrentProfileName = ControlsProfile.SelectedValue as string;
+            Logger.Info(GlobalSettings.CurrentProfileName + " - Profile now in use");
+            GlobalSettings.CurrentProfileName = GlobalSettings.CurrentProfileName;
 
             //redraw UI
             ReloadInputBindings();
@@ -332,10 +316,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         {
             InputManager = new InputDeviceManager(this, ToggleOverlay);
 
-            InitSettingsProfiles();
-
             ControlsProfile.SelectionChanged += OnProfileDropDownChanged;
-
             RadioStartTransmitEffect.SelectionChanged += OnRadioStartTransmitEffectChanged;
             RadioEndTransmitEffect.SelectionChanged += OnRadioEndTransmitEffectChanged;
 
@@ -910,7 +891,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                                                 if (name.StartsWith(Regex.Replace(splitName, "[^a-zA-Z0-9]", "")) &&
                                                     profileName.Trim().EndsWith(nameSeat))
                                                 {
-                                                    ControlsProfile.SelectedItem = profileName;
+                                                    GlobalSettings.CurrentProfileName = profileName;
                                                     return;
                                                 }
                                             }
@@ -921,12 +902,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                                                 if (name.StartsWith(Regex.Replace(profileName.Trim().ToLower(),
                                                         "[^a-zA-Z0-9_]", "")))
                                                 {
-                                                    ControlsProfile.SelectedItem = profileName;
+                                                    GlobalSettings.CurrentProfileName = profileName;
                                                     return;
                                                 }
                                             }
 
-                                            ControlsProfile.SelectedIndex = 0;
+                                            GlobalSettings.CurrentProfileName = "default";
 
                                         }));
                                 }
@@ -1802,8 +1783,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                     if (name.Trim().Length > 0)
                     {
                         GlobalSettings.CreateProfileCommand.Execute(name);
-                        InitSettingsProfiles();
-
                     }
                 });
             inputProfileWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -1813,7 +1792,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         private void DeleteProfile(object sender, RoutedEventArgs e)
         {
-            var current = ControlsProfile.SelectedValue as string;
+            var current = GlobalSettings.CurrentProfileName;
 
             if (current.Equals("default"))
             {
@@ -1833,9 +1812,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    ControlsProfile.SelectedIndex = 0;
+                    GlobalSettings.CurrentProfileName = "default";
                     GlobalSettings.DeleteProfileCommand.Execute(current);
-                    InitSettingsProfiles();
                 }
 
             }
@@ -1845,7 +1823,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         private void RenameProfile(object sender, RoutedEventArgs e)
         {
 
-            var current = ControlsProfile.SelectedValue as string;
+            var current = GlobalSettings.CurrentProfileName;
             if (current.Equals("default"))
             {
                 MessageBox.Show(this,
@@ -1862,7 +1840,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                     if (name.Trim().Length > 0)
                     {
                         GlobalSettings.RenameProfileCommand.Execute(name);
-                        InitSettingsProfiles();
                     }
                 }, true, oldName);
                 inputProfileWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -1894,13 +1871,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         private void CopyProfile(object sender, RoutedEventArgs e)
         {
-            var current = ControlsProfile.SelectedValue as string;
             var inputProfileWindow = new InputProfileWindow.InputProfileWindow(name =>
             {
                 if (name.Trim().Length > 0)
                 {
                     GlobalSettings.DuplicateProfileCommand.Execute(name);
-                    InitSettingsProfiles();
                 }
             });
             inputProfileWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;

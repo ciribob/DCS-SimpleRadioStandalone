@@ -90,7 +90,7 @@ namespace DCS_SR_Client
                     }
                 }
 
-                if (GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.AllowMultipleInstances) || allowMultiple)
+                if (Services.GetService<ISrsSettings>().ClientSettings.AllowMultipleInstances || allowMultiple)
                 {
                     Logger.Warn("Another SRS instance is already running, allowing multiple instances due to config setting");
                 }

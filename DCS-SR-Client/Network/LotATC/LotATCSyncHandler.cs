@@ -43,7 +43,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.LotATC
             _guid = guid;
             _clientStateSingleton = ClientStateSingleton.Instance;
 
-            _heightOffset = _globalSettings.GetClientSetting(GlobalSettingsKeys.LotATCHeightOffset).DoubleValue;
+            _heightOffset = _globalSettings.LotATCHeightOffset;
         }
 
         public void Start()

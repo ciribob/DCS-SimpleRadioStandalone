@@ -79,7 +79,7 @@ namespace DCS_SR_Client
                     }
                 }
 
-                if (GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.AllowMultipleInstances) || allowMultiple)
+                if (GlobalSettingsStore.Instance.AllowMultipleInstances || allowMultiple)
                 {
                     Logger.Warn("Another SRS instance is already running, allowing multiple instances due to config setting");
                 }
@@ -118,7 +118,7 @@ namespace DCS_SR_Client
 
         private void RequireAdmin()
         {
-            if (!GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.RequireAdmin))
+            if (!GlobalSettingsStore.Instance.RequireAdmin)
             {
                 return;
             }
@@ -126,7 +126,7 @@ namespace DCS_SR_Client
             WindowsPrincipal principal = new WindowsPrincipal(WindowsIdentity.GetCurrent());
             bool hasAdministrativeRight = principal.IsInRole(WindowsBuiltInRole.Administrator);
 
-            if (!hasAdministrativeRight && GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.RequireAdmin))
+            if (!hasAdministrativeRight && GlobalSettingsStore.Instance.RequireAdmin)
             {
                 Task.Factory.StartNew(() =>
                 {

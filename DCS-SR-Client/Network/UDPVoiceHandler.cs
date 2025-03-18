@@ -483,8 +483,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                             {
                                                 if (_serverSettings.GetSettingAsBool(ServerSettingsKeys
                                                         .SHOW_TRANSMITTER_NAME)
-                                                    && _globalSettings.GetClientSettingBool(GlobalSettingsKeys
-                                                        .ShowTransmitterName))
+                                                    && _globalSettings.ShowTransmitterName)
                                                 {
                                                     transmitterName = transmittingClient.Name;
                                                 }
@@ -856,7 +855,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     else if (radioInfo.intercomHotMic && !voice)
                     {
                         TimeSpan lastVOXSendDiff = new TimeSpan(DateTime.Now.Ticks - _lastVOXSend);
-                        if (lastVOXSendDiff.TotalMilliseconds < _globalSettings.GetClientSettingInt(GlobalSettingsKeys.VOXMinimumTime))
+                        if (lastVOXSendDiff.TotalMilliseconds < _globalSettings.VOXMinimumTime)
                         {
                             return intercom;
                         }

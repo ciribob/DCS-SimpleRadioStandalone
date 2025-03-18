@@ -71,7 +71,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.VAICOM
                             {
                                 if (vaicomMessageWrapper.MessageType == 1)
                                 {
-                                    if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.VAICOMTXInhibitEnabled))
+                                    if (_globalSettings.VAICOMTXInhibitEnabled)
                                     {
                                         vaicomMessageWrapper.LastReceivedAt = DateTime.Now.Ticks;
                                         _clientStateSingleton.InhibitTX = vaicomMessageWrapper;

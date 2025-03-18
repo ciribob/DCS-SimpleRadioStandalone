@@ -96,9 +96,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
 
         public void InitDevices()
         {
-            var allowXInput = _globalSettings.GetClientSettingBool(GlobalSettingsKeys.AllowXInputController);
+            var allowXInput = _globalSettings.AllowXInputController;
             Logger.Info("Starting Device Search. Expand Search: " +
-            (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.ExpandControls)) +
+            (_globalSettings.ExpandControls) +
             ". Use XInput (for Xbox controllers): " + allowXInput);
 
 
@@ -178,7 +178,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
 
                     _inputDevices.Add(deviceInstance.InstanceGuid, device);
                 }
-                else if (GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.ExpandControls))
+                else if (GlobalSettingsStore.Instance.ExpandControls)
                 {
                     Logger.Info("Adding (Expanded Devices) ID:" + deviceInstance.ProductGuid + " " +
                                 deviceInstance.ProductName.Trim().Replace("\0", ""));

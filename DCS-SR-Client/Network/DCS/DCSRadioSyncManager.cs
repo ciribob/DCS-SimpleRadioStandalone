@@ -46,7 +46,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 
         public bool IsListening { get; private set; }
 
-        private string PresetsFolder { get { return _globalSettings.GetClientSetting(GlobalSettingsKeys.LastPresetsFolder).RawValue; } }
+        private string PresetsFolder { get { return _globalSettings.LastPresetsFolder; } }
 
         public DCSRadioSyncManager(SendRadioUpdate clientRadioUpdate, ClientSideUpdate clientSideUpdate,
            string guid, DCSRadioSyncHandler.NewAircraft _newAircraftCallback)

@@ -277,7 +277,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
 
         public List<string> GetProfiles()
         {
-            var profiles = _globalSettings.GetClientSetting(GlobalSettingsKeys.SettingsProfiles).StringValueArray;
+            var profiles = _globalSettings.SettingsProfiles;
 
             if (profiles == null || profiles.Length == 0 || !profiles.Contains("default"))
             {

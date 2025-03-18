@@ -70,7 +70,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         private void CheckIfIdleTimeOut(object sender, EventArgs e)
         {
-            var timeout = GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.IdleTimeOut).IntValue;
+            var timeout = GlobalSettingsStore.Instance.IdleTimeOut;
             if (_lastSent != -1 && TimeSpan.FromTicks(DateTime.Now.Ticks - _lastSent).TotalSeconds > timeout)
             {
                 Logger.Warn("Disconnecting - Idle Time out");
@@ -109,7 +109,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     Name = sideInfo.name,
                     LatLngPosition = sideInfo.LngLngPosition,
                     ClientGuid = _guid,
-                    AllowRecord = GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.AllowRecording)
+                    AllowRecord = GlobalSettingsStore.Instance.AllowRecording
                 },
                 ExternalAWACSModePassword = password,
                 MsgType = NetworkMessage.MessageType.EXTERNAL_AWACS_MODE_PASSWORD
@@ -222,7 +222,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     Seat = sideInfo.seat,
                     ClientGuid = _guid,
                     RadioInfo = _clientStateSingleton.DcsPlayerRadioInfo,
-                    AllowRecord = GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.AllowRecording)
+                    AllowRecord = GlobalSettingsStore.Instance.AllowRecording
                 },
                 MsgType = NetworkMessage.MessageType.RADIO_UPDATE
             };
@@ -253,7 +253,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     Name = sideInfo.name,
                     Seat = sideInfo.seat,
                     ClientGuid = _guid,
-                    AllowRecord = GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.AllowRecording)
+                    AllowRecord = GlobalSettingsStore.Instance.AllowRecording
                 },
                 MsgType = NetworkMessage.MessageType.UPDATE
             };
@@ -331,7 +331,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                             LatLngPosition = sideInfo.LngLngPosition,
                             ClientGuid = _guid,
                             RadioInfo = _clientStateSingleton.DcsPlayerRadioInfo,
-                            AllowRecord = GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.AllowRecording)
+                            AllowRecord = GlobalSettingsStore.Instance.AllowRecording
                         },
                         MsgType = NetworkMessage.MessageType.SYNC,
                     });

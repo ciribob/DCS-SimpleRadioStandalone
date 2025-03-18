@@ -496,7 +496,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             SetSetting("Position Settings", key.ToString(), value.ToString(CultureInfo.InvariantCulture));
         }
 
-        public int GetClientSettingInt(GlobalSettingsKeys key)
+        private int GetClientSettingInt(GlobalSettingsKeys key)
         {
             if (_settingsCache.TryGetValue(key.ToString(), out var val))
             {
@@ -512,7 +512,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             return setting.IntValue;
         }
 
-        public double GetClientSettingDouble(GlobalSettingsKeys key)
+        private double GetClientSettingDouble(GlobalSettingsKeys key)
         {
             if (_settingsCache.TryGetValue(key.ToString(), out var val))
             {
@@ -527,7 +527,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             _settingsCache[key.ToString()] = setting.DoubleValue;
             return setting.DoubleValue;
         }
-        public bool GetClientSettingBool(GlobalSettingsKeys key)
+        private bool GetClientSettingBool(GlobalSettingsKeys key)
         {
             if (_settingsCache.TryGetValue(key.ToString(), out var val))
             {
@@ -543,30 +543,30 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             return setting.BoolValue;
         }
 
-        public Setting GetClientSetting(GlobalSettingsKeys key)
+        private Setting GetClientSetting(GlobalSettingsKeys key)
         {
             return GetSetting("Client Settings", key.ToString());
         }
 
-        public void SetClientSetting(GlobalSettingsKeys key, string value)
+        private void SetClientSetting(GlobalSettingsKeys key, string value)
         {
             _settingsCache.TryRemove(key.ToString(), out _);
             SetSetting("Client Settings", key.ToString(), value);
         }
 
-        public void SetClientSetting(GlobalSettingsKeys key, bool value)
+        private void SetClientSetting(GlobalSettingsKeys key, bool value)
         {
             _settingsCache.TryRemove(key.ToString(), out _);
             SetSetting("Client Settings", key.ToString(), value);
         }
 
-        public void SetClientSetting(GlobalSettingsKeys key, int value)
+        private void SetClientSetting(GlobalSettingsKeys key, int value)
         {
             _settingsCache.TryRemove(key.ToString(), out _);
             SetSetting("Client Settings", key.ToString(), value);
         }
 
-        public void SetClientSetting(GlobalSettingsKeys key, double value)
+        private void SetClientSetting(GlobalSettingsKeys key, double value)
         {
             _settingsCache.TryRemove(key.ToString(), out _);
             SetSetting("Client Settings", key.ToString(), value);

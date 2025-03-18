@@ -426,7 +426,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             return _configuration[section][setting];
         }
 
-        public bool GetClientSettingBool(ProfileSettingsKeys key)
+        private bool GetClientSettingBool(ProfileSettingsKeys key)
         {
 
             if (_settingsCache.TryGetValue(key.ToString(), out var val))
@@ -446,7 +446,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             return setting.BoolValue;
         }
 
-        public float GetClientSettingFloat(ProfileSettingsKeys key)
+        private float GetClientSettingFloat(ProfileSettingsKeys key)
         {
             if (_settingsCache.TryGetValue(key.ToString(),out var val))
             {
@@ -464,7 +464,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             return setting;
         }
 
-        public string GetClientSettingString(ProfileSettingsKeys key)
+        private string GetClientSettingString(ProfileSettingsKeys key)
         {
             if (_settingsCache.TryGetValue(key.ToString(), out var val))
             {
@@ -479,20 +479,20 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
         }
 
 
-        public void SetClientSettingBool(ProfileSettingsKeys key, bool value)
+        private void SetClientSettingBool(ProfileSettingsKeys key, bool value)
         {
             SetSetting("Client Settings", key.ToString(), value);
 
             _settingsCache.TryRemove(key.ToString(), out var res);
         }
 
-        public void SetClientSettingFloat(ProfileSettingsKeys key, float value)
+        private void SetClientSettingFloat(ProfileSettingsKeys key, float value)
         {
             SetSetting("Client Settings", key.ToString(), value);
 
             _settingsCache.TryRemove(key.ToString(), out var res);
         }
-        public void SetClientSettingString(ProfileSettingsKeys key, string value)
+        private void SetClientSettingString(ProfileSettingsKeys key, string value)
         {
             SetSetting("Client Settings", key.ToString(), value);
             _settingsCache.TryRemove(key.ToString(), out var res);

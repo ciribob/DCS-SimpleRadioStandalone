@@ -57,7 +57,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
                     {
                         DCSPTT.Content = Properties.Resources.OverlayAvailableCockpit;
 
-                        if (!profile.GetClientSettingBool(ProfileSettingsKeys.AllowDCSPTT))
+                        if (!profile.AllowDCSPTT)
                         {
                             DCSPTT.Content += " " + Properties.Resources.OverlayDisabledSRS;
                         }
@@ -72,7 +72,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
                     {
                         DCSRadioSwitch.Content = Properties.Resources.OverlayAvailableCockpit;
 
-                        if (profile.GetClientSettingBool(ProfileSettingsKeys.AlwaysAllowHotasControls))
+                        if (profile.AlwaysAllowHotasControls)
                         {
                             DCSRadioSwitch.Content += " " + Properties.Resources.OverlayDisabledSRS;
                         }
@@ -87,7 +87,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
                     {
                         DCSIFF.Content = Properties.Resources.OverlayAvailableCockpit;
 
-                        if (profile.GetClientSettingBool(ProfileSettingsKeys.AlwaysAllowTransponderOverlay))
+                        if (profile.AlwaysAllowTransponderOverlay)
                         {
                             DCSIFF.Content += " " + Properties.Resources.OverlayDisabledSRS;
                         }
@@ -102,7 +102,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
                     {
                         IntercomHotMic.Content = Properties.Resources.OverlayAvailableCockpit;
 
-                        if (!profile.GetClientSettingBool(ProfileSettingsKeys.AllowDCSPTT) || profile.GetClientSettingBool(ProfileSettingsKeys.AlwaysAllowHotasControls))
+                        if (!profile.AllowDCSPTT || profile.AlwaysAllowHotasControls)
                         {
                             IntercomHotMic.Content += " " + Properties.Resources.OverlayDisabledSRS;
                         }

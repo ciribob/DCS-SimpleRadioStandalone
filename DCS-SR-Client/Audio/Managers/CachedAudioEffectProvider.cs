@@ -43,8 +43,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         {
             get
             {
-                var selectedTone = GlobalSettingsStore.Instance.ProfileSettingsStore
-                    .GetClientSettingString(ProfileSettingsKeys.RadioTransmissionStartSelection).ToLowerInvariant();
+                var selectedTone = GlobalSettingsStore.Instance.ProfileSettingsStore.RadioTransmissionStartSelection.ToLowerInvariant();
 
                 foreach (var startEffect in RadioTransmissionStart)
                 {
@@ -62,8 +61,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         {
             get
             {
-                var selectedTone = GlobalSettingsStore.Instance.ProfileSettingsStore
-                    .GetClientSettingString(ProfileSettingsKeys.RadioTransmissionEndSelection).ToLowerInvariant();
+                var selectedTone = GlobalSettingsStore.Instance.ProfileSettingsStore.RadioTransmissionEndSelection.ToLowerInvariant();
 
                 foreach (var endEffect in RadioTransmissionEnd)
                 {
@@ -81,8 +79,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         {
             get
             {
-                var selectedTone = GlobalSettingsStore.Instance.ProfileSettingsStore
-                    .GetClientSettingString(ProfileSettingsKeys.IntercomTransmissionStartSelection).ToLowerInvariant();
+                var selectedTone = GlobalSettingsStore.Instance.ProfileSettingsStore.IntercomTransmissionStartSelection.ToLowerInvariant();
 
                 foreach (var startEffect in IntercomTransmissionStart)
                 {
@@ -100,8 +97,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         {
             get
             {
-                var selectedTone = GlobalSettingsStore.Instance.ProfileSettingsStore
-                    .GetClientSettingString(ProfileSettingsKeys.IntercomTransmissionEndSelection).ToLowerInvariant();
+                var selectedTone = GlobalSettingsStore.Instance.ProfileSettingsStore.IntercomTransmissionEndSelection.ToLowerInvariant();
 
                 foreach (var endEffect in IntercomTransmissionEnd)
                 {

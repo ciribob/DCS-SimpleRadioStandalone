@@ -138,8 +138,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             {
                 var radios = _clientStateSingleton.DcsPlayerRadioInfo;
 
-                var radioSwitchPtt = _globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.RadioSwitchIsPTT);
-                var radioSwitchPttWhenValid = _globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.RadioSwitchIsPTTOnlyWhenValid);
+                var radioSwitchPtt = _globalSettings.ProfileSettingsStore.RadioSwitchIsPTT;
+                var radioSwitchPttWhenValid = _globalSettings.ProfileSettingsStore.RadioSwitchIsPTTOnlyWhenValid;
 
                 //store the current PTT state and radios
                 var currentRadioId = radios.selected;
@@ -216,8 +216,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     //should inhibit for a bit
                     var startDiff = new TimeSpan(DateTime.Now.Ticks - _firstPTTPress);
 
-                    var startInhibit = _globalSettings.ProfileSettingsStore
-                        .GetClientSettingFloat(ProfileSettingsKeys.PTTStartDelay);
+                    var startInhibit = _globalSettings.ProfileSettingsStore.PTTStartDelay;
 
                     if (startDiff.TotalMilliseconds < startInhibit)
                     {
@@ -241,8 +240,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                 //Release the PTT ONLY if X ms have passed and we didnt switch radios to handle
                 //shitty buttons
-                var releaseTime = _globalSettings.ProfileSettingsStore
-                    .GetClientSettingFloat(ProfileSettingsKeys.PTTReleaseDelay);
+                var releaseTime = _globalSettings.ProfileSettingsStore.PTTReleaseDelay;
 
                 if (!ptt
                     && releaseTime > 0

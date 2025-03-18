@@ -760,7 +760,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             get => GetClientSettingString(ProfileSettingsKeys.RadioTransmissionEndSelection);
             set => SetClientSettingString(ProfileSettingsKeys.RadioTransmissionEndSelection, value);
         }
-
+        public string IntercomTransmissionStartSelection
+        {
+            get => GetClientSettingString(ProfileSettingsKeys.IntercomTransmissionStartSelection);
+            set => SetClientSettingString(ProfileSettingsKeys.IntercomTransmissionStartSelection, value);
+        }
+        public string IntercomTransmissionEndSelection
+        {
+            get => GetClientSettingString(ProfileSettingsKeys.IntercomTransmissionEndSelection);
+            set => SetClientSettingString(ProfileSettingsKeys.IntercomTransmissionEndSelection, value);
+        }
+        
 
         public bool RadioTxEffects_Start
         {

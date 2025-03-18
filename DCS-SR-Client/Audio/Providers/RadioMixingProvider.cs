@@ -260,12 +260,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
 
         private void PlaySoundEffectEndReceive(RadioInformation.Modulation modulation)
         {
-            if (!profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioRxEffects_End))
+            if (!profileSettings.RadioRxEffects_End)
             {
                 return;
             }
 
-            bool midsTone = profileSettings.GetClientSettingBool(ProfileSettingsKeys.MIDSRadioEffect);
+            bool midsTone = profileSettings.MIDSRadioEffect;
 
             if (radioId == 0)
             {
@@ -296,12 +296,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
 
         public void PlaySoundEffectStartReceive(bool encrypted, RadioInformation.Modulation modulation)
         {
-            if (!profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioRxEffects_Start))
+            if (!profileSettings.RadioRxEffects_Start)
             {
                 return;
             }
 
-            bool midsTone = profileSettings.GetClientSettingBool(ProfileSettingsKeys.MIDSRadioEffect);
+            bool midsTone = profileSettings.MIDSRadioEffect;
 
             if (modulation == RadioInformation.Modulation.MIDS && midsTone)
             {
@@ -318,9 +318,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
                     effectsBuffer.Write(effect.AudioEffectFloat, 0, effect.AudioEffectFloat.Length);
                 }
             }
-            else if (encrypted &&
-                     profileSettings.GetClientSettingBool(ProfileSettingsKeys
-                         .RadioEncryptionEffects))
+            else if (encrypted && profileSettings.RadioEncryptionEffects)
             {
                 var effect = _cachedAudioEffectsProvider.KY58EncryptionEndTone;
                 if (effect.Loaded)
@@ -343,12 +341,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
             lastModulation = modulation;
             lastVolume = volume;
 
-            if (!profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioTxEffects_Start))
+            if (!profileSettings.RadioTxEffects_Start)
             {
                 return;
             }
 
-            bool midsTone = profileSettings.GetClientSettingBool(ProfileSettingsKeys.MIDSRadioEffect);
+            bool midsTone = profileSettings.MIDSRadioEffect;
 
             if (radioId == 0)
             {
@@ -358,7 +356,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
                     effectsBuffer.Write(effect.AudioEffectFloat, 0, effect.AudioEffectFloat.Length);
                 }
             }
-            else if (encrypted && (profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEncryptionEffects)))
+            else if (encrypted && profileSettings.RadioEncryptionEffects)
             {
                 var effect = _cachedAudioEffectsProvider.KY58EncryptionTransmitTone;
                 if (effect.Loaded)
@@ -390,12 +388,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
             lastModulation = modulation;
             lastVolume = volume;
 
-            if (!profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioTxEffects_End))
+            if (!profileSettings.RadioTxEffects_End)
             {
                 return;
             }
 
-            bool midsTone = profileSettings.GetClientSettingBool(ProfileSettingsKeys.MIDSRadioEffect);
+            bool midsTone = profileSettings.MIDSRadioEffect;
 
             if (radioId == 0)
             {

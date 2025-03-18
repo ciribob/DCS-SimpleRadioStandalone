@@ -225,7 +225,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
             if (expansion)
             {
                 //override the server side setting
-                expansion = !_globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.DisableExpansionRadios);
+                expansion = !_globalSettings.ProfileSettingsStore.DisableExpansionRadios;
             }
 
             var playerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
@@ -245,7 +245,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
             //TODO check this
             playerRadioInfo.ambient.vol = playerRadioInfo.ambient.vol; // (float)(Math.Round(playerRadioInfo.ambient.vol / 10f, MidpointRounding.AwayFromZero) * 10.0f);
 
-            if (_globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.AlwaysAllowHotasControls))
+            if (_globalSettings.ProfileSettingsStore.AlwaysAllowHotasControls)
             {
                 message.control = DCSPlayerRadioInfo.RadioSwitchControls.HOTAS;
                 playerRadioInfo.control = DCSPlayerRadioInfo.RadioSwitchControls.HOTAS;
@@ -499,7 +499,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 
                             clientRadio.channel = -1; //reset channel
 
-                            if (_globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.AutoSelectPresetChannel))
+                            if (_globalSettings.ProfileSettingsStore.AutoSelectPresetChannel)
                             {
                                 RadioHelper.RadioChannelUp(i);
                             }
@@ -531,7 +531,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
             }
 
             //change PTT last
-            if (!_globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.AllowDCSPTT))
+            if (!_globalSettings.ProfileSettingsStore.AllowDCSPTT)
             {
                 playerRadioInfo.ptt = false;
             }
@@ -544,8 +544,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
             //TODO tidy up the IFF/Transponder handling and this giant function in general as its silly big :(
 
 
-            if (_globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys
-                .AlwaysAllowTransponderOverlay))
+            if (_globalSettings.ProfileSettingsStore.AlwaysAllowTransponderOverlay)
             {
                 if (message.iff.control != Transponder.IFFControlMode.DISABLED)
                 {

@@ -636,7 +636,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
         }
 
         #region Bulk Properties
-
         /// <summary>
         /// position 0 = Intercom. position 1 = radio 1, 2 = radio 2, etc.
         /// </summary>
@@ -654,8 +653,19 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             Radio9Channel,
             Radio10Channel
         ];
-
-
+        
+        [Obsolete("Do not use unless absolutely needed.")]
+        public float SpecialCaseForAudioBalanceUI_GetFloat(ProfileSettingsKeys settingsKey)
+        {
+            return GetClientSettingFloat(settingsKey);
+        }
+        [Obsolete("Do not use unless absolutely needed.")]
+        public void SpecialCaseForAudioBalanceUI_SetFloat(ProfileSettingsKeys settingsKey, float value)
+        {
+            SetClientSettingFloat(settingsKey, value);
+        }
+        
+        
         public float IntercomChannel
         {
             get => GetClientSettingFloat(ProfileSettingsKeys.IntercomChannel);

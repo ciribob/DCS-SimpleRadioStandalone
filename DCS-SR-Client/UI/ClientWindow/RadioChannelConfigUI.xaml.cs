@@ -20,6 +20,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             ChannelSelector.Loaded += InitBalanceSlider;
         }
 
+        // Todo, eliminate this data passing method.
+        // Data binding to a property would be preferred. 
         public ProfileSettingsKeys ProfileSettingKey { get; set; }
 
         private void InitBalanceSlider(object sender, RoutedEventArgs e)
@@ -34,7 +36,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         {
             ChannelSelector.IsEnabled = false;
 
-            ChannelSelector.Value = GlobalSettingsStore.Instance.ProfileSettingsStore.GetClientSettingFloat(ProfileSettingKey);
+            ChannelSelector.Value = GlobalSettingsStore.Instance.ProfileSettingsStore.SpecialCaseForAudioBalanceUI_GetFloat(ProfileSettingKey);
 
             ChannelSelector.IsEnabled = true;
         }
@@ -44,7 +46,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             //the selected value changes when 
             if (ChannelSelector.IsEnabled)
             {
-                GlobalSettingsStore.Instance.ProfileSettingsStore.SetClientSettingFloat(ProfileSettingKey,(float) ChannelSelector.Value);
+                GlobalSettingsStore.Instance.ProfileSettingsStore.SpecialCaseForAudioBalanceUI_SetFloat(ProfileSettingKey,(float) ChannelSelector.Value);
             }
         }
     }

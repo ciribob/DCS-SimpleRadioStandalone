@@ -637,6 +637,25 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
 
         #region Bulk Properties
 
+        /// <summary>
+        /// position 0 = Intercom. position 1 = radio 1, 2 = radio 2, etc.
+        /// </summary>
+        public List<float> RadioBalanceList =>
+        [
+            IntercomChannel,
+            Radio1Channel,
+            Radio2Channel,
+            Radio3Channel,
+            Radio4Channel,
+            Radio5Channel,
+            Radio6Channel,
+            Radio7Channel,
+            Radio8Channel,
+            Radio9Channel,
+            Radio10Channel
+        ];
+
+
         public float IntercomChannel
         {
             get => GetClientSettingFloat(ProfileSettingsKeys.IntercomChannel);

@@ -277,7 +277,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 
             if (newAircraft)
             {
-                if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.AutoSelectSettingsProfile))
+                if (_globalSettings.AutoSelectSettingsProfile)
                 {
                     _newAircraftCallback(message.unit, message.seat);
                 }

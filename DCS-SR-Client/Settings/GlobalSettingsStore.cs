@@ -5,10 +5,10 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Windows;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
+using NAudio.Lame;
 using NLog;
 using SharpConfig;
+using WebRtcVadSharp;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
 {
@@ -496,7 +496,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             SetSetting("Position Settings", key.ToString(), value.ToString(CultureInfo.InvariantCulture));
         }
 
-        public int GetClientSettingInt(GlobalSettingsKeys key)
+        private int GetClientSettingInt(GlobalSettingsKeys key)
         {
             if (_settingsCache.TryGetValue(key.ToString(), out var val))
             {
@@ -512,7 +512,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             return setting.IntValue;
         }
 
-        public double GetClientSettingDouble(GlobalSettingsKeys key)
+        private double GetClientSettingDouble(GlobalSettingsKeys key)
         {
             if (_settingsCache.TryGetValue(key.ToString(), out var val))
             {
@@ -527,7 +527,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             _settingsCache[key.ToString()] = setting.DoubleValue;
             return setting.DoubleValue;
         }
-        public bool GetClientSettingBool(GlobalSettingsKeys key)
+        private bool GetClientSettingBool(GlobalSettingsKeys key)
         {
             if (_settingsCache.TryGetValue(key.ToString(), out var val))
             {
@@ -543,30 +543,30 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             return setting.BoolValue;
         }
 
-        public Setting GetClientSetting(GlobalSettingsKeys key)
+        private Setting GetClientSetting(GlobalSettingsKeys key)
         {
             return GetSetting("Client Settings", key.ToString());
         }
 
-        public void SetClientSetting(GlobalSettingsKeys key, string value)
+        private void SetClientSetting(GlobalSettingsKeys key, string value)
         {
             _settingsCache.TryRemove(key.ToString(), out _);
             SetSetting("Client Settings", key.ToString(), value);
         }
 
-        public void SetClientSetting(GlobalSettingsKeys key, bool value)
+        private void SetClientSetting(GlobalSettingsKeys key, bool value)
         {
             _settingsCache.TryRemove(key.ToString(), out _);
             SetSetting("Client Settings", key.ToString(), value);
         }
 
-        public void SetClientSetting(GlobalSettingsKeys key, int value)
+        private void SetClientSetting(GlobalSettingsKeys key, int value)
         {
             _settingsCache.TryRemove(key.ToString(), out _);
             SetSetting("Client Settings", key.ToString(), value);
         }
 
-        public void SetClientSetting(GlobalSettingsKeys key, double value)
+        private void SetClientSetting(GlobalSettingsKeys key, double value)
         {
             _settingsCache.TryRemove(key.ToString(), out _);
             SetSetting("Client Settings", key.ToString(), value);
@@ -691,5 +691,341 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             }
         }
 
+        
+        #region Bulk Properties
+        public bool MinimiseToTray
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.MinimiseToTray);
+            set => SetClientSetting(GlobalSettingsKeys.MinimiseToTray, value.ToString());
+        }
+        public bool StartMinimised
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.StartMinimised);
+            set => SetClientSetting(GlobalSettingsKeys.StartMinimised, value.ToString());
+        }
+        public bool RefocusDCS
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.RefocusDCS);
+            set => SetClientSetting(GlobalSettingsKeys.RefocusDCS, value.ToString());
+        }
+        public bool ExpandControls
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.ExpandControls);
+            set => SetClientSetting(GlobalSettingsKeys.ExpandControls, value.ToString());
+        }
+        public bool AutoConnectPrompt
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.AutoConnectPrompt);
+            set => SetClientSetting(GlobalSettingsKeys.AutoConnectPrompt, value.ToString());
+        }
+        public bool RadioOverlayTaskbarHide
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.RadioOverlayTaskbarHide);
+            set => SetClientSetting(GlobalSettingsKeys.RadioOverlayTaskbarHide, value.ToString());
+        }
+        public string AudioInputDeviceId
+        {
+            get => GetClientSetting(GlobalSettingsKeys.AudioInputDeviceId).RawValue;
+            set => SetClientSetting(GlobalSettingsKeys.AudioInputDeviceId, value.ToString());
+        }
+        public string AudioOutputDeviceId
+        {
+            get => GetClientSetting(GlobalSettingsKeys.AudioInputDeviceId).RawValue;
+            set => SetClientSetting(GlobalSettingsKeys.AudioInputDeviceId, value.ToString());
+        }
+        public string LastServer
+        {
+            get => GetClientSetting(GlobalSettingsKeys.AudioInputDeviceId).RawValue;
+            set => SetClientSetting(GlobalSettingsKeys.AudioInputDeviceId, value.ToString());
+        }
+        public float MicBoost 
+        {
+            get => GetClientSetting(GlobalSettingsKeys.MicBoost).FloatValue;
+            set => SetClientSetting(GlobalSettingsKeys.MicBoost, value.ToString(CultureInfo.InvariantCulture));
+        }
+        public float  SpeakerBoost
+        {
+            get => GetClientSetting(GlobalSettingsKeys.SpeakerBoost).FloatValue;
+            set => SetClientSetting(GlobalSettingsKeys.SpeakerBoost, value.ToString(CultureInfo.InvariantCulture));
+        }
+        public double RadioX 
+        {
+            get => GetClientSettingDouble(GlobalSettingsKeys.SpeakerBoost);
+            set => SetClientSetting(GlobalSettingsKeys.SpeakerBoost, value.ToString(CultureInfo.InvariantCulture));
+        }
+        public double RadioY 
+        {
+            get => GetClientSettingDouble(GlobalSettingsKeys.SpeakerBoost);
+            set => SetClientSetting(GlobalSettingsKeys.SpeakerBoost, value.ToString(CultureInfo.InvariantCulture));
+        }
+        public double RadioSize
+        {
+            get => GetClientSettingDouble(GlobalSettingsKeys.RadioSize);
+            set => SetClientSetting(GlobalSettingsKeys.RadioSize, value.ToString(CultureInfo.InvariantCulture));
+        }
+        public double RadioOpacity
+        {
+            get => GetClientSettingDouble(GlobalSettingsKeys.RadioOpacity);
+            set => SetClientSetting(GlobalSettingsKeys.RadioOpacity, value.ToString(CultureInfo.InvariantCulture));
+        }
+        public double RadioWidth 
+        {
+            get => GetClientSettingDouble(GlobalSettingsKeys.RadioWidth);
+            set => SetClientSetting(GlobalSettingsKeys.RadioWidth, value.ToString(CultureInfo.InvariantCulture));
+        }
+        public double RadioHeight
+        {
+            get => GetClientSettingDouble(GlobalSettingsKeys.RadioHeight);
+            set => SetClientSetting(GlobalSettingsKeys.RadioHeight, value.ToString(CultureInfo.InvariantCulture));
+        }
+        public double ClientX
+        {
+            get => GetClientSettingDouble(GlobalSettingsKeys.ClientX);
+            set => SetClientSetting(GlobalSettingsKeys.ClientX, value.ToString(CultureInfo.InvariantCulture));
+        }
+        public double ClientY
+        {
+            get => GetClientSettingDouble(GlobalSettingsKeys.ClientY);
+            set => SetClientSetting(GlobalSettingsKeys.ClientY, value.ToString(CultureInfo.InvariantCulture));
+        }
+        public double AwacsX
+        {
+            get => GetClientSettingDouble(GlobalSettingsKeys.AwacsX);
+            set => SetClientSetting(GlobalSettingsKeys.AwacsX, value.ToString(CultureInfo.InvariantCulture));
+        }
+        public double AwacsY
+        {
+            get => GetClientSettingDouble(GlobalSettingsKeys.AwacsY);
+            set => SetClientSetting(GlobalSettingsKeys.AwacsY, value.ToString(CultureInfo.InvariantCulture));
+        }
+        public string MicAudioOutputDeviceId
+        {
+            get => GetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId).RawValue;
+            set => SetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId, value.ToString());
+        }
+        public string ClientIdLong
+        {
+            get => GetClientSetting(GlobalSettingsKeys.AudioInputDeviceId).RawValue;
+            set => SetClientSetting(GlobalSettingsKeys.AudioInputDeviceId, value.ToString());
+        }
+        public int DCSLOSOutgoingUDP
+        {
+            get => GetClientSettingInt(GlobalSettingsKeys.DCSLOSOutgoingUDP);
+            set => SetClientSetting(GlobalSettingsKeys.DCSLOSOutgoingUDP, value.ToString());
+        }
+        public int DCSIncomingUDP
+        {
+            get => GetClientSettingInt(GlobalSettingsKeys.DCSIncomingUDP);
+            set => SetClientSetting(GlobalSettingsKeys.DCSIncomingUDP, value.ToString());
+        }
+        public int CommandListenerUDP
+        {
+            get => GetClientSettingInt(GlobalSettingsKeys.CommandListenerUDP);
+            set => SetClientSetting(GlobalSettingsKeys.CommandListenerUDP, value.ToString());
+        }
+        public int OutgoingDCSUDPInfo
+        {
+            get => GetClientSettingInt(GlobalSettingsKeys.OutgoingDCSUDPInfo);
+            set => SetClientSetting(GlobalSettingsKeys.OutgoingDCSUDPInfo, value.ToString());
+        }
+        public int OutgoingDCSUDPOther
+        {
+            get => GetClientSettingInt(GlobalSettingsKeys.OutgoingDCSUDPOther);
+            set => SetClientSetting(GlobalSettingsKeys.OutgoingDCSUDPOther, value.ToString());
+        }
+        public int DCSIncomingGameGUIUDP
+        {
+            get => GetClientSettingInt(GlobalSettingsKeys.DCSIncomingGameGUIUDP);
+            set => SetClientSetting(GlobalSettingsKeys.DCSIncomingGameGUIUDP, value.ToString());
+        }
+        public int DCSLOSIncomingUDP
+        {
+            get => GetClientSettingInt(GlobalSettingsKeys.DCSLOSIncomingUDP);
+            set => SetClientSetting(GlobalSettingsKeys.DCSLOSIncomingUDP, value.ToString());
+        }
+        public bool AGC
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.AGC);
+            set => SetClientSetting(GlobalSettingsKeys.AGC, value.ToString());
+        }
+        public int AGCTarget
+        {
+            get => GetClientSettingInt(GlobalSettingsKeys.AGCTarget);
+            set => SetClientSetting(GlobalSettingsKeys.AGCTarget, value.ToString());
+        }
+        public int AGCDecrement
+        {
+            get => GetClientSettingInt(GlobalSettingsKeys.AGCDecrement);
+            set => SetClientSetting(GlobalSettingsKeys.AGCDecrement, value.ToString());
+        }
+        public int AGCLevelMax
+        {
+            get => GetClientSettingInt(GlobalSettingsKeys.AGCLevelMax);
+            set => SetClientSetting(GlobalSettingsKeys.AGCLevelMax, value.ToString());
+        }
+        public bool Denoise
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.Denoise);
+            set => SetClientSetting(GlobalSettingsKeys.Denoise, value.ToString());
+        }
+        public int DenoiseAttenuation
+        {
+            get => GetClientSettingInt(GlobalSettingsKeys.DenoiseAttenuation);
+            set => SetClientSetting(GlobalSettingsKeys.DenoiseAttenuation, value.ToString());
+        }
+        public string LastSeenName
+        {
+            get => GetClientSetting(GlobalSettingsKeys.LastPresetsFolder).RawValue;
+            set => SetClientSetting(GlobalSettingsKeys.LastPresetsFolder, value.ToString());
+        }
+        public bool CheckForBetaUpdates
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.CheckForBetaUpdates);
+            set => SetClientSetting(GlobalSettingsKeys.CheckForBetaUpdates, value.ToString());
+        }
+        public bool AllowMultipleInstances
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.AllowMultipleInstances);
+            set => SetClientSetting(GlobalSettingsKeys.AllowMultipleInstances, value.ToString());
+        }
+        public bool AutoConnectMismatchPrompt
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.AutoConnectMismatchPrompt);
+            set => SetClientSetting(GlobalSettingsKeys.AutoConnectMismatchPrompt, value.ToString());
+        }
+        public bool DisableWindowVisibilityCheck 
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.DisableWindowVisibilityCheck);
+            set => SetClientSetting(GlobalSettingsKeys.DisableWindowVisibilityCheck, value.ToString());
+        }
+        public bool PlayConnectionSounds
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.PlayConnectionSounds);
+            set => SetClientSetting(GlobalSettingsKeys.PlayConnectionSounds, value.ToString());
+        }
+        public bool RequireAdmin
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.RequireAdmin);
+            set => SetClientSetting(GlobalSettingsKeys.RequireAdmin, value.ToString());
+        }
+        public int LotATCIncomingUDP
+        {
+            get => GetClientSettingInt(GlobalSettingsKeys.LotATCIncomingUDP);
+            set => SetClientSetting(GlobalSettingsKeys.LotATCIncomingUDP, value.ToString());
+        }
+        public int LotATCOutgoingUDP
+        {
+            get => GetClientSettingInt(GlobalSettingsKeys.LotATCOutgoingUDP);
+            set => SetClientSetting(GlobalSettingsKeys.LotATCOutgoingUDP, value.ToString());
+        }
+
+        
+        /// <summary>
+        /// This is a dangerous property to use.
+        /// Ensure it is being used properly.
+        /// </summary>
+        public string[] SettingsProfiles
+        {
+            get => GetClientSetting(GlobalSettingsKeys.SettingsProfiles).StringValueArray;
+            set => SetClientSetting(GlobalSettingsKeys.SettingsProfiles, value.ToString());
+        }
+        
+        
+        public bool AutoSelectSettingsProfile
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.VAICOMTXInhibitEnabled);
+            set => SetClientSetting(GlobalSettingsKeys.VAICOMTXInhibitEnabled, value.ToString());
+        }
+        public int VAICOMIncomingUDP
+        {
+            get => GetClientSettingInt(GlobalSettingsKeys.LotATCOutgoingUDP);
+            set => SetClientSetting(GlobalSettingsKeys.LotATCOutgoingUDP, value.ToString());
+        }
+        public bool VAICOMTXInhibitEnabled
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.VAICOMTXInhibitEnabled);
+            set => SetClientSetting(GlobalSettingsKeys.VAICOMTXInhibitEnabled, value.ToString());
+        }
+        public double LotATCHeightOffset
+        {
+            get => GetClientSettingDouble(GlobalSettingsKeys.LotATCHeightOffset);
+            set => SetClientSetting(GlobalSettingsKeys.LotATCHeightOffset, value.ToString(CultureInfo.InvariantCulture));
+        }
+        public int DCSAutoConnectUDP
+        {
+            get => GetClientSettingInt(GlobalSettingsKeys.DCSAutoConnectUDP);
+            set => SetClientSetting(GlobalSettingsKeys.DCSAutoConnectUDP, value.ToString());
+        }
+        public bool ShowTransmitterName
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.ShowTransmitterName);
+            set => SetClientSetting(GlobalSettingsKeys.ShowTransmitterName, value.ToString());
+        }
+        public int  IdleTimeOut
+        {
+            get => GetClientSettingInt(GlobalSettingsKeys.IdleTimeOut);
+            set => SetClientSetting(GlobalSettingsKeys.IdleTimeOut, value.ToString());
+        }
+        public bool AutoConnect
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.AutoConnect);
+            set => SetClientSetting(GlobalSettingsKeys.AutoConnect, value.ToString());
+        }
+        public bool AllowRecording
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.AllowRecording);
+            set => SetClientSetting(GlobalSettingsKeys.AllowRecording, value.ToString());
+        }
+        public bool RecordAudio
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.RecordAudio);
+            set => SetClientSetting(GlobalSettingsKeys.RecordAudio, value.ToString());
+        }
+        public bool SingleFileMixdown
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.SingleFileMixdown);
+            set => SetClientSetting(GlobalSettingsKeys.SingleFileMixdown, value.ToString());
+        }
+        public LAMEPreset RecordingQuality
+        {
+            get => (LAMEPreset)GetClientSettingInt(GlobalSettingsKeys.RecordingQuality);
+            set => SetClientSetting(GlobalSettingsKeys.RecordingQuality, (int)value);
+        }
+        public bool DisallowedAudioTone
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.DisallowedAudioTone);
+            set => SetClientSetting(GlobalSettingsKeys.DisallowedAudioTone, value.ToString());
+        }
+        public bool VOX
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.VOX);
+            set => SetClientSetting(GlobalSettingsKeys.VOX, value.ToString());
+        }
+        public OperatingMode VOXMode
+        {
+            get => (OperatingMode)GetClientSettingInt(GlobalSettingsKeys.VOXMode);
+            set => SetClientSetting(GlobalSettingsKeys.VOXMode, (int)value);
+        }
+        public int VOXMinimumTime
+        {
+            get => GetClientSettingInt(GlobalSettingsKeys.VOXMinimumTime);
+            set => SetClientSetting(GlobalSettingsKeys.VOXMinimumTime, value.ToString());
+        }
+        public double VOXMinimumDB
+        {
+            get => GetClientSettingDouble(GlobalSettingsKeys.VOXMinimumDB);
+            set => SetClientSetting(GlobalSettingsKeys.VOXMinimumDB, value.ToString(CultureInfo.InvariantCulture));
+        }
+        public bool AllowXInputController
+        {
+            get => GetClientSettingBool(GlobalSettingsKeys.AllowXInputController);
+            set => SetClientSetting(GlobalSettingsKeys.AllowXInputController, value.ToString());
+        }
+        public string LastPresetsFolder
+        {
+            get => GetClientSetting(GlobalSettingsKeys.LastPresetsFolder).RawValue;
+            set => SetClientSetting(GlobalSettingsKeys.LastPresetsFolder, value.ToString());
+        }
+        #endregion
     }
 }

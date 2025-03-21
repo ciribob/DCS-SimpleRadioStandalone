@@ -51,8 +51,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
 
         private List<AudioDeviceListItem> BuildAudioInputs()
         {
-            Logger.Info("Audio Input - Saved ID " +
-                        GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.AudioInputDeviceId).RawValue);
+            Logger.Info("Audio Input - Saved ID " + GlobalSettingsStore.Instance.AudioInputDeviceId);
 
             var inputs = new List<AudioDeviceListItem>();
 
@@ -96,7 +95,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
 
                     inputs.Add(input);
 
-                    if (item.ID.Trim().Equals(GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.AudioInputDeviceId).RawValue.Trim()))
+                    if (item.ID.Trim().Equals(GlobalSettingsStore.Instance.AudioInputDeviceId.Trim()))
                     {
                         SelectedAudioInput = input;
                         Logger.Info("Audio Input - Found Saved ");

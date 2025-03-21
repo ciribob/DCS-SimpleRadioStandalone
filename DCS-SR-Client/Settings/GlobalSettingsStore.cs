@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Windows;
+using NAudio.Lame;
 using NLog;
 using SharpConfig;
 using WebRtcVadSharp;
@@ -985,10 +986,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             get => GetClientSettingBool(GlobalSettingsKeys.SingleFileMixdown);
             set => SetClientSetting(GlobalSettingsKeys.SingleFileMixdown, value.ToString());
         }
-        public string RecordingQuality
+        public LAMEPreset RecordingQuality
         {
-            get => GetClientSetting(GlobalSettingsKeys.RecordingQuality).RawValue;
-            set => SetClientSetting(GlobalSettingsKeys.RecordingQuality, value.ToString());
+            get => (LAMEPreset)GetClientSettingInt(GlobalSettingsKeys.RecordingQuality);
+            set => SetClientSetting(GlobalSettingsKeys.RecordingQuality, (int)value);
         }
         public bool DisallowedAudioTone
         {

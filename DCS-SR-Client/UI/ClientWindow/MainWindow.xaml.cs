@@ -39,6 +39,7 @@ using MahApps.Metro.Controls;
 using Microsoft.Win32;
 using NAudio.CoreAudioApi;
 using NAudio.Dmo;
+using NAudio.Lame;
 using NAudio.Wave;
 using NLog;
 using WebRtcVadSharp;
@@ -702,8 +703,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             RecordingQuality.IsEnabled = false;
             RecordingQuality.ValueChanged += RecordingQuality_ValueChanged;
-            RecordingQuality.Value = double.Parse(
-                _globalSettings.RecordingQuality[1].ToString());
+            RecordingQuality.Value = (int)_globalSettings.RecordingQuality;
             RecordingQuality.IsEnabled = true;
 
             var objValue = Registry.GetValue("HKEY_CURRENT_USER\\SOFTWARE\\DCS-SR-Standalone", "SRSAnalyticsOptOut", "FALSE");
@@ -2116,7 +2116,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         private void RecordingQuality_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            _globalSettings.RecordingQuality = $"V{(int)e.NewValue}";
+            _globalSettings.RecordingQuality = (LAMEPreset)e.NewValue;
         }
 
         private void DisallowedAudioTone_OnClick(object sender, RoutedEventArgs e)

@@ -1003,7 +1003,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
         public OperatingMode VOXMode
         {
             get => (OperatingMode)GetClientSettingInt(GlobalSettingsKeys.VOXMode);
-            set => SetClientSetting(GlobalSettingsKeys.VOXMode, value.ToString());
+            set => SetClientSetting(GlobalSettingsKeys.VOXMode, (int)value);
         }
         public int VOXMinimumTime
         {

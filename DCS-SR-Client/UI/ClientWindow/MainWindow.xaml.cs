@@ -41,6 +41,7 @@ using NAudio.CoreAudioApi;
 using NAudio.Dmo;
 using NAudio.Wave;
 using NLog;
+using WebRtcVadSharp;
 using WPFCustomMessageBox;
 using InputBinding = Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.InputBinding;
 
@@ -718,7 +719,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             VOXEnabled.IsChecked = _globalSettings.VOX;
 
             VOXMode.IsEnabled = false;
-            VOXMode.Value = _globalSettings.VOXMode;
+            VOXMode.Value = (int)_globalSettings.VOXMode;
             VOXMode.ValueChanged += VOXMode_ValueChanged;
             VOXMode.IsEnabled = true;
 
@@ -2131,7 +2132,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         private void VOXMode_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if(VOXMode.IsEnabled)
-                _globalSettings.VOXMode = (int)e.NewValue;
+                _globalSettings.VOXMode = (OperatingMode)e.NewValue;
         }
 
         private void VOXMinimumTime_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

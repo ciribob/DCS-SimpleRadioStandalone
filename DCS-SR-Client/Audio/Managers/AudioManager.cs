@@ -544,7 +544,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
             {
                 SampleRate = SampleRate.Is16kHz,
                 FrameLength = FrameLength.Is20ms,
-                OperatingMode = (OperatingMode)_globalSettings.VOXMode
+                OperatingMode = _globalSettings.VOXMode
             };
         }
 

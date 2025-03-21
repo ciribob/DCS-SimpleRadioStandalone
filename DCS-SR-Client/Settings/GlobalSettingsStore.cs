@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows;
 using NLog;
 using SharpConfig;
+using WebRtcVadSharp;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
 {
@@ -999,9 +1000,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
             get => GetClientSettingBool(GlobalSettingsKeys.VOX);
             set => SetClientSetting(GlobalSettingsKeys.VOX, value.ToString());
         }
-        public int VOXMode
+        public OperatingMode VOXMode
         {
-            get => GetClientSettingInt(GlobalSettingsKeys.VOXMode);
+            get => (OperatingMode)GetClientSettingInt(GlobalSettingsKeys.VOXMode);
             set => SetClientSetting(GlobalSettingsKeys.VOXMode, value.ToString());
         }
         public int VOXMinimumTime

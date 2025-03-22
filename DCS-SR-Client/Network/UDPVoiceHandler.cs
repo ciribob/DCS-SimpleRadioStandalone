@@ -363,7 +363,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                                 if (udpVoicePacket != null)
                                 {
-                                    var globalFrequencies = _serverSettings.GlobalFrequencies;
+                                    var globalFrequencies = _serverSettings.GlobalLobbyFreqs;
 
                                     var frequencyCount = udpVoicePacket.Frequencies.Length;
 
@@ -371,7 +371,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                         new List<RadioReceivingPriority>(frequencyCount);
                                     List<int> blockedRadios = CurrentlyBlockedRadios();
 
-                                    var strictEncryption = _serverSettings.GetSettingAsBool(ServerSettingsKeys.STRICT_RADIO_ENCRYPTION);
+                                    var strictEncryption = _serverSettings.StrictRadioEncryptionEnabled;
 
                                         // Parse frequencies into receiving radio priority for selection below
                                         for (var i = 0; i < frequencyCount; i++)
@@ -479,9 +479,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                             var transmitterName = "";
                                             if (_clients.TryGetValue(udpVoicePacket.Guid, out var transmittingClient))
                                             {
-                                                if (_serverSettings.GetSettingAsBool(ServerSettingsKeys
-                                                        .SHOW_TRANSMITTER_NAME)
-                                                    && _globalSettings.ShowTransmitterName)
+                                                if (_serverSettings.ShowTransmitterNameEnabled && 
+                                                    _globalSettings.ShowTransmitterName)
                                                 {
                                                     transmitterName = transmittingClient.Name;
                                                 }
@@ -503,12 +502,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                         
                                             //we now WANT to duplicate through multiple pipelines ONLY if AM blocking is on
                                             //this is a nice optimisation to save duplicated audio on servers without that setting 
-                                            if (i == 0 || _serverSettings.GetSettingAsBool(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE))
+                                            if (i == 0 || _serverSettings.IrlRadioRxInterferenceEnabled)
                                             {
-                                                if (_serverSettings.GetSettingAsBool(ServerSettingsKeys
-                                                    .RADIO_EFFECT_OVERRIDE))
+                                                if (_serverSettings.RadioEffectOverrideEnabled)
                                                 {
-                                                    audio.NoAudioEffects = _serverSettings.GlobalFrequencies.Contains(audio.Frequency); ;
+                                                    audio.NoAudioEffects = _serverSettings.GlobalLobbyFreqs.Contains(audio.Frequency); ;
                                                 }
 
                                                 _audioManager.AddClientAudio(audio);
@@ -547,7 +545,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             }
 
             //Hop count can limit the retransmission too
-            var nodeLimit = _serverSettings.RetransmitNodeLimit;
+            var nodeLimit = _serverSettings.RetransmissionNodeLimit;
 
             if (nodeLimit < udpVoicePacket.RetransmissionCount)
             {
@@ -556,7 +554,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             }
 
             //Check if Global
-            List<double> globalFrequencies = _serverSettings.GlobalFrequencies;
+            List<double> globalFrequencies = _serverSettings.GlobalLobbyFreqs;
 
             // filter radios by ability to hear it AND decryption works
             List<RadioReceivingPriority> retransmitOn = new List<RadioReceivingPriority>();
@@ -641,7 +639,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         private List<int> CurrentlyBlockedRadios()
         {
             List<int> transmitting = new List<int>();
-            if (!_serverSettings.GetSettingAsBool(ServerSettingsKeys.IRL_RADIO_TX))
+            if (!_serverSettings.IrlRadioTxEnabled)
             {
                 return transmitting;
             }
@@ -687,7 +685,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         private bool HasLineOfSight(UDPVoicePacket udpVoicePacket, out float losLoss)
         {
             losLoss = 0; //0 is NO LOSS
-            if (!_serverSettings.GetSettingAsBool(ServerSettingsKeys.LOS_ENABLED))
+            if (!_serverSettings.LosCheckingEnabled)
             {
                 return true;
             }
@@ -725,7 +723,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         private bool InRange(string transmissingClientGuid, double frequency, out double signalStrength)
         {
             signalStrength = 0;
-            if (!_serverSettings.GetSettingAsBool(ServerSettingsKeys.DISTANCE_ENABLED))
+            if (!_serverSettings.DistanceCheckingEnabled)
             {
                 return true;
             }

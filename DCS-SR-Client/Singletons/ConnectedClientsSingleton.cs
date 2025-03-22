@@ -106,14 +106,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
 
         public int ClientsOnFreq(double freq, RadioInformation.Modulation modulation)
         {
-            if (!_serverSettings.GetSettingAsBool(ServerSettingsKeys.SHOW_TUNED_COUNT))
+            if (!_serverSettings.ShowTurnedListenersCountEnabled)
             {
                 return 0;
             }
             var currentClientPos = ClientStateSingleton.Instance.PlayerCoaltionLocationMetadata;
             var currentUnitId = ClientStateSingleton.Instance.DcsPlayerRadioInfo.unitId;
-            var coalitionSecurity = SyncedServerSettings.Instance.GetSettingAsBool(ServerSettingsKeys.COALITION_AUDIO_SECURITY);
-            var globalFrequencies = _serverSettings.GlobalFrequencies;
+            var coalitionSecurity = SyncedServerSettings.Instance.CoalitionAudioSecurityEnabled;
+            var globalFrequencies = _serverSettings.GlobalLobbyFreqs;
             var global = globalFrequencies.Contains(freq);
             int count = 0;
 

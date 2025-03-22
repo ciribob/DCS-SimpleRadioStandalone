@@ -101,7 +101,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
         {
             get
             { 
-                bool EamEnabled = SyncedServerSettings.Instance.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE);
+                bool EamEnabled = SyncedServerSettings.Instance.ExternalAwacsModeAllowed;
                 return IsConnected && EamEnabled && ExternalAWACSModelSelected && !IsGameExportConnected;
             }
         }

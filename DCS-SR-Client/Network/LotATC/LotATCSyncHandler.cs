@@ -126,7 +126,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.LotATC
             _clientStateSingleton.LotATCLastReceived = DateTime.Now.Ticks;
 
             //only send update if position and line of sight are enabled
-            var shouldUpdate = _serverSettings.GetSettingAsBool(ServerSettingsKeys.DISTANCE_ENABLED) || _serverSettings.GetSettingAsBool(ServerSettingsKeys.LOS_ENABLED);
+            var shouldUpdate = _serverSettings.DistanceCheckingEnabled || _serverSettings.LosCheckingEnabled;
 
             if (_clientStateSingleton.ShouldUseLotATCPosition())
             {
@@ -218,7 +218,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.LotATC
             if (_clientStateSingleton.PlayerCoaltionLocationMetadata.LngLngPosition != null
                 && _clientStateSingleton.PlayerCoaltionLocationMetadata.LngLngPosition.isValid()
                 && _clientStateSingleton.ShouldUseLotATCPosition() 
-                && _serverSettings.GetSettingAsBool(ServerSettingsKeys.LOS_ENABLED))
+                && _serverSettings.LosCheckingEnabled)
             {
                 foreach (var client in clients)
                 {

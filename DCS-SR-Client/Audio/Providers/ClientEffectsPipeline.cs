@@ -106,7 +106,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
 
                 radioBackgroundNoiseEffect = profileSettings.RadioBackgroundNoiseEffect;
 
-                irlRadioRXInterference = serverSettings.GetSettingAsBool(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE);
+                irlRadioRXInterference = serverSettings.IrlRadioRxInterferenceEnabled;
             }
         }
 

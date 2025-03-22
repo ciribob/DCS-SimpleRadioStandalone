@@ -1320,7 +1320,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             {
                 ToggleServerSettings.IsEnabled = true;
 
-                bool eamEnabled = _serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE);
+                bool eamEnabled = _serverSettings.ExternalAwacsModeAllowed;
 
                 ConnectExternalAWACSMode.IsEnabled = eamEnabled;
                 ConnectExternalAWACSMode.Content = ClientState.ExternalAWACSModelSelected ? Properties.Resources.DisconnectExternalAWACSMode : Properties.Resources.ConnectExternalAWACSMode;
@@ -1785,7 +1785,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         {
             if (_client == null ||
                 !ClientState.IsConnected ||
-                !_serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE) ||
+                !_serverSettings.ExternalAwacsModeAllowed ||
                 (!ClientState.ExternalAWACSModelSelected &&
                 string.IsNullOrWhiteSpace(ExternalAWACSModePassword.Password)))
             {
@@ -1825,8 +1825,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 ClientState.LastSent = 0;
 
                 ConnectExternalAWACSMode.Content = Properties.Resources.ConnectExternalAWACSMode;
-                ExternalAWACSModePassword.IsEnabled = _serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE);
-                ExternalAWACSModeName.IsEnabled = _serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE);
+                ExternalAWACSModePassword.IsEnabled = _serverSettings.ExternalAwacsModeAllowed;
+                ExternalAWACSModeName.IsEnabled = _serverSettings.ExternalAwacsModeAllowed;
             }
         }
 

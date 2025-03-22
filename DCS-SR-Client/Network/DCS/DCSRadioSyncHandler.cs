@@ -220,7 +220,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 
         private bool UpdateRadio(DCSPlayerRadioInfo message)
         {
-            var expansion = _serverSettings.GetSettingAsBool(ServerSettingsKeys.RADIO_EXPANSION);
+            var expansion = _serverSettings.RadioExpansionAllowed;
 
             if (expansion)
             {
@@ -374,7 +374,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                     clientRadio.rtMode = updateRadio.rtMode;
                     clientRadio.rxOnly = updateRadio.rxOnly;
 
-                    if (_serverSettings.GetSettingAsBool(ServerSettingsKeys.ALLOW_RADIO_ENCRYPTION))
+                    if (_serverSettings.RadioEncryptionAllowed)
                     {
                         clientRadio.encMode = updateRadio.encMode;
                     }

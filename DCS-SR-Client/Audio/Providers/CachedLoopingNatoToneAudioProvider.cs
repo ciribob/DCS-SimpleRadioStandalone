@@ -38,7 +38,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
         {
             int read = source.Read(buffer, offset, count);
 
-            if (!GlobalSettingsStore.Instance.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.NATOTone) || _audioEffectShort == null)
+            if (!GlobalSettingsStore.Instance.ProfileSettingsStore.NATOTone || _audioEffectShort == null)
             {
                 return read;
             }

@@ -178,7 +178,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 
             var playerLocation = ClientStateSingleton.Instance.PlayerCoaltionLocationMetadata;
 
-            if (_serverSettings.GetSettingAsBool(ServerSettingsKeys.LOS_ENABLED) 
+            if (_serverSettings.LosCheckingEnabled 
                 && playerLocation != null
                 && playerLocation.LngLngPosition  !=null
                 && playerLocation.LngLngPosition.isValid())

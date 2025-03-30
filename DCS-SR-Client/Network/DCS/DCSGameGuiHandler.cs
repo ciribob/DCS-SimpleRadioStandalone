@@ -70,7 +70,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 
                         if (updatedPlayerInfo != null)
                         {
-                            var shouldUpdate = _serverSettings.GetSettingAsBool(ServerSettingsKeys.DISTANCE_ENABLED) || _serverSettings.GetSettingAsBool(ServerSettingsKeys.LOS_ENABLED);
+                            var shouldUpdate = _serverSettings.DistanceCheckingEnabled || _serverSettings.LosCheckingEnabled;
 
                             var currentInfo = _clientStateSingleton.PlayerCoaltionLocationMetadata;
 

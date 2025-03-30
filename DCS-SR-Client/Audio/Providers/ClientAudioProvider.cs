@@ -237,11 +237,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             if ((now - lastLoaded) > 30000000)
             {
                 lastLoaded = now;
-                ambientCockpitEffectEnabled = settingsStore.GetClientSettingBool(ProfileSettingsKeys.AmbientCockpitNoiseEffect);
-                ambientCockpitEffectVolume =
-                    settingsStore.GetClientSettingFloat(ProfileSettingsKeys.AmbientCockpitNoiseEffectVolume);
-                ambientCockpitIntercomEffectEnabled =
-                    settingsStore.GetClientSettingBool(ProfileSettingsKeys.AmbientCockpitIntercomNoiseEffect);
+                ambientCockpitEffectEnabled = settingsStore.AmbientCockpitNoiseEffect;
+                ambientCockpitEffectVolume = settingsStore.AmbientCockpitNoiseEffectVolume;
+                ambientCockpitIntercomEffectEnabled = settingsStore.AmbientCockpitIntercomNoiseEffect;
             }
                 
         }

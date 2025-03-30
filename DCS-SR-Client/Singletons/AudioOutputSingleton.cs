@@ -60,8 +60,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
         private List<AudioDeviceListItem> BuildNormalAudioOutputs()
         {
             Logger.Info("Building Normal Audio Outputs");
-            Logger.Info("Audio Output - Saved ID " +
-                         GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.AudioOutputDeviceId).RawValue);
+            Logger.Info("Audio Output - Saved ID " + GlobalSettingsStore.Instance.AudioOutputDeviceId);
 
             return BuildAudioOutputs(Properties.Resources.DefaultSpeakers, false);
         }
@@ -69,8 +68,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
         private List<AudioDeviceListItem> BuildMicAudioOutputs()
         {
             Logger.Info("Building Microphone Audio Outputs");
-            Logger.Info("Mic Audio Output - Saved ID " +
-                                   GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId).RawValue);
+            Logger.Info("Mic Audio Output - Saved ID " + GlobalSettingsStore.Instance.MicAudioOutputDeviceId);
 
             return BuildAudioOutputs(Properties.Resources.DefaultNoPassthru, true);
         }
@@ -89,11 +87,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             string savedDeviceId;
             if (micOutput)
             {
-                savedDeviceId = GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId).RawValue;
+                savedDeviceId = GlobalSettingsStore.Instance.MicAudioOutputDeviceId;
                 SelectedMicAudioOutput = outputs[0];
             } else
             {
-                savedDeviceId = GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.AudioOutputDeviceId).RawValue;
+                savedDeviceId = GlobalSettingsStore.Instance.AudioOutputDeviceId;
                 SelectedAudioOutput = outputs[0];
             }
 

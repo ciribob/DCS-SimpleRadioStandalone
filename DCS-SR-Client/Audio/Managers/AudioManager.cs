@@ -345,7 +345,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                         //check for voice before any pre-processing
                         bool voice = true;
 
-                        if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.VOX))
+                        if (_globalSettings.VOX)
                         {
                             Buffer.BlockCopy(_pcmShort, 0, _pcmBytes, 0, _pcmBytes.Length);
                             voice = DoesFrameContainSpeech(_pcmBytes, _pcmShort);
@@ -386,8 +386,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
                             // _beforeWaveFile.Write(pcmBytes, 0, pcmBytes.Length);
 
-                            if (clientAudio != null && (_micWaveOutBuffer != null 
-                                                        || GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.RecordAudio)))
+                            if (clientAudio != null && (_micWaveOutBuffer != null || GlobalSettingsStore.Instance.RecordAudio))
                             {
 
                                 //todo see if we can fix the resample / opus decode
@@ -430,8 +429,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                                         _micWaveOutBuffer.AddSamples(_tempMicOutputBuffer, 0, tempFloat.Length * 4);
                                     }
 
-                                    if (GlobalSettingsStore.Instance.GetClientSettingBool(
-                                        GlobalSettingsKeys.RecordAudio))
+                                    if (GlobalSettingsStore.Instance.RecordAudio)
                                     {
                                         ///TODO cache this to avoid the contant lookup
                                         _audioRecordingManager.AppendPlayerAudio(tempFloat, jitterBufferAudio.ReceivedRadio);
@@ -546,7 +544,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
             {
                 SampleRate = SampleRate.Is16kHz,
                 FrameLength = FrameLength.Is20ms,
-                OperatingMode = (OperatingMode)_globalSettings.GetClientSettingInt(GlobalSettingsKeys.VOXMode)
+                OperatingMode = (OperatingMode)_globalSettings.VOXMode
             };
         }
 
@@ -678,7 +676,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
             Buffer.BlockCopy(audioFrame,0,tempBuffferFirst20ms,0, MIC_SEGMENT_FRAMES);
             Buffer.BlockCopy(audioFrame, MIC_SEGMENT_FRAMES, tempBuffferSecond20ms, 0, MIC_SEGMENT_FRAMES);
 
-            OperatingMode mode = (OperatingMode)_globalSettings.GetClientSettingInt(GlobalSettingsKeys.VOXMode);
+            OperatingMode mode = (OperatingMode)_globalSettings.VOXMode;
 
             if (_voxDectection.OperatingMode != mode)
             {
@@ -693,7 +691,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 //calculate the RMS and see if we're over it
                 //voice run first as it ignores background hums very well
                 double rms = VolumeConversionHelper.CalculateRMS(pcmShort);
-                double min = _globalSettings.GetClientSettingDouble(GlobalSettingsKeys.VOXMinimumDB);
+                double min = _globalSettings.VOXMinimumDB;
 
                 return rms > min;
             }

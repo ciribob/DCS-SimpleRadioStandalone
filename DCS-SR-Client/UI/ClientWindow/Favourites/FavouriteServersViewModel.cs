@@ -80,10 +80,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites
 
             _addresses.Remove(SelectedItem);
 
-            if (_addresses.Count == 0 && !string.IsNullOrEmpty(_globalSettings.GetClientSetting(GlobalSettingsKeys.LastServer).StringValue))
+            if (_addresses.Count == 0 && !string.IsNullOrEmpty(_globalSettings.LastServer))
             {
-                var oldAddress = new ServerAddress(_globalSettings.GetClientSetting(GlobalSettingsKeys.LastServer).StringValue,
-                    _globalSettings.GetClientSetting(GlobalSettingsKeys.LastServer).StringValue, null, true);
+                var oldAddress = new ServerAddress(_globalSettings.LastServer,
+                    _globalSettings.LastServer, null, true);
                 _addresses.Add(oldAddress);
             }
 

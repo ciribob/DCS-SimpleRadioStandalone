@@ -89,22 +89,22 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
             {
                 lastRefresh = now;
 
-                natoToneEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.NATOTone);
-                hqToneEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.HAVEQUICKTone);
-                radioEffectsEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEffects);
-                clippingEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEffectsClipping);
-                hqToneVolume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.HQToneVolume);
-                natoToneVolume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.NATOToneVolume);
-                amCollisionVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.AMCollisionVolume);
+                natoToneEnabled = profileSettings.NATOTone;
+                hqToneEnabled = profileSettings.HAVEQUICKTone;
+                radioEffectsEnabled = profileSettings.RadioEffects;
+                clippingEnabled = profileSettings.RadioEffectsClipping;
+                hqToneVolume = profileSettings.HQToneVolume;
+                natoToneVolume = profileSettings.NATOToneVolume;
+                amCollisionVol = profileSettings.AMCollisionVolume;
 
-                fmVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.FMNoiseVolume);
-                hfVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.HFNoiseVolume);
-                uhfVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.UHFNoiseVolume);
-                vhfVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.VHFNoiseVolume);
+                fmVol = profileSettings.FMNoiseVolume;
+                hfVol = profileSettings.HFNoiseVolume;
+                uhfVol = profileSettings.UHFNoiseVolume;
+                vhfVol = profileSettings.VHFNoiseVolume;
 
-                radioEffects = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEffects);
+                radioEffects = profileSettings.RadioEffects;
 
-                radioBackgroundNoiseEffect = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioBackgroundNoiseEffect) ;
+                radioBackgroundNoiseEffect = profileSettings.RadioBackgroundNoiseEffect;
 
                 irlRadioRXInterference = serverSettings.GetSettingAsBool(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE);
             }

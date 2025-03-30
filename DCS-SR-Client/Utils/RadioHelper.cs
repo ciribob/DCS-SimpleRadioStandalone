@@ -90,7 +90,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Utils
                             return false;
                         }
 
-                        if (GlobalSettingsStore.Instance.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.RotaryStyleIncrement))
+                        if (GlobalSettingsStore.Instance.ProfileSettingsStore.RotaryStyleIncrement)
                         {
                             // Easier to simply shift the decimal place value to the ones position for finding numeral at specific position
                             double adjustedFrequency = Math.Abs((int)Math.Round(radio.freq / frequency));

@@ -19,7 +19,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.RadioChannels
 
         private string PresetsFolder { get
             {
-                var folder = _globalSettings.GetClientSetting(GlobalSettingsKeys.LastPresetsFolder).RawValue;
+                var folder = _globalSettings.LastPresetsFolder;
                 if (string.IsNullOrWhiteSpace(folder))
                 {
                     folder = Directory.GetCurrentDirectory();

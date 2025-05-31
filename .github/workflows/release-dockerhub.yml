@@ -50,11 +50,23 @@ jobs:
         run: |
           unzip -j DCS-SimpleRadioStandalone.zip 'ServerCommandLine-Linux/SRS-Server-Commandline' -d .
 
+      - name: Set Docker tags
+        id: set_tags
+        run: |
+          TAGS="${{ secrets.DOCKERHUB_USERNAME }}/dcs-srs-server:${{ env.IMAGE_TAG }}"
+          # Only add 'latest' if not a pre-release (for release event)
+          if [[ "${{ github.event.release.prerelease }}" != "true" && "${{ github.event_name }}" == "release" ]]; then
+            TAGS="$TAGS,${{ secrets.DOCKERHUB_USERNAME }}/dcs-srs-server:latest"
+          fi
+          # Always add 'latest' for manual dispatch
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            TAGS="$TAGS,${{ secrets.DOCKERHUB_USERNAME }}/dcs-srs-server:latest"
+          fi
+          echo "tags=$TAGS" >> $GITHUB_OUTPUT
+
       - name: Build and Push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/dcs-srs-server:${{ env.IMAGE_TAG }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/dcs-srs-server:latest
+          tags: ${{ steps.set_tags.outputs.tags }}

@@ -34,22 +34,15 @@ jobs:
           chmod +x ./DCS-SRS-DockerServer/build-linux-server.sh
           ./DCS-SRS-DockerServer/build-linux-server.sh
         shell: bash
-      - name: Set Docker tags
-        id: set_tags
-        run: |
-          TAGS="${{ secrets.DOCKERHUB_USERNAME }}/dcs-srs-server:${{ github.event.inputs.image_tag }}"
-          if [[ "${{ github.event.release.prerelease }}" != "true" ]]; then
-            TAGS="$TAGS,${{ secrets.DOCKERHUB_USERNAME }}/dcs-srs-server:latest"
-          fi
-          echo "tags=$TAGS" >> $GITHUB_OUTPUT
-
       - name: Build and Push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./DCS-SRS-DockerServer/Dockerfile
           push: true
-          tags: ${{ steps.set_tags.outputs.tags }}
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/dcs-srs-server:${{ github.event.inputs.image_tag }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/dcs-srs-server:latest
       - name: Upload SRS-Server-Commandline artifact
         uses: actions/upload-artifact@v4
         with:

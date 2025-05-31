@@ -1,4 +1,4 @@
-name: Build and Push to Docker Hub
+name: Fetch Binary, Build Container Image and Push to DockerHub
 
 on:
   release:

@@ -68,5 +68,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./DCS-SRS-DockerServer/Dockerfile
           push: true
           tags: ${{ steps.set_tags.outputs.tags }}

@@ -48,7 +48,8 @@ jobs:
 
       - name: Extract SRS-Server-Commandline
         run: |
-          unzip -j DCS-SimpleRadioStandalone.zip 'ServerCommandLine-Linux/SRS-Server-Commandline' -d .
+          mkdir -p install-build/ServerCommandLine-Linux
+          unzip -j DCS-SimpleRadioStandalone.zip 'install-build/ServerCommandLine-Linux/SRS-Server-Commandline' -d .
 
       - name: Set Docker tags
         id: set_tags

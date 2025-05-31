@@ -13,6 +13,14 @@ on:
         description: 'Docker image tag'
         required: true
         default: '0.0.0.0'
+      tag_latest:
+        description: 'Also tag as latest on DockerHub?'
+        required: true
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -59,8 +67,8 @@ jobs:
           if [[ "${{ github.event.release.prerelease }}" != "true" && "${{ github.event_name }}" == "release" ]]; then
             TAGS="$TAGS,${{ secrets.DOCKERHUB_USERNAME }}/dcs-srs-server:latest"
           fi
-          # Always add 'latest' for manual dispatch
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+          # For manual dispatch, only add 'latest' if requested
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ github.event.inputs.tag_latest }}" == "true" ]]; then
             TAGS="$TAGS,${{ secrets.DOCKERHUB_USERNAME }}/dcs-srs-server:latest"
           fi
           echo "tags=$TAGS" >> $GITHUB_OUTPUT

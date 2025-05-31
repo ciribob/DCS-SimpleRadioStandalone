@@ -24,8 +24,9 @@ RUN apt-get update && \
 # All subsequent commands will be executed from this directory
 WORKDIR /opt/srs
 
-# Copy the SRS server executable and startup script from the build context
-# These files must be present in the same directory as the Dockerfile
+# Copy the SRS server Linux CLI executable and startup script from the build context
+# The source binary path was choosed to be future proof if the binary build become part of the same pipeline
+# In order to build the container image properly, the docker build or pipeline must run in the context of the root of the repository
 COPY ./install-build/ServerCommandLine-Linux/SRS-Server-Commandline .
 
 # Make the copied files executable

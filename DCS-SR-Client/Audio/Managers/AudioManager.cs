@@ -336,12 +336,6 @@ public class AudioManager : IHandle<SRClientUpdateMessage>
                     //process with Speex
                     _speex.Process(new ArraySegment<short>(_pcmShort));
 
-                    float max = 0;
-                    for (var i = 0; i < _pcmShort.Length; i++)
-                        //determine peak
-                        if (_pcmShort[i] > max)
-                            max = _pcmShort[i];
-
                     //convert to dB
                     MicMax = (float)VolumeConversionHelper.CalculateRMS(_pcmShort);
 
@@ -383,6 +377,7 @@ public class AudioManager : IHandle<SRClientUpdateMessage>
                                     Modulation = jitterBufferAudio.Modulation,
                                     Volume = jitterBufferAudio.Volume,
                                     Decryptable = true,
+                                    Encryption = jitterBufferAudio.Encryption,
                                     Frequency = jitterBufferAudio.Frequency,
                                     IsSecondary = jitterBufferAudio.IsSecondary,
                                     NoAudioEffects = jitterBufferAudio.NoAudioEffects,

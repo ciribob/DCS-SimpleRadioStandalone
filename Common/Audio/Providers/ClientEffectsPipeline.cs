@@ -1,396 +1,458 @@
-﻿using System;
-using System.Collections.Generic;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
-using MathNet.Filtering;
 using NAudio.Dsp;
+using NAudio.Utils;
+using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
+using NLog;
+using System;
+using System.Collections.Frozen;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers;
 
-public class ClientEffectsPipeline
+
+namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
 {
-    private static readonly double HQ_RESET_CHANCE = 0.8;
 
-    private readonly OnlineFilter[] _filters;
-
-    private readonly BiQuadFilter _highPassFilter;
-    private readonly BiQuadFilter _lowPassFilter;
-    private readonly Random _random = new();
-
-    private readonly CachedAudioEffect amCollisionEffect;
-
-    private readonly CachedAudioEffectProvider effectProvider = CachedAudioEffectProvider.Instance;
-
-    private readonly ProfileSettingsStore profileSettings;
-
-    private readonly SyncedServerSettings serverSettings;
-    private float amCollisionVol = 1.0f;
-    private int amEffectPosition;
-    private bool clippingEnabled;
-    private int fmNoisePosition;
-
-    private float fmVol;
-    private int hfNoisePosition;
-    private float hfVol;
-    private bool hqToneEnabled;
-
-    private int hqTonePosition;
-    private float hqToneVolume;
-
-    private bool irlRadioRXInterference;
-
-    private long lastRefresh; //last refresh of settings
-    private int natoPosition;
-
-    private bool natoToneEnabled;
-    private float natoToneVolume;
-    private bool radioBackgroundNoiseEffect;
-
-    private bool radioEffects;
-    private bool radioEffectsEnabled;
-    private int uhfNoisePosition;
-    private float uhfVol;
-    private int vhfNoisePosition;
-    private float vhfVol;
-
-    public ClientEffectsPipeline()
+    public class ClientEffectsPipeline
     {
-        profileSettings = GlobalSettingsStore.Instance.ProfileSettingsStore;
-        serverSettings = SyncedServerSettings.Instance;
+        private readonly Random _random = new Random();
 
-        _filters = new OnlineFilter[2];
-        _filters[0] =
-            OnlineFilter.CreateBandpass(ImpulseResponse.Finite, Constants.OUTPUT_SAMPLE_RATE, 560, 3900);
-        _filters[1] =
-            OnlineFilter.CreateBandpass(ImpulseResponse.Finite, Constants.OUTPUT_SAMPLE_RATE, 100, 4500);
+        private Dictionary<CachedAudioEffect.AudioEffectTypes, VolumeCachedEffectProvider> _fxProviders = new Dictionary<CachedAudioEffect.AudioEffectTypes, VolumeCachedEffectProvider>();
 
-        _highPassFilter = BiQuadFilter.HighPassFilter(Constants.OUTPUT_SAMPLE_RATE, 520, 0.97f);
-        _lowPassFilter = BiQuadFilter.LowPassFilter(Constants.OUTPUT_SAMPLE_RATE, 4130, 2.0f);
-        RefreshSettings();
+        private readonly CachedAudioEffectProvider effectProvider = CachedAudioEffectProvider.Instance;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        amCollisionEffect = effectProvider.AMCollision;
-    }
+        private bool radioEffectsEnabled;
+        private bool clippingEnabled;
 
-    private void RefreshSettings()
-    {
-        //only get settings every 3 seconds - and cache them - issues with performance
-        var now = DateTime.Now.Ticks;
+        private long lastRefresh = 0; //last refresh of settings
 
-        if (TimeSpan.FromTicks(now - lastRefresh).TotalSeconds > 3) //3 seconds since last refresh
+        private readonly ProfileSettingsStore profileSettings;
+
+        private bool radioEffects;
+        private bool radioBackgroundNoiseEffect;
+        private bool radioEncryptionEffect;
+
+        private bool irlRadioRXInterference = false;
+
+        private readonly SyncedServerSettings serverSettings;
+
+        private string PresetsFolder
         {
-            lastRefresh = now;
-
-            natoToneEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.NATOTone);
-            hqToneEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.HAVEQUICKTone);
-            radioEffectsEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEffects);
-            clippingEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEffectsClipping);
-
-            hqToneVolume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.HQToneVolume);
-            natoToneVolume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.NATOToneVolume);
-
-            amCollisionVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.AMCollisionVolume);
-
-            fmVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.FMNoiseVolume);
-            hfVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.HFNoiseVolume);
-            uhfVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.UHFNoiseVolume);
-            vhfVol = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.VHFNoiseVolume);
-
-            radioEffects = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEffects);
-
-            radioBackgroundNoiseEffect =
-                profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioBackgroundNoiseEffect);
-
-            irlRadioRXInterference = serverSettings.GetSettingAsBool(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE);
-        }
-    }
-
-    public float[] ProcessClientTransmissions(float[] tempBuffer, List<DeJitteredTransmission> transmissions,
-        out int clientTransmissionLength)
-    {
-        RefreshSettings();
-        var lastTransmission = transmissions[0];
-
-        clientTransmissionLength = 0;
-        foreach (var transmission in transmissions)
-        {
-            for (var i = 0; i < transmission.PCMAudioLength; i++) tempBuffer[i] += transmission.PCMMonoAudio[i];
-
-            clientTransmissionLength = Math.Max(clientTransmissionLength, transmission.PCMAudioLength);
-        }
-
-        var process = true;
-
-        // take info account server setting AND volume of this radio AND if its AM or FM
-        // FOR HAVEQUICK - only if its MORE THAN TWO
-        if (lastTransmission.ReceivedRadio != 0
-            && !lastTransmission.NoAudioEffects
-            && (lastTransmission.Modulation == Modulation.AM
-                || lastTransmission.Modulation == Modulation.FM
-                || lastTransmission.Modulation == Modulation.SINCGARS
-                || lastTransmission.Modulation == Modulation.HAVEQUICK)
-            && irlRadioRXInterference)
-            if (transmissions.Count > 1)
+            get
             {
-                //All AM is wrecked if more than one transmission
-                //For HQ - only if more than TWO transmissions and its totally fucked
-                if (lastTransmission.Modulation == Modulation.HAVEQUICK && transmissions.Count > 2 &&
-                    amCollisionEffect.Loaded)
+                return Path.Combine(Directory.GetCurrentDirectory(), "Presets");
+            }
+        }
+
+        public ClientEffectsPipeline()
+        {
+            profileSettings = GlobalSettingsStore.Instance.ProfileSettingsStore;
+            serverSettings = SyncedServerSettings.Instance;
+
+            _fxProviders.Add(CachedAudioEffect.AudioEffectTypes.NATO_TONE, new VolumeCachedEffectProvider(new CachedEffectProvider(effectProvider.NATOTone)));
+            _fxProviders.Add(CachedAudioEffect.AudioEffectTypes.HAVEQUICK_TONE, new VolumeCachedEffectProvider(new CachedEffectProvider(effectProvider.HAVEQUICKTone)));
+            _fxProviders.Add(CachedAudioEffect.AudioEffectTypes.UHF_NOISE, new VolumeCachedEffectProvider(new CachedEffectProvider(effectProvider.UHFNoise)));
+            _fxProviders.Add(CachedAudioEffect.AudioEffectTypes.VHF_NOISE, new VolumeCachedEffectProvider(new CachedEffectProvider(effectProvider.VHFNoise)));
+            _fxProviders.Add(CachedAudioEffect.AudioEffectTypes.HF_NOISE, new VolumeCachedEffectProvider(new CachedEffectProvider(effectProvider.HFNoise)));
+            _fxProviders.Add(CachedAudioEffect.AudioEffectTypes.FM_NOISE, new VolumeCachedEffectProvider(new CachedEffectProvider(effectProvider.FMNoise)));
+            _fxProviders.Add(CachedAudioEffect.AudioEffectTypes.AM_COLLISION, new VolumeCachedEffectProvider(new CachedEffectProvider(effectProvider.AMCollision)));
+
+            RefreshSettings();
+            LoadRadioModels();
+        }
+
+        private IReadOnlyDictionary<string, RadioPreset> Presets;
+
+        private void LoadRadioModels()
+        {
+            var loadedPresets = new Dictionary<string, RadioPreset>();
+            try
+            {
+                var presets = Directory.EnumerateFiles(PresetsFolder, "*.json");
+                foreach (var presetFile in presets)
                 {
-                    //replace the buffer with our own
-                    var outIndex = 0;
-                    while (outIndex < clientTransmissionLength)
+                    var presetName = Path.GetFileNameWithoutExtension(presetFile).ToLowerInvariant().Replace("-custom", null);
+                    using (Stream jsonFile = File.OpenRead(presetFile))
                     {
-                        var amByte = amCollisionEffect.AudioEffectFloat[amEffectPosition++];
+                        RadioPreset preset = null;
+                        try
+                        {
+                            preset = JsonSerializer.Deserialize<RadioPreset>(jsonFile, new JsonSerializerOptions
+                            {
+                                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error($"Unable to parse radio preset file {presetFile}", ex);
+                        }
 
-                        tempBuffer[outIndex++] = amByte * amCollisionVol * lastTransmission.Volume;
-
-                        if (amEffectPosition == amCollisionEffect.AudioEffectFloat.Length) amEffectPosition = 0;
-                    }
-
-                    process = false;
-                }
-                else if (lastTransmission.Modulation == Modulation.AM && amCollisionEffect.Loaded)
-                {
-                    //AM https://www.youtube.com/watch?v=yHRDjhkrDbo
-                    //Heterodyne tone AND audio from multiple transmitters in a horrible mess
-                    //TODO improve this
-                    //process here first
-                    tempBuffer = ProcessClientAudioSamples(tempBuffer, clientTransmissionLength, 0, lastTransmission);
-                    process = false;
-
-                    //apply heterodyne tone to the mixdown
-                    //replace the buffer with our own
-                    var outIndex = 0;
-                    while (outIndex < clientTransmissionLength)
-                    {
-                        var amByte = amCollisionEffect.AudioEffectFloat[amEffectPosition++];
-
-                        tempBuffer[outIndex++] += amByte * amCollisionVol * lastTransmission.Volume;
-
-                        if (amEffectPosition == amCollisionEffect.AudioEffectFloat.Length) amEffectPosition = 0;
+                        if (preset != null)
+                        {
+                            if (!loadedPresets.TryAdd(presetName, preset))
+                            {
+                                // If we load a customization afterwards, it takes precedence.
+                                // If we happened to have already loaded it, ignore the 'default'.
+                                if (presetName.EndsWith("-custom.json"))
+                                {
+                                    loadedPresets.Remove(presetName);
+                                    loadedPresets.Add(presetName, preset);
+                                }
+                            }
+                        }
                     }
                 }
-                else if (lastTransmission.Modulation == Modulation.FM ||
-                         lastTransmission.Modulation == Modulation.SINCGARS)
-                {
-                    //FM picketing / picket fencing - pick one transmission at random
-                    //TODO improve this to pick the stronger frequency?
-                    var index = _random.Next(transmissions.Count);
-                    var transmission = transmissions[index];
-
-                    for (var i = 0; i < transmission.PCMAudioLength; i++) tempBuffer[i] = transmission.PCMMonoAudio[i];
-
-                    clientTransmissionLength = transmission.PCMMonoAudio.Length;
-                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"Unable to parse radio preset files {PresetsFolder}", ex);
             }
 
-        //only process if AM effect doesnt apply
-        if (process)
-            tempBuffer = ProcessClientAudioSamples(tempBuffer, clientTransmissionLength, 0, lastTransmission);
 
-        return tempBuffer;
-    }
+            // If these were loaded from files, the try adds will fail here.
+            loadedPresets.TryAdd("intercom", DefaultRadioPresets.Intercom);
+            loadedPresets.TryAdd("arc210", DefaultRadioPresets.Arc210);
 
-    public float[] ProcessClientAudioSamples(float[] buffer, int count, int offset, DeJitteredTransmission transmission)
-    {
-        if (!transmission.NoAudioEffects)
+            Presets = loadedPresets.ToFrozenDictionary();
+        }
+
+        private void RefreshSettings()
         {
-            if (transmission.Modulation == Modulation.MIDS
-                || transmission.Modulation == Modulation.SATCOM
-                || transmission.Modulation == Modulation.INTERCOM)
+            //only get settings every 3 seconds - and cache them - issues with performance
+            long now = DateTime.Now.Ticks;
+
+            if (TimeSpan.FromTicks(now - lastRefresh).TotalSeconds > 3) //3 seconds since last refresh
             {
-                if (radioEffects) AddRadioEffectIntercom(buffer, count, offset, transmission.Modulation);
-            }
-            else
-            {
-                AddRadioEffect(buffer, count, offset, transmission.Modulation, transmission.Frequency);
+                lastRefresh = now;
+
+                _fxProviders[CachedAudioEffect.AudioEffectTypes.NATO_TONE].Enabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.NATOTone);
+                _fxProviders[CachedAudioEffect.AudioEffectTypes.NATO_TONE].Volume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.NATOToneVolume);
+
+                _fxProviders[CachedAudioEffect.AudioEffectTypes.HAVEQUICK_TONE].Enabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.HAVEQUICKTone);
+                _fxProviders[CachedAudioEffect.AudioEffectTypes.HAVEQUICK_TONE].Volume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.HQToneVolume);
+
+                radioEffectsEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEffects);
+                clippingEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEffectsClipping);
+
+                _fxProviders[CachedAudioEffect.AudioEffectTypes.UHF_NOISE].Volume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.UHFNoiseVolume);
+                _fxProviders[CachedAudioEffect.AudioEffectTypes.VHF_NOISE].Volume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.VHFNoiseVolume);
+                _fxProviders[CachedAudioEffect.AudioEffectTypes.HF_NOISE].Volume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.HFNoiseVolume);
+                _fxProviders[CachedAudioEffect.AudioEffectTypes.FM_NOISE].Volume = profileSettings.GetClientSettingFloat(ProfileSettingsKeys.FMNoiseVolume);
+
+                radioEffects = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEffects);
+
+                radioBackgroundNoiseEffect = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioBackgroundNoiseEffect);
+                radioEncryptionEffect = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEncryptionEffects);
+
+                irlRadioRXInterference = serverSettings.GetSettingAsBool(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE);
             }
         }
 
-        //final adjust
-        AdjustVolume(buffer, count, offset, transmission.Volume);
-
-        return buffer;
-    }
-
-    private void AdjustVolume(float[] buffer, int count, int offset, float volume)
-    {
-        var outputIndex = offset;
-        while (outputIndex < offset + count)
+        public float[] ProcessClientTransmissions(float[] tempBuffer, List<DeJitteredTransmission> transmissions, out int clientTransmissionLength)
         {
-            buffer[outputIndex] *= volume;
+            RefreshSettings();
+            DeJitteredTransmission lastTransmission = transmissions[0];
 
-            outputIndex++;
-        }
-    }
-
-    private void AddRadioEffectIntercom(float[] buffer, int count, int offset, Modulation modulation)
-    {
-        var outputIndex = offset;
-        while (outputIndex < offset + count)
-        {
-            var audio = _highPassFilter.Transform(buffer[outputIndex]);
-
-            audio = _highPassFilter.Transform(audio);
-
-            if (float.IsNaN(audio))
-                audio = _lowPassFilter.Transform(buffer[outputIndex]);
-            else
-                audio = _lowPassFilter.Transform(audio);
-
-            if (!float.IsNaN(audio))
+            clientTransmissionLength = 0;
+            foreach (var transmission in transmissions)
             {
-                // clip
-                if (audio > 1.0f)
-                    audio = 1.0f;
-                if (audio < -1.0f)
-                    audio = -1.0f;
-
-                buffer[outputIndex] = audio;
-            }
-
-            outputIndex++;
-        }
-    }
-
-
-    private void AddRadioEffect(float[] buffer, int count, int offset, Modulation modulation, double freq)
-    {
-        var outputIndex = offset;
-
-        while (outputIndex < offset + count)
-        {
-            var audio = (double)buffer[outputIndex];
-
-            if (radioEffectsEnabled)
-            {
-                if (clippingEnabled)
+                for (int i = 0; i < transmission.PCMAudioLength; i++)
                 {
-                    if (audio > RadioFilter.CLIPPING_MAX)
-                        audio = RadioFilter.CLIPPING_MAX;
-                    else if (audio < RadioFilter.CLIPPING_MIN) audio = RadioFilter.CLIPPING_MIN;
+                    tempBuffer[i] += transmission.PCMMonoAudio[i];
                 }
 
-                //high and low pass filter
-                for (var j = 0; j < _filters.Length; j++)
-                {
-                    var filter = _filters[j];
-                    audio = filter.ProcessSample(audio);
-                    if (double.IsNaN(audio)) audio = buffer[outputIndex];
-
-                    audio *= RadioFilter.BOOST;
-                }
+                clientTransmissionLength = Math.Max(clientTransmissionLength, transmission.PCMAudioLength);
             }
 
-            if ((modulation == Modulation.FM || modulation == Modulation.SINCGARS)
-                && effectProvider.NATOTone.Loaded
-                && natoToneEnabled)
+            bool process = true;
+
+            // take info account server setting AND volume of this radio AND if its AM or FM
+            // FOR HAVEQUICK - only if its MORE THAN TWO
+            if (lastTransmission.ReceivedRadio != 0
+                && !lastTransmission.NoAudioEffects
+                && (lastTransmission.Modulation == Modulation.AM
+                    || lastTransmission.Modulation == Modulation.FM
+                    || lastTransmission.Modulation == Modulation.SINCGARS
+                    || lastTransmission.Modulation == Modulation.HAVEQUICK)
+                && irlRadioRXInterference)
             {
-                var natoTone = effectProvider.NATOTone.AudioEffectFloat;
-                audio += natoTone[natoPosition] * natoToneVolume;
-                natoPosition++;
-
-                if (natoPosition == natoTone.Length) natoPosition = 0;
-            }
-
-            if (modulation == Modulation.HAVEQUICK
-                && effectProvider.HAVEQUICKTone.Loaded
-                && hqToneEnabled)
-            {
-                var hqTone = effectProvider.HAVEQUICKTone.AudioEffectFloat;
-
-                audio += hqTone[hqTonePosition] * hqToneVolume;
-                hqTonePosition++;
-
-                if (hqTonePosition == hqTone.Length)
+                if (transmissions.Count > 1)
                 {
-                    var reset = _random.NextDouble();
-
-                    if (reset > HQ_RESET_CHANCE)
-                        hqTonePosition = 0;
-                    else
-                        //one back to try again
-                        hqTonePosition += -1;
-                }
-            }
-
-            audio = AddRadioBackgroundNoiseEffect(audio, modulation, freq);
-
-            // clip
-            if (audio > 1.0f)
-                audio = 1.0f;
-            if (audio < -1.0f)
-                audio = -1.0f;
-
-            buffer[outputIndex] = (float)audio;
-
-            outputIndex++;
-        }
-    }
-
-    private double AddRadioBackgroundNoiseEffect(double audio, Modulation modulation, double freq)
-    {
-        if (radioBackgroundNoiseEffect)
-        {
-            if (modulation == Modulation.HAVEQUICK || modulation == Modulation.AM)
-            {
-                //mix in based on frequency
-                if (freq >= 200d * 1000000)
-                {
-                    if (effectProvider.UHFNoise.Loaded)
+                    //All AM is wrecked if more than one transmission
+                    //For HQ - only if more than TWO transmissions and its totally fucked
+                    var amCollisionProvider = _fxProviders[CachedAudioEffect.AudioEffectTypes.AM_COLLISION];
+                    if (lastTransmission.Modulation == Modulation.HAVEQUICK && transmissions.Count > 2 && amCollisionProvider.Active)
                     {
-                        var noise = effectProvider.UHFNoise.AudioEffectFloat;
-                        //UHF Band?
-                        audio += noise[uhfNoisePosition] * uhfVol;
-                        uhfNoisePosition++;
+                        var collisionProvider = new VolumeSampleProvider(amCollisionProvider);
+                        collisionProvider.Volume = lastTransmission.Volume;
 
-                        if (uhfNoisePosition == noise.Length) uhfNoisePosition = 0;
+                        //replace the buffer with our own
+                        collisionProvider.Read(tempBuffer, 0, clientTransmissionLength);
+
+                        process = false;
+                    }
+                    else if (lastTransmission.Modulation == Modulation.AM && amCollisionProvider.Active)
+                    {
+                        //AM https://www.youtube.com/watch?v=yHRDjhkrDbo
+                        //Heterodyne tone AND audio from multiple transmitters in a horrible mess
+                        //TODO improve this
+
+
+                        //process here first
+                        tempBuffer = ProcessClientAudioSamples(tempBuffer, clientTransmissionLength, 0, lastTransmission);
+                        process = false;
+
+                        //apply heterodyne tone to the mixdown
+                        // TODO: merge into the mixer living in ProcessClientAudioSamples().
+                        var collisionMixer = new MixingSampleProvider(new List<ISampleProvider>{
+                            new VolumeSampleProvider(amCollisionProvider)
+                            {
+                                Volume = lastTransmission.Volume,
+                            },
+                            new TransmissionProvider(tempBuffer, clientTransmissionLength)
+                        });
+
+                        collisionMixer.Read(tempBuffer, 0, clientTransmissionLength);
+                    }
+                    else if (lastTransmission.Modulation == Modulation.FM || lastTransmission.Modulation == Modulation.SINCGARS)
+                    {
+                        //FM picketing / picket fencing - pick one transmission at random
+                        //TODO improve this to pick the stronger frequency?
+
+                        int index = _random.Next(transmissions.Count);
+                        var transmission = transmissions[index];
+
+                        Array.Copy(transmission.PCMMonoAudio, tempBuffer, transmission.PCMMonoAudio.Length);
+                        clientTransmissionLength = transmission.PCMMonoAudio.Length;
                     }
                 }
-                else if (freq > 80d * 1000000)
-                {
-                    if (effectProvider.VHFNoise.Loaded)
-                    {
-                        //VHF Band? - Very rough
-                        var noise = effectProvider.VHFNoise.AudioEffectFloat;
-                        audio += noise[vhfNoisePosition] * vhfVol;
-                        vhfNoisePosition++;
+            }
 
-                        if (vhfNoisePosition == noise.Length) vhfNoisePosition = 0;
+            //only process if AM effect doesnt apply
+            if (process)
+                tempBuffer = ProcessClientAudioSamples(tempBuffer, clientTransmissionLength, 0, lastTransmission);
+
+
+            return tempBuffer;
+        }
+
+        public float[] ProcessClientAudioSamples(float[] buffer, int count, int offset, DeJitteredTransmission transmission)
+        {
+            ISampleProvider transmissionProvider = new TransmissionProvider(buffer, offset);
+            if (!transmission.NoAudioEffects)
+            {
+                if (transmission.Modulation == Modulation.MIDS
+                    || transmission.Modulation == Modulation.SATCOM
+                    || transmission.Modulation == Modulation.INTERCOM)
+                {
+                    if (radioEffects)
+                    {
+                        transmissionProvider = AddRadioEffectIntercom(transmissionProvider, transmission.Modulation);
                     }
                 }
                 else
                 {
-                    if (effectProvider.HFNoise.Loaded)
+                    string model = null;
+                    SRClientBase sender = null;
+                    if (ConnectedClientsSingleton.Instance.Clients.TryGetValue(transmission.Guid, out sender))
                     {
-                        //HF!
-                        var noise = effectProvider.HFNoise.AudioEffectFloat;
-                        audio += noise[hfNoisePosition] * hfVol;
-                        hfNoisePosition++;
-
-                        if (hfNoisePosition == noise.Length) hfNoisePosition = 0;
+                        if (sender != null)
+                        {
+                            // Try to find which radio the transmission is coming from.
+                            // "best match".
+                            foreach (var radio in sender.RadioInfo.radios)
+                            {
+                                if (radio.modulation == transmission.Modulation && RadioBase.FreqCloseEnough(transmission.Frequency, radio.freq))
+                                {
+                                    model = radio.Model;
+                                    break;
+                                }
+                            }
+                        }
                     }
+                    
+
+                    RadioPreset preset = Presets.GetValueOrDefault(model, Presets["arc210"]);
+
+                    transmissionProvider = AddRadioEffect(transmissionProvider, preset, transmission.Modulation, transmission.Frequency, transmission.Encryption);
                 }
             }
-            else if (modulation == Modulation.FM || modulation == Modulation.SINCGARS)
-            {
-                if (effectProvider.FMNoise.Loaded)
-                {
-                    //FM picks up most of the 20-60 ish range + has a different effect
-                    //HF!
-                    var noise = effectProvider.FMNoise.AudioEffectFloat;
-                    //UHF Band?
-                    audio += noise[fmNoisePosition] * fmVol;
-                    fmNoisePosition++;
 
-                    if (fmNoisePosition == noise.Length) fmNoisePosition = 0;
-                }
+            transmissionProvider = new VolumeSampleProvider(transmissionProvider)
+            {
+                Volume = transmission.Volume
+            };
+
+            transmissionProvider.Read(buffer, offset, count);
+            return buffer;
+        }
+
+        private void AdjustVolume(float[] buffer, int count, int offset, float volume)
+        {
+            int outputIndex = offset;
+            while (outputIndex < offset + count)
+            {
+                buffer[outputIndex] *= volume;
+
+                outputIndex++;
             }
         }
 
-        return audio;
+        private ISampleProvider AddRadioEffectIntercom(ISampleProvider voiceProvider, Modulation modulation)
+        {
+            return BuildMicPipeline(voiceProvider, Presets["intercom"], modulation == Modulation.MIDS);
+        }
+
+        private VolumeCachedEffectProvider GetToneProvider(Modulation modulation)
+        {
+            switch (modulation)
+            {
+                case Modulation.FM:
+                case Modulation.SINCGARS:
+                    return _fxProviders[CachedAudioEffect.AudioEffectTypes.NATO_TONE];
+
+                case Modulation.HAVEQUICK:
+                    return _fxProviders[CachedAudioEffect.AudioEffectTypes.HAVEQUICK_TONE];
+            }
+
+            return null;
+        }
+
+        private ISampleProvider GetNoiseProvider(Modulation modulation, double freq)
+        {
+            switch (modulation)
+            {
+                case Modulation.AM:
+                case Modulation.HAVEQUICK:
+                    if (freq > 200e6) // UHF range
+                    {
+                        return _fxProviders[CachedAudioEffect.AudioEffectTypes.UHF_NOISE];
+                    }
+
+                    if (freq > 80e6)
+                    {
+                        return _fxProviders[CachedAudioEffect.AudioEffectTypes.VHF_NOISE];
+                    }
+
+                    return _fxProviders[CachedAudioEffect.AudioEffectTypes.HF_NOISE];
+                case Modulation.FM:
+                case Modulation.SINCGARS:
+                    return _fxProviders[CachedAudioEffect.AudioEffectTypes.FM_NOISE];
+            }
+
+            return null;
+        }
+        private ISampleProvider BuildMicPipeline(ISampleProvider voiceProvider, RadioPreset radioModel, bool encryptionEffects)
+        {
+            voiceProvider = new MixingSampleProvider(new ISampleProvider[]{
+                voiceProvider,
+                new SignalGenerator(voiceProvider.WaveFormat.SampleRate, 1)
+                {
+                    Type = SignalGeneratorType.White,
+                    Gain = (float)Decibels.DecibelsToLinear(radioModel.NoiseGain -30),
+                },
+            });
+            voiceProvider = new FiltersProvider(voiceProvider)
+            {
+                Filters = radioModel.PrepassFilters
+            };
+
+            voiceProvider = new SaturationProvider(voiceProvider)
+            {
+                GainDB = radioModel.Saturation.Gain,
+                ThresholdDB = radioModel.Saturation.Threshold
+            };
+
+            voiceProvider = new SimpleCompressorEffect(voiceProvider)
+            {
+                Attack = radioModel.Compressor.Attack,
+                MakeUpGain = radioModel.Compressor.MakeUp,
+                Release = radioModel.Compressor.Release,
+                Enabled = true,
+                Threshold = radioModel.Compressor.Threshold,
+                Ratio = 1f / radioModel.Compressor.Slope,
+            };
+
+            // post
+            voiceProvider = new FiltersProvider(voiceProvider)
+            {
+                Filters = radioModel.PostCompressorFilters
+            };
+
+            // Bump gain.
+            voiceProvider = new VolumeSampleProvider(voiceProvider)
+            {
+                Volume = (float)Decibels.DecibelsToLinear(radioModel.PostGain)
+            };
+
+            if (encryptionEffects)
+            {
+                voiceProvider = new CVSDProvider(voiceProvider);
+            }
+
+            // Add receiver bandpass.
+            voiceProvider = new FiltersProvider(voiceProvider)
+            {
+                Filters = radioModel.ReceiverFilters
+            };
+
+            return voiceProvider;
+        }
+        private ISampleProvider AddRadioEffect(ISampleProvider voiceProvider, RadioPreset radioModel, Modulation modulation, double freq, short encryption)
+        {
+            // NAudio version.
+            // Chain of effects being applied.
+            // TODO: We should be able to precompute a lot of this.
+            if (radioEffectsEnabled)
+            {
+                if (clippingEnabled)
+                {
+                    voiceProvider = new ClippingProvider(voiceProvider, RadioFilter.CLIPPING_MIN, RadioFilter.CLIPPING_MAX);
+                }
+
+                voiceProvider = BuildMicPipeline(voiceProvider, radioModel, radioEncryptionEffect && encryption > 0);
+            }
+
+
+
+            // Mix in the noise, tones, etc.
+            // Note that they are applied LIFO.
+            var fxMixer = new MixingSampleProvider(voiceProvider.WaveFormat);
+
+            if (radioBackgroundNoiseEffect)
+            {
+                var noise = GetNoiseProvider(modulation, freq);
+                if (noise != null)
+                {
+                    fxMixer.AddMixerInput(new VolumeSampleProvider(noise)
+                    {
+                        Volume = (float)Decibels.DecibelsToLinear(radioModel.NoiseGain)
+                    });
+                }
+            }
+
+            // Modulation tone, if applicable.
+            {
+                var tone = GetToneProvider(modulation);
+                if (tone != null && tone.Active)
+                {
+                    fxMixer.AddMixerInput(tone);
+                }
+            }
+
+            // And now the voice.
+            fxMixer.AddMixerInput(voiceProvider);
+
+            voiceProvider = new ClippingProvider(fxMixer, -1, 1);
+
+            return voiceProvider;
+        }
     }
 }

@@ -14,10 +14,12 @@ public partial class RadioBase
     public bool retransmit = false;
     public double secFreq = 1;
     
-    private string _name = "";
-    public string Name
+    private string _model = "";
+
+    // Radio model, lowercase alphanumeric only (arc123, r456, etc).
+    public string Model
     {
-        get => _name;
+        get => _model;
         set { 
             value ??= "";
 
@@ -29,7 +31,7 @@ public partial class RadioBase
             {
                 value = value.Substring(0, 32);
             }
-            _name = value;
+            _model = value;
         }
     }
 
@@ -52,7 +54,7 @@ public partial class RadioBase
         if (encKey != compare.encKey) return false;
         if (retransmit != compare.retransmit) return false;
         if (!FreqCloseEnough(secFreq, compare.secFreq)) return false;
-        if (Name != compare?.Name) return false;
+        if (Model != compare?.Model) return false;
 
         return true;
     }
@@ -75,7 +77,7 @@ public partial class RadioBase
             secFreq = secFreq,
             encKey = encKey,
             freq = freq,
-            Name = Name
+            Model = Model
         };
     }
     

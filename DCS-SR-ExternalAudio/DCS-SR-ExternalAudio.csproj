@@ -58,8 +58,8 @@
     <PackageReference Include="Grpc.Core" Version="2.46.3" />
     <PackageReference Include="Grpc.Core.Api" Version="2.48.0" />
     <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.40.0" />
-    <PackageReference Include="NAudio" Version="2.2.0" />
-    <PackageReference Include="NAudio.Core" Version="2.2.0" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="NAudio.Core" Version="2.2.1" />
     <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
     <PackageReference Include="NVorbis" Version="0.10.4" />
     <PackageReference Include="System.ComponentModel.Composition" Version="9.0.2" />

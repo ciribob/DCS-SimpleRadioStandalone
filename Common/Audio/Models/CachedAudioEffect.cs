@@ -19,13 +19,8 @@ public class CachedAudioEffect
         MIDS_TX = 5,
         MIDS_TX_END = 6,
         HAVEQUICK_TONE = 7,
-        VHF_NOISE = 8,
-        HF_NOISE = 9,
-        UHF_NOISE = 10,
-        FM_NOISE = 11,
         INTERCOM_TRANS_START = 12,
         INTERCOM_TRANS_END = 13,
-        AM_COLLISION = 14,
         AMBIENT_COCKPIT = 15
     }
 

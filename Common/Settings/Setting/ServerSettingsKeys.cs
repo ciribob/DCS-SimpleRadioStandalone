@@ -33,7 +33,9 @@ public enum ServerSettingsKeys
     TRANSMISSION_LOG_ENABLED = 26,
     TRANSMISSION_LOG_RETENTION = 27,
     RADIO_EFFECT_OVERRIDE = 28,
-    SERVER_IP = 29
+    SERVER_IP = 29,
+    SERVER_RECORDING_ENABLED = 30,
+    SERVER_RECORDING_PATH = 31,
 }
 
 public class DefaultServerSettings
@@ -69,6 +71,8 @@ public class DefaultServerSettings
         { ServerSettingsKeys.TRANSMISSION_LOG_ENABLED.ToString(), "false" },
         { ServerSettingsKeys.TRANSMISSION_LOG_RETENTION.ToString(), "2" },
         { ServerSettingsKeys.RADIO_EFFECT_OVERRIDE.ToString(), "false" },
-        { ServerSettingsKeys.SERVER_IP.ToString(), "0.0.0.0" }
+        { ServerSettingsKeys.SERVER_IP.ToString(), "0.0.0.0" },
+        { ServerSettingsKeys.SERVER_RECORDING_ENABLED.ToString(), "false" },
+        { ServerSettingsKeys.SERVER_RECORDING_PATH.ToString(), @"C:\SRS recordings" },
     };
 }

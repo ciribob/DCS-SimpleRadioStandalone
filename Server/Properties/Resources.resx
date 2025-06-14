@@ -260,4 +260,10 @@ Cancel - Ignore</value>
   <data name="MsgBoxUpdateTitle" xml:space="preserve">
     <value>Update available</value>
   </data>
+  <data name="LabelServerRecordingPath" xml:space="preserve">
+    <value>Server Recordings path</value>
+  </data>
+  <data name="LabelAllowServerRecord" xml:space="preserve">
+    <value>Allow server voice recording</value>
+  </data>
 </root>

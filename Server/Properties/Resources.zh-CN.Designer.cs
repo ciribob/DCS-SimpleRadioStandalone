@@ -148,7 +148,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
                 return ResourceManager.GetString("BtnStopServer", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Allow server voice recording.
+        /// </summary>
+        public static string LabelAllowServerRecord
+        {
+            get
+            {
+                return ResourceManager.GetString("LabelAllowServerRecord", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to 传输存档时间.
         /// </summary>
@@ -319,7 +330,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
                 return ResourceManager.GetString("LabelSecurity", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Server Recordings path.
+        /// </summary>
+        public static string LabelServerRecordingPath
+        {
+            get
+            {
+                return ResourceManager.GetString("LabelServerRecordingPath", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to 显示发送者名字.
         /// </summary>

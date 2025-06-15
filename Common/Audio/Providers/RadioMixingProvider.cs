@@ -193,11 +193,9 @@ public class RadioMixingProvider : ISampleProvider
         }
     }
 
-    public float[] ClearArray(float[] buffer)
+    private static void ClearArray(float[] buffer)
     {
-        for (var i = 0; i < buffer.Length; i++) buffer[i] = 0;
-
-        return buffer;
+        Array.Clear(buffer);
     }
 
     private float[] HandleStartEndTones(float[] mixBuffer, int count, bool transmisson,

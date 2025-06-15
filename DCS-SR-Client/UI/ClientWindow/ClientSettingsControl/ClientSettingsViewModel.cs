@@ -823,78 +823,12 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         }
     }
 
-    public double UHFEffectVolume
+    public float NoiseGainDB
     {
-        get => _globalSettings.ProfileSettingsStore.GetClientSettingFloat(ProfileSettingsKeys.UHFNoiseVolume)
-            / double.Parse(
-                ProfileSettingsStore.DefaultSettingsProfileSettings[ProfileSettingsKeys.UHFNoiseVolume.ToString()],
-                CultureInfo.InvariantCulture) * 100.0f;
+        get => _globalSettings.ProfileSettingsStore.GetClientSettingFloat(ProfileSettingsKeys.NoiseGainDB);
         set
         {
-            var orig = double.Parse(
-                ProfileSettingsStore.DefaultSettingsProfileSettings[ProfileSettingsKeys.UHFNoiseVolume.ToString()],
-                CultureInfo.InvariantCulture);
-            var vol = orig * (value / 100.0f);
-
-            _globalSettings.ProfileSettingsStore.SetClientSettingFloat(ProfileSettingsKeys.UHFNoiseVolume,
-                (float)vol);
-            NotifyPropertyChanged();
-        }
-    }
-
-    public double VHFEffectVolume
-    {
-        get => _globalSettings.ProfileSettingsStore.GetClientSettingFloat(ProfileSettingsKeys.VHFNoiseVolume)
-            / double.Parse(
-                ProfileSettingsStore.DefaultSettingsProfileSettings[ProfileSettingsKeys.VHFNoiseVolume.ToString()],
-                CultureInfo.InvariantCulture) * 100.0f;
-        set
-        {
-            var orig = double.Parse(
-                ProfileSettingsStore.DefaultSettingsProfileSettings[ProfileSettingsKeys.VHFNoiseVolume.ToString()],
-                CultureInfo.InvariantCulture);
-            var vol = orig * (value / 100.0f);
-
-            _globalSettings.ProfileSettingsStore.SetClientSettingFloat(ProfileSettingsKeys.VHFNoiseVolume,
-                (float)vol);
-            NotifyPropertyChanged();
-        }
-    }
-
-    public double HFEffectVolume
-    {
-        get => _globalSettings.ProfileSettingsStore.GetClientSettingFloat(ProfileSettingsKeys.HFNoiseVolume)
-            / double.Parse(
-                ProfileSettingsStore.DefaultSettingsProfileSettings[ProfileSettingsKeys.HFNoiseVolume.ToString()],
-                CultureInfo.InvariantCulture) * 100.0f;
-        set
-        {
-            var orig = double.Parse(
-                ProfileSettingsStore.DefaultSettingsProfileSettings[ProfileSettingsKeys.HFNoiseVolume.ToString()],
-                CultureInfo.InvariantCulture);
-            var vol = orig * (value / 100.0f);
-
-            _globalSettings.ProfileSettingsStore.SetClientSettingFloat(ProfileSettingsKeys.HFNoiseVolume,
-                (float)vol);
-            NotifyPropertyChanged();
-        }
-    }
-
-    public double FMEffectVolume
-    {
-        get => _globalSettings.ProfileSettingsStore.GetClientSettingFloat(ProfileSettingsKeys.FMNoiseVolume)
-            / double.Parse(
-                ProfileSettingsStore.DefaultSettingsProfileSettings[ProfileSettingsKeys.FMNoiseVolume.ToString()],
-                CultureInfo.InvariantCulture) * 100.0f;
-        set
-        {
-            var orig = double.Parse(
-                ProfileSettingsStore.DefaultSettingsProfileSettings[ProfileSettingsKeys.FMNoiseVolume.ToString()],
-                CultureInfo.InvariantCulture);
-            var vol = orig * (value / 100.0f);
-
-            _globalSettings.ProfileSettingsStore.SetClientSettingFloat(ProfileSettingsKeys.FMNoiseVolume,
-                (float)vol);
+            _globalSettings.ProfileSettingsStore.SetClientSettingFloat(ProfileSettingsKeys.NoiseGainDB, value);
             NotifyPropertyChanged();
         }
     }
@@ -1147,10 +1081,7 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         NotifyPropertyChanged(nameof(HQEffectToggle));
         NotifyPropertyChanged(nameof(HQEffectVolume));
         NotifyPropertyChanged(nameof(BackgroundRadioNoiseToggle));
-        NotifyPropertyChanged(nameof(UHFEffectVolume));
-        NotifyPropertyChanged(nameof(VHFEffectVolume));
-        NotifyPropertyChanged(nameof(HFEffectVolume));
-        NotifyPropertyChanged(nameof(FMEffectVolume));
+        NotifyPropertyChanged(nameof(NoiseGainDB));
 
         NotifyPropertyChanged(nameof(AmbientEffectToggle));
         NotifyPropertyChanged(nameof(AmbientEffectIntercomToggle));

@@ -76,8 +76,8 @@ internal class AudioRecordingLameWriter
         var sanitisedTime = string.Join("-", DateTime.Now.ToLongTimeString().Split(Path.GetInvalidFileNameChars()));
         var filePathBase = $"Recordings\\{sanitisedDate}-{sanitisedTime}";
 
-        var lamePreset = (LAMEPreset)Enum.Parse(typeof(LAMEPreset),
-            GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.RecordingQuality).RawValue);
+        var lamePreset = LAMEPreset.ABR_320;// ABR_320(LAMEPreset)Enum.Parse(typeof(LAMEPreset),
+            //GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.RecordingQuality).RawValue);
 
         for (var i = 0; i < _streams.Count; i++)
         {

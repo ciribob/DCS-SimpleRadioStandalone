@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.NetCoreServer;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
-using Newtonsoft.Json;
 using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Server;
@@ -107,7 +107,10 @@ public class SRSClientSession : TcpSession
 
             try
             {
-                var networkMessage = JsonConvert.DeserializeObject<NetworkMessage>(message.Trim());
+                var networkMessage = JsonSerializer.Deserialize<NetworkMessage>(message.Trim(), new JsonSerializerOptions()
+                {
+                    IncludeFields = true,
+                });
                 //trim the received part
                 messages.Add(networkMessage);
             }

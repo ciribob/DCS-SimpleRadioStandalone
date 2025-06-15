@@ -2,13 +2,13 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.VAICOM.Models;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
-using Newtonsoft.Json;
 using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.VAICOM;
@@ -53,8 +53,8 @@ public class VAICOMSyncHandler
                     var bytes = _vaicomUDPListener.Receive(ref groupEp);
 
                     var vaicomMessageWrapper =
-                        JsonConvert.DeserializeObject<VAICOMMessageWrapper>(Encoding.UTF8.GetString(
-                            bytes, 0, bytes.Length));
+                        JsonSerializer.Deserialize<VAICOMMessageWrapper>(Encoding.UTF8.GetString(
+                            bytes, 0, bytes.Length), new JsonSerializerOptions() { IncludeFields = true, PropertyNameCaseInsensitive = true, });
 
                     if (vaicomMessageWrapper != null)
                         if (vaicomMessageWrapper.MessageType == 1)

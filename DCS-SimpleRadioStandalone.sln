@@ -36,6 +36,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		DCS-SR-Client\awacs-radios.json = DCS-SR-Client\awacs-radios.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{FB018727-A55A-4A9E-876E-784BE4801620}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -82,5 +84,9 @@ Global
 		{B4E223EC-B160-003C-F262-F249FBC7AC2A}.Debug|x64.Build.0 = Debug|x64
 		{B4E223EC-B160-003C-F262-F249FBC7AC2A}.Release|x64.ActiveCfg = Release|x64
 		{B4E223EC-B160-003C-F262-F249FBC7AC2A}.Release|x64.Build.0 = Release|x64
+		{FB018727-A55A-4A9E-876E-784BE4801620}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FB018727-A55A-4A9E-876E-784BE4801620}.Debug|x64.Build.0 = Debug|Any CPU
+		{FB018727-A55A-4A9E-876E-784BE4801620}.Release|x64.ActiveCfg = Release|Any CPU
+		{FB018727-A55A-4A9E-876E-784BE4801620}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

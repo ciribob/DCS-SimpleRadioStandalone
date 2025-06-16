@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace Server;
+namespace Ciribob.DCS.SimpleRadio.Standalone.Server.UI;
 
 public partial class MainWindow : Window
 {

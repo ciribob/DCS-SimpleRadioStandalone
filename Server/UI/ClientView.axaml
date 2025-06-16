@@ -1,9 +1,9 @@
-<Window xmlns="https://github.com/avaloniaui"
+﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="Server.MainWindow"
-        Title="Server">
-    Welcome to Avalonia!
+        x:Class="Ciribob.DCS.SimpleRadio.Standalone.Server.UI.ClientView"
+        Title="ClientView">
+	Welcome to Avalonia!
 </Window>

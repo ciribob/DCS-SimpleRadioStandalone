@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using System;
 
-namespace Server;
+namespace Ciribob.DCS.SimpleRadio.Standalone.Server;
 
 class Program
 {

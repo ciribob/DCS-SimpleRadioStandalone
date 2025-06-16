@@ -14,7 +14,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Installer", "Installer\Inst
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerCommandLine", "ServerCommandLine\ServerCommandLine.csproj", "{7F5894C9-3A28-141E-5C2C-2D1F3037102C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{3461765F-60A1-21BC-764E-FC799869FE2F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server-wpf", "Server-wpf\Server-wpf.csproj", "{3461765F-60A1-21BC-764E-FC799869FE2F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedAudio", "SharedAudio\SharedAudio.csproj", "{1BBCDA50-4C90-DA19-FDFA-9D35559A089F}"
 EndProject

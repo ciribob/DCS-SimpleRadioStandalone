@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="BtnBan" xml:space="preserve">
+        <value>Ban!</value>
+    </data>
+    <data name="BtnClientAdmin" xml:space="preserve">
+        <value>Client Admin</value>
+    </data>
+    <data name="BtnDisabled" xml:space="preserve">
+        <value>DISABLED</value>
+    </data>
+    <data name="BtnEnabled" xml:space="preserve">
+        <value>ENABLED</value>
+    </data>
+    <data name="BtnKick" xml:space="preserve">
+        <value>Kick</value>
+    </data>
+    <data name="BtnMute" xml:space="preserve">
+        <value>Mute</value>
+    </data>
+    <data name="BtnOff" xml:space="preserve">
+        <value>OFF</value>
+    </data>
+    <data name="BtnOn" xml:space="preserve">
+        <value>ON</value>
+    </data>
+    <data name="BtnStartServer" xml:space="preserve">
+        <value>Start Server</value>
+    </data>
+    <data name="BtnStopServer" xml:space="preserve">
+        <value>Stop Server</value>
+    </data>
+    <data name="LabelArchiveTime" xml:space="preserve">
+        <value>Transmission Archive Time</value>
+    </data>
+    <data name="LabelCheckBetaUpdates" xml:space="preserve">
+        <value>Check for beta updates</value>
+    </data>
+    <data name="LabelClients" xml:space="preserve">
+        <value>Clients:</value>
+    </data>
+    <data name="LabelDistanceLimit" xml:space="preserve">
+        <value>Distance Limit</value>
+    </data>
+    <data name="LabelExportList" xml:space="preserve">
+        <value>Auto Export List</value>
+    </data>
+    <data name="LabelExternalAWACS" xml:space="preserve">
+        <value>External AWACS Mode (EAM)</value>
+    </data>
+    <data name="LabelExternalAWACSBluePass" xml:space="preserve">
+        <value>EAM blue coal. password</value>
+    </data>
+    <data name="LabelExternalAWACSRedPass" xml:space="preserve">
+        <value>EAM red coal. password</value>
+    </data>
+    <data name="LabelGlobalLobbyFreq" xml:space="preserve">
+        <value>Global Lobby Freq. AM (MHz)</value>
+    </data>
+    <data name="LabelLOS" xml:space="preserve">
+        <value>Line of Sight</value>
+    </data>
+    <data name="LabelLotATCExport" xml:space="preserve">
+        <value>LotATC Transponder Export</value>
+    </data>
+    <data name="LabelOverrideEffectsOnGlobal" xml:space="preserve">
+        <value>Ignore Radio Effect on Global Freq</value>
+    </data>
+    <data name="LabelPort" xml:space="preserve">
+        <value>Port:</value>
+    </data>
+    <data name="LabelRadioEncryption" xml:space="preserve">
+        <value>Allow Radio Encryption</value>
+    </data>
+    <data name="LabelRadioExpansion" xml:space="preserve">
+        <value>Radio Expansion</value>
+    </data>
+    <data name="LabelRealRx" xml:space="preserve">
+        <value>IRL Radio Rx Behaviour</value>
+    </data>
+    <data name="LabelRealTx" xml:space="preserve">
+        <value>IRL Radio Tx Behaviour</value>
+    </data>
+    <data name="LabelRetransmitNodeLimit" xml:space="preserve">
+        <value>Retransmit Hop/Node Count</value>
+    </data>
+    <data name="LabelSecurity" xml:space="preserve">
+        <value>Secure Coalition Radios</value>
+    </data>
+    <data name="LabelShowTransmitterName" xml:space="preserve">
+        <value>Show Transmitter Name</value>
+    </data>
+    <data name="LabelSpectator" xml:space="preserve">
+        <value>Spectator Audio</value>
+    </data>
+    <data name="LabelStrictEncryption" xml:space="preserve">
+        <value>Strict Radio Encryption</value>
+    </data>
+    <data name="LabelTestFreq" xml:space="preserve">
+        <value>Test Frequencies AM (MHz)</value>
+    </data>
+    <data name="LabelTransmissionLog" xml:space="preserve">
+        <value>Log Received Transmissions</value>
+    </data>
+    <data name="LabelTunedCount" xml:space="preserve">
+        <value>Show Tuned/Client Count</value>
+    </data>
+    <data name="MsgBoxUpdate1" xml:space="preserve">
+        <value>New</value>
+    </data>
+    <data name="MsgBoxUpdate2" xml:space="preserve">
+        <value>version</value>
+    </data>
+    <data name="MsgBoxUpdate3" xml:space="preserve">
+        <value>available!</value>
+    </data>
+    <data name="MsgBoxUpdate4" xml:space="preserve">
+        <value>Do you want to Auto update?
+    
+If DCS is running this will wait until DCS has stopped running and automatically update after as the SRS installer requires DCS to be stopped. 
+It will also close SRS automatically if DCS is no longer running.
+
+Yes - Auto Update (and wait for DCS to Close automatically)
+No - Manual Update
+Cancel - Ignore</value>
+    </data>
+    <data name="MsgBoxUpdateFailed" xml:space="preserve">
+        <value>Unable to Auto Update - please download latest version manually</value>
+    </data>
+    <data name="MsgBoxUpdateFailedTitle" xml:space="preserve">
+        <value>Auto Update Error</value>
+    </data>
+    <data name="MsgBoxUpdateTitle" xml:space="preserve">
+        <value>Update available</value>
+    </data>
+    <data name="ServerPresetsEnabled" xml:space="preserve">
+        <value>Server Channel Presets</value>
+    </data>
+    <data name="TitleClientList" xml:space="preserve">
+        <value>SR Client List</value>
+    </data>
+</root>

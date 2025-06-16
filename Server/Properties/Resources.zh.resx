@@ -1,0 +1,150 @@
+﻿<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="BtnBan" xml:space="preserve">
+        <value>封禁</value>
+    </data>
+    <data name="BtnClientAdmin" xml:space="preserve">
+        <value>客户端管理</value>
+    </data>
+    <data name="BtnDisabled" xml:space="preserve">
+        <value>关</value>
+    </data>
+    <data name="BtnEnabled" xml:space="preserve">
+        <value>开</value>
+    </data>
+    <data name="BtnKick" xml:space="preserve">
+        <value>踢出</value>
+    </data>
+    <data name="BtnMute" xml:space="preserve">
+        <value>静音</value>
+    </data>
+    <data name="BtnOff" xml:space="preserve">
+        <value>关</value>
+    </data>
+    <data name="BtnOn" xml:space="preserve">
+        <value>开</value>
+    </data>
+    <data name="BtnStartServer" xml:space="preserve">
+        <value>开始服务器</value>
+    </data>
+    <data name="BtnStopServer" xml:space="preserve">
+        <value>停止服务器</value>
+    </data>
+    <data name="LabelArchiveTime" xml:space="preserve">
+        <value>传输存档时间</value>
+    </data>
+    <data name="LabelCheckBetaUpdates" xml:space="preserve">
+        <value>检查Beta版更新</value>
+    </data>
+    <data name="LabelClients" xml:space="preserve">
+        <value>客户端:</value>
+    </data>
+    <data name="LabelDistanceLimit" xml:space="preserve">
+        <value>传输距离限制</value>
+    </data>
+    <data name="LabelExportList" xml:space="preserve">
+        <value>自动导出列表</value>
+    </data>
+    <data name="LabelExternalAWACS" xml:space="preserve">
+        <value>外部预警机模式 (EAM)</value>
+    </data>
+    <data name="LabelExternalAWACSBluePass" xml:space="preserve">
+        <value>EAM蓝方密码</value>
+    </data>
+    <data name="LabelExternalAWACSRedPass" xml:space="preserve">
+        <value>EAM红方密码</value>
+    </data>
+    <data name="LabelGlobalLobbyFreq" xml:space="preserve">
+        <value>全局大厅频率 AM (MHz)</value>
+    </data>
+    <data name="LabelLOS" xml:space="preserve">
+        <value>地形遮挡检测</value>
+    </data>
+    <data name="LabelLotATCExport" xml:space="preserve">
+        <value>LotATC应答机导出</value>
+    </data>
+    <data name="LabelOverrideEffectsOnGlobal" xml:space="preserve">
+        <value>大厅无视无线电效果</value>
+    </data>
+    <data name="LabelPort" xml:space="preserve">
+        <value>端口:</value>
+    </data>
+    <data name="LabelRadioEncryption" xml:space="preserve">
+        <value>允许无线电加密</value>
+    </data>
+    <data name="LabelRadioExpansion" xml:space="preserve">
+        <value>扩展无线电</value>
+    </data>
+    <data name="LabelRealRx" xml:space="preserve">
+        <value>真实无线电接收</value>
+    </data>
+    <data name="LabelRealTx" xml:space="preserve">
+        <value>真实无线电发送</value>
+    </data>
+    <data name="LabelRetransmitNodeLimit" xml:space="preserve">
+        <value>转发节点数限制</value>
+    </data>
+    <data name="LabelSecurity" xml:space="preserve">
+        <value>保护阵营无线电</value>
+    </data>
+    <data name="LabelShowTransmitterName" xml:space="preserve">
+        <value>显示发送者名字</value>
+    </data>
+    <data name="LabelSpectator" xml:space="preserve">
+        <value>观众席语音</value>
+    </data>
+    <data name="LabelStrictEncryption" xml:space="preserve">
+        <value>严格无线电加密</value>
+    </data>
+    <data name="LabelTestFreq" xml:space="preserve">
+        <value>自我测试频率 AM (MHz)</value>
+    </data>
+    <data name="LabelTransmissionLog" xml:space="preserve">
+        <value>记录收到的传输</value>
+    </data>
+    <data name="LabelTunedCount" xml:space="preserve">
+        <value>显示同频人数</value>
+    </data>
+    <data name="MsgBoxUpdate1" xml:space="preserve">
+        <value>新</value>
+    </data>
+    <data name="MsgBoxUpdate2" xml:space="preserve">
+        <value>版本</value>
+    </data>
+    <data name="MsgBoxUpdate3" xml:space="preserve">
+        <value>已发布！</value>
+    </data>
+    <data name="MsgBoxUpdate4" xml:space="preserve">
+        <value>你想进行自动更新吗？
+
+安装程序需要关闭DCS。如果DCS正在运行，更新会等待直到DCS退出。
+DCS结束运行后，SRS也会自动关闭进行以更新。
+
+是 - 自动更新 （等待DCS退出）
+否 - 手动更新
+取消 - 忽略提示</value>
+    </data>
+    <data name="MsgBoxUpdateFailed" xml:space="preserve">
+        <value>无法自动更新 - 请手动下载最新版</value>
+    </data>
+    <data name="MsgBoxUpdateFailedTitle" xml:space="preserve">
+        <value>自动更新错误</value>
+    </data>
+    <data name="MsgBoxUpdateTitle" xml:space="preserve">
+        <value>更新可用</value>
+    </data>
+    <data name="TitleClientList" xml:space="preserve">
+        <value>SRS 客户端列表</value>
+    </data>
+</root>

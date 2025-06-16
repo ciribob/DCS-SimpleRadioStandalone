@@ -6,7 +6,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.Properties"
              Width="330"
-             Height="575"
              mc:Ignorable="d">
     <ScrollViewer VerticalScrollBarVisibility="Visible"  Margin="0,0,0,0" >
         <StackPanel Orientation="Vertical" Margin="5" >

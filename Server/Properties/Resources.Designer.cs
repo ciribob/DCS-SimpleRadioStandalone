@@ -21,7 +21,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    public class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -35,7 +35,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Ciribob.DCS.SimpleRadio.Standalone.Server.Properties.Resources", typeof(Resources).Assembly);
@@ -50,7 +50,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -62,7 +62,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Ban!.
         /// </summary>
-        internal static string BtnBan {
+        public static string BtnBan {
             get {
                 return ResourceManager.GetString("BtnBan", resourceCulture);
             }
@@ -71,7 +71,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Client Admin.
         /// </summary>
-        internal static string BtnClientAdmin {
+        public static string BtnClientAdmin {
             get {
                 return ResourceManager.GetString("BtnClientAdmin", resourceCulture);
             }
@@ -80,7 +80,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to DISABLED.
         /// </summary>
-        internal static string BtnDisabled {
+        public static string BtnDisabled {
             get {
                 return ResourceManager.GetString("BtnDisabled", resourceCulture);
             }
@@ -89,7 +89,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to ENABLED.
         /// </summary>
-        internal static string BtnEnabled {
+        public static string BtnEnabled {
             get {
                 return ResourceManager.GetString("BtnEnabled", resourceCulture);
             }
@@ -98,7 +98,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Kick.
         /// </summary>
-        internal static string BtnKick {
+        public static string BtnKick {
             get {
                 return ResourceManager.GetString("BtnKick", resourceCulture);
             }
@@ -107,7 +107,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Mute.
         /// </summary>
-        internal static string BtnMute {
+        public static string BtnMute {
             get {
                 return ResourceManager.GetString("BtnMute", resourceCulture);
             }
@@ -116,7 +116,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to OFF.
         /// </summary>
-        internal static string BtnOff {
+        public static string BtnOff {
             get {
                 return ResourceManager.GetString("BtnOff", resourceCulture);
             }
@@ -125,7 +125,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to ON.
         /// </summary>
-        internal static string BtnOn {
+        public static string BtnOn {
             get {
                 return ResourceManager.GetString("BtnOn", resourceCulture);
             }
@@ -134,7 +134,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Start Server.
         /// </summary>
-        internal static string BtnStartServer {
+        public static string BtnStartServer {
             get {
                 return ResourceManager.GetString("BtnStartServer", resourceCulture);
             }
@@ -143,7 +143,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Stop Server.
         /// </summary>
-        internal static string BtnStopServer {
+        public static string BtnStopServer {
             get {
                 return ResourceManager.GetString("BtnStopServer", resourceCulture);
             }
@@ -152,7 +152,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Transmission Archive Time.
         /// </summary>
-        internal static string LabelArchiveTime {
+        public static string LabelArchiveTime {
             get {
                 return ResourceManager.GetString("LabelArchiveTime", resourceCulture);
             }
@@ -161,7 +161,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Check for beta updates.
         /// </summary>
-        internal static string LabelCheckBetaUpdates {
+        public static string LabelCheckBetaUpdates {
             get {
                 return ResourceManager.GetString("LabelCheckBetaUpdates", resourceCulture);
             }
@@ -170,7 +170,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Clients:.
         /// </summary>
-        internal static string LabelClients {
+        public static string LabelClients {
             get {
                 return ResourceManager.GetString("LabelClients", resourceCulture);
             }
@@ -179,7 +179,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Distance Limit.
         /// </summary>
-        internal static string LabelDistanceLimit {
+        public static string LabelDistanceLimit {
             get {
                 return ResourceManager.GetString("LabelDistanceLimit", resourceCulture);
             }
@@ -188,7 +188,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Auto Export List.
         /// </summary>
-        internal static string LabelExportList {
+        public static string LabelExportList {
             get {
                 return ResourceManager.GetString("LabelExportList", resourceCulture);
             }
@@ -197,7 +197,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to External AWACS Mode (EAM).
         /// </summary>
-        internal static string LabelExternalAWACS {
+        public static string LabelExternalAWACS {
             get {
                 return ResourceManager.GetString("LabelExternalAWACS", resourceCulture);
             }
@@ -206,7 +206,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to EAM blue coal. password.
         /// </summary>
-        internal static string LabelExternalAWACSBluePass {
+        public static string LabelExternalAWACSBluePass {
             get {
                 return ResourceManager.GetString("LabelExternalAWACSBluePass", resourceCulture);
             }
@@ -215,7 +215,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to EAM red coal. password.
         /// </summary>
-        internal static string LabelExternalAWACSRedPass {
+        public static string LabelExternalAWACSRedPass {
             get {
                 return ResourceManager.GetString("LabelExternalAWACSRedPass", resourceCulture);
             }
@@ -224,7 +224,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Global Lobby Freq. AM (MHz).
         /// </summary>
-        internal static string LabelGlobalLobbyFreq {
+        public static string LabelGlobalLobbyFreq {
             get {
                 return ResourceManager.GetString("LabelGlobalLobbyFreq", resourceCulture);
             }
@@ -233,7 +233,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Line of Sight.
         /// </summary>
-        internal static string LabelLOS {
+        public static string LabelLOS {
             get {
                 return ResourceManager.GetString("LabelLOS", resourceCulture);
             }
@@ -242,7 +242,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to LotATC Transponder Export.
         /// </summary>
-        internal static string LabelLotATCExport {
+        public static string LabelLotATCExport {
             get {
                 return ResourceManager.GetString("LabelLotATCExport", resourceCulture);
             }
@@ -251,7 +251,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Ignore Radio Effect on Global Freq.
         /// </summary>
-        internal static string LabelOverrideEffectsOnGlobal {
+        public static string LabelOverrideEffectsOnGlobal {
             get {
                 return ResourceManager.GetString("LabelOverrideEffectsOnGlobal", resourceCulture);
             }
@@ -260,7 +260,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Port:.
         /// </summary>
-        internal static string LabelPort {
+        public static string LabelPort {
             get {
                 return ResourceManager.GetString("LabelPort", resourceCulture);
             }
@@ -269,7 +269,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Allow Radio Encryption.
         /// </summary>
-        internal static string LabelRadioEncryption {
+        public static string LabelRadioEncryption {
             get {
                 return ResourceManager.GetString("LabelRadioEncryption", resourceCulture);
             }
@@ -278,7 +278,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Radio Expansion.
         /// </summary>
-        internal static string LabelRadioExpansion {
+        public static string LabelRadioExpansion {
             get {
                 return ResourceManager.GetString("LabelRadioExpansion", resourceCulture);
             }
@@ -287,7 +287,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to IRL Radio Rx Behaviour.
         /// </summary>
-        internal static string LabelRealRx {
+        public static string LabelRealRx {
             get {
                 return ResourceManager.GetString("LabelRealRx", resourceCulture);
             }
@@ -296,7 +296,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to IRL Radio Tx Behaviour.
         /// </summary>
-        internal static string LabelRealTx {
+        public static string LabelRealTx {
             get {
                 return ResourceManager.GetString("LabelRealTx", resourceCulture);
             }
@@ -305,7 +305,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Retransmit Hop/Node Count.
         /// </summary>
-        internal static string LabelRetransmitNodeLimit {
+        public static string LabelRetransmitNodeLimit {
             get {
                 return ResourceManager.GetString("LabelRetransmitNodeLimit", resourceCulture);
             }
@@ -314,7 +314,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Secure Coalition Radios.
         /// </summary>
-        internal static string LabelSecurity {
+        public static string LabelSecurity {
             get {
                 return ResourceManager.GetString("LabelSecurity", resourceCulture);
             }
@@ -323,7 +323,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Show Transmitter Name.
         /// </summary>
-        internal static string LabelShowTransmitterName {
+        public static string LabelShowTransmitterName {
             get {
                 return ResourceManager.GetString("LabelShowTransmitterName", resourceCulture);
             }
@@ -332,7 +332,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Spectator Audio.
         /// </summary>
-        internal static string LabelSpectator {
+        public static string LabelSpectator {
             get {
                 return ResourceManager.GetString("LabelSpectator", resourceCulture);
             }
@@ -341,7 +341,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Strict Radio Encryption.
         /// </summary>
-        internal static string LabelStrictEncryption {
+        public static string LabelStrictEncryption {
             get {
                 return ResourceManager.GetString("LabelStrictEncryption", resourceCulture);
             }
@@ -350,7 +350,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Test Frequencies AM (MHz).
         /// </summary>
-        internal static string LabelTestFreq {
+        public static string LabelTestFreq {
             get {
                 return ResourceManager.GetString("LabelTestFreq", resourceCulture);
             }
@@ -359,7 +359,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Log Received Transmissions.
         /// </summary>
-        internal static string LabelTransmissionLog {
+        public static string LabelTransmissionLog {
             get {
                 return ResourceManager.GetString("LabelTransmissionLog", resourceCulture);
             }
@@ -368,7 +368,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Show Tuned/Client Count.
         /// </summary>
-        internal static string LabelTunedCount {
+        public static string LabelTunedCount {
             get {
                 return ResourceManager.GetString("LabelTunedCount", resourceCulture);
             }
@@ -377,7 +377,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to New.
         /// </summary>
-        internal static string MsgBoxUpdate1 {
+        public static string MsgBoxUpdate1 {
             get {
                 return ResourceManager.GetString("MsgBoxUpdate1", resourceCulture);
             }
@@ -386,7 +386,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to version.
         /// </summary>
-        internal static string MsgBoxUpdate2 {
+        public static string MsgBoxUpdate2 {
             get {
                 return ResourceManager.GetString("MsgBoxUpdate2", resourceCulture);
             }
@@ -395,7 +395,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to available!.
         /// </summary>
-        internal static string MsgBoxUpdate3 {
+        public static string MsgBoxUpdate3 {
             get {
                 return ResourceManager.GetString("MsgBoxUpdate3", resourceCulture);
             }
@@ -411,7 +411,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         ///No - Manual Update
         ///Cancel - Ignore.
         /// </summary>
-        internal static string MsgBoxUpdate4 {
+        public static string MsgBoxUpdate4 {
             get {
                 return ResourceManager.GetString("MsgBoxUpdate4", resourceCulture);
             }
@@ -420,7 +420,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Unable to Auto Update - please download latest version manually.
         /// </summary>
-        internal static string MsgBoxUpdateFailed {
+        public static string MsgBoxUpdateFailed {
             get {
                 return ResourceManager.GetString("MsgBoxUpdateFailed", resourceCulture);
             }
@@ -429,7 +429,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Auto Update Error.
         /// </summary>
-        internal static string MsgBoxUpdateFailedTitle {
+        public static string MsgBoxUpdateFailedTitle {
             get {
                 return ResourceManager.GetString("MsgBoxUpdateFailedTitle", resourceCulture);
             }
@@ -438,7 +438,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Update available.
         /// </summary>
-        internal static string MsgBoxUpdateTitle {
+        public static string MsgBoxUpdateTitle {
             get {
                 return ResourceManager.GetString("MsgBoxUpdateTitle", resourceCulture);
             }
@@ -447,7 +447,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Server Channel Presets.
         /// </summary>
-        internal static string ServerPresetsEnabled {
+        public static string ServerPresetsEnabled {
             get {
                 return ResourceManager.GetString("ServerPresetsEnabled", resourceCulture);
             }
@@ -456,7 +456,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to SR Client List.
         /// </summary>
-        internal static string TitleClientList {
+        public static string TitleClientList {
             get {
                 return ResourceManager.GetString("TitleClientList", resourceCulture);
             }

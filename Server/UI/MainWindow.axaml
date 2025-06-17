@@ -1,59 +1,65 @@
 <Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        Width="330"
-        Height="575"
-        mc:Ignorable="d" d:DesignWidth="330"
-        x:Class="Ciribob.DCS.SimpleRadio.Standalone.Server.UI.MainWindow"
-        Title="Server">
-        <DockPanel>
-                <ScrollViewer DockPanel.Dock="Top"
-                              VerticalScrollBarVisibility="Auto">
-                        <StackPanel Orientation="Vertical"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch" >
-                                <StackPanel Orientation="Horizontal" >
-                                        <Button x:Name="ServerStartStop"
-                                                Content="To Bind"/>
-                                        <StackPanel Orientation="Vertical">
-                                                <HeaderedContentControl Header="Clients:">
-                                                        <Label x:Name="ClientsCount"
-                                                               Content="0"/>
-                                                </HeaderedContentControl>
-                                                <HeaderedContentControl Header="Port:">
-                                                        <Label x:Name="LabelPort"
-                                                               Content="5002" />
-                                                </HeaderedContentControl>
-                                        </StackPanel>
-                                        <Button x:Name="ClientList" 
-                                                Content="To Bind" />
-                                </StackPanel>
-                                
-                                <HeaderedContentControl Header="Secure Coalition Radios" 
-                                                        HorizontalAlignment="Stretch" >
-                                        <ToggleSwitch x:Name="RadioSecurityToggle" />
-                                </HeaderedContentControl>
-                                <HeaderedContentControl Header="Spectator Audio">
-                                        <ToggleSwitch x:Name="SpectatorAudioToggle" />
-                                </HeaderedContentControl>
-                                <HeaderedContentControl Header="Auto Export List">
-                                        <ToggleSwitch x:Name="ExportListToggle" />
-                                </HeaderedContentControl>
-                                
-                        </StackPanel>
-                </ScrollViewer>
-                
-                
-                
-                <DockPanel DockPanel.Dock="Bottom"
-                           HorizontalAlignment="Stretch"
-                           VerticalAlignment="Bottom"
-                           Height="25"
-                           Background="{DynamicResource ThemeAccentBrush2}" >
-                        <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
-                                <Label>Status:</Label>
-                        </StackPanel>
-                </DockPanel>
-        </DockPanel>
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.Properties"
+	mc:Ignorable="d"
+	x:Class="Ciribob.DCS.SimpleRadio.Standalone.Server.UI.MainWindow"
+	Title="Server">
+	
+	<DockPanel>
+		<ScrollViewer DockPanel.Dock="Top"
+			      VerticalScrollBarVisibility="Auto">
+			<StackPanel Orientation="Vertical"
+			            Margin="5" >
+				<StackPanel Orientation="Horizontal" >
+					<Button x:Name="ServerStartStop"
+						Content="To Bind"/>
+					<WrapPanel Margin="5" >
+						<HeaderedContentControl Header="{x:Static p:Resources.LabelClients}">
+							<Label x:Name="ClientsCount"
+							       Content="0"/>
+						</HeaderedContentControl>
+						<HeaderedContentControl Header="{x:Static p:Resources.LabelPort}">
+							<Label x:Name="LabelPort"
+							       Content="5002" />
+						</HeaderedContentControl>
+					</WrapPanel>
+					<Button x:Name="ClientList" 
+						Content="{x:Static p:Resources.BtnClientAdmin}" />
+				</StackPanel>
+				
+				<HeaderedContentControl Header="{x:Static p:Resources.LabelSecurity}" >
+					<DockPanel>
+						<Label DockPanel.Dock="Left"
+						           MaxWidth="300" 
+						           Content="Description Text"/>
+						<ToggleSwitch x:Name="RadioSecurityToggle"
+						              DockPanel.Dock="Right"
+						              HorizontalAlignment="Right"/>
+					</DockPanel>
+					
+				</HeaderedContentControl>
+				<HeaderedContentControl Header="{x:Static p:Resources.LabelSpectator}">
+					<ToggleSwitch x:Name="SpectatorAudioToggle" />
+				</HeaderedContentControl>
+				<HeaderedContentControl Header="{x:Static p:Resources.LabelExportList}">
+					<ToggleSwitch x:Name="ExportListToggle" />
+				</HeaderedContentControl>
+				
+			</StackPanel>
+		</ScrollViewer>
+		
+		
+		
+		<DockPanel DockPanel.Dock="Bottom"
+			   HorizontalAlignment="Stretch"
+			   VerticalAlignment="Bottom"
+			   Height="25"
+			   Background="{DynamicResource ThemeAccentBrush2}" >
+			<StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
+				<Label>Status:</Label>
+			</StackPanel>
+		</DockPanel>
+	</DockPanel>
 </Window>

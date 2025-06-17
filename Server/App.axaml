@@ -1,10 +1,57 @@
 <Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="Ciribob.DCS.SimpleRadio.Standalone.Server.App"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+						 x:Class="Ciribob.DCS.SimpleRadio.Standalone.Server.App"
+						 RequestedThemeVariant="Default">
+						 <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
-    <Application.Styles>
-        <FluentTheme />
-    </Application.Styles>
+		<Application.Styles>
+			<FluentTheme />
+			
+			<Style Selector="Button">
+				<Setter Property="Margin" Value="5"/>
+			</Style>
+			
+			<Style Selector="HeaderedContentControl">
+				<Setter Property="Template">
+					<ControlTemplate>
+						<Grid Margin="5">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="*"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+
+							<!-- Header -->
+							<Border 
+								ZIndex="1" 
+								Background="{DynamicResource SystemControlBackgroundAltHighBrush}" 
+								Padding="5,0,5,0" 
+								Margin="5,0,0,0">
+								<TextBlock 
+									Text="{TemplateBinding Header}" 
+									FontWeight="Bold"/>
+							</Border>
+
+							<!-- Content Area -->
+							<Border 
+								Grid.RowSpan="2" 
+								Padding="0,5,0,0"
+								Grid.ColumnSpan="2"
+								CornerRadius="4"
+								Margin="0,10,0,0"
+								BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+								BorderThickness="1">
+								<ContentPresenter 
+									Name="PART_ContentPresenter"
+									Padding="8"
+									Content="{TemplateBinding Content}"/>
+							</Border>
+						</Grid>
+					</ControlTemplate>
+				</Setter>
+			</Style>
+		</Application.Styles>
 </Application>

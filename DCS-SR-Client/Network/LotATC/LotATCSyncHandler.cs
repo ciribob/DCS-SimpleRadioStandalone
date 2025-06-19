@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS;
@@ -14,7 +15,6 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
-using Newtonsoft.Json;
 using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.LotATC;
@@ -72,7 +72,7 @@ public class LotATCSyncHandler
                     var bytes = _lotATCPositionListener.Receive(ref groupEp);
 
                     var lotAtcPositionWrapper =
-                        JsonConvert.DeserializeObject<LotATCMessageWrapper>(Encoding.UTF8.GetString(
+                        JsonSerializer.Deserialize<LotATCMessageWrapper>(Encoding.UTF8.GetString(
                             bytes, 0, bytes.Length));
 
                     if (lotAtcPositionWrapper != null)
@@ -175,7 +175,7 @@ public class LotATCSyncHandler
                                 foreach (var losRequest in clientsList)
                                 {
                                     var byteData =
-                                        Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(losRequest) + "\n");
+                                        Encoding.UTF8.GetBytes(JsonSerializer.Serialize(losRequest, new JsonSerializerOptions() { IncludeFields = true, PropertyNameCaseInsensitive = true }) + "\n");
 
                                     _udpSocket.Send(byteData, byteData.Length, _host);
 

@@ -394,6 +394,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                 if (updateRadio.simul) simul = true;
 
                 clientRadio.name = updateRadio.name;
+                clientRadio.model = updateRadio.model;
 
                 clientRadio.modulation = updateRadio.modulation;
 

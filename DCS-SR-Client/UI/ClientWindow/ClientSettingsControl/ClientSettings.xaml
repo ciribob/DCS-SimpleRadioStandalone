@@ -1096,45 +1096,13 @@
                                    Grid.Column="0"
                                    HorizontalContentAlignment="Center"
                                    VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.UHFEffectVolume}" />
+                                   Content="{x:Static p:Resources.NoiseGainDB}" />
 
-                            <clientSettingsControl:BackgroundEffectVolumeControl
+                            <clientSettingsControl:GainDBControl
                                 Grid.Row="13"
                                 Grid.Column="1"
-                                VolumeValue="{Binding UHFEffectVolume,Mode=TwoWay}" />
-
-                            <Label Grid.Row="14"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.VHFEffectVolume}" />
-
-                            <clientSettingsControl:BackgroundEffectVolumeControl
-                                Grid.Row="14"
-                                Grid.Column="1"
-                                VolumeValue="{Binding VHFEffectVolume,Mode=TwoWay}" />
-
-                            <Label Grid.Row="15"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.HFEffectVolume}" />
-
-                            <clientSettingsControl:BackgroundEffectVolumeControl
-                                Grid.Row="15"
-                                Grid.Column="1"
-                                VolumeValue="{Binding HFEffectVolume,Mode=TwoWay}" />
-
-                            <Label Grid.Row="16"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.FMEffectVolume}" />
-
-                            <clientSettingsControl:BackgroundEffectVolumeControl
-                                Grid.Row="16"
-                                Grid.Column="1"
-                                VolumeValue="{Binding FMEffectVolume,Mode=TwoWay}" />
+                                IsEnabled="{Binding BackgroundRadioNoiseToggle}"
+                                GainDBValue="{Binding NoiseGainDB,Mode=TwoWay}" />
 
                             <Label Grid.Row="17"
                                    Grid.Column="0"

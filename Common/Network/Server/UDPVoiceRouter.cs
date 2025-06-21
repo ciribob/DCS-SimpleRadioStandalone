@@ -189,7 +189,7 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
         {
             _listener.Close();
         }
-        catch (Exception e)
+        catch (Exception)
         {
         }
     }
@@ -201,7 +201,7 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
         {
             _listener.Close();
         }
-        catch (Exception e)
+        catch (Exception)
         {
         }
 

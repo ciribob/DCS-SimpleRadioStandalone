@@ -221,7 +221,7 @@ public class GlobalSettingsStore
 {
     private static readonly string CFG_FILE_NAME = "global.cfg";
 
-    private static readonly string PREVIOUS_CFG_FILE_NAME = "client.cfg";
+    //private static readonly string PREVIOUS_CFG_FILE_NAME = "client.cfg";
 
     private static readonly object _lock = new();
 

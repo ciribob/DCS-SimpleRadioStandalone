@@ -35,9 +35,4 @@ public class SRClientListClient : SRClientBase
             }
         }
     }
-
-    public string AllowRecordingStatus
-    {
-        get { return AllowRecord ? "R" : "-"; }
-    }
 }

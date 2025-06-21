@@ -107,7 +107,7 @@ public class ClientAudioProvider : AudioProvider
             //append ms of silence - this functions as our jitter buffer??
             var silencePad = Constants.OUTPUT_SAMPLE_RATE / 1000 * SILENCE_PAD;
             var newAudio = new float[audio.PcmAudioFloat.Length + silencePad];
-            Buffer.BlockCopy(audio.PcmAudioFloat, 0, newAudio, silencePad, audio.PcmAudioFloat.Length);
+            Buffer.BlockCopy(audio.PcmAudioFloat, 0, newAudio, silencePad * sizeof(float), audio.PcmAudioFloat.Length * sizeof(float));
             audio.PcmAudioFloat = newAudio;
         }
 

@@ -121,6 +121,8 @@ public class DCSRadio
         return true;
     }
 
+    public override int GetHashCode() => (name, freq, modulation, enc, encKey, retransmit, secFreq).GetHashCode();
+
     public DCSRadio DeepClone()
     {
         //probably can use memberswise clone

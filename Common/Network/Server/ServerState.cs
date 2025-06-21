@@ -49,29 +49,40 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
 
     public async Task HandleAsync(BanClientMessage message, CancellationToken cancellationToken)
     {
-        WriteBanIP(message.Client);
-
-        KickClient(message.Client);
+        await Task.Run(() =>
+        {
+            WriteBanIP(message.Client);
+            KickClient(message.Client);
+        });
     }
 
     public async Task HandleAsync(KickClientMessage message, CancellationToken cancellationToken)
     {
-        var client = message.Client;
-        KickClient(client);
+        await Task.Run(() =>
+        {
+            var client = message.Client;
+            KickClient(client);
+        });
     }
 
     public async Task HandleAsync(StartServerMessage message, CancellationToken cancellationToken)
     {
-        StartServer();
-        _eventAggregator.PublishOnUIThreadAsync(new ServerStateMessage(true,
-            new List<SRClientBase>(_connectedClients.Values)));
+        await Task.Run(() =>
+        {
+            StartServer();
+            _eventAggregator.PublishOnUIThreadAsync(new ServerStateMessage(true,
+                new List<SRClientBase>(_connectedClients.Values)));
+        });
     }
 
     public async Task HandleAsync(StopServerMessage message, CancellationToken cancellationToken)
     {
-        StopServer();
-        _eventAggregator.PublishOnUIThreadAsync(new ServerStateMessage(false,
-            new List<SRClientBase>(_connectedClients.Values)));
+        await Task.Run(() =>
+        {
+            StopServer();
+            _eventAggregator.PublishOnUIThreadAsync(new ServerStateMessage(false,
+                new List<SRClientBase>(_connectedClients.Values)));
+        });
     }
 
 
@@ -311,7 +322,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
                     _bannedIps.Add(ip);
                 }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             Logger.Error("Unable to read banned.txt");
         }

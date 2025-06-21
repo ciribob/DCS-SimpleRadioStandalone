@@ -20,6 +20,8 @@ public class DCSPlayerSideInfo
                seat == info.seat;
     }
 
+    public override int GetHashCode() => (name, side, seat).GetHashCode();
+
     public void Reset()
     {
         name = "";

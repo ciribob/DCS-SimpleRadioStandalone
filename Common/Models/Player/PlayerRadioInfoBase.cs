@@ -82,6 +82,8 @@ public class PlayerRadioInfoBase
         return true;
     }
 
+    public override int GetHashCode() => (unit, unitId, iff, ambient, radios).GetHashCode();
+
 
     public PlayerRadioInfoBase DeepClone()
     {

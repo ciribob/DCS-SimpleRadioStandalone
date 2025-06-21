@@ -20,6 +20,9 @@ public class Ambient
         return true;
     }
 
+    // https://stackoverflow.com/a/61730200
+    public override int GetHashCode() => (vol, abType).GetHashCode();
+
     public Ambient Copy()
     {
         return new Ambient

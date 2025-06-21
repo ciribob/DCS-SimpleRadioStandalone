@@ -13,7 +13,7 @@ public static class LoggingHelper
         {
             FileName = @"${date:format=yyyy-MM-dd}-transmissionlog.csv",
             ArchiveFileName = @"${basedir}/TransmissionLogArchive/{#}-transmissionlog.old.csv",
-            ArchiveNumbering = ArchiveNumberingMode.Date,
+            ArchiveNumbering = "Date", // #TODO switch to ArchiveSuffixFormat.
             MaxArchiveFiles = archiveFiles,
             ArchiveEvery = FileArchivePeriod.Day,
             Layout = @"${longdate}, ${message}"

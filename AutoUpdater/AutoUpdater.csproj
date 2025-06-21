@@ -44,11 +44,11 @@
         </Compile>
     </ItemGroup>
     <ItemGroup>
-        <Resource Include="system_software_update.ico"/>
+        <Resource Include="system_software_update.ico" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.CSharp" Version="4.7.0"/>
-        <PackageReference Include="Octokit" Version="2.0.1"/>
+        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+        <PackageReference Include="Octokit" Version="14.0.0" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Update="Properties\Resources.resx">

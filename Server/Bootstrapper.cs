@@ -124,7 +124,7 @@ public class Bootstrapper : BootstrapperBase
         //create an instance of serverState to actually start the server
         _simpleContainer.GetInstance(typeof(ServerState), null);
 
-        DisplayRootViewFor<MainViewModel>(settings);
+        DisplayRootViewForAsync<MainViewModel>(settings);
         
         UpdaterChecker.Instance.CheckForUpdate(ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).BoolValue,
             result =>

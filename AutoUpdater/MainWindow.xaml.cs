@@ -177,10 +177,16 @@ public partial class MainWindow : Window
                     if (path.Length > 0)
                     {
                         var latestVersion = new Version(release.TagName.Replace("v", ""));
-                        var serverVersion = Assembly.LoadFile(Path.Combine(path, "SR-Server.exe")).GetName()
-                            .Version;
+                        var serverExe = Path.Combine(path, "SR-Server.exe");
+                        var useThisVersion = true;
+                        if (Path.Exists(serverExe))
+                        {
+                            var serverVersion = Assembly.LoadFile(serverExe).GetName().Version;
+                            useThisVersion = serverVersion < latestVersion;
+                        }
+                        
 
-                        if (serverVersion < latestVersion) return new Uri(releaseAsset.BrowserDownloadUrl);
+                        if (useThisVersion) return new Uri(releaseAsset.BrowserDownloadUrl);
 
                         //no update
                         return null;
@@ -229,6 +235,15 @@ public partial class MainWindow : Window
     {
         foreach (var arg in Environment.GetCommandLineArgs())
             if (arg.Trim().Equals("-server"))
+                return true;
+
+        return false;
+    }
+
+    private bool WaitInstaller()
+    {
+        foreach (var arg in Environment.GetCommandLineArgs())
+            if (arg.Trim().Equals("-wait"))
                 return true;
 
         return false;
@@ -341,7 +356,13 @@ public partial class MainWindow : Window
 
             procInfo.FileName = Path.Combine(Path.Combine(_directory, "extract"), "installer.exe");
             procInfo.UseShellExecute = false;
-            Process.Start(procInfo);
+            var installerProcess = Process.Start(procInfo);
+
+            if (WaitInstaller() && installerProcess != null)
+            {
+                installerProcess.WaitForExit();
+            }
+            
 
 
             //Process.Start(changelogURL);

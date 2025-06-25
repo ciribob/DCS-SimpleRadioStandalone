@@ -204,7 +204,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to EAM blue coal. password.
+        ///   Looks up a localized string similar to Blue Password.
         /// </summary>
         public static string LabelExternalAWACSBluePass {
             get {
@@ -213,7 +213,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to EAM red coal. password.
+        ///   Looks up a localized string similar to Red Password.
         /// </summary>
         public static string LabelExternalAWACSRedPass {
             get {

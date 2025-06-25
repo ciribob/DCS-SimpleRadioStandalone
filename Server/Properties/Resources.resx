@@ -67,10 +67,10 @@
         <value>External AWACS Mode (EAM)</value>
     </data>
     <data name="LabelExternalAWACSBluePass" xml:space="preserve">
-        <value>EAM blue coal. password</value>
+        <value>Blue Password</value>
     </data>
     <data name="LabelExternalAWACSRedPass" xml:space="preserve">
-        <value>EAM red coal. password</value>
+        <value>Red Password</value>
     </data>
     <data name="LabelGlobalLobbyFreq" xml:space="preserve">
         <value>Global Lobby Freq. AM (MHz)</value>

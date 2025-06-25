@@ -60,10 +60,10 @@
         <value>外部预警机模式 (EAM)</value>
     </data>
     <data name="LabelExternalAWACSBluePass" xml:space="preserve">
-        <value>EAM蓝方密码</value>
+        <value>蓝方密码</value>
     </data>
     <data name="LabelExternalAWACSRedPass" xml:space="preserve">
-        <value>EAM红方密码</value>
+        <value>红方密码</value>
     </data>
     <data name="LabelGlobalLobbyFreq" xml:space="preserve">
         <value>全局大厅频率 AM (MHz)</value>

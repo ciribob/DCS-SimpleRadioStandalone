@@ -213,9 +213,9 @@ function SR.exporter()
         -- EXPANSION: only enabled if IFF Expansion is enabled
         -- CONTROL: 1 - OVERLAY / SRS, 0 - COCKPIT / Realistic, 2 = DISABLED / NOT FITTED AT ALL
         -- MIC - -1 for OFF or ID of the radio to trigger IDENT Mode if the PTT is used
-        -- IFF STATUS{"control":1,"expansion":false,"mode1":51,"mode3":7700,"mode4":1,"status":2,mic=1}
+        -- IFF STATUS{"control":1,"expansion":false,"mode1":51,"mode3":7700,"mode4":true,"status":2,mic=1}
 
-        _update.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=0,control=1,expansion=false,mic=-1}
+        _update.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=false,control=1,expansion=false,mic=-1}
 
         --   SR.log(_update.unit.."\n\n")
 
@@ -280,7 +280,7 @@ function SR.exporter()
 
             _update.control = 0;
             _update.selected = 1
-            _update.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=0,control=0,expansion=false,mic=-1}
+            _update.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=false,control=0,expansion=false,mic=-1}
 
             _update.ambient = {vol = 0.2, abType = 'jet' }
         end
@@ -331,7 +331,7 @@ function SR.exporter()
                 { name = "VHF Guard", freq = 124.8 * 1000000, modulation = 0, volume = 1.0, secFreq = 121.5 * 1000000, freqMin = 1 * 1000000, freqMax = 400 * 1000000, encKey = 0, enc = false, encMode = 0, freqMode = 1, volMode = 1, expansion = false, rtMode = 1 },
             },
             radioType = 3,
-            iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=0,control=0,expansion=false,mic=-1}
+            iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=false,control=0,expansion=false,mic=-1}
         }
 
         -- Allows for custom radio's using the DCS-Plugin scheme.
@@ -730,7 +730,7 @@ function SR.exportRadioAH64D(_data)
         mode1 = _ah64Mode1Persist,
         mode2 = -1,
         mode3 = -1,
-        mode4 = 0,
+        mode4 = false,
         control = 0,
         expansion = false
     }
@@ -923,7 +923,7 @@ function SR.exportRadioAH64D(_data)
 
             _iffSettings.mode3 = _eufdDevice["Transponder_MODE_3A"] and string.format("%04d", _eufdDevice["Transponder_MODE_3A"]) or -1
 
-            _iffSettings.mode4 = _eufdDevice["XPNDR_MODE_4"] and 1 or 0
+            _iffSettings.mode4 = _eufdDevice["XPNDR_MODE_4"] and true or false
         else -- Transponder_MC == "STBY" or there's no power
             _iffSettings.status = 0
         end
@@ -1949,7 +1949,7 @@ end
 
 function SR.exportRadioHercules(_data)
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = true, desc = "" }
-    _data.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=0,control=1,expansion=false,mic=-1}
+    _data.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=false,control=1,expansion=false,mic=-1}
 
     -- Intercom
     _data.radios[1].name = "Intercom"
@@ -7242,7 +7242,7 @@ function SR.exportRadioF4U (_data)
     -- p59 of the pdf (p53 for the manual) is the radio section.
 
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
-    _data.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=0,control=1,expansion=false,mic=-1}
+    _data.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=false,control=1,expansion=false,mic=-1}
 
     local devices = {
         Cockpit = 0,

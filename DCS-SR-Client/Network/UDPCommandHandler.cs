@@ -2,11 +2,11 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
-using Newtonsoft.Json;
 using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
@@ -51,8 +51,8 @@ public class UDPCommandHandler
                     //Logger.Info("Recevied Message from UDP COMMAND INTERFACE: "+ Encoding.UTF8.GetString(
                     //          bytes, 0, bytes.Length));
                     var message =
-                        JsonConvert.DeserializeObject<UDPInterfaceCommand>(Encoding.UTF8.GetString(
-                            bytes, 0, bytes.Length));
+                        JsonSerializer.Deserialize<UDPInterfaceCommand>(Encoding.UTF8.GetString(
+                            bytes, 0, bytes.Length), new JsonSerializerOptions() { IncludeFields = true, PropertyNameCaseInsensitive = true, });
 
                     if (message?.Command == UDPInterfaceCommand.UDPCommandType.FREQUENCY_DELTA)
                         RadioHelper.UpdateRadioFrequency(message.Frequency, message.RadioId);

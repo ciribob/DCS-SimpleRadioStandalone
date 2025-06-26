@@ -2,12 +2,12 @@
 using System.Collections.Concurrent;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
-using Newtonsoft.Json;
 using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Server;
@@ -115,7 +115,7 @@ public class HttpServer
         {
             var data = new ClientListExport
                 { Clients = _connectedClients.Values, ServerVersion = UpdaterChecker.VERSION };
-            var json = JsonConvert.SerializeObject(data) + "\n";
+            var json = JsonSerializer.Serialize(data) + "\n";
 
             var output = context.Response.OutputStream;
             using (output)

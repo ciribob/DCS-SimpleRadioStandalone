@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS.Models;
@@ -13,7 +14,6 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
-using Newtonsoft.Json;
 using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS;
@@ -69,8 +69,8 @@ public class DCSLineOfSightHandler
                     /*   Logger.Debug(Encoding.UTF8.GetString(
                             bytes, 0, bytes.Length));*/
                     var playerInfo =
-                        JsonConvert.DeserializeObject<DCSLosCheckResult[]>(Encoding.UTF8.GetString(
-                            bytes, 0, bytes.Length));
+                        JsonSerializer.Deserialize<DCSLosCheckResult[]>(Encoding.UTF8.GetString(
+                            bytes, 0, bytes.Length), new JsonSerializerOptions() { IncludeFields = true });
 
                     foreach (var player in playerInfo)
                     {
@@ -126,7 +126,10 @@ public class DCSLineOfSightHandler
                             {
                                 // Logger.Info( "Sending LOS Request: "+ JsonConvert.SerializeObject(clientSubList));
                                 var byteData =
-                                    Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(clientSubList) + "\n");
+                                    Encoding.UTF8.GetBytes(JsonSerializer.Serialize(clientSubList, new JsonSerializerOptions()
+                                    {
+                                        IncludeFields = true,
+                                    }) + "\n");
 
                                 _udpSocket.Send(byteData, byteData.Length, _host);
 

@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
-using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Models;
 
@@ -20,10 +22,14 @@ public class NetworkMessage
         EXTERNAL_AWACS_MODE_DISCONNECT // Received server side on "voluntary" disconnect by the client (without closing the server connection)
     }
 
-    private static readonly JsonSerializerSettings JsonSerializerSettings = new()
+    private static readonly JsonSerializerOptions JsonSerializerSettings = new()
     {
-        ContractResolver = new JsonNetworkPropertiesResolver(), // strip out things not required for the TCP sync
-        NullValueHandling = NullValueHandling.Ignore // same some network bandwidth
+        TypeInfoResolver = new DefaultJsonTypeInfoResolver()
+        {
+            Modifiers = { JsonNetworkPropertiesResolver.StripNetworkIgnored } // strip out things not required for the TCP sync
+        },
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        IncludeFields = true,
     };
 
     public SRClientBase Client { get; set; }
@@ -41,6 +47,6 @@ public class NetworkMessage
     public string Encode()
     {
         Version = UpdaterChecker.VERSION;
-        return JsonConvert.SerializeObject(this, JsonSerializerSettings) + "\n";
+        return JsonSerializer.Serialize(this, JsonSerializerSettings) + "\n";
     }
 }

@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -15,7 +16,6 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
-using Newtonsoft.Json;
 using NLog;
 using LogManager = NLog.LogManager;
 using Timer = System.Timers.Timer;
@@ -266,7 +266,10 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
                 while ((line = reader.ReadLine()) != null)
                     try
                     {
-                        var serverMessage = JsonConvert.DeserializeObject<NetworkMessage>(line);
+                        var serverMessage = JsonSerializer.Deserialize<NetworkMessage>(line, new JsonSerializerOptions()
+                        {
+                            IncludeFields = true
+                        });
                         decodeErrors = 0; //reset counter
                         if (serverMessage != null)
                             Logger.Debug("Received " + serverMessage.MsgType);

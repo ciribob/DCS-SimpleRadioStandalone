@@ -4,27 +4,25 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.Properties"
 	MinHeight="250"
-	Width="700" MinWidth="250"
+	Width="700" MinWidth="420"
 	mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="600"
 	x:Class="Ciribob.DCS.SimpleRadio.Standalone.Server.UI.MainWindow"
 	Title="Server">
 
 	<DockPanel>
 		<!-- Status Bar comes first so it stays on top of the other content. -->
-		<DockPanel DockPanel.Dock="Bottom" 
-		           HorizontalAlignment="Stretch"
+		<DockPanel DockPanel.Dock="Bottom"
 		           VerticalAlignment="Bottom"
-		           Background="{DynamicResource ToggleButtonBackgroundCheckedPointerOver}"
-		           IsVisible="True">
+		           Background="{DynamicResource SystemAccentColor}">
 			<Panel.Styles>
 				<Style Selector="Label">
-					<Setter Property="Width" Value="50" />
+					<Setter Property="Width" Value="55" />
 				</Style>
 			</Panel.Styles>
 			
 			<StackPanel DockPanel.Dock="Left" 
 			            Orientation="Horizontal">
-				<Label>Status: </Label>
+				<Label>Status:</Label>
 				<Label>Offline</Label>
 			</StackPanel>
 			<StackPanel DockPanel.Dock="Right" 
@@ -40,7 +38,7 @@
 		<ScrollViewer VerticalScrollBarVisibility="Auto">
 			<StackPanel Margin="5" >
 				<StackPanel Orientation="Horizontal"
-				            HorizontalAlignment="Center" >
+				            HorizontalAlignment="Center">
 					<Button x:Name="ServerStartStop"
 					        Content="To Bind"/>
 					<Button x:Name="ClientList" 
@@ -49,14 +47,14 @@
 				
 				<StackPanel.Resources>
 					<ControlTheme x:Key="SettingsStackPanel" TargetType="StackPanel">
-						<Setter Property="Width" Value="220" />
+						<Setter Property="Width" Value="350" />
 						<Setter Property="DockPanel.Dock" Value="Left" />
 					</ControlTheme>
 				</StackPanel.Resources>
 				
 				<HeaderedContentControl Header="Radio Simulation Settings">
 					<StackPanel>
-						<TextBlock DockPanel.Dock="Top" 
+						<TextBlock DockPanel.Dock="Top"
 						           Margin="20,5,5,5"
 						           Text="Description Text. Lorum Ipsum" />
 						
@@ -92,13 +90,15 @@
 										<Label Content="{x:Static p:Resources.LabelOverrideEffectsOnGlobal}"/>
 									</StackPanel>
 									<StackPanel Orientation="Horizontal">
-										<Slider />
+										<NumericUpDown Minimum="0" Maximum="7" Value="2" />
 										<Label Content="{x:Static p:Resources.LabelRetransmitNodeLimit}"/>
 									</StackPanel>
 								</StackPanel>
-								<TextBlock DockPanel.Dock="Right" 
+
+								<TextBlock DockPanel.Dock="Right"
 								           Margin="20,5,5,5"
-								           Text="Description Text. Lorum Ipsum" />
+								           Text="Description Text. Lorum Ipsum Lorum Ipsum Lorum Ipsum Lorum Ipsum Lorum Ipsum Lorum Ipsum" />
+								
 							</DockPanel>
 						</HeaderedContentControl>
 						
@@ -191,7 +191,7 @@
 										<Label Content="Client Export Filepath"/>
 									</StackPanel>
 									<StackPanel Orientation="Horizontal">
-										<Slider />
+										<NumericUpDown Minimum="0" Maximum="7" Value="2" />
 										<Label Content="{x:Static p:Resources.LabelArchiveTime}"/>
 									</StackPanel>
 									<StackPanel Orientation="Horizontal">

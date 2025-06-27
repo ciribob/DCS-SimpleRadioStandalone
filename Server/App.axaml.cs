@@ -14,7 +14,7 @@ public partial class App : Application
 
 	public override void OnFrameworkInitializationCompleted()
 	{
-		Properties.Resources.Culture = new CultureInfo("en-US");
+		Properties.Resources.Culture = CultureInfo.CurrentUICulture;
 		if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
 		{
 			desktop.MainWindow = new UI.MainWindow();

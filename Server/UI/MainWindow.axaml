@@ -1,13 +1,13 @@
 <Window xmlns="https://github.com/avaloniaui"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.Properties"
-	MinHeight="250"
-	Width="700" MinWidth="420"
-	mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="600"
-	x:Class="Ciribob.DCS.SimpleRadio.Standalone.Server.UI.MainWindow"
-	Title="Server">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.Properties"
+        MinHeight="250"
+        Width="700" MinWidth="420"
+        mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="600"
+        x:Class="Ciribob.DCS.SimpleRadio.Standalone.Server.UI.MainWindow"
+        Title="Server">
 
 	<DockPanel>
 		<!-- Status Bar comes first so it stays on top of the other content. -->
@@ -35,236 +35,246 @@
 			</StackPanel>
 		</DockPanel>
 		
-		<ScrollViewer VerticalScrollBarVisibility="Auto">
-			<StackPanel Margin="5" >
-				<StackPanel Orientation="Horizontal"
-				            HorizontalAlignment="Center">
-					<Button x:Name="ServerStartStop"
-					        Content="To Bind"/>
-					<Button x:Name="ClientList" 
-					        Content="{x:Static p:Resources.BtnClientAdmin}" />
-				</StackPanel>
+		<Grid RowDefinitions="Auto,*">
+			<Button Grid.Row="0" 
+			        x:Name="ServerStartStop"
+			        HorizontalAlignment="Stretch"
+			        Width="200"
+			        Content="To Bind"/>
+			<TabControl Grid.Row="1">
+				<TabItem Header="Settings">
+					<ScrollViewer VerticalScrollBarVisibility="Visible" Margin="-10,0,-10,0" >
+						<StackPanel Margin="5,0,5,0">
+							<StackPanel.Resources>
+								<ControlTheme x:Key="SettingsStackPanel" TargetType="StackPanel">
+									<Setter Property="Width" Value="350" />
+									<Setter Property="DockPanel.Dock" Value="Left" />
+								</ControlTheme>
+							</StackPanel.Resources>
 				
-				<StackPanel.Resources>
-					<ControlTheme x:Key="SettingsStackPanel" TargetType="StackPanel">
-						<Setter Property="Width" Value="350" />
-						<Setter Property="DockPanel.Dock" Value="Left" />
-					</ControlTheme>
-				</StackPanel.Resources>
-				
-				<HeaderedContentControl Header="Radio Simulation Settings">
-					<StackPanel>
-						<TextBlock DockPanel.Dock="Top"
-						           Margin="20,5,5,5"
-						           Text="Description Text. Lorum Ipsum" />
+							<HeaderedContentControl Header="Radio Simulation Settings">
+								<StackPanel>
+									<TextBlock DockPanel.Dock="Top"
+									           Margin="20,5,5,5"
+									           Text="Description Text. Lorum Ipsum" />
 						
-						<HeaderedContentControl Header="Radio Behavior">
-							<DockPanel>
-								<StackPanel Theme="{StaticResource SettingsStackPanel}" >
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="{x:Static p:Resources.LabelLOS}"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="{x:Static p:Resources.LabelDistanceLimit}"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="{x:Static p:Resources.LabelRealTx}"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="{x:Static p:Resources.LabelRealRx}"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="{x:Static p:Resources.LabelRadioExpansion}"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="{x:Static p:Resources.LabelStrictEncryption}"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="{x:Static p:Resources.LabelOverrideEffectsOnGlobal}"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<NumericUpDown Minimum="0" Maximum="7" Value="2" />
-										<Label Content="{x:Static p:Resources.LabelRetransmitNodeLimit}"/>
-									</StackPanel>
-								</StackPanel>
+									<HeaderedContentControl Header="Radio Behavior">
+										<DockPanel>
+											<StackPanel Theme="{StaticResource SettingsStackPanel}" >
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="tips text">
+													<ToggleSwitch/>
+													<Label Content="{x:Static p:Resources.LabelLOS}"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<ToggleSwitch/>
+													<Label Content="{x:Static p:Resources.LabelDistanceLimit}"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<ToggleSwitch/>
+													<Label Content="{x:Static p:Resources.LabelRealTx}"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<ToggleSwitch/>
+													<Label Content="{x:Static p:Resources.LabelRealRx}"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<ToggleSwitch/>
+													<Label Content="{x:Static p:Resources.LabelRadioExpansion}"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<ToggleSwitch/>
+													<Label Content="{x:Static p:Resources.LabelStrictEncryption}"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<ToggleSwitch/>
+													<Label Content="{x:Static p:Resources.LabelOverrideEffectsOnGlobal}"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<NumericUpDown Minimum="0" Maximum="7" Value="2" />
+													<Label Content="{x:Static p:Resources.LabelRetransmitNodeLimit}"/>
+												</StackPanel>
+											</StackPanel>
 
-								<TextBlock DockPanel.Dock="Right"
-								           Margin="20,5,5,5"
-								           Text="Description Text. Lorum Ipsum Lorum Ipsum Lorum Ipsum Lorum Ipsum Lorum Ipsum Lorum Ipsum" />
+											<TextBlock DockPanel.Dock="Right"
+											           Margin="20,5,5,5"
+											           Text="Description Text. Lorum Ipsum Lorum Ipsum Lorum Ipsum Lorum Ipsum Lorum Ipsum Lorum Ipsum" />
 								
-							</DockPanel>
-						</HeaderedContentControl>
+										</DockPanel>
+									</HeaderedContentControl>
 						
-						<HeaderedContentControl Header="Radio Security">
-							<DockPanel>
-								<StackPanel Theme="{StaticResource SettingsStackPanel}" >
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="{x:Static p:Resources.LabelSecurity}"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="{x:Static p:Resources.LabelSpectator}"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<TextBox />
-										<Label Content="{x:Static p:Resources.LabelTestFreq}"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="{x:Static p:Resources.LabelRadioExpansion}"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="{x:Static p:Resources.LabelShowTransmitterName}"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="{x:Static p:Resources.LabelTunedCount}"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<TextBox />
-										<Label Content="{x:Static p:Resources.LabelGlobalLobbyFreq}"/>
-									</StackPanel>
-								</StackPanel>
-								<TextBlock DockPanel.Dock="Right" 
-								           Margin="20,5,5,5"
-								           Text="Description Text. Lorum Ipsum" />
-							</DockPanel>
-						</HeaderedContentControl>
+									<HeaderedContentControl Header="Radio Security">
+										<DockPanel>
+											<StackPanel Theme="{StaticResource SettingsStackPanel}" >
+												<StackPanel Orientation="Horizontal">
+													<ToggleSwitch/>
+													<Label Content="{x:Static p:Resources.LabelSecurity}"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<ToggleSwitch/>
+													<Label Content="{x:Static p:Resources.LabelSpectator}"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<TextBox />
+													<Label Content="{x:Static p:Resources.LabelTestFreq}"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<ToggleSwitch/>
+													<Label Content="{x:Static p:Resources.LabelRadioExpansion}"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<ToggleSwitch/>
+													<Label Content="{x:Static p:Resources.LabelShowTransmitterName}"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<ToggleSwitch/>
+													<Label Content="{x:Static p:Resources.LabelTunedCount}"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<TextBox />
+													<Label Content="{x:Static p:Resources.LabelGlobalLobbyFreq}"/>
+												</StackPanel>
+											</StackPanel>
+											<TextBlock DockPanel.Dock="Right" 
+											           Margin="20,5,5,5"
+											           Text="Description Text. Lorum Ipsum" />
+										</DockPanel>
+									</HeaderedContentControl>
 						
-						<HeaderedContentControl Header="{x:Static p:Resources.LabelExternalAWACS}">
-							<DockPanel>
-								<StackPanel Theme="{StaticResource SettingsStackPanel}" >
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="Enable"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<TextBox />
-										<Label Content="{x:Static p:Resources.LabelExternalAWACSBluePass}"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<TextBox />
-										<Label Content="{x:Static p:Resources.LabelExternalAWACSRedPass}"/>
-									</StackPanel>
+									<HeaderedContentControl Header="{x:Static p:Resources.LabelExternalAWACS}">
+										<DockPanel>
+											<StackPanel Theme="{StaticResource SettingsStackPanel}" >
+												<StackPanel Orientation="Horizontal">
+													<ToggleSwitch/>
+													<Label Content="Enable"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<TextBox />
+													<Label Content="{x:Static p:Resources.LabelExternalAWACSBluePass}"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<TextBox />
+													<Label Content="{x:Static p:Resources.LabelExternalAWACSRedPass}"/>
+												</StackPanel>
+											</StackPanel>
+											<TextBlock DockPanel.Dock="Right" 
+											           Margin="20,5,5,5"
+											           TextWrapping="Wrap"
+											           Text="External Awacs Mode allows for users not inside of the DCS Game Server to connect and use radios like those in-game." />
+										</DockPanel>
+									</HeaderedContentControl>
 								</StackPanel>
-								<TextBlock DockPanel.Dock="Right" 
-								           Margin="20,5,5,5"
-								           TextWrapping="Wrap"
-								           Text="External Awacs Mode allows for users not inside of the DCS Game Server to connect and use radios like those in-game." />
-							</DockPanel>
-						</HeaderedContentControl>
-					</StackPanel>
-				</HeaderedContentControl>
+							</HeaderedContentControl>
 				
-				<HeaderedContentControl Header="Program Settings">
-					<StackPanel>
-						<TextBlock DockPanel.Dock="Top" 
-						           Margin="20,5,5,5"
-						           Text="Description Text. Lorum Ipsum" />
+							<HeaderedContentControl Header="Program Settings">
+								<StackPanel>
+									<TextBlock DockPanel.Dock="Top" 
+									           Margin="20,5,5,5"
+									           Text="Description Text. Lorum Ipsum" />
 						
-						<HeaderedContentControl Header="General Settings">
-							<DockPanel>
-								<StackPanel Theme="{StaticResource SettingsStackPanel}" >
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="{x:Static p:Resources.LabelCheckBetaUpdates}"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="{x:Static p:Resources.LabelTransmissionLog}"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="{x:Static p:Resources.ServerPresetsEnabled}"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<Button Content="PATH" />
-										<Label Content="Client Export Filepath"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<NumericUpDown Minimum="0" Maximum="7" Value="2" />
-										<Label Content="{x:Static p:Resources.LabelArchiveTime}"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="{x:Static p:Resources.LabelExportList}"/>
-									</StackPanel>
-								</StackPanel>
-								<TextBlock DockPanel.Dock="Right" 
-								           Margin="20,5,5,5"
-								           Text="Description Text. Lorum Ipsum" />
-							</DockPanel>
-						</HeaderedContentControl>
+									<HeaderedContentControl Header="General Settings">
+										<DockPanel>
+											<StackPanel Theme="{StaticResource SettingsStackPanel}" >
+												<StackPanel Orientation="Horizontal">
+													<ToggleSwitch/>
+													<Label Content="{x:Static p:Resources.LabelCheckBetaUpdates}"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<ToggleSwitch/>
+													<Label Content="{x:Static p:Resources.LabelTransmissionLog}"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<ToggleSwitch/>
+													<Label Content="{x:Static p:Resources.ServerPresetsEnabled}"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<Button Content="PATH" />
+													<Label Content="Client Export Filepath"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<NumericUpDown Minimum="0" Maximum="7" Value="2" />
+													<Label Content="{x:Static p:Resources.LabelArchiveTime}"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<ToggleSwitch/>
+													<Label Content="{x:Static p:Resources.LabelExportList}"/>
+												</StackPanel>
+											</StackPanel>
+											<TextBlock DockPanel.Dock="Right" 
+											           Margin="20,5,5,5"
+											           Text="Description Text. Lorum Ipsum" />
+										</DockPanel>
+									</HeaderedContentControl>
 						
-						<HeaderedContentControl Header="Network Settings">
-							<DockPanel>
-								<StackPanel Theme="{StaticResource SettingsStackPanel}" >
-									<StackPanel Orientation="Horizontal">
-										<TextBox />
-										<Label Content="Port"/>
-									</StackPanel>
+									<HeaderedContentControl Header="Network Settings">
+										<DockPanel>
+											<StackPanel Theme="{StaticResource SettingsStackPanel}" >
+												<StackPanel Orientation="Horizontal">
+													<TextBox />
+													<Label Content="Port"/>
+												</StackPanel>
 									
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="UPNP"/>
-									</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<ToggleSwitch/>
+													<Label Content="UPNP"/>
+												</StackPanel>
 									
-									<StackPanel Orientation="Horizontal">
-										<TextBox />
-										<Label Content="Server IP"/>
-									</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<TextBox />
+													<Label Content="Server IP"/>
+												</StackPanel>
 									
-								</StackPanel>
-								<TextBlock DockPanel.Dock="Right" 
-								           Margin="20,5,5,5"
-								           Text="Description Text. Lorum Ipsum" />
-							</DockPanel>
-						</HeaderedContentControl>
+											</StackPanel>
+											<TextBlock DockPanel.Dock="Right" 
+											           Margin="20,5,5,5"
+											           Text="Description Text. Lorum Ipsum" />
+										</DockPanel>
+									</HeaderedContentControl>
 						
-						<HeaderedContentControl Header="External Program Integrations">
-							<DockPanel>
-								<StackPanel Theme="{StaticResource SettingsStackPanel}" >
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="LotATC Transponder"/>
-									</StackPanel>
-									</StackPanel>
-								<TextBlock DockPanel.Dock="Right" 
-								           Margin="20,5,5,5"
-								           Text="Description Text. Lorum Ipsum" />
-							</DockPanel>
-						</HeaderedContentControl>
+									<HeaderedContentControl Header="External Program Integrations">
+										<DockPanel>
+											<StackPanel Theme="{StaticResource SettingsStackPanel}" >
+												<StackPanel Orientation="Horizontal">
+													<ToggleSwitch/>
+													<Label Content="LotATC Transponder"/>
+												</StackPanel>
+											</StackPanel>
+											<TextBlock DockPanel.Dock="Right" 
+											           Margin="20,5,5,5"
+											           Text="Description Text. Lorum Ipsum" />
+										</DockPanel>
+									</HeaderedContentControl>
 						
-						<HeaderedContentControl Header="HTTP API Settings">
-							<DockPanel>
-								<StackPanel Theme="{StaticResource SettingsStackPanel}" >
-									<StackPanel Orientation="Horizontal">
-										<ToggleSwitch/>
-										<Label Content="Enable"/>
-									</StackPanel>
-									<StackPanel Orientation="Horizontal">
-										<TextBox />
-										<Label Content="Port"/>
-									</StackPanel>
+									<HeaderedContentControl Header="HTTP API Settings">
+										<DockPanel>
+											<StackPanel Theme="{StaticResource SettingsStackPanel}" >
+												<StackPanel Orientation="Horizontal">
+													<ToggleSwitch/>
+													<Label Content="Enable"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<TextBox />
+													<Label Content="Port"/>
+												</StackPanel>
+											</StackPanel>
+											<TextBlock DockPanel.Dock="Right" 
+											           Margin="20,5,5,5"
+											           Text="Description Text. Lorum Ipsum" />
+										</DockPanel>
+									</HeaderedContentControl>
 								</StackPanel>
-								<TextBlock DockPanel.Dock="Right" 
-								           Margin="20,5,5,5"
-								           Text="Description Text. Lorum Ipsum" />
-							</DockPanel>
-						</HeaderedContentControl>
-					</StackPanel>
-				</HeaderedContentControl>
+							</HeaderedContentControl>
 
-			</StackPanel>
-		</ScrollViewer>
+						</StackPanel>
+					</ScrollViewer>
+				</TabItem>
+				
+				<TabItem Header="{x:Static p:Resources.BtnClientAdmin}">
+				
+				</TabItem>
+			</TabControl>
+
+		</Grid>
+
 	</DockPanel>
 </Window>

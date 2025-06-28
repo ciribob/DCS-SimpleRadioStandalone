@@ -414,40 +414,43 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
 
     public async Task HandleAsync(TCPClientStatusMessage obj, CancellationToken cancellationToken)
     {
-        if (obj.Connected)
+        await Task.Run(() =>
         {
-            ConnectIsEnabled = true;
-            //TODO dont let this trigger again
-            IsConnected = true;
-            //connection sound
-            if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.PlayConnectionSounds))
-                try
-                {
-                    Sounds.BeepConnected.Play();
-                }
-                catch (Exception ex)
-                {
-                    Logger.Warn(ex, "Failed to play connect sound");
-                }
+            if (obj.Connected)
+            {
+                ConnectIsEnabled = true;
+                //TODO dont let this trigger again
+                IsConnected = true;
+                //connection sound
+                if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.PlayConnectionSounds))
+                    try
+                    {
+                        Sounds.BeepConnected.Play();
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Warn(ex, "Failed to play connect sound");
+                    }
 
-            if (obj.Address != null)
-                StartAudio(obj.Address);
+                if (obj.Address != null)
+                    StartAudio(obj.Address);
+                else
+                    Logger.Error("TCPClientStatusMessage - Connect sent without address and safely ignored.");
+
+                _dcsManager?.Stop();
+
+                _dcsManager = new DCSRadioSyncManager(ClientStateSingleton.Instance.ShortGUID);
+                _dcsManager.Start();
+            }
             else
-                Logger.Error("TCPClientStatusMessage - Connect sent without address and safely ignored.");
+            {
+                //disconnect sound
+                Stop(obj.Error);
+            }
 
-            _dcsManager?.Stop();
-
-            _dcsManager = new DCSRadioSyncManager(ClientStateSingleton.Instance.ShortGUID);
-            _dcsManager.Start();
-        }
-        else
-        {
-            //disconnect sound
-            Stop(obj.Error);
-        }
-
-        NotifyPropertyChanged(nameof(IsEAMAvailable));
-        NotifyPropertyChanged(nameof(EAMConnectButtonText));
+            NotifyPropertyChanged(nameof(IsEAMAvailable));
+            NotifyPropertyChanged(nameof(EAMConnectButtonText));
+        });
     }
 
     public Task HandleAsync(VOIPStatusMessage message, CancellationToken cancellationToken)

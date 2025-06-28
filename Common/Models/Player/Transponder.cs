@@ -62,6 +62,8 @@ public class Transponder
         return true;
     }
 
+    public override int GetHashCode() => (mode1, mode2, mode3, mode4, status).GetHashCode();
+
     public Transponder Copy()
     {
         return new Transponder

@@ -838,7 +838,7 @@ namespace Installer
             {
                 File.Copy(_currentDirectory + "\\Installer.exe", path + "\\Installer.exe", true);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
 

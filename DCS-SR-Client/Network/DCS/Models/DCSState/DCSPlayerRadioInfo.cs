@@ -143,6 +143,8 @@ public class DCSPlayerRadioInfo
         return true;
     }
 
+    public override int GetHashCode() => (control, name, unit, unitId, inAircraft, iff, ambient, radios).GetHashCode();
+
 
     /*
      * Was Radio updated in the last 10 Seconds

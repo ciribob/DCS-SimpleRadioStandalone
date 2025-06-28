@@ -56,7 +56,7 @@ public partial class MainWindow : Window
         {
             DownloadLatestVersion();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             ShowError();
         }
@@ -271,7 +271,7 @@ public partial class MainWindow : Window
                 _progressCheckTimer.Start();
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             ShowError();
         }

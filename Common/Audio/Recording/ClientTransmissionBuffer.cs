@@ -8,7 +8,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Recording;
 internal class ClientTransmissionBuffer
 {
     private readonly List<LinkedList<ClientAudio>> _clientAudioSamples;
-    private readonly int _sampleRate = 48000;
+    private readonly int _sampleRate = Constants.OUTPUT_SAMPLE_RATE;
     private long lastAccess;
 
     public ClientTransmissionBuffer()

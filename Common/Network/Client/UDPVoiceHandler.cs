@@ -115,7 +115,7 @@ public class UDPVoiceHandler
                         EncodedAudio.Add(bytes);
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     //  logger.Error(e, "error listening for UDP Voip");
                 }
@@ -141,7 +141,7 @@ public class UDPVoiceHandler
             _listener?.Close();
             _listener = null;
         }
-        catch (Exception e)
+        catch (Exception)
         {
         }
 
@@ -149,7 +149,7 @@ public class UDPVoiceHandler
         {
             _pingStop.Cancel();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
 
@@ -230,7 +230,7 @@ public class UDPVoiceHandler
                     {
                         _listener?.Close();
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                     }
 

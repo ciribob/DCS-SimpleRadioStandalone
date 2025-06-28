@@ -51,14 +51,17 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
 
     public async Task HandleAsync(ServerSettingsChangedMessage message, CancellationToken token)
     {
-        try
+        await Task.Run(() =>
         {
-            HandleServerSettingsMessage();
-        }
-        catch (Exception ex)
-        {
-            Logger.Error(ex, "Exception Sending Server Settings ");
-        }
+            try
+            {
+                HandleServerSettingsMessage();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Exception Sending Server Settings ");
+            }
+        });
     }
 
     protected override TcpSession CreateSession()

@@ -168,7 +168,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
 
         if (update
             || _clientStateSingleton.LastSent < 1
-            || diff.TotalSeconds > 60)
+            || diff.TotalSeconds > RADIO_UPDATE_PING_INTERVAL)
         {
             Logger.Debug("Sending Radio Info To Server - Update");
             _clientStateSingleton.LastSent = DateTime.Now.Ticks;

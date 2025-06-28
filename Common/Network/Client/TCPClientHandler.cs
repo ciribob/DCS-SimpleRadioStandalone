@@ -131,8 +131,6 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
         _idleTimeout.Enabled = true;
         _idleTimeout.Start();
 
-        var connectionError = false;
-
         using (_tcpClient = new TcpClient())
         {
             try
@@ -155,8 +153,6 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
                 else
                 {
                     Logger.Error($"Failed to connect to server @ {_serverEndpoint}");
-                    // Signal disconnect including an error
-                    connectionError = true;
                     EventBus.Instance.PublishOnUIThreadAsync(new TCPClientStatusMessage(false,
                         TCPClientStatusMessage.ErrorCode.TIMEOUT));
                 }
@@ -164,7 +160,6 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
             catch (Exception ex)
             {
                 Logger.Error(ex, "Could not connect to server");
-                connectionError = true;
                 Disconnect();
             }
         }
@@ -513,7 +508,7 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
                 EventBus.Instance.PublishOnUIThreadAsync(new TCPClientStatusMessage(false));
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
 

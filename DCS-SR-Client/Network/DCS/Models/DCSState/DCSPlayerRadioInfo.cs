@@ -195,8 +195,8 @@ public class DCSPlayerRadioInfo
 
         return new PlayerRadioInfoBase
         {
-            ambient = ambient.Copy(),
-            iff = iff.Copy(),
+            ambient = ambient?.Copy(),
+            iff = iff?.Copy(),
             unit = unit,
             unitId = unitId,
             radios = radiosBase

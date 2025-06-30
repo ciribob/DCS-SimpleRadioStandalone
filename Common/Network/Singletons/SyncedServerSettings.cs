@@ -2,7 +2,9 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
+using Newtonsoft.Json;
 using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
@@ -26,6 +28,8 @@ public class SyncedServerSettings
     }
 
     public List<double> GlobalFrequencies { get; set; } = new();
+
+    private Dictionary<string, List<ServerPresetChannel>> ServerPresetChannels { get; set; } = new();
 
     public string ServerVersion { get; set; }
 
@@ -62,6 +66,18 @@ public class SyncedServerSettings
         return res;
     }
 
+    public List<ServerPresetChannel> GetPresetChannels(string radio)
+    {
+        foreach (var radioPreset in ServerPresetChannels.Keys)
+        {
+            if (radio.StartsWith(radioPreset))
+            {
+                return ServerPresetChannels[radioPreset];
+            }
+        }
+        return new List<ServerPresetChannel>();
+    }
+
     public void Decode(Dictionary<string, string> encoded)
     {
         foreach (var kvp in encoded)
@@ -89,6 +105,18 @@ public class SyncedServerSettings
                     nodeLimit = 0;
                 else
                     RetransmitNodeLimit = nodeLimit;
+            }
+            else if (kvp.Key.Equals(ServerSettingsKeys.SERVER_PRESETS.ToString()))
+            {
+                try
+                {
+                    ServerPresetChannels =
+                        JsonConvert.DeserializeObject<Dictionary<string, List<ServerPresetChannel>>>(kvp.Value);
+                }
+                catch (Exception)
+                {
+                    ServerPresetChannels = new Dictionary<string, List<ServerPresetChannel>>();
+                }
             }
         }
 

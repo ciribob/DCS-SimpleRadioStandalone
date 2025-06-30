@@ -87,8 +87,8 @@ public class PlayerRadioInfoBase
     {
         var clone = (PlayerRadioInfoBase)MemberwiseClone();
 
-        clone.iff = iff.Copy();
-        clone.ambient = ambient.Copy();
+        clone.iff = iff?.Copy();
+        clone.ambient = ambient?.Copy();
         //ignore position
 
         clone.radios = new RadioBase[Constants.MAX_RADIOS];

@@ -85,6 +85,10 @@ public partial class ServerSettingsWindow : MetroWindow
             ShowTransmitterName.Content = settings.GetSettingAsBool(ServerSettingsKeys.SHOW_TRANSMITTER_NAME)
                 ? Properties.Resources.ValueON
                 : Properties.Resources.ValueOFF;
+            
+            ServerPresetsEnabled.Content = settings.GetSettingAsBool(ServerSettingsKeys.SERVER_PRESETS_ENABLED)
+                ? Properties.Resources.ValueENABLED
+                : Properties.Resources.ValueDISABLED;
 
             ServerVersion.Content = SyncedServerSettings.Instance.ServerVersion;
 

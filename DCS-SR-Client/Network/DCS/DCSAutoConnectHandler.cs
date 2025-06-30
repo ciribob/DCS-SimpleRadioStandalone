@@ -16,11 +16,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS;
 public class DCSAutoConnectHandler
 {
     private static readonly object _lock = new();
-    
+
+    private CancellationTokenSource _cts = new();
     private readonly Logger Logger = LogManager.GetCurrentClassLogger();
     private UdpClient _dcsUdpListener;
-
-    private volatile bool _stop;
 
     public DCSAutoConnectHandler()
     {
@@ -31,14 +30,17 @@ public class DCSAutoConnectHandler
 
     private void StartDcsBroadcastListener()
     {
-        Task.Factory.StartNew(() =>
+        var cancellationToken = _cts.Token;
+        Task.Factory.StartNew(async () =>
         {
-            while (!_stop)
+            while (!cancellationToken.IsCancellationRequested)
+            {
                 try
                 {
                     var localEp = new IPEndPoint(IPAddress.Any,
                         GlobalSettingsStore.Instance.GetNetworkSetting(GlobalSettingsKeys.DCSAutoConnectUDP));
                     _dcsUdpListener = new UdpClient(localEp);
+                    Logger.Info("DCS AutoConnect Listener Started.");
                     break;
                 }
                 catch (Exception ex)
@@ -47,12 +49,15 @@ public class DCSAutoConnectHandler
                         $"Unable to bind to the AutoConnect Socket Port: {GlobalSettingsStore.Instance.GetNetworkSetting(GlobalSettingsKeys.DCSAutoConnectUDP)}");
                     Thread.Sleep(500);
                 }
+            }
+               
 
-            while (!_stop)
+            while (!cancellationToken.IsCancellationRequested)
+            {
                 try
                 {
-                    var groupEp = new IPEndPoint(IPAddress.Any, 0);
-                    var bytes = _dcsUdpListener.Receive(ref groupEp);
+                    var result = await _dcsUdpListener.ReceiveAsync(cancellationToken);
+                    var bytes = result.Buffer;
 
                     var message = Encoding.UTF8.GetString(
                         bytes, 0, bytes.Length);
@@ -62,23 +67,29 @@ public class DCSAutoConnectHandler
                 catch (SocketException e)
                 {
                     // SocketException is raised when closing app/disconnecting, ignore so we don't log "irrelevant" exceptions
-                    if (!_stop) Logger.Error(e, "SocketException Handling DCS AutoConnect Message");
+                    if (!cancellationToken.IsCancellationRequested) Logger.Error(e, "SocketException Handling DCS AutoConnect Message");
+                }
+                catch (OperationCanceledException)
+                {
+                    // Expected on closure.
                 }
                 catch (Exception e)
                 {
                     Logger.Error(e, "Exception Handling DCS AutoConnect Message");
                 }
+            }
 
 
             try
             {
                 _dcsUdpListener.Close();
+                Logger.Info("Shutting down DCS AutoConnect listener.");
             }
             catch (Exception e)
             {
                 Logger.Error(e, "Exception stoping DCS AutoConnect listener ");
             }
-        });
+        }, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
     }
 
     private void HandleMessage(string message)
@@ -113,18 +124,17 @@ public class DCSAutoConnectHandler
             }));
     }
 
-
     public void Stop()
     {
-        _stop = true;
+        _cts.Cancel();
+        _cts.Dispose();
 
         try
         {
             _dcsUdpListener?.Close();
+        } catch(Exception){
+            // ignored
         }
-        catch (Exception)
-        {
-            //IGNORE
-        }
+
     }
 }

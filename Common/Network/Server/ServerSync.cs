@@ -93,6 +93,8 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
 
             Environment.Exit(0);
         }
+        
+        
     }
 
     public void HandleDisconnect(SRSClientSession state)
@@ -144,17 +146,13 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
                     // Do nothing for now
                     break;
                 case NetworkMessage.MessageType.UPDATE: //Partial metadata update
-                    if (!HandleClientMetaDataUpdate(state, message, true, out SRClientBase client))
-                    {
+                    if (!HandleClientMetaDataUpdate(state, message, true, out var client))
                         if (state.ShouldSendFullRadioUpdate())
-                        {
                             SendFullRadioUpdate(state, client);
-                        }
-                    }
 
                     break;
                 case NetworkMessage.MessageType.RADIO_UPDATE: //Full update with radio info
-                    bool sent = HandleClientMetaDataUpdate(state, message, false, out var ignore);
+                    var sent = HandleClientMetaDataUpdate(state, message, false, out var ignore);
                     HandleClientRadioUpdate(state, message, sent);
                     break;
                 case NetworkMessage.MessageType.SYNC:
@@ -252,10 +250,7 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
         if (_clients.TryGetValue(session.SRSGuid, out client))
             if (client != null)
             {
-                if (message.Client.LatLngPosition == null)
-                {
-                    message.Client.LatLngPosition = new LatLngPosition();
-                }
+                if (message.Client.LatLngPosition == null) message.Client.LatLngPosition = new LatLngPosition();
 
                 changed = !client.MetaDataEquals(message.Client, true);
 
@@ -344,9 +339,7 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
 
                 //send update to everyone
                 if (send || changed || lastSent.TotalSeconds > Constants.CLIENT_UPDATE_INTERVAL_LIMIT - 5)
-                {
                     SendFullRadioUpdate(session, client);
-                }
             }
     }
 

@@ -28,7 +28,7 @@ public class UpdaterChecker
 
     public static readonly string MINIMUM_PROTOCOL_VERSION = "1.9.0.0";
 
-    public static readonly string VERSION = "2.2.0.3";
+    public static readonly string VERSION = "2.2.0.5";
 
     private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
@@ -59,13 +59,13 @@ public class UpdaterChecker
 #endif
             var releases = await githubClient.Repository.Release.GetAll(GITHUB_USERNAME, GITHUB_REPOSITORY);
 
-            Version latestStableVersion = new Version();
+            var latestStableVersion = new Version();
             Release latestStableRelease = null;
-            Version latestBetaVersion = new Version();
+            var latestBetaVersion = new Version();
             Release latestBetaRelease = null;
 
             // Retrieve last stable and beta branch release as tagged on GitHub
-            foreach (Release release in releases)
+            foreach (var release in releases)
             {
                 Version releaseVersion;
 
@@ -91,7 +91,7 @@ public class UpdaterChecker
             // Compare latest versions with currently running version depending on user branch choice
             if (checkForBetaUpdates && latestBetaVersion > currentVersion)
             {
-                updateCallback?.Invoke(new UpdateCallbackResult()
+                updateCallback?.Invoke(new UpdateCallbackResult
                 {
                     Beta = true,
                     Branch = "beta",
@@ -103,7 +103,7 @@ public class UpdaterChecker
             }
             else if (latestStableVersion > currentVersion)
             {
-                updateCallback?.Invoke(new UpdateCallbackResult()
+                updateCallback?.Invoke(new UpdateCallbackResult
                 {
                     Beta = false,
                     Branch = "stable",
@@ -115,7 +115,7 @@ public class UpdaterChecker
             }
             else if (checkForBetaUpdates && latestBetaVersion == currentVersion)
             {
-                updateCallback?.Invoke(new UpdateCallbackResult()
+                updateCallback?.Invoke(new UpdateCallbackResult
                 {
                     Beta = true,
                     Branch = "beta",
@@ -128,7 +128,7 @@ public class UpdaterChecker
             }
             else if (latestStableVersion == currentVersion)
             {
-                updateCallback?.Invoke(new UpdateCallbackResult()
+                updateCallback?.Invoke(new UpdateCallbackResult
                 {
                     Beta = false,
                     Branch = "stable",
@@ -141,7 +141,7 @@ public class UpdaterChecker
             }
             else
             {
-                updateCallback?.Invoke(new UpdateCallbackResult()
+                updateCallback?.Invoke(new UpdateCallbackResult
                 {
                     Beta = false,
                     Branch = "stable",
@@ -156,7 +156,7 @@ public class UpdaterChecker
         catch (Exception ex)
         {
             _logger.Error(ex, "Failed to check for updated version");
-            updateCallback?.Invoke(new UpdateCallbackResult()
+            updateCallback?.Invoke(new UpdateCallbackResult
             {
                 Beta = false,
                 Branch = "unknown",
@@ -238,10 +238,8 @@ public class UpdaterChecker
             else
             {
                 if (beta)
-                {
                     Process.Start(new ProcessStartInfo(autoUpdatePath, "-beta")
                         { UseShellExecute = true });
-                }
                 else
                     Process.Start(new ProcessStartInfo(autoUpdatePath)
                         { UseShellExecute = true });

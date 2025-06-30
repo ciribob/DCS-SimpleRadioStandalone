@@ -20,12 +20,7 @@ internal class TransmissionLoggingQueue
 
     public TransmissionLoggingQueue()
     {
-        _log = _serverSettings.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED).BoolValue;
         _stop = false;
-
-        var b = (WrapperTargetBase)LogManager.Configuration.FindTargetByName("asyncTransmissionFileTarget");
-        _fileTarget = b != null ? (FileTarget)b.WrappedTarget : null;
-        //_fileTarget = (FileTarget)b.WrappedTarget;
     }
 
     private ConcurrentDictionary<SRClientBase, TransmissionLog> _currentTransmissionLog { get; } = new();
@@ -35,9 +30,10 @@ internal class TransmissionLoggingQueue
         if (!_stop)
             try
             {
-                _currentTransmissionLog.AddOrUpdate(client,
-                    new TransmissionLog(client.LastTransmissionReceived, client.TransmittingFrequency),
-                    (k, v) => UpdateTransmission(client, v));
+                if (_log)
+                    _currentTransmissionLog.AddOrUpdate(client,
+                        new TransmissionLog(client.LastTransmissionReceived, client.TransmittingFrequency),
+                        (k, v) => UpdateTransmission(client, v));
             }
             catch
             {
@@ -65,9 +61,9 @@ internal class TransmissionLoggingQueue
         while (!_stop)
         {
             Thread.Sleep(500);
-            if (_log != !_serverSettings.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED).BoolValue)
+            if (_log != _serverSettings.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED).BoolValue)
             {
-                _log = !_serverSettings.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED).BoolValue;
+                _log = _serverSettings.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED).BoolValue;
                 var newSetting = _log ? "TRANSMISSION LOGGING ENABLED" : "TRANSMISSION LOGGING DISABLED";
 
                 if (_serverSettings.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED).BoolValue

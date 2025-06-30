@@ -65,7 +65,7 @@ public class CachedAudioEffect
                     {
                         //    Assert.AreEqual(16, reader.WaveFormat.BitsPerSample, "Only works with 16 bit audio");
                         if (reader.WaveFormat.BitsPerSample == RequiredFormat.BitsPerSample &&
-                            reader.WaveFormat.SampleRate == reader.WaveFormat.SampleRate &&
+                            reader.WaveFormat.SampleRate == RequiredFormat.SampleRate &&
                             reader.WaveFormat.Channels == 1)
                         {
                             var tmpBytes = new byte[reader.Length];

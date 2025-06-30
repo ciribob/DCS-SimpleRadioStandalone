@@ -39,10 +39,10 @@ public class AudioRecordingManager
     private readonly ClientEffectsPipeline pipeline = new();
 
     private AudioRecordingLameWriter _audioRecordingWriter;
+    private string _clientGuid; //player guid
     private bool _processThreadDone;
 
     private bool _stop;
-    private string _clientGuid; //player guid
 
     private AudioRecordingManager()
     {
@@ -227,7 +227,7 @@ public class AudioRecordingManager
 
     public void Start(string clientGuid)
     {
-        this._clientGuid = clientGuid;   
+        _clientGuid = clientGuid;
         if (!GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.RecordAudio))
         {
             _processThreadDone = true;
@@ -309,7 +309,7 @@ public class AudioRecordingManager
     public void AppendPlayerAudio(float[] transmission, int radioId)
     {
         //only record if we need too
-        if (!_stop && GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.RecordAudio) )
+        if (!_stop && GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.RecordAudio))
             _playerRawQueues[radioId]?.Write(transmission, 0, transmission.Length);
     }
 

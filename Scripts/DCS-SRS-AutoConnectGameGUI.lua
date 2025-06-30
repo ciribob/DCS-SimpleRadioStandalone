@@ -1,4 +1,4 @@
--- Version 2.2.0.3
+-- Version 2.2.0.5
 -- ONLY COPY THIS WHOLE FILE IS YOU ARE GOING TO HOST A SERVER!
 -- The file must be in Saved Games\DCS\Scripts\Hooks or Saved Games\DCS.openalpha\Scripts\Hooks
 -- Make sure you enter the correct address into SERVER_SRS_HOST and SERVER_SRS_PORT (5002 by default) below.
@@ -51,21 +51,22 @@ local JSON = loadfile("Scripts\\JSON.lua")()
 SRSAuto.JSON = JSON
 
 local socket = require("socket")
+local log = require('log')
 -- local DcsWeb = require('DcsWeb')
 
 require("url") -- defines socket.url, which socket.http looks for
-http = require("http") -- socket.http
+local http = require("http") -- socket.http
 
 SRSAuto.UDPSendSocket = socket.udp()
 SRSAuto.UDPSendSocket:settimeout(0)
 
-SRSAuto.logFile = io.open(lfs.writedir()..[[Logs\DCS-SRS-AutoConnect.log]], "w")
-
 function SRSAuto.log(str)
-    if SRSAuto.logFile then
-        SRSAuto.logFile:write(str.."\n")
-        SRSAuto.logFile:flush()
-    end
+    log.write('SRS-AutoConnectGameGUI', log.INFO, str)
+end
+
+
+function SRSAuto.error(str)
+    log.write('SRS-AutoConnectGameGUI', log.INFO, str)
 end
 
 function SRSAuto.sendAutoConnectMessage(id)
@@ -205,7 +206,7 @@ SRSAuto.srsNudge = function()
     end)
 
     if not _status then
-        SRSAuto.log('ERROR: ' .. _result)
+        SRSAuto.error(_result)
     end
 
 
@@ -217,16 +218,16 @@ SRSAuto.sendMessage = function(msg, showTime, gid)
         local str = "trigger.action.outTextForGroup(" .. gid .. ",'" .. msg .. "'," .. showTime .. ",true); return true;"
         local _status, _error = net.dostring_in('server', str)
         if not _status and _error then
-            SRSAuto.log("Error! " .. _error)
+            SRSAuto.error(_error)
         end
     else
         local str = "trigger.action.outText('" .. msg .. "'," .. showTime .. ",true); return true;"
         local _status, _error = net.dostring_in('server', str)
         if not _status and _error then
-            SRSAuto.log("Error! " .. _error)
+            SRSAuto.error(_error)
         end
     end
 end
 
 DCS.setUserCallbacks(SRSAuto)
-net.log("Loaded - DCS-SRS-AutoConnect 2.2.0.3")
+SRSAuto.log("Loaded - DCS-SRS-AutoConnect 2.2.0.5")

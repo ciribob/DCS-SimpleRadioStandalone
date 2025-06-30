@@ -1,4 +1,4 @@
--- Version 2.2.0.3
+-- Version 2.2.0.5
 -- Special thanks to Cap. Zeen, Tarres and Splash for all the help
 -- with getting the radio information :)
 -- Run the installer to correctly install this file
@@ -23,12 +23,12 @@ SR.lastKnownSlot = ''
 SR.MIDS_FREQ = 1030.0 * 1000000 -- Start at UHF 300
 SR.MIDS_FREQ_SEPARATION = 1.0 * 100000 -- 0.1 MHZ between MIDS channels
 
-SR.logFile = io.open(lfs.writedir() .. [[Logs\DCS-SimpleRadioStandalone.log]], "w")
 function SR.log(str)
-    if SR.logFile then
-        SR.logFile:write(str .. "\n")
-        SR.logFile:flush()
-    end
+    log.write('SRS-export', log.INFO, str)
+end
+
+function SR.error(str)
+    log.write('SRS-export', log.ERROR, str)
 end
 
 package.path = package.path .. ";.\\LuaSocket\\?.lua;"
@@ -133,7 +133,7 @@ function SR.ModsPuginsRecursiveSearch(modsPath)
    
     -- Check that Mod folder actually exists, if not then do nothing
     if mode == nil or mode ~= "directory" then
-        SR.log("Error: SR.RecursiveSearch(): modsPath is not a directory or is null: '" .. modsPath)
+        SR.error("SR.RecursiveSearch(): modsPath is not a directory or is null: '" .. modsPath)
         return
     end
 
@@ -150,7 +150,7 @@ function SR.ModsPuginsRecursiveSearch(modsPath)
             local status, error = pcall(function () loadfile(modAutoloadPath)().register(SR) end)
             
             if error then
-                SR.log("Failed loading SRS Mod plugin due to an error in '"..modAutoloadPath.."'")
+                SR.error("Failed loading SRS Mod plugin due to an error in '"..modAutoloadPath.."'")
             else
                 SR.log("Loaded SRS Mod plugin '"..modAutoloadPath.."'")
             end
@@ -511,7 +511,7 @@ function SR.exportRadioA10A(_data)
     _data.radios[3].encKey = 1
     _data.radios[3].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
-    _data.radios[4].name = "AN/ARC-186(V)FM"
+    _data.radios[4].name = "AN/ARC-186(V) FM"
     _data.radios[4].freq = 30.0 * 1000000 --VHF/FM opera entre 30.000 y 76.000 MHz.
     _data.radios[4].modulation = 1
     _data.radios[4].volume = 1.0
@@ -753,30 +753,30 @@ function SR.exportRadioAH64D(_data)
     _data.radios[1].modulation = 2 --Special intercom modulation
     _data.radios[1].volMode = 0
 
-    _data.radios[2].name = "VHF-ARC-186"
+    _data.radios[2].name = "AN/ARC-186 VHF"
     _data.radios[2].freq = SR.getRadioFrequency(58)
     _data.radios[2].modulation = SR.getRadioModulation(58)
     _data.radios[2].volMode = 0
 
-    _data.radios[3].name = "UHF-ARC-164"
+    _data.radios[3].name = "AN/ARC-164 UHF"
     _data.radios[3].freq = SR.getRadioFrequency(57)
     _data.radios[3].modulation = SR.getRadioModulation(57)
     _data.radios[3].volMode = 0
     _data.radios[3].encMode = 2
 
-    _data.radios[4].name = "FM1-ARC-201D"
+    _data.radios[4].name = "AN/ARC201D FM1"
     _data.radios[4].freq = SR.getRadioFrequency(59)
     _data.radios[4].modulation = SR.getRadioModulation(59)
     _data.radios[4].volMode = 0
     _data.radios[4].encMode = 2
 
-    _data.radios[5].name = "FM2-ARC-201D"
+    _data.radios[5].name = "AN/ARC-201D FM2"
     _data.radios[5].freq = SR.getRadioFrequency(60)
     _data.radios[5].modulation = SR.getRadioModulation(60)
     _data.radios[5].volMode = 0
     _data.radios[5].encMode = 2
 
-    _data.radios[6].name = "HF-ARC-220"
+    _data.radios[6].name = "AN/ARC-220 HF"
     _data.radios[6].freq = SR.getRadioFrequency(61)
     _data.radios[6].modulation = 0
     _data.radios[6].volMode = 0
@@ -1430,7 +1430,7 @@ function SR.exportRadioSK60(_data)
     _data.radios[1].volume = 1.0
     _data.radios[1].volMode = 1
 
-    _data.radios[2].name = "UHF Radio AN/ARC-164"
+    _data.radios[2].name = "AN/ARC-164 UHF"
     _data.radios[2].freq = SR.getRadioFrequency(6)
     _data.radios[2].modulation = 1
     _data.radios[2].volume = 1.0
@@ -1758,6 +1758,153 @@ function SR.exportRadioA29B(_data)
     return _data
 end
 
+function SR.exportRadioVSNF104C(_data)
+    _data.capabilities	= { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
+    _data.control		= 0 -- full radio			
+
+    -- UHF radio
+    local arc66		= {}
+    arc66.DeviceId	= 1
+    arc66.Frequency	= 0
+    arc66.Volume	= GetDevice(0):get_argument_value(506)--TEST-- --0		-- no volume control in cockpit definitions
+    arc66.Mode		= { OFF = 0, TR = 1, TRG = 2 }
+    arc66.ModeSw	= (GetDevice(0):get_argument_value(505))*2
+    arc66.ChannelSw	= GetDevice(0):get_argument_value(302)
+    arc66.PttSw		= 0 -- GetDevice(arc66.DeviceId):is_ptt_pressed()
+    arc66.Power		= GetDevice(arc66.DeviceId):is_on()
+    arc66.Manual	= GetDevice(0):get_argument_value(504)
+    --new
+    arc66.Channel	= math.floor(arc66.ChannelSw * 100.0)
+
+    -- UHF guard channel
+    local guard		= {}
+    guard.DeviceId	= 2
+    guard.Frequency	= 0
+
+    -- intercom
+    local ics		= {}
+    ics.DeviceId	= 3
+    ics.Frequency	= 0
+
+    local iff		= {}
+    iff.DeviceId	= 24	-- defined in devices, but not used by this script
+    iff.MstrMode	= { OFF = 0, STBY = 1, LOW = 2, NORM = 3, EMER = 4 }
+    iff.MstrModeSw	= (GetDevice(0):get_argument_value(243))*4
+    iff.Ident		= { MIC = 0, OUT = 1, IP = 2 }
+    iff.IdentSw		= (GetDevice(0):get_argument_value(240))*2
+    iff.Mode1Code	= 0	-- not in cockpit definitions yet
+    iff.Mode		= { OUT = 0, ON = 1 }
+    iff.Mode2Sw		= GetDevice(0):get_argument_value(242)
+    iff.Mode3Sw		= GetDevice(0):get_argument_value(241)
+    iff.Mode3Code	= 0	-- not in cockpit definitions yet
+
+    if (arc66.PttSw == 1) then
+        _data.ptt = true
+    end
+
+    if arc66.Power and (arc66.ModeSw ~= arc66.Mode.OFF) then
+        arc66.Frequency	= math.floor((GetDevice(arc66.DeviceId):get_frequency() + 5000 / 2) / 5000) * 5000
+        ics.Frequency	= 100.0
+        --arc66.Volume	= 1.0
+
+        if arc66.ModeSw == arc66.Mode.TRG then
+            guard.Frequency = math.floor((GetDevice(guard.DeviceId):get_frequency() + 5000 / 2) / 5000) * 5000
+        end
+    end
+
+    -- ARC-66 Preset Channel Selector changes interval between channels above Channel 13
+    --if (arc66.ChannelSw > 0.45) then
+    --	arc66.Channel = math.floor((arc66.ChannelSw - 0.44) * 25.5) + 13
+    --else
+    --	arc66.Channel = math.floor(arc66.ChannelSw * 28.9)
+    --end
+
+
+
+    -- Intercom
+    _data.radios[1].name		= "Intercom"
+    _data.radios[1].freq		= ics.Frequency
+    _data.radios[1].modulation	= 2 --Special intercom modulation
+    _data.radios[1].volume		= arc66.Volume
+
+    -- ARC-66 UHF radio
+    _data.radios[2].name		= "AN/ARC-66"
+    _data.radios[2].freq		= arc66.Frequency
+    _data.radios[2].secFreq		= guard.Frequency
+    _data.radios[2].modulation	= 0  -- AM only
+    _data.radios[2].freqMin		= 225.000e6
+    _data.radios[2].freqMax		= 399.900e6
+    _data.radios[2].volume		= arc66.Volume
+
+    if (arc66.Channel >= 1) and (arc66.Manual == 0) then
+        _data.radios[2].channel = arc66.Channel
+    end
+
+    -- Expansion Radio - Server Side Controlled
+    _data.radios[3].name = "AN/ARC-186(V)"
+    _data.radios[3].freq = 124.8 * 1000000 --116,00-151,975 MHz
+    _data.radios[3].modulation = 0
+    _data.radios[3].secFreq = 121.5 * 1000000
+    _data.radios[3].volume = 1.0
+    _data.radios[3].freqMin = 116 * 1000000
+    _data.radios[3].freqMax = 151.975 * 1000000
+    _data.radios[3].volMode = 1
+    _data.radios[3].freqMode = 1
+    _data.radios[3].expansion = true
+
+    -- Expansion Radio - Server Side Controlled
+    _data.radios[4].name = "AN/ARC-164 UHF"
+    _data.radios[4].freq = 251.0 * 1000000 --225-399.975 MHZ
+    _data.radios[4].modulation = 0
+    _data.radios[4].secFreq = 243.0 * 1000000
+    _data.radios[4].volume = 1.0
+    _data.radios[4].freqMin = 225 * 1000000
+    _data.radios[4].freqMax = 399.975 * 1000000
+    _data.radios[4].volMode = 1
+    _data.radios[4].freqMode = 1
+    _data.radios[4].expansion = true
+    _data.radios[4].encKey = 1
+    _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+
+    -- HANDLE TRANSPONDER
+    _data.iff = {status=0,mode1=0,mode2=0,mode3=0,mode4=false,control=0,expansion=false}
+
+    if iff.MstrModeSw >= iff.MstrMode.LOW then
+        _data.iff.status = 1 -- NORMAL
+
+        if iff.IdentSw == 1 then
+            _data.iff.status = 2 -- IDENT (BLINKY THING)
+        end
+
+        -- MODE set to MIC
+        if iff.IdentSw == 0 then
+            _data.iff.mic = 2
+
+            if _data.ptt and _data.selected == 2 then
+                _data.iff.status = 2 -- IDENT due to MIC switch
+            end
+        end
+    end
+
+    -- IFF Mode 1
+    _data.iff.mode1 = iff.Mode1Code
+
+    -- IFF Mode 2
+    if iff.Mode2Sw == iff.Mode.OUT then
+        _data.iff.mode2 = -1
+    end
+
+    -- IFF Mode 3
+    _data.iff.mode3 = iff.Mode3Code
+
+    if iff.Mode3Sw == iff.Mode.OUT then
+        _data.iff.mode3 = -1
+    elseif iff.MstrModeSw == iff.MstrMode.EMER then
+        _data.iff.mode3 = 7700
+    end
+
+    return _data;
+end
 
 function SR.exportRadioVSNF4(_data)
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
@@ -2277,25 +2424,28 @@ function SR.exportRadioCH47F(_data)
     _data.radios[1].freq = 100.0
     _data.radios[1].modulation = 2 --Special intercom modulation
 
-    _data.radios[2].name = "ARC-201 FM1" -- ARC 201
-    _data.radios[2].freq = SR.getRadioFrequency(49)
-    _data.radios[2].modulation = SR.getRadioModulation(49)
+
+    _data.radios[2].name = "AN/ARC-201 FM1" -- ARC 201
+    _data.radios[2].freq = SR.getRadioFrequency(51)
+    _data.radios[2].modulation = SR.getRadioModulation(51)
 
     _data.radios[2].encKey = 1
     _data.radios[2].encMode = 3 -- Cockpit Toggle + Gui Enc key setting
 
 
-    _data.radios[3].name = "ARC-164 UHF" -- ARC_164
-    _data.radios[3].freq = SR.getRadioFrequency(47)
-    _data.radios[3].modulation = SR.getRadioModulation(47)
+
+    _data.radios[3].name = "AN/ARC-164 UHF" -- ARC_164
+    _data.radios[3].freq = SR.getRadioFrequency(49)
+    _data.radios[3].modulation = SR.getRadioModulation(49)
 
     _data.radios[3].encKey = 1
     _data.radios[3].encMode = 3 -- Cockpit Toggle + Gui Enc key setting
 
 
-    _data.radios[4].name = "ARC-186 VHF" -- ARC_186
-    _data.radios[4].freq = SR.getRadioFrequency(48)
-    _data.radios[4].modulation = SR.getRadioModulation(48)
+
+    _data.radios[4].name = "AN/ARC-186 VHF" -- ARC_186
+    _data.radios[4].freq = SR.getRadioFrequency(50)
+    _data.radios[4].modulation = SR.getRadioModulation(50)
 
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 3 -- Cockpit Toggle + Gui Enc key setting
@@ -2311,14 +2461,14 @@ function SR.exportRadioCH47F(_data)
     end
 
 
-    _data.radios[5].name = "ARC-220 HF" -- ARC_220
-    _data.radios[5].freq = SR.getRadioFrequency(50)
-    _data.radios[5].modulation = SR.getRadioModulation(50)
+    _data.radios[5].name = "AN/ARC-220 HF" -- ARC_220
+    _data.radios[5].freq = SR.getRadioFrequency(52)
+    _data.radios[5].modulation = SR.getRadioModulation(52)
 
     _data.radios[5].encMode = 0
 
     -- TODO (still in overlay)
-    _data.radios[6].name = "ARC-201 FM2"
+    _data.radios[6].name = "AN/ARC-201 FM2"
    -- _data.radios[6].freq = SR.getRadioFrequency(32)
     _data.radios[6].freq = 32000000
     _data.radios[6].modulation = 1
@@ -2617,7 +2767,7 @@ function SR.exportRadioSA342(_data)
     _data.radios[2].volume = SR.getRadioVolume(0, vhfVolume, { 1.0, 0.0 }, true)
     _data.radios[2].rtMode = 1
 
-    _data.radios[3].name = "UHF TRA 6031"
+    _data.radios[3].name = "TRA 6031 UHF"
 
     -- deal with odd radio tune & rounding issue... BUG you cannot set frequency 243.000 ever again
     local freq = SR.getRadioFrequency(_uhfId, 500)
@@ -2746,26 +2896,26 @@ function SR.exportRadioOH58D(_data)
     _data.radios[1].modulation = 2 --Special intercom modulation
     _data.radios[1].volMode = 0
 
-    _data.radios[2].name = "FM1"
+    _data.radios[2].name = "AN/ARC-201D FM1"
     _data.radios[2].freq = SR.getRadioFrequency(29)
     _data.radios[2].modulation = SR.getRadioModulation(29)
     _data.radios[2].volMode = 0
     _data.radios[2].encMode = 2
 
-    _data.radios[3].name = "UHF"
+    _data.radios[3].name = "AN/ARC-164 UHF"
     _data.radios[3].freq = SR.getRadioFrequency(30)
     _data.radios[3].modulation = SR.getRadioModulation(30)
     _data.radios[3].volMode = 0
     _data.radios[3].encMode = 2
 
-    _data.radios[4].name = "VHF"
+    _data.radios[4].name = "AN/ARC-186 VHF"
     _data.radios[4].freq = SR.getRadioFrequency(31)
     _data.radios[4].modulation = SR.getRadioModulation(31)
     _data.radios[4].volMode = 0
     _data.radios[4].encMode = 2
 
 
-    _data.radios[5].name = "FM2"
+    _data.radios[5].name = "AN/ARC-201D FM2"
     _data.radios[5].freq = SR.getRadioFrequency(32)
     _data.radios[5].modulation = SR.getRadioModulation(32)
     _data.radios[5].volMode = 0
@@ -3075,7 +3225,7 @@ function SR.exportRadioKA50(_data)
 
     local _panel = GetDevice(0)
 
-    _data.radios[2].name = "R-800L14 VHF/UHF"
+    _data.radios[2].name = "R-800L14 V/UHF"
     _data.radios[2].freq = SR.getRadioFrequency(48)
 
     -- Get modulation mode
@@ -4258,7 +4408,7 @@ function SR.exportRadioFA18C(_data)
     -- AN/ARC-210 - 1
     -- Set radio data
     local _radio = _data.radios[2]
-    _radio.name = "AN/ARC-210 - 1"
+    _radio.name = "AN/ARC-210 - COMM1"
     _radio.freq = SR.getRadioFrequency(38)
     _radio.modulation = SR.getRadioModulation(38)
     _radio.volume = SR.getRadioVolume(0, 108, { 0.0, 1.0 }, false)
@@ -4272,7 +4422,7 @@ function SR.exportRadioFA18C(_data)
     -- AN/ARC-210 - 2
     -- Set radio data
     _radio = _data.radios[3]
-    _radio.name = "AN/ARC-210 - 2"
+    _radio.name = "AN/ARC-210 - COMM2"
     _radio.freq = SR.getRadioFrequency(39)
     _radio.modulation = SR.getRadioModulation(39)
     _radio.volume = SR.getRadioVolume(0, 123, { 0.0, 1.0 }, false)
@@ -5672,7 +5822,7 @@ function SR.exportRadioC101CC(_data)
         _data.radios[2].secFreq = 0
     end
 
-    _data.radios[3].name = "VHF-20B"
+    _data.radios[3].name = "20B VHF"
     _data.radios[3].modulation = 0
     _data.radios[3].volume = 1.0 --SR.getRadioVolume(0, 412,{0.0,1.0},false)
     _data.radios[3].volMode = 1
@@ -6124,7 +6274,7 @@ function SR.exportRadioF1CE(_data)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
-    _data.radios[2].name = "V/UHF TRAP-136"
+    _data.radios[2].name = "TRAP-136 V/UHF"
     _data.radios[2].freq = SR.getRadioFrequency(6)
     _data.radios[2].modulation = 0
     _data.radios[2].volume = SR.getRadioVolume(0, 311,{0.0,1.0},false)
@@ -6138,7 +6288,7 @@ function SR.exportRadioF1CE(_data)
         _data.radios[2].channel = SR.getNonStandardSpinner(283, {[0.000]= "1", [0.050]= "2",[0.100]= "3",[0.150]= "4",[0.200]= "5",[0.250]= "6",[0.300]= "7",[0.350]= "8",[0.400]= "9",[0.450]= "10",[0.500]= "11",[0.550]= "12",[0.600]= "13",[0.650]= "14",[0.700]= "15",[0.750]= "16",[0.800]= "17",[0.850]= "18",[0.900]= "19",[0.950]= "20"},0.05,3)
     end
 
-    _data.radios[3].name = "UHF TRAP-137B"
+    _data.radios[3].name = "TRAP-137B UHF"
     _data.radios[3].freq = SR.getRadioFrequency(8)
     _data.radios[3].modulation = 0
     _data.radios[3].volume = SR.getRadioVolume(0, 314,{0.0,1.0},false)
@@ -6236,13 +6386,13 @@ function SR.exportRadioF1BE(_data)
     _data.radios[1].volMode = 1.0
 
 
-    _data.radios[2].name = "V/UHF TRAP-136"
+    _data.radios[2].name = "TRAP-136 V/UHF"
     _data.radios[2].freq = SR.getRadioFrequency(6)
     _data.radios[2].modulation = 0
     _data.radios[2].volMode = 0
 
 
-    _data.radios[3].name = "UHF TRAP-137B"
+    _data.radios[3].name = "TRAP-137B UHF"
     _data.radios[3].freq = SR.getRadioFrequency(8)
     _data.radios[3].modulation = 0
     _data.radios[3].volMode = 0
@@ -6650,7 +6800,7 @@ end
 
 
 
-    _data.radios[2].name = "ARC-210 COM 1"
+    _data.radios[2].name = "ARC-210 - COMM1"
     _data.radios[2].freq = SR.getRadioFrequency(2)
     _data.radios[2].modulation = SR.getRadioModulation(2)
     _data.radios[2].volume = SR.getRadioVolume(0, 298, { 0.0, 1.0 }, false)
@@ -6679,7 +6829,7 @@ end
     --_data.radios[2].channel =  SR.getSelectorPosition(178,0.01)  --add 1 as channel 0 is channel 1
     --end
 
-    _data.radios[3].name = "ARC-210 COM 2"
+    _data.radios[3].name = "ARC-210 - COMM2"
     _data.radios[3].freq = SR.getRadioFrequency(3)
     _data.radios[3].modulation = SR.getRadioModulation(3)
     _data.radios[3].volume = SR.getRadioVolume(0, 299, { 0.0, 1.0 }, false)
@@ -7086,6 +7236,97 @@ function SR.exportRadioAJS37(_data)
     return _data
 end
 
+function SR.exportRadioF4U (_data)
+
+    -- Reference manual: https://www.vmfa251.org/pdffiles/Corsair%20Manual.pdf
+    -- p59 of the pdf (p53 for the manual) is the radio section.
+
+    _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
+    _data.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=0,control=1,expansion=false,mic=-1}
+
+    local devices = {
+        Cockpit = 0,
+        Radio = 8
+    }
+
+    local buttons = {
+        Battery = 120,
+        C38_Receiver_A = 82, -- VHF
+        C38_Receiver_C = 83, -- MHF
+        C30A_CW_Voice = 95,
+    }
+
+    local anarc5 = GetDevice(devices.Radio)
+
+    -- TX ON implies RX ON.
+    local txOn = anarc5:is_on()
+    local vhfOn = SR.getButtonPosition(buttons.C38_Receiver_A) > 0
+    local batteryOn = get_param_handle("DC_BUS"):get() > 1 -- SR.getButtonPosition(buttons.Battery) > 0
+    local voiceSelected = SR.getButtonPosition(buttons.C30A_CW_Voice) > 0
+    local rxOn = txOn or (batteryOn and vhfOn)
+
+
+    -- AN/ARC-5 Radio
+    _data.radios[2].name = "AN/ARC-5"
+    _data.radios[2].channel = SR.getSelectorPosition(088, 0.33) + 1
+    _data.radios[2].volume = SR.getRadioVolume(devices.Cockpit, 081, {0.0,1.0},false)
+    _data.radios[2].rxOnly = rxOn and not txOn
+    _data.radios[2].modulation = anarc5:get_modulation()
+
+    if voiceSelected and (txOn or rxOn) then
+        _data.radios[2].freq = SR.round(anarc5:get_frequency(), 5e3) or 0
+    end
+
+    _data.selected = 1
+
+    -- Expansion Radio - Server Side Controlled
+    _data.radios[3].name = "AN/ARC-186(V)"
+    _data.radios[3].freq = 124.8 * 1000000 --116,00-151,975 MHz
+    _data.radios[3].modulation = 0
+    _data.radios[3].secFreq = 121.5 * 1000000
+    _data.radios[3].volume = 1.0
+    _data.radios[3].freqMin = 116 * 1000000
+    _data.radios[3].freqMax = 151.975 * 1000000
+    _data.radios[3].volMode = 1
+    _data.radios[3].freqMode = 1
+    _data.radios[3].expansion = true
+
+    -- Expansion Radio - Server Side Controlled
+    _data.radios[4].name = "AN/ARC-164 UHF"
+    _data.radios[4].freq = 251.0 * 1000000 --225-399.975 MHZ
+    _data.radios[4].modulation = 0
+    _data.radios[4].secFreq = 243.0 * 1000000
+    _data.radios[4].volume = 1.0
+    _data.radios[4].freqMin = 225 * 1000000
+    _data.radios[4].freqMax = 399.975 * 1000000
+    _data.radios[4].volMode = 1
+    _data.radios[4].freqMode = 1
+    _data.radios[4].expansion = true
+    _data.radios[4].encKey = 1
+    _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+
+    _data.control = 0; -- no ptt, same as the FW and 109. No connector.
+
+    if SR.getAmbientVolumeEngine()  > 10 then
+        -- engine on
+
+        local _door = get_param_handle("BASE_SENSOR_CANOPY_STATE"):get()
+
+        if _door > 0.5 then
+            _data.ambient = {vol = 0.35,  abType = 'f4u' }
+        else
+            _data.ambient = {vol = 0.2,  abType = 'f4u' }
+        end
+
+    else
+        -- engine off
+        _data.ambient = {vol = 0, abType = 'f4u' }
+    end
+
+    return _data;
+end
+
+
 function SR.getRadioVolume(_deviceId, _arg, _minMax, _invert)
 
     local _device = GetDevice(_deviceId)
@@ -7418,6 +7659,7 @@ SR.exporters["T-45"] = SR.exportRadioT45
 SR.exporters["A-29B"] = SR.exportRadioA29B
 SR.exporters["VSN_F4C"] = SR.exportRadioVSNF4
 SR.exporters["VSN_F4B"] = SR.exportRadioVSNF4
+SR.exporters["VSN_F104C"] = SR.exportRadioVSNF104C
 SR.exporters["Hercules"] = SR.exportRadioHercules
 SR.exporters["F-15C"] = SR.exportRadioF15C
 SR.exporters["F-15ESE"] = SR.exportRadioF15ESE
@@ -7459,6 +7701,8 @@ SR.exporters["SpitfireLFMkIX"] = SR.exportRadioSpitfireLFMkIX
 SR.exporters["SpitfireLFMkIXCW"] = SR.exportRadioSpitfireLFMkIX
 SR.exporters["MosquitoFBMkVI"] = SR.exportRadioMosquitoFBMkVI
 SR.exporters["F-4E-45MC"] = SR.exportRadioF4
+SR.exporters["F4U-1D"] = SR.exportRadioF4U
+SR.exporters["F4U-1D_CW"] = SR.exportRadioF4U
 
 
 --- DCS EXPORT FUNCTIONS
@@ -7471,7 +7715,7 @@ LuaExportActivityNextEvent = function(tCurrent)
         local _status, _result = pcall(SR.exporter)
 
         if not _status then
-            SR.log('ERROR: ' ..  SR.debugDump(_result))
+            SR.error(SR.debugDump(_result))
         end
     end
 
@@ -7486,12 +7730,12 @@ LuaExportActivityNextEvent = function(tCurrent)
                 tNext = _result
             end
         else
-            SR.log('ERROR Calling other LuaExportActivityNextEvent from another script: ' .. SR.debugDump(_result))
+            SR.error('Calling other LuaExportActivityNextEvent from another script: ' .. SR.debugDump(_result))
         end
     end
 
     if terrain == nil then
-        SR.log("Terrain Export is not working")
+        SR.error("Terrain Export is not working")
         --SR.log("EXPORT CHECK "..tostring(terrain.isVisible(1,100,1,1,100,1)))
         --SR.log("EXPORT CHECK "..tostring(terrain.isVisible(1,1,1,1,-100,-100)))
     end
@@ -7508,20 +7752,20 @@ LuaExportBeforeNextFrame = function()
     local _status, _result = pcall(SR.readLOSSocket)
 
     if not _status then
-        SR.log('ERROR LuaExportBeforeNextFrame readLOSSocket SRS: ' .. SR.debugDump(_result))
+        SR.error('LuaExportBeforeNextFrame readLOSSocket SRS: ' .. SR.debugDump(_result))
     end
 
     _status, _result = pcall(SR.readSeatSocket)
 
     if not _status then
-        SR.log('ERROR LuaExportBeforeNextFrame readSeatSocket SRS: ' .. SR.debugDump(_result))
+        SR.error('LuaExportBeforeNextFrame readSeatSocket SRS: ' .. SR.debugDump(_result))
     end
 
     -- call original
     if _prevLuaExportBeforeNextFrame then
         _status, _result = pcall(_prevLuaExportBeforeNextFrame)
         if not _status then
-            SR.log('ERROR Calling other LuaExportBeforeNextFrame from another script: ' .. SR.debugDump(_result))
+            SR.error('Calling other LuaExportBeforeNextFrame from another script: ' .. SR.debugDump(_result))
         end
     end
 end
@@ -7529,4 +7773,4 @@ end
 -- Load mods' SRS plugins
 SR.LoadModsPlugins()
 
-SR.log("Loaded SimpleRadio Standalone Export version: 2.2.0.3")
+SR.log("Loaded SimpleRadio Standalone Export version: 2.2.0.5")

@@ -12,6 +12,7 @@ using Caliburn.Micro;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Properties;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.ClientSettingsControl.Model;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.RadioOverlayWindow.PresetChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers;
@@ -259,6 +260,22 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
                 value);
             NotifyPropertyChanged();
         }
+    }
+    
+    public List<string> ServerPresetConfigurations => ProfileSettingsStore.ServerPresetSettings;
+
+    public string SelectedServerPresetConfiguration
+    {
+        set
+        {
+            GlobalSettingsStore.Instance.ProfileSettingsStore.SetClientSettingString(
+                ProfileSettingsKeys.ServerPresetSelection, value);
+            NotifyPropertyChanged();
+            EventBus.Instance.PublishOnUIThreadAsync(new ServerSettingsPresetsSettingChangedMessage());
+        }
+        get =>
+            GlobalSettingsStore.Instance.ProfileSettingsStore.GetClientSettingString(ProfileSettingsKeys
+                .ServerPresetSelection);
     }
 
     public bool VOXEnabled
@@ -1167,6 +1184,8 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         NotifyPropertyChanged(nameof(RadioChannel9));
         NotifyPropertyChanged(nameof(RadioChannel10));
         NotifyPropertyChanged(nameof(Intercom));
+        
+        NotifyPropertyChanged(nameof(ServerPresetConfigurations));
 
         //TODO send message to tell input to reload!
         //TODO pick up in inputhandler that settings have changed?

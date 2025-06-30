@@ -628,7 +628,15 @@ public class UDPClientAudioProcessor : IDisposable
                                                     .ShowTransmitterName))
                                                 transmitterName = transmittingClient.Name;
 
-                                            audio.Ambient = transmittingClient.RadioInfo.ambient;
+                                            if (transmittingClient.RadioInfo?.ambient == null)
+                                            {
+                                                audio.Ambient = new Ambient();
+                                            }
+                                            else
+                                            {
+                                                audio.Ambient = transmittingClient.RadioInfo.ambient;
+                                            }
+                                            
                                         }
 
                                         var newRadioReceivingState = new RadioReceivingState

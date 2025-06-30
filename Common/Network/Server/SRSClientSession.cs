@@ -21,8 +21,14 @@ public class SRSClientSession : TcpSession
     private readonly StringBuilder _receiveBuffer = new();
 
     private string _ip;
-    private int _port;
     private long _lastFullRadioSent;
+    private int _port;
+
+    public SRSClientSession(ServerSync server,
+        HashSet<IPAddress> bannedIps) : base(server)
+    {
+        _bannedIps = bannedIps;
+    }
 
     public long LastMetaDataSent { get; set; }
 
@@ -39,23 +45,17 @@ public class SRSClientSession : TcpSession
 
     public long LastMessageReceived { get; set; }
 
-    public SRSClientSession(ServerSync server,
-        HashSet<IPAddress> bannedIps) : base(server)
-    {
-        _bannedIps = bannedIps;
-    }
-
     public string SRSGuid { get; set; }
 
     protected override void OnConnected()
     {
         var clientIp = (IPEndPoint)Socket.RemoteEndPoint;
 
-        EventBus.Instance.PublishOnBackgroundThreadAsync(new SRSClientStatus()
+        EventBus.Instance.PublishOnBackgroundThreadAsync(new SRSClientStatus
         {
             Connected = true,
             ClientIP = clientIp.ToString(),
-            SRSGuid = SRSGuid,
+            SRSGuid = SRSGuid
         });
 
         _ip = clientIp.Address.ToString();
@@ -81,7 +81,7 @@ public class SRSClientSession : TcpSession
 
     protected override void OnDisconnected()
     {
-        EventBus.Instance.PublishOnBackgroundThreadAsync(new SRSClientStatus()
+        EventBus.Instance.PublishOnBackgroundThreadAsync(new SRSClientStatus
         {
             Connected = false,
             SRSGuid = SRSGuid,

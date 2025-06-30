@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
+﻿namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
 
 public class SRSClientStatus
 {

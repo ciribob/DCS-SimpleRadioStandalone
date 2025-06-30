@@ -253,6 +253,9 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         }
     }
 
+        public string ServerPresetsEnabledText
+            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.SERVER_PRESETS_ENABLED).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+        
     public string ListeningPort
         => ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.SERVER_PORT).StringValue;
 
@@ -510,5 +513,14 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
 
                 _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
             }
+        }
+        
+        public void ServerPresetsEnabledToggle()
+        {
+            var newSetting = ServerPresetsEnabledText != $"{Properties.Resources.BtnOn}";
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SERVER_PRESETS_ENABLED, newSetting);
+            NotifyOfPropertyChange(() => ServerPresetsEnabledText);
+
+            _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
         }
 }

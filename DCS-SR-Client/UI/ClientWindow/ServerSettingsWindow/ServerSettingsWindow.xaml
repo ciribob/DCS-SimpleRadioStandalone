@@ -193,14 +193,14 @@
                        HorizontalContentAlignment="Center"
                        VerticalContentAlignment="Center"
                        Content="{x:Static p:Resources.ValueUnknown}" />
-
+                
                 <Label Grid.Row="12"
                        Grid.Column="0"
                        HorizontalContentAlignment="Center"
                        VerticalContentAlignment="Center"
-                       Content="{x:Static p:Resources.SrvServerVersion}" />
+                       Content="{x:Static p:Resources.SrvPresetsEnabled}" />
 
-                <Label Name="ServerVersion"
+                <Label Name="ServerPresetsEnabled"
                        Grid.Row="12"
                        Grid.Column="1"
                        HorizontalContentAlignment="Center"
@@ -211,10 +211,23 @@
                        Grid.Column="0"
                        HorizontalContentAlignment="Center"
                        VerticalContentAlignment="Center"
+                       Content="{x:Static p:Resources.SrvServerVersion}" />
+
+                <Label Name="ServerVersion"
+                       Grid.Row="13"
+                       Grid.Column="1"
+                       HorizontalContentAlignment="Center"
+                       VerticalContentAlignment="Center"
+                       Content="{x:Static p:Resources.ValueUnknown}" />
+
+                <Label Grid.Row="14"
+                       Grid.Column="0"
+                       HorizontalContentAlignment="Center"
+                       VerticalContentAlignment="Center"
                        Content="{x:Static p:Resources.SrvNodeLimit}" />
 
                 <Label Name="NodeLimit"
-                       Grid.Row="13"
+                       Grid.Row="14"
                        Grid.Column="1"
                        HorizontalContentAlignment="Center"
                        VerticalContentAlignment="Center"

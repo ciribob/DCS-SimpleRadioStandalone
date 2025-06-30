@@ -7,8 +7,8 @@
         <AssemblyTitle>DCS-SR-CommonTests</AssemblyTitle>
         <Product>DCS-SimpleRadio Standalone</Product>
         <Copyright>Copyright © 2016</Copyright>
-        <AssemblyVersion>2.2.0.3</AssemblyVersion>
-        <FileVersion>2.2.0.3</FileVersion>
+        <AssemblyVersion>2.2.0.5</AssemblyVersion>
+        <FileVersion>2.2.0.5</FileVersion>
         <Company>DCS-SimpleRadio Standalone</Company>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -23,12 +23,12 @@
         <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0"/>
-        <PackageReference Include="MSTest.TestAdapter" Version="3.8.2"/>
-        <PackageReference Include="MSTest.TestFramework" Version="3.8.2"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+        <PackageReference Include="MSTest.TestAdapter" Version="3.9.3" />
+        <PackageReference Include="MSTest.TestFramework" Version="3.9.3" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Common\Common.csproj"/>
+        <ProjectReference Include="..\Common\Common.csproj" />
     </ItemGroup>
     <Choose>
         <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

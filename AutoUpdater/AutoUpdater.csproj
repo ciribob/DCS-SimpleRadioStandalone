@@ -15,7 +15,7 @@
         <UpdateRequired>false</UpdateRequired>
         <MapFileExtensions>true</MapFileExtensions>
         <ApplicationRevision>0</ApplicationRevision>
-        <ApplicationVersion>2.2.0.3</ApplicationVersion>
+        <ApplicationVersion>2.2.0.5</ApplicationVersion>
         <UseApplicationTrust>false</UseApplicationTrust>
         <BootstrapperEnabled>true</BootstrapperEnabled>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -23,9 +23,9 @@
         <UseWPF>true</UseWPF>
         <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
         <PlatformTarget>x64</PlatformTarget>
-        <AssemblyVersion>2.2.0.3</AssemblyVersion>
-        <FileVersion>2.2.0.3</FileVersion>
-        <Version>2.2.0.3</Version>
+        <AssemblyVersion>2.2.0.5</AssemblyVersion>
+        <FileVersion>2.2.0.5</FileVersion>
+        <Version>2.2.0.5</Version>
         <Company>Ciribob - GitHub.com/Ciribob</Company>
         <Product>DCS-SRS-AutoUpdater</Product>
     </PropertyGroup>
@@ -44,11 +44,11 @@
         </Compile>
     </ItemGroup>
     <ItemGroup>
-        <Resource Include="system_software_update.ico"/>
+        <Resource Include="system_software_update.ico" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.CSharp" Version="4.7.0"/>
-        <PackageReference Include="Octokit" Version="2.0.1"/>
+        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+        <PackageReference Include="Octokit" Version="14.0.0" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Update="Properties\Resources.resx">

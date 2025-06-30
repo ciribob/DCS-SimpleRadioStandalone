@@ -1,9 +1,9 @@
--- Version 2.2.0.3
+-- Version 2.2.0.5
 -- Make sure you COPY this file to the same location as the Export.lua as well! 
 -- Otherwise the Overlay will not work
 
 
-net.log("Loading - DCS-SRS Overlay GameGUI - Ciribob: 2.2.0.3 ")
+log.write('SRS-OverlayGameGUI', log.INFO, "Loading - DCS-SRS Overlay GameGUI - Ciribob: 2.2.0.5 ")
 
 local base = _G
 
@@ -33,6 +33,7 @@ local Gui               = require('dxgui')
 local DialogLoader      = require('DialogLoader')
 local Static            = require('Static')
 local Tools             = require('tools')
+local log               = require('log')
 
 local _modes = {     
     hidden = "hidden",
@@ -57,8 +58,7 @@ local HEIGHT = 200
 local _lastReceived = 0
 
 local srsOverlay = { 
-    connection = nil,
-    logFile = io.open(lfs.writedir()..[[Logs\DCS-SRS-InGameRadio.log]], "w")
+    connection = nil
 }
 
 
@@ -216,10 +216,15 @@ function srsOverlay.log(str)
         return
     end
 
-    if srsOverlay.logFile then
-        srsOverlay.logFile:write("["..os.date("%H:%M:%S").."] "..str.."\r\n")
-        srsOverlay.logFile:flush()
+    log.write('SRS-OverlayGameGUI', log.INFO, str)
+end
+
+function srsOverlay.error(str)
+     if not str then 
+        return
     end
+
+    log.write('SRS-OverlayGameGUI', log.ERROR, str)
 end
 
 
@@ -777,7 +782,7 @@ function srsOverlay.onSimulationFrame()
         end)
 
         if not _status then
-            srsOverlay.log("Error: ".._result)
+            srsOverlay.error(_result)
         end
         
     else
@@ -797,4 +802,4 @@ end
 
 DCS.setUserCallbacks(srsOverlay)
 
-net.log("Loaded - DCS-SRS Overlay GameGUI - Ciribob: 2.2.0.3 ")
+net.log("Loaded - DCS-SRS Overlay GameGUI - Ciribob: 2.2.0.5 ")

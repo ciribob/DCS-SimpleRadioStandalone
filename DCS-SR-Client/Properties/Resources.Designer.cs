@@ -2555,6 +2555,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Channel Presets Configuration.
+        /// </summary>
+        public static string ServerPresetsConfiguration {
+            get {
+                return ResourceManager.GetString("ServerPresetsConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Server Settings.
         /// </summary>
         public static string ServerWindowTitle {
@@ -2731,6 +2740,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         public static string SrvNodeLimit {
             get {
                 return ResourceManager.GetString("SrvNodeLimit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server Presets Enabled.
+        /// </summary>
+        public static string SrvPresetsEnabled {
+            get {
+                return ResourceManager.GetString("SrvPresetsEnabled", resourceCulture);
             }
         }
         

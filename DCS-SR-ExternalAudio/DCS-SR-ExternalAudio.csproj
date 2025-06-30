@@ -9,8 +9,8 @@
     <PlatformTarget>x64</PlatformTarget>
     <Company>Ciribob - GitHub.com/Ciribob</Company>
     <Product>DCS-SimpleRadio Standalone</Product>
-    <AssemblyVersion>2.2.0.3</AssemblyVersion>
-    <FileVersion>2.2.0.3</FileVersion>
+    <AssemblyVersion>2.2.0.5</AssemblyVersion>
+    <FileVersion>2.2.0.5</FileVersion>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Ciribob.DCS.SimpleRadio.Standalone.ExternalAudioClient.Client.Program</StartupObject>
@@ -45,35 +45,35 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
-    <PackageReference Include="Google.Api.CommonProtos" Version="2.2.0" />
-    <PackageReference Include="Google.Api.Gax" Version="3.2.0" />
-    <PackageReference Include="Google.Api.Gax.Grpc" Version="3.2.0" />
-    <PackageReference Include="Google.Api.Gax.Grpc.GrpcCore" Version="3.2.0" />
-    <PackageReference Include="Google.Apis" Version="1.51.0" />
-    <PackageReference Include="Google.Apis.Auth" Version="1.51.0" />
-    <PackageReference Include="Google.Apis.Core" Version="1.51.0" />
-    <PackageReference Include="Google.Cloud.TextToSpeech.V1" Version="2.1.0" />
-    <PackageReference Include="Google.Protobuf" Version="3.21.5" />
-    <PackageReference Include="Grpc.Auth" Version="2.48.0" />
-    <PackageReference Include="Grpc.Core" Version="2.46.3" />
-    <PackageReference Include="Grpc.Core.Api" Version="2.48.0" />
-    <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.40.0" />
-    <PackageReference Include="NAudio" Version="2.2.0" />
-    <PackageReference Include="NAudio.Core" Version="2.2.0" />
+    <PackageReference Include="Google.Api.CommonProtos" Version="2.17.0" />
+    <PackageReference Include="Google.Api.Gax" Version="4.11.0" />
+    <PackageReference Include="Google.Api.Gax.Grpc" Version="4.11.0" />
+    <PackageReference Include="Google.Api.Gax.Grpc.GrpcCore" Version="3.7.0" />
+    <PackageReference Include="Google.Apis" Version="1.70.0" />
+    <PackageReference Include="Google.Apis.Auth" Version="1.70.0" />
+    <PackageReference Include="Google.Apis.Core" Version="1.70.0" />
+    <PackageReference Include="Google.Cloud.TextToSpeech.V1" Version="3.12.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.31.1" />
+    <PackageReference Include="Grpc.Auth" Version="2.71.0" />
+    <PackageReference Include="Grpc.Core" Version="2.46.6" />
+    <PackageReference Include="Grpc.Core.Api" Version="2.71.0" />
+    <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.44.0" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="NAudio.Core" Version="2.2.1" />
     <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
-    <PackageReference Include="NVorbis" Version="0.10.4" />
-    <PackageReference Include="System.ComponentModel.Composition" Version="9.0.2" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.1" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
+    <PackageReference Include="NVorbis" Version="0.10.5" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="9.0.6" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="9.0.6" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
     <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
-    <PackageReference Include="System.Security.AccessControl" Version="6.0.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.2" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="8.1.1" />
-    <PackageReference Include="System.ServiceModel.Http" Version="8.1.1" />
+    <PackageReference Include="System.Security.AccessControl" Version="6.0.1" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.6" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="8.1.2" />
+    <PackageReference Include="System.ServiceModel.Http" Version="8.1.2" />
     <PackageReference Include="System.ServiceModel.Duplex" Version="6.0.0" />
-    <PackageReference Include="System.ServiceModel.NetTcp" Version="8.1.1" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="8.1.2" />
     <PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />
-    <PackageReference Include="System.ServiceModel.Federation" Version="8.1.1" />
-    <PackageReference Include="System.Speech" Version="9.0.2" />
+    <PackageReference Include="System.ServiceModel.Federation" Version="8.1.2" />
+    <PackageReference Include="System.Speech" Version="9.0.6" />
   </ItemGroup>
 </Project>

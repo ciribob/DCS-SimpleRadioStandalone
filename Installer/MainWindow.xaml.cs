@@ -503,20 +503,11 @@ namespace Installer
             }
         }
 
-        private void ClearVersionPostModsServicesDCS(string programPath, string dcsPath)
+        private void CleanPreviousInstall(string programPath)
         {
-            Logger.Info($"Removed SRS Version Post Mods Services at {programPath} and {dcsPath}");
-
-            var paths = FindValidDCSFolders(dcsPath);
-
-            foreach (var path in paths)
-            {
-                _progressBarDialog.UpdateProgress(false, $"Removing SRS at {path}");
-                RemoveScriptsPostModsServicesDCS(path);
-            }
-
             Logger.Info($"Removed SRS program files at {programPath}");
             _progressBarDialog.UpdateProgress(false, $"Removing SRS at {programPath}");
+            
             if (Directory.Exists(programPath))
             {
                 DeleteFileIfExists(programPath + "\\Server\\serverlog.txt");
@@ -543,6 +534,7 @@ namespace Installer
                 DeleteFileIfExists(programPath + "\\Client\\sni.dll");
                 DeleteFileIfExists(programPath + "\\Client\\speexdsp.dll");
                 DeleteFileIfExists(programPath + "\\Client\\SR-ClientRadio.exe");
+                DeleteFileIfExists(programPath + "\\Client\\WebRtcVad.dll");
 
                 //Old structure
                 DeleteFileIfExists(programPath + "\\SR-ClientRadio.exe");
@@ -559,9 +551,21 @@ namespace Installer
                 DeleteFileIfExists(programPath + "\\serverlog.txt");
                 DeleteFileIfExists(programPath + "\\clientlog.txt");
             }
+        }
 
+        private void ClearVersionPostModsServicesDCS(string programPath, string dcsPath)
+        {
+            Logger.Info($"Removed SRS Version Post Mods Services at {programPath} and {dcsPath}");
 
-            Logger.Info($"Finished clearing scripts and program Post Mods ");
+            var paths = FindValidDCSFolders(dcsPath);
+
+            foreach (var path in paths)
+            {
+                _progressBarDialog.UpdateProgress(false, $"Removing SRS at {path}");
+                RemoveScriptsPostModsServicesDCS(path);
+            }
+            
+            Logger.Info($"Finished clearing scripts Post Mods ");
         }
 
         private void RemoveScriptsPostModsServicesDCS(string path)
@@ -804,6 +808,16 @@ namespace Installer
 
         private void InstallProgram(string path)
         {
+            try
+            {
+                CleanPreviousInstall(path);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, $"Error Cleaning Previous Install at {path}");
+            }
+            
+            
             Logger.Info($"Installing SRS Program to {path}");
             _progressBarDialog.UpdateProgress(false, $"Installing SRS at {path}");
             //sleep! WTF directory is lagging behind state here...
@@ -966,8 +980,11 @@ namespace Installer
         {
             Logger.Info($"Adding SRS Shortcut");
 
-            string shortcutPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonPrograms),
+            var shortcutPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonPrograms),
                 "DCS-SRS Client.lnk");
+            
+            if(File.Exists(shortcutPath))
+                File.Delete(shortcutPath);
 
             Logger.Info(
                 $"Adding SRS Shortcut {path + "Client\\SR-ClientRadio.exe"} - {shortcutPath} - Working Directory{

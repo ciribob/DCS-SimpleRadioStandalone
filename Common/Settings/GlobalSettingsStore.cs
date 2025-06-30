@@ -338,7 +338,6 @@ public class GlobalSettingsStore
 
     private GlobalSettingsStore()
     {
-
         //check commandline
         var args = Environment.GetCommandLineArgs();
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -95,6 +96,62 @@ public partial class MainWindow : Window
         return false;
     }
 
+    private Release FindRightRelease(IReadOnlyList<Release> releases)
+    {
+        var allowBeta = AllowBeta();
+        var allowAlpha = AllowAlpha();
+
+        Release latestAlpha = null;
+        Release latestBeta = null;
+        Release latestStable = null;
+        
+        foreach (var release in releases)
+        {
+            if (release.Prerelease)
+            {
+                if (release.Name.ToLower().Contains("alpha") && latestAlpha == null)
+                {
+                    latestAlpha = release;
+                }
+
+                if (release.Name.ToLower().Contains("beta") && latestBeta == null)
+                {
+                    latestBeta = release;
+                }
+            }
+            else
+            {
+                if (latestStable == null)
+                {
+                    latestStable = release;
+                }
+            }
+
+            if (latestAlpha != null && latestBeta != null && latestStable != null)
+            {
+                break;
+            }
+        }
+
+        var lastStableVersion = new Version(latestStable?.TagName.Replace("v", "") ?? "0.0.0.0");
+        var lastBetaVersion = new Version(latestBeta?.TagName.Replace("v", "") ?? "0.0.0.0");
+        var lastAlphaVersion = new Version(latestAlpha?.TagName.Replace("v", "") ?? "0.0.0.0");
+        
+        if (allowAlpha && latestAlpha != null 
+                       && lastAlphaVersion > lastBetaVersion 
+            && lastAlphaVersion > lastStableVersion)
+        {
+            return latestAlpha;
+        }
+        //allowing alpha gives you beta if its newer
+        if ((allowBeta || allowAlpha) && latestBeta != null && lastBetaVersion > lastStableVersion)
+        {
+            return latestBeta;
+        }
+            
+        return latestStable;
+    }
+    
     private async Task<Uri> GetPathToLatestVersion()
     {
         Status.Content = "Finding Latest SRS Version";
@@ -102,43 +159,37 @@ public partial class MainWindow : Window
 
         var releases = await githubClient.Repository.Release.GetAll(GITHUB_USERNAME, GITHUB_REPOSITORY);
 
-        var allowBeta = AllowBeta();
+        var release = FindRightRelease(releases);
+        var releaseAsset = release.Assets.First();
 
-        // Retrieve last stable and beta branch release as tagged on GitHub
-        foreach (var release in releases)
-            if ((release.Prerelease && allowBeta) || !release.Prerelease)
+        foreach (var asset in release.Assets)
+            if (asset.Name.ToLower().StartsWith("dcs-simpleradiostandalone") &&
+                asset.Name.ToLower().Contains(".zip"))
             {
-                var releaseAsset = release.Assets.First();
+                changelogURL = release.HtmlUrl;
+                Status.Content = "Downloading Version " + release.TagName;
 
-                foreach (var asset in release.Assets)
-                    if (asset.Name.ToLower().StartsWith("dcs-simpleradiostandalone") &&
-                        asset.Name.ToLower().Contains(".zip"))
+                if (ServerInstall())
+                {
+                    //check the path and version
+                    var path = ServerPath();
+
+                    if (path.Length > 0)
                     {
-                        changelogURL = release.HtmlUrl;
-                        Status.Content = "Downloading Version " + release.TagName;
+                        var latestVersion = new Version(release.TagName.Replace("v", ""));
+                        var serverVersion = Assembly.LoadFile(Path.Combine(path, "SR-Server.exe")).GetName()
+                            .Version;
 
-                        if (ServerInstall())
-                        {
-                            //check the path and version
-                            var path = ServerPath();
+                        if (serverVersion < latestVersion) return new Uri(releaseAsset.BrowserDownloadUrl);
 
-                            if (path.Length > 0)
-                            {
-                                var latestVersion = new Version(release.TagName.Replace("v", ""));
-                                var serverVersion = Assembly.LoadFile(Path.Combine(path, "SR-Server.exe")).GetName()
-                                    .Version;
-
-                                if (serverVersion < latestVersion) return new Uri(releaseAsset.BrowserDownloadUrl);
-
-                                //no update
-                                return null;
-                            }
-                        }
-
-                        return new Uri(releaseAsset.BrowserDownloadUrl);
+                        //no update
+                        return null;
                     }
-            }
+                }
 
+                return new Uri(releaseAsset.BrowserDownloadUrl);
+            }
+        
         return null;
     }
 
@@ -146,6 +197,15 @@ public partial class MainWindow : Window
     {
         foreach (var arg in Environment.GetCommandLineArgs())
             if (arg.Trim().Equals("-beta"))
+                return true;
+
+        return false;
+    }
+
+    private bool AllowAlpha()
+    {
+        foreach (var arg in Environment.GetCommandLineArgs())
+            if (arg.Trim().Equals("-alpha"))
                 return true;
 
         return false;

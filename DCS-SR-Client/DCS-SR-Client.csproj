@@ -25,10 +25,10 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Company>Ciribob - GitHub.com/Ciribob</Company>
         <Product>DCS-SimpleRadio Standalone</Product>
-        <ApplicationVersion>2.2.0.3</ApplicationVersion>
-        <AssemblyVersion>2.2.0.3</AssemblyVersion>
-        <FileVersion>2.2.0.3</FileVersion>
-        <Version>2.2.0.3</Version>
+        <ApplicationVersion>2.2.0.5</ApplicationVersion>
+        <AssemblyVersion>2.2.0.5</AssemblyVersion>
+        <FileVersion>2.2.0.5</FileVersion>
+        <Version>2.2.0.5</Version>
         <ApplicationIcon>audio-headset.ico</ApplicationIcon>
     </PropertyGroup>
     <PropertyGroup>
@@ -284,6 +284,10 @@
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
         <AppDesigner Include="Properties\" />
+        <None Remove="AudioEffects\Ambient\F4U.wav" />
+        <Content Include="AudioEffects\Ambient\F4U.wav">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Common\Common.csproj" />
@@ -314,17 +318,16 @@
     </ItemGroup>
     <ItemGroup>
 
-        <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25103.5738" />
+        <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25104.5739" />
         <PackageReference Include="Fody" Version="6.9.2" />
         <PackageReference Include="MahApps.Metro" Version="2.4.10" />
         <PackageReference Include="MathNet.Filtering" Version="0.7.0" />
         <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
-        <PackageReference Include="Microsoft.Windows.Compatibility" Version="5.0.2" />
-        <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.37" />
-        <PackageReference Include="MvvmEventBinding" Version="1.0.0" />
-        <PackageReference Include="NAudio.Wasapi" Version="2.1.0" />
+        <PackageReference Include="Microsoft.Windows.Compatibility" Version="9.0.6" />
+        <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+        <PackageReference Include="NAudio.Wasapi" Version="2.2.1" />
         <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
-        <PackageReference Include="Sentry" Version="5.7.0" />
+        <PackageReference Include="Sentry" Version="5.11.1" />
         <PackageReference Include="SharpConfig" Version="3.2.9.1" />
         <PackageReference Include="SharpDX" Version="4.2.0" />
         <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />

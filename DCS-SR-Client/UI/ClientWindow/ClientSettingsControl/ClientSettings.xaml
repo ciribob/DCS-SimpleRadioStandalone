@@ -678,6 +678,8 @@
                                 <RowDefinition />
                                 <RowDefinition />
                                 <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
                             </Grid.RowDefinitions>
 
                             <Label Grid.Row="0"
@@ -838,6 +840,21 @@
                                 Grid.Column="1"
                                 ToggleValue="{Binding DisableExpansionRadios, Mode=TwoWay}" />
 
+                            
+                            <Label Grid.Row="9"
+                                   Grid.Column="0"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center"
+                                   Content="{x:Static p:Resources.ServerPresetsConfiguration}" />
+                            
+                            <ComboBox 
+                                      Grid.Row="9"
+                                      Grid.Column="1"
+                                      Width="215"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Top"
+                                      ItemsSource="{Binding ServerPresetConfigurations}"
+                                      SelectedItem="{Binding SelectedServerPresetConfiguration, Mode=TwoWay}" />
                         </Grid>
                     </GroupBox>
 

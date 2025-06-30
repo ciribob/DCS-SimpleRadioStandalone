@@ -1,19 +1,24 @@
--- Version 2.2.0.3
+-- Version 2.2.0.5
 -- Make sure you COPY this file to the same location as the Export.lua as well! 
 -- Otherwise the Radio Might not work
 
-net.log("Loading - DCS-SRS GameGUI - Ciribob: 2.2.0.3")
+log.write('SRS-GameGUI', log.INFO, "Loading - DCS-SRS GameGUI - Ciribob: 2.2.0.5")
+
+local base = _G
+
+local require = base.require
+local log = require('log')
 local SRS = {}
 
 SRS.CLIENT_ACCEPT_AUTO_CONNECT = true --- Set to false if you want to disable AUTO CONNECT
 
 SRS.dbg = {}
-SRS.logFile = io.open(lfs.writedir()..[[Logs\DCS-SRS-GameGUI.log]], "w")
 function SRS.log(str)
-    if SRS.logFile then
-        SRS.logFile:write(str.."\n")
-        SRS.logFile:flush()
-    end
+	log.write('SRS-GameGUI', log.INFO, str)
+end
+
+function SRS.error(str)
+	log.write('SRS-GameGUI', log.ERROR, str)
 end
 
 package.path  = package.path..";.\\LuaSocket\\?.lua;"
@@ -31,7 +36,7 @@ pcall(function()
 end)
 
 if not srs then
-	SRS.log("Couldnt load SRS.dll")
+	SRS.error("Couldnt load SRS.dll")
 end
 
 local JSON = loadfile("Scripts\\JSON.lua")()
@@ -340,7 +345,7 @@ SRS.onChatMessage = function(msg, from)
 			host = SRS.getHostFromMessage(msg)
 		end
 		if host == nil then 
-			SRS.log("Error getting host from message: " .. msg)
+			SRS.error("Error getting host from message: " .. msg)
 			return
 		end
 
@@ -382,5 +387,5 @@ end
 
 DCS.setUserCallbacks(SRS)
 
-net.log("Loaded - DCS-SRS GameGUI - Ciribob: 2.2.0.3")
+net.log("Loaded - DCS-SRS GameGUI - Ciribob: 2.2.0.5")
 

@@ -1047,6 +1047,9 @@ Requires Tx or Rx Effects On</value>
     <data name="SrvShowTransmitterName" xml:space="preserve">
     <value>Show Transmitter Name</value>
   </data>
+    <data name="SrvPresetsEnabled" xml:space="preserve">
+    <value>Server Presets Enabled</value>
+  </data>
     <data name="SrvSpectatorAudio" xml:space="preserve">
     <value>Spectator Audio</value>
   </data>
@@ -1237,5 +1240,8 @@ Requires Tx or Rx Effects On</value>
   </data>
     <data name="DisableExpansionRadios" xml:space="preserve">
     <value>Disable Expansion Radios</value>
+  </data>
+<data name="ServerPresetsConfiguration" xml:space="preserve">
+    <value>Channel Presets Configuration</value>
   </data>
 </root>

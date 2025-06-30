@@ -12,7 +12,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers;
 
 public class RadioMixingProvider : ISampleProvider
 {
-
     private readonly AudioRecordingManager _audioRecordingManager = AudioRecordingManager.Instance;
 
     private readonly CachedAudioEffectProvider _cachedAudioEffectsProvider;

@@ -42,8 +42,6 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
         new();
 
     private readonly ServerSettingsStore _serverSettings = ServerSettingsStore.Instance;
-
-    private readonly TransmissionLoggingQueue _transmissionLoggingQueue = new();
     private List<double> _globalFrequencies = new();
 
     private UdpClient _listener;
@@ -52,6 +50,8 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
 
     private volatile bool _stop;
     private List<double> _testFrequencies = new();
+
+    private TransmissionLoggingQueue _transmissionLoggingQueue;
 
     public UDPVoiceRouter(ConcurrentDictionary<string, SRClientBase> clientsList, IEventAggregator eventAggregator)
     {
@@ -118,6 +118,9 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
 
     public void Listen()
     {
+        _transmissionLoggingQueue = new TransmissionLoggingQueue();
+        _transmissionLoggingQueue.Start();
+
         //start threads
         //packets that need processing
         new Thread(ProcessPackets).Start();
@@ -202,6 +205,9 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
         {
         }
 
+        _transmissionLoggingQueue?.Stop();
+        _transmissionLoggingQueue = null;
+
         _outgoingCancellationToken.Cancel();
         _pendingProcessingCancellationToken.Cancel();
     }
@@ -269,7 +275,7 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
                                             // Only log the initial transmission
                                             // only log received transmissions!
                                             if (udpVoicePacket.RetransmissionCount == 0)
-                                                _transmissionLoggingQueue.LogTransmission(client);
+                                                _transmissionLoggingQueue?.LogTransmission(client);
 
                                             #region Record the transmission if server recording is enabled and client allows recording
                                             var ServerRecordingEnabled = _serverSettings.GetGeneralSetting(ServerSettingsKeys.SERVER_RECORDING_ENABLED).BoolValue;

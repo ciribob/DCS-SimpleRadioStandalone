@@ -3,7 +3,7 @@
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 
 /// <summary>
-/// Store to only 5 decimal places - thats plenty for what we need
+///     Store to only 5 decimal places - thats plenty for what we need
 /// </summary>
 public class LatLngPosition
 {

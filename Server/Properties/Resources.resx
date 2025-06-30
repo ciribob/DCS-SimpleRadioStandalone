@@ -219,6 +219,9 @@
   <data name="LabelTransmissionLog" xml:space="preserve">
     <value>Log Received Transmissions</value>
   </data>
+  <data name="ServerPresetsEnabled" xml:space="preserve">
+    <value>Server Channel Presets</value>
+  </data>
   <data name="LabelTunedCount" xml:space="preserve">
     <value>Show Tuned/Client Count</value>
   </data>

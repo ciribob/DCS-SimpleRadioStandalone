@@ -17,15 +17,30 @@ using LogManager = NLog.LogManager;
 namespace Ciribob.DCS.SimpleRadio.Standalone.Server;
 
 internal class Program : IHandle<SRSClientStatus>
+internal class Program : IHandle<SRSClientStatus>
 {
     private readonly EventAggregator _eventAggregator = new();
     private ServerState _serverState;
-    public bool ConsoleLogs { get; set; }
 
     public Program()
     {
         SentrySdk.Init("https://0935ffeb7f9c46e28a420775a7f598f4@o414743.ingest.sentry.io/5315043");
         SetupLogging();
+    }
+
+    public bool ConsoleLogs { get; set; }
+
+    public Task HandleAsync(SRSClientStatus message, CancellationToken cancellationToken)
+    {
+        if (ConsoleLogs)
+        {
+            if (message.Connected)
+                Console.WriteLine($"SRS Client Connected: {message.ClientIP}");
+            else
+                Console.WriteLine($"SRS Client Disconnected: {message.ClientIP} - {message.SRSGuid}");
+        }
+
+        return Task.CompletedTask;
     }
 
     private static void Main(string[] args)
@@ -38,11 +53,10 @@ internal class Program : IHandle<SRSClientStatus>
     private static void ProcessArgs(Options options)
     {
         if (options.ConfigFile != null && options.ConfigFile.Trim().Length > 0)
-        {
             ServerSettingsStore.CFG_FILE_NAME = options.ConfigFile.Trim();
-        }
 
-        UpdaterChecker.Instance.CheckForUpdate(ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).BoolValue,
+        UpdaterChecker.Instance.CheckForUpdate(
+            ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).BoolValue,
             result =>
             {
                 if (result.UpdateAvailable)
@@ -93,89 +107,66 @@ internal class Program : IHandle<SRSClientStatus>
         ConsoleLogs = options.ConsoleLogs;
 
         if (options.Port != null && options.Port.HasValue)
-        {
-            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.SERVER_PORT, options.Port.Value.ToString());
-        }
+            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.SERVER_PORT,
+                options.Port.Value.ToString());
         if (options.CoalitionSecurity != null && options.CoalitionSecurity.HasValue)
-        {
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.COALITION_AUDIO_SECURITY, options.CoalitionSecurity.Value);
-        }
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.COALITION_AUDIO_SECURITY,
+                options.CoalitionSecurity.Value);
         if (options.SpectatorAudioDisabled != null && options.SpectatorAudioDisabled.HasValue)
-        {
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SPECTATORS_AUDIO_DISABLED, options.SpectatorAudioDisabled.Value);
-        }
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SPECTATORS_AUDIO_DISABLED,
+                options.SpectatorAudioDisabled.Value);
         if (options.ClientExportEnabled != null && options.ClientExportEnabled.HasValue)
-        {
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.CLIENT_EXPORT_ENABLED, options.ClientExportEnabled.Value);
-        }
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.CLIENT_EXPORT_ENABLED,
+                options.ClientExportEnabled.Value);
         if (options.RealRadioTX != null && options.RealRadioTX.HasValue)
-        {
             ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.IRL_RADIO_TX, options.RealRadioTX.Value);
-        }
         if (options.RealRadioRX != null && options.RealRadioRX.HasValue)
-        {
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE, options.RealRadioRX.Value);
-        }
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE,
+                options.RealRadioRX.Value);
         if (options.RadioExpansion != null && options.RadioExpansion.HasValue)
-        {
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.RADIO_EXPANSION, options.RadioExpansion.Value);
-        }
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.RADIO_EXPANSION,
+                options.RadioExpansion.Value);
         if (options.EnableEAM != null && options.EnableEAM.HasValue)
-        {
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE, options.EnableEAM.Value);
-        }
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE,
+                options.EnableEAM.Value);
         if (options.EAMRedPassword != null && options.EAMRedPassword.Trim().Length > 0)
-        {
-            ServerSettingsStore.Instance.SetExternalAWACSModeSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE_RED_PASSWORD, options.EAMRedPassword);
-        }
+            ServerSettingsStore.Instance.SetExternalAWACSModeSetting(
+                ServerSettingsKeys.EXTERNAL_AWACS_MODE_RED_PASSWORD, options.EAMRedPassword);
         if (options.EAMBluePassword != null && options.EAMBluePassword.Trim().Length > 0)
-        {
-            ServerSettingsStore.Instance.SetExternalAWACSModeSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE_BLUE_PASSWORD, options.EAMBluePassword);
-        }
+            ServerSettingsStore.Instance.SetExternalAWACSModeSetting(
+                ServerSettingsKeys.EXTERNAL_AWACS_MODE_BLUE_PASSWORD, options.EAMBluePassword);
         if (options.CheckBETAUpdates != null && options.CheckBETAUpdates.HasValue)
-        {
-            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES, options.CheckBETAUpdates.Value);
-        }
+            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES,
+                options.CheckBETAUpdates.Value);
         if (options.AllowRadioEncryption != null && options.AllowRadioEncryption.HasValue)
-        {
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.ALLOW_RADIO_ENCRYPTION, options.AllowRadioEncryption.Value);
-        }
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.ALLOW_RADIO_ENCRYPTION,
+                options.AllowRadioEncryption.Value);
         if (options.ShowTunedCount != null && options.ShowTunedCount.HasValue)
-        {
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SHOW_TUNED_COUNT, options.ShowTunedCount.Value);
-        }
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SHOW_TUNED_COUNT,
+                options.ShowTunedCount.Value);
         if (options.ShowTransmitterName != null && options.ShowTransmitterName.HasValue)
-        {
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SHOW_TRANSMITTER_NAME, options.ShowTransmitterName.Value);
-        }
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SHOW_TRANSMITTER_NAME,
+                options.ShowTransmitterName.Value);
         if (options.LOTATCExport != null && options.LOTATCExport.HasValue)
-        {
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_ENABLED, options.LOTATCExport.Value);
-        }
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_ENABLED,
+                options.LOTATCExport.Value);
         if (options.LotATCExportPort != null && options.LotATCExportPort.HasValue)
-        {
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_PORT, options.LotATCExportPort.Value.ToString());
-        }
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_PORT,
+                options.LotATCExportPort.Value.ToString());
         if (options.LotATCExportIP != null && options.LotATCExportIP.Trim().Length > 0)
-        {
             ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_IP, options.LotATCExportIP);
-        }
         if (options.TestFrequencies != null && options.TestFrequencies.Trim().Length > 0)
-        {
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.TEST_FREQUENCIES, options.TestFrequencies);
-        }
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.TEST_FREQUENCIES,
+                options.TestFrequencies);
         if (options.RetransmissionNodeLimit != null && options.RetransmissionNodeLimit.HasValue)
-        {
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.RETRANSMISSION_NODE_LIMIT, options.RetransmissionNodeLimit.Value.ToString());
-        }
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.RETRANSMISSION_NODE_LIMIT,
+                options.RetransmissionNodeLimit.Value.ToString());
         if (options.StrictRadioEncryption != null && options.StrictRadioEncryption.HasValue)
-        {
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.STRICT_RADIO_ENCRYPTION, options.StrictRadioEncryption.Value);
-        }
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.STRICT_RADIO_ENCRYPTION,
+                options.StrictRadioEncryption.Value);
         if (options.TransmissionLogEnabled != null && options.TransmissionLogEnabled.HasValue)
-        {
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED, options.TransmissionLogEnabled.Value);
-        }
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED,
+                options.TransmissionLogEnabled.Value);
         if (options.serverRecordEnabled != null && options.serverRecordEnabled.HasValue)
         {
             ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SERVER_RECORDING_ENABLED, options.serverRecordEnabled.Value);
@@ -185,23 +176,25 @@ internal class Program : IHandle<SRSClientStatus>
             ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SERVER_RECORDING_PATH, options.serverRecordingPath.Value);
         }
         if (options.RadioEffectOverride != null && options.RadioEffectOverride.HasValue)
-        {
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.RADIO_EFFECT_OVERRIDE, options.RadioEffectOverride.Value);
-        }
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.RADIO_EFFECT_OVERRIDE,
+                options.RadioEffectOverride.Value);
         if (options.ServerBindIP != null && options.ServerBindIP.Trim().Length > 0)
-        {
             ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.SERVER_IP, options.ServerBindIP);
-        }
         if (options.ClientExportPath != null && options.ClientExportPath.Trim().Length > 0)
-        {
-            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.CLIENT_EXPORT_FILE_PATH, options.ClientExportPath);
-        }
+            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.CLIENT_EXPORT_FILE_PATH,
+                options.ClientExportPath);
+        if (options.ServerPresetChannelsEnabled != null && options.ServerPresetChannelsEnabled.HasValue)
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SERVER_PRESETS_ENABLED,
+                options.ServerPresetChannelsEnabled.Value);
+        if (options.HttpServerEnabled != null && options.HttpServerEnabled.HasValue)
+            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.HTTP_SERVER_ENABLED,
+                options.HttpServerEnabled.Value);
+        if (options.HttpServerPort != null && options.HttpServerPort.HasValue)
+            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.HTTP_SERVER_PORT,
+                options.HttpServerPort.Value.ToString());
 
-        Console.WriteLine($"Final Settings:");
-        foreach (var setting in ServerSettingsStore.Instance.GetAllSettings())
-        {
-            Console.WriteLine(setting);
-        }
+        Console.WriteLine("Final Settings:");
+        foreach (var setting in ServerSettingsStore.Instance.GetAllSettings()) Console.WriteLine(setting);
 
         _serverState = new ServerState(_eventAggregator);
     }
@@ -227,19 +220,6 @@ internal class Program : IHandle<SRSClientStatus>
         config.LoggingRules.Add(new LoggingRule("*", LogLevel.Info, wrapper));
 
         LogManager.Configuration = config;
-    }
-
-    public Task HandleAsync(SRSClientStatus message, CancellationToken cancellationToken)
-    {
-        if (ConsoleLogs)
-        {
-            if (message.Connected)
-                Console.WriteLine($"SRS Client Connected: {message.ClientIP}");
-            else
-                Console.WriteLine($"SRS Client Disconnected: {message.ClientIP} - {message.SRSGuid}");
-        }
-
-        return Task.CompletedTask;
     }
 }
 
@@ -274,7 +254,8 @@ public class Options
     public bool? ClientExportEnabled { get; set; }
 
     [Option("realRadioTx",
-        HelpText = "Forces radios to be half duplex (can only send or receive - not both at the same time. Default is false",
+        HelpText =
+            "Forces radios to be half duplex (can only send or receive - not both at the same time. Default is false",
         Required = false)]
     public bool? RealRadioTX { get; set; }
 
@@ -289,7 +270,8 @@ public class Options
     public bool? RadioExpansion { get; set; }
 
     [Option("enableEAM",
-        HelpText = "Enables External AWACS Mode - allows clients to connect without DCS running once they input the correct password. Default is false",
+        HelpText =
+            "Enables External AWACS Mode - allows clients to connect without DCS running once they input the correct password. Default is false",
         Required = false)]
     public bool? EnableEAM { get; set; }
 
@@ -324,12 +306,14 @@ public class Options
     public string TestFrequencies { get; set; }
 
     [Option("showTunedCount",
-        HelpText = "Enables the ability for players to see how many people are tuned to that frequency. Default is true",
+        HelpText =
+            "Enables the ability for players to see how many people are tuned to that frequency. Default is true",
         Required = false)]
     public bool? ShowTunedCount { get; set; }
 
     [Option("globalLobbyFrequencies",
-        HelpText = "Enables frequencies to that all players can always communicate on - even if coalition security is enabled as a lobby.",
+        HelpText =
+            "Enables frequencies to that all players can always communicate on - even if coalition security is enabled as a lobby.",
         Required = false)]
     public string GlobalFrequencies { get; set; }
 
@@ -354,12 +338,14 @@ public class Options
     public string LotATCExportIP { get; set; }
 
     [Option("retransmitNodeLimit",
-        HelpText = "Sets the maximum number of nodes that a transmission can pass through. Default 0 disables retransmission",
+        HelpText =
+            "Sets the maximum number of nodes that a transmission can pass through. Default 0 disables retransmission",
         Required = false)]
     public int? RetransmissionNodeLimit { get; set; }
 
     [Option("strictRadioEncryption",
-        HelpText = "If enabled and radio encryption is on, players can only hear encrypted radio transmissions. Default is false.",
+        HelpText =
+            "If enabled and radio encryption is on, players can only hear encrypted radio transmissions. Default is false.",
         Required = false)]
     public bool? StrictRadioEncryption { get; set; }
 
@@ -367,6 +353,18 @@ public class Options
         HelpText = "Log all transmissions to a CSV. Default is false.",
         Required = false)]
     public bool? TransmissionLogEnabled { get; set; }
+
+    [Option("httpServerEnabled",
+        HelpText = "Enables the HTTP Server. Default is false.",
+        Required = false)]
+    public bool? HttpServerEnabled { get; set; }
+
+    [Option("httpServerPort",
+        HelpText = "Sets the HTTP Server Port if Enabled. Default is 8080.",
+        Required = false)]
+    public int? HttpServerPort { get; set; }
+
+    [Option("radioEffectOverride",
 
     [Option("serverRecordEnabled",
     HelpText = "Record all transmissions to a json. Default is false.",
@@ -402,14 +400,16 @@ public class Options
             if (_configFile != null)
             {
                 _configFile = _configFile.Trim();
-                if (_configFile.StartsWith("fg="))
-                {
-                    _configFile = _configFile.Replace("fg=", "");
-                }
+                if (_configFile.StartsWith("fg=")) _configFile = _configFile.Replace("fg=", "");
             }
-
         }
     }
+
+    [Option("serverPresetChannelsEnabled",
+        HelpText =
+            "Enables Server Channel Presets to be used by clients - put the *.txt files in a folder called Presets alongside your server.cfg file",
+        Required = false)]
+    public bool? ServerPresetChannelsEnabled { get; set; }
 
     public override string ToString()
     {
@@ -440,7 +440,10 @@ public class Options
             $"{nameof(serverRecordEnabled)}: {serverRecordEnabled}, \n" +
             $"{nameof(serverRecordingPath)}: {serverRecordingPath}, \n" +
             $"{nameof(RadioEffectOverride)}: {RadioEffectOverride}, \n" +
+            $"{nameof(ServerPresetChannelsEnabled)}: {ServerPresetChannelsEnabled}, \n" +
+            $"{nameof(HttpServerEnabled)}: {HttpServerEnabled}, \n" +
+            $"{nameof(HttpServerPort)}: {HttpServerPort}, \n" +
             $"{nameof(ServerBindIP)}: {ServerBindIP}";
-
+        
     }
 }

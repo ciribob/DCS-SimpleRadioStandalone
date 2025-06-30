@@ -64,7 +64,14 @@ internal class Program : IHandle<SRSClientStatus>
         Console.WriteLine($"Settings From Command Line: \n{options}");
 
         var p = new Program();
-        new Thread(() => { p.StartServer(options); }).Start();
+
+        // Start server in a new thread
+        new Thread(() =>
+        {
+            // Apply environment variables last, so they override everything else
+            ApplyEnvironmentVariablesToOptions(options);
+            p.StartServer(options);
+        }).Start();
 
         var waitForProcessShutdownStart = new ManualResetEventSlim();
         var waitForMainExit = new ManualResetEventSlim();
@@ -89,6 +96,43 @@ internal class Program : IHandle<SRSClientStatus>
         Console.WriteLine("Shutdown complete");
         // Now we're done with main, tell the shutdown handler
         waitForMainExit.Set();
+    }
+
+    private static void ApplyEnvironmentVariablesToOptions(Options options)
+    {
+        //Extend if you need more environment variables
+        var envVarMap = new Dictionary<string, string>
+        {
+            { "EAMBluePassword", "SRS_EAM_BLUE_PASSWORD" },
+            { "EAMRedPassword", "SRS_EAM_RED_PASSWORD" }
+        };
+
+        foreach (var kvp in envVarMap)
+        {
+            var envValue = Environment.GetEnvironmentVariable(kvp.Value);
+            if (!string.IsNullOrWhiteSpace(envValue))
+            {
+                string value = kvp.Key.Contains("Password") ? "[REDACTED]" : envValue;
+
+                Console.WriteLine($"[ENV OVERRIDE] {kvp.Key} will be set from environment variable {value}");
+
+                var prop = typeof(Options).GetProperty(kvp.Key);
+                if (prop != null && prop.CanWrite)
+                {
+                    // Only set if property is string, otherwise extend with type conversion as needed
+                    if (prop.PropertyType == typeof(string))
+                    {
+                    prop.SetValue(options, envValue);
+                    }
+                    // Add more type conversions here if you add non-string env vars
+                }
+
+                if (kvp.Key == "EAMBluePassword")
+                    ServerSettingsStore.Instance.SetExternalAWACSModeSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE_BLUE_PASSWORD, envValue);
+                if (kvp.Key == "EAMRedPassword")
+                    ServerSettingsStore.Instance.SetExternalAWACSModeSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE_RED_PASSWORD, envValue);
+            }
+        }
     }
 
     private void StopServer()

@@ -32,7 +32,7 @@ internal class API
         int decode_fec);
 
     [DllImport("opus", CallingConvention = CallingConvention.Cdecl)]
-    internal static extern int opus_decode_float(IntPtr st, byte[] data, int len, IntPtr pcm, int frame_size,
+    internal static extern unsafe int opus_decode_float(IntPtr st, byte* data, int len, float* pcm, int frame_size,
         int decode_fec);
 
     [DllImport("opus", CallingConvention = CallingConvention.Cdecl)]

@@ -35,9 +35,11 @@ internal class AudioRecordingStreamMixer : AudioRecordingStream
         var count = Math.Min(Count(), maxSampleCount);
         if (count > 0 && streams.Count() > 0)
         {
+            var samplesSpan = samples.AsSpan(0, count);
             streams[0].Read(samples, count);
 
             var buffer = new float[maxSampleCount];
+            var bufferSpan = buffer.AsSpan(0, count);
             for (var i = 1; i < streams.Count(); i++)
             {
                 streams[i].Read(buffer, count);
@@ -48,11 +50,10 @@ internal class AudioRecordingStreamMixer : AudioRecordingStream
                 //
                 // TODO: this is a bit fragile and dependent on specific implementation...
                 //
-                AudioManipulationHelper.MixArraysNoClipping(buffer, count, samples, count,
-                    out var mixLength);
+                AudioManipulationHelper.MixArraysNoClipping(bufferSpan, samplesSpan);
             }
 
-            AudioManipulationHelper.ClipArray(samples, count);
+            AudioManipulationHelper.ClipArray(samplesSpan);
         }
 
         return count;

@@ -98,30 +98,25 @@ public static class AudioManipulationHelper
         return array2;
     }
 
-    public static float[] MixArraysNoClipping(float[] array1, int array1Length, float[] array2, int array2Length,
-        out int count)
+    public static int MixArraysNoClipping(Span<float> array1, Span<float> array2)
     {
-        if (array1Length > array2Length)
+        if (array1.Length > array2.Length)
         {
-            for (var i = 0; i < array2Length; i++) array1[i] += array2[i];
+            for (var i = 0; i < array2.Length; i++) array1[i] += array2[i];
 
-            count = array1Length;
-            return array1;
+            return array1.Length;
         }
 
-        for (var i = 0; i < array1Length; i++) array2[i] += array1[i];
+        for (var i = 0; i < array2.Length; i++) array2[i] += array1[i];
 
-        count = array2Length;
-        return array2;
+        return array2.Length;
     }
 
-    public static float[] ClipArray(float[] array, int arrayLength)
+    public static void ClipArray(Span<float> array)
     {
-        for (var i = 0; i < arrayLength; i++)
+        for (var i = 0; i < array.Length; i++)
             if (array[i] > 1f)
                 array[i] = 1.0f;
             else if (array[i] < -1.0f) array[i] = -1.0f;
-
-        return array;
     }
 }

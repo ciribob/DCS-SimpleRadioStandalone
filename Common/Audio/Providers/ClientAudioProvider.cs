@@ -10,6 +10,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers;
 public class ClientAudioProvider : AudioProvider
 {
     private readonly Random _random = new();
+    public float[] PcmAudioFloat { get; set; } = new float[Constants.OUTPUT_SAMPLE_RATE * 120 / 1000]; // max Opus frame size.
 
     //progress per radio
     private readonly Dictionary<string, int>[] ambientEffectProgress;
@@ -56,9 +57,8 @@ public class ClientAudioProvider : AudioProvider
 
         var newTransmission = LikelyNewTransmission();
 
-        //TODO reduce the size of this buffer
-        var decoded = _decoder.DecodeFloat(audio.EncodedAudio,
-            audio.EncodedAudio.Length, out var decodedLength, newTransmission);
+        // Target buffer contains at least one frame.
+        var decodedLength = _decoder.DecodeFloat(audio.EncodedAudio, PcmAudioFloat, newTransmission);
 
         if (decodedLength <= 0)
         {
@@ -66,49 +66,29 @@ public class ClientAudioProvider : AudioProvider
             return null;
         }
 
-        // for some reason if this is removed then it lags?!
-        //guess it makes a giant buffer and only uses a little?
-        //Answer: makes a buffer of 4000 bytes - so throw away most of it
-
-        //TODO reuse this buffer
-        var tmp = new float[decodedLength / 4];
-        Buffer.BlockCopy(decoded, 0, tmp, 0, decodedLength);
-
         //convert the byte buffer to a wave buffer
         //   var waveBuffer = new WaveBuffer(tmp);
 
         // waveWriter.WriteSamples(tmp,0,tmp.Length);
-
-        audio.PcmAudioFloat = tmp;
-
         var
             decrytable =
                 audio.Decryptable /* || (audio.Encryption == 0) <--- this test has already been performed by all callers and would require another call to check for STRICT_AUDIO_ENCRYPTION */;
 
+        var pcmAudio = PcmAudioFloat.AsSpan(0, decodedLength);
         if (decrytable)
         {
             //adjust for LOS + Distance + Volume
-            AdjustVolumeForLoss(audio);
+            AdjustVolumeForLoss(audio, pcmAudio);
 
             //Add cockpit effect - but not for Intercom unless you specifically opt in
             if ((ambientCockpitEffectEnabled && audio.Modulation != (short)Modulation.INTERCOM)
                 || (ambientCockpitEffectEnabled && audio.Modulation == (short)Modulation.INTERCOM &&
                     ambientCockpitIntercomEffectEnabled))
-                AddCockpitAmbientAudio(audio);
+                AddCockpitAmbientAudio(audio, pcmAudio);
         }
         else
         {
-            AddEncryptionFailureEffect(audio);
-        }
-
-        if (newTransmission)
-        {
-            // System.Diagnostics.Debug.WriteLine(audio.ClientGuid+"ADDED");
-            //append ms of silence - this functions as our jitter buffer??
-            var silencePad = Constants.OUTPUT_SAMPLE_RATE / 1000 * SILENCE_PAD;
-            var newAudio = new float[audio.PcmAudioFloat.Length + silencePad];
-            Buffer.BlockCopy(audio.PcmAudioFloat, 0, newAudio, silencePad, audio.PcmAudioFloat.Length);
-            audio.PcmAudioFloat = newAudio;
+            AddEncryptionFailureEffect(audio, pcmAudio);
         }
 
         LastUpdate = DateTime.Now.Ticks;
@@ -119,7 +99,7 @@ public class ClientAudioProvider : AudioProvider
             // NOT MONO PCM 32
             return new JitterBufferAudio
             {
-                Audio = audio.PcmAudioFloat,
+                Audio = pcmAudio.ToArray(),
                 PacketNumber = audio.PacketNumber,
                 Decryptable = decrytable,
                 Modulation = (Modulation)audio.Modulation,
@@ -135,7 +115,7 @@ public class ClientAudioProvider : AudioProvider
 
         JitterBufferProviderInterface[audio.ReceivedRadio].AddSamples(new JitterBufferAudio
         {
-            Audio = audio.PcmAudioFloat,
+            Audio = pcmAudio.ToArray(),
             PacketNumber = audio.PacketNumber,
             Decryptable = decrytable,
             Modulation = (Modulation)audio.Modulation,
@@ -169,7 +149,7 @@ public class ClientAudioProvider : AudioProvider
         }
     }
 
-    private void AddCockpitAmbientAudio(ClientAudio clientAudio)
+    private void AddCockpitAmbientAudio(ClientAudio clientAudio, Span<float> pcmAudio)
     {
         //           clientAudio.Ambient.abType = "uh1";
         //           clientAudio.Ambient.vol = 0.35f;
@@ -198,10 +178,9 @@ public class ClientAudioProvider : AudioProvider
                 ambientEffectProg[clientAudio.Ambient.abType] = 0;
             }
 
-            var audio = clientAudio.PcmAudioFloat;
-            for (var i = 0; i < audio.Length; i++)
+            for (var i = 0; i < pcmAudio.Length; i++)
             {
-                audio[i] += effect.AudioEffectFloat[progress] * (vol * ambientCockpitEffectVolume);
+                pcmAudio[i] += effect.AudioEffectFloat[progress] * (vol * ambientCockpitEffectVolume);
 
                 progress++;
 
@@ -212,16 +191,15 @@ public class ClientAudioProvider : AudioProvider
         }
     }
 
-    private void AdjustVolumeForLoss(ClientAudio clientAudio)
+    private void AdjustVolumeForLoss(ClientAudio clientAudio, Span<float> pcmAudio)
     {
         if (clientAudio.Modulation == (short)Modulation.MIDS || clientAudio.Modulation == (short)Modulation.SATCOM
                                                              || clientAudio.Modulation == (short)Modulation.INTERCOM)
             return;
 
-        var audio = clientAudio.PcmAudioFloat;
-        for (var i = 0; i < audio.Length; i++)
+        for (var i = 0; i < pcmAudio.Length; i++)
         {
-            var audioFloat = audio[i];
+            var audioFloat = pcmAudio[i];
 
             //add in radio loss
             //if less than loss reduce volume
@@ -232,15 +210,13 @@ public class ClientAudioProvider : AudioProvider
             //0 is no loss so if more than 0 reduce volume
             if (clientAudio.LineOfSightLoss > 0) audioFloat = audioFloat * (1.0f - clientAudio.LineOfSightLoss);
 
-            audio[i] = audioFloat;
+            pcmAudio[i] = audioFloat;
         }
     }
 
-    private void AddEncryptionFailureEffect(ClientAudio clientAudio)
+    private void AddEncryptionFailureEffect(ClientAudio clientAudio, Span<float> pcmAudio)
     {
-        var mixedAudio = clientAudio.PcmAudioFloat;
-
-        for (var i = 0; i < mixedAudio.Length; i++) mixedAudio[i] = RandomFloat();
+        for (var i = 0; i < pcmAudio.Length; i++) pcmAudio[i] = RandomFloat();
     }
 
 

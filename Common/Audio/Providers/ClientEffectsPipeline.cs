@@ -107,7 +107,7 @@ public class ClientEffectsPipeline
         }
     }
 
-    public float[] ProcessClientTransmissions(float[] tempBuffer, List<DeJitteredTransmission> transmissions,
+    public void ProcessClientTransmissions(float[] tempBuffer, int offset, List<DeJitteredTransmission> transmissions,
         out int clientTransmissionLength)
     {
         RefreshSettings();
@@ -116,7 +116,7 @@ public class ClientEffectsPipeline
         clientTransmissionLength = 0;
         foreach (var transmission in transmissions)
         {
-            for (var i = 0; i < transmission.PCMAudioLength; i++) tempBuffer[i] += transmission.PCMMonoAudio[i];
+            for (var i = 0; i < transmission.PCMAudioLength; i++) tempBuffer[offset + i] += transmission.PCMMonoAudio[i];
 
             clientTransmissionLength = Math.Max(clientTransmissionLength, transmission.PCMAudioLength);
         }
@@ -145,7 +145,7 @@ public class ClientEffectsPipeline
                     {
                         var amByte = amCollisionEffect.AudioEffectFloat[amEffectPosition++];
 
-                        tempBuffer[outIndex++] = amByte * amCollisionVol * lastTransmission.Volume;
+                        tempBuffer[offset + outIndex++] = amByte * amCollisionVol * lastTransmission.Volume;
 
                         if (amEffectPosition == amCollisionEffect.AudioEffectFloat.Length) amEffectPosition = 0;
                     }
@@ -158,7 +158,7 @@ public class ClientEffectsPipeline
                     //Heterodyne tone AND audio from multiple transmitters in a horrible mess
                     //TODO improve this
                     //process here first
-                    tempBuffer = ProcessClientAudioSamples(tempBuffer, clientTransmissionLength, 0, lastTransmission);
+                    ProcessClientAudioSamples(tempBuffer, clientTransmissionLength, offset, lastTransmission);
                     process = false;
 
                     //apply heterodyne tone to the mixdown
@@ -168,7 +168,7 @@ public class ClientEffectsPipeline
                     {
                         var amByte = amCollisionEffect.AudioEffectFloat[amEffectPosition++];
 
-                        tempBuffer[outIndex++] += amByte * amCollisionVol * lastTransmission.Volume;
+                        tempBuffer[offset + outIndex++] += amByte * amCollisionVol * lastTransmission.Volume;
 
                         if (amEffectPosition == amCollisionEffect.AudioEffectFloat.Length) amEffectPosition = 0;
                     }
@@ -181,7 +181,7 @@ public class ClientEffectsPipeline
                     var index = _random.Next(transmissions.Count);
                     var transmission = transmissions[index];
 
-                    for (var i = 0; i < transmission.PCMAudioLength; i++) tempBuffer[i] = transmission.PCMMonoAudio[i];
+                    for (var i = 0; i < transmission.PCMAudioLength; i++) tempBuffer[offset + i] = transmission.PCMMonoAudio[i];
 
                     clientTransmissionLength = transmission.PCMMonoAudio.Length;
                 }
@@ -189,12 +189,10 @@ public class ClientEffectsPipeline
 
         //only process if AM effect doesnt apply
         if (process)
-            tempBuffer = ProcessClientAudioSamples(tempBuffer, clientTransmissionLength, 0, lastTransmission);
-
-        return tempBuffer;
+            ProcessClientAudioSamples(tempBuffer, clientTransmissionLength, offset, lastTransmission);
     }
 
-    public float[] ProcessClientAudioSamples(float[] buffer, int count, int offset, DeJitteredTransmission transmission)
+    public void ProcessClientAudioSamples(float[] buffer, int count, int offset, DeJitteredTransmission transmission)
     {
         if (!transmission.NoAudioEffects)
         {
@@ -212,8 +210,6 @@ public class ClientEffectsPipeline
 
         //final adjust
         AdjustVolume(buffer, count, offset, transmission.Volume);
-
-        return buffer;
     }
 
     private void AdjustVolume(float[] buffer, int count, int offset, float volume)

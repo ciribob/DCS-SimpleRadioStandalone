@@ -14,5 +14,5 @@ public class RadioReceivingState
 
     public string SentBy { get; set; }
 
-    public bool IsReceiving => DateTime.Now.Ticks - LastReceivedAt < 3500000;
+    public bool IsReceiving => TimeSpan.FromTicks(DateTime.Now.Ticks - LastReceivedAt).TotalMilliseconds < 350;
 }

@@ -142,46 +142,39 @@ public class OpusDecoder : IDisposable
     /// <param name="dataLength">Length of data to decode or skipped data if <paramref name="inputOpusData" /> is <c>null</c>.</param>
     /// <param name="decodedLength">Set to the length of the decoded sample data.</param>
     /// <returns>PCM audio samples.</returns>
-    public unsafe byte[] DecodeFloat(byte[] inputOpusData, int dataLength, out int decodedLength,
-        bool reset = false)
+    public int DecodeFloat(byte[] inputOpusData, float[] decoded, bool reset = false)
     {
         if (disposed)
             throw new ObjectDisposedException("OpusDecoder");
 
-        IntPtr decodedPtr;
-        EnsureBuffer(MaxDataBytes);
-        var decoded = tempDecodingBuffer;
+
+        if (reset)
+        {
+            //https://notabug.org/xiph/opus/raw/v0.9.10/include/opus_defines.h
+            var ret = API.opus_decoder_ctl(_decoder,
+                4028); //reset opus state - packets missing and it'll get confused
+            if (ret < 0) throw new Exception("Error Resetting Opus");
+        }
 
         var length = 0;
-        fixed (byte* bdec = decoded)
+        unsafe
         {
-            decodedPtr = new IntPtr(bdec);
-
-            if (reset)
+            fixed (byte* input = inputOpusData)
             {
-                //https://notabug.org/xiph/opus/raw/v0.9.10/include/opus_defines.h
-                var ret = API.opus_decoder_ctl(_decoder,
-                    4028); //reset opus state - packets missing and it'll get confused
-                if (ret < 0) throw new Exception("Error Resetting Oppus");
-            }
-
-            if (inputOpusData != null)
-            {
-                var frameCount = FrameCount(MaxDataBytes);
-                length = API.opus_decode_float(_decoder, inputOpusData, dataLength, decodedPtr, frameCount,
-                    ForwardErrorCorrection ? 1 : 0);
-            }
-            else
-            {
-                length = API.opus_decode_float(_decoder, null, 0, decodedPtr, FrameCount(dataLength), 0);
+                fixed (float* pcmOut = decoded)
+                {
+                    var payloadLength = input != null ? inputOpusData.Length : 0;
+                    length = API.opus_decode_float(_decoder, input, payloadLength, pcmOut, decoded.Length / OutputChannels,
+                            ForwardErrorCorrection ? 1 : 0);
+                
+                }
             }
         }
 
-        decodedLength = length * 4;
         if (length < 0)
             throw new Exception("Decoding failed - " + (Errors)length);
 
-        return decoded;
+        return length;
     }
 
     //opus_decode_float

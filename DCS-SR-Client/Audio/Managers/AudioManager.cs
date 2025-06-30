@@ -393,7 +393,7 @@ public class AudioManager : IHandle<SRClientUpdateMessage>
                                 };
 
                                 //process audio
-                                var tempFloat = _clientEffectsPipeline.ProcessClientAudioSamples(
+                                _clientEffectsPipeline.ProcessClientAudioSamples(
                                     jitterBufferAudio.Audio,
                                     jitterBufferAudio.Audio.Length, 0, deJittered);
 
@@ -401,20 +401,20 @@ public class AudioManager : IHandle<SRClientUpdateMessage>
                                 {
                                     //now its a processed Mono audio
                                     _tempMicOutputBuffer =
-                                        BufferHelpers.Ensure(_tempMicOutputBuffer, tempFloat.Length * 4);
-                                    Buffer.BlockCopy(tempFloat, 0, _tempMicOutputBuffer, 0, tempFloat.Length * 4);
+                                        BufferHelpers.Ensure(_tempMicOutputBuffer, jitterBufferAudio.Audio.Length * 4);
+                                    Buffer.BlockCopy(jitterBufferAudio.Audio, 0, _tempMicOutputBuffer, 0, jitterBufferAudio.Audio.Length * 4);
 
                                     //_beforeWaveFile?.WriteSamples(jitterBufferAudio.Audio,0,jitterBufferAudio.Audio.Length);
                                     //_beforeWaveFile?.Write(pcm32, 0, pcm32.Length);
                                     //_beforeWaveFile?.Flush();
 
-                                    _micWaveOutBuffer.AddSamples(_tempMicOutputBuffer, 0, tempFloat.Length * 4);
+                                    _micWaveOutBuffer.AddSamples(_tempMicOutputBuffer, 0, jitterBufferAudio.Audio.Length * 4);
                                 }
 
                                 //TODO cache this to avoid the constant lookup
                                 if (GlobalSettingsStore.Instance.GetClientSettingBool(
                                         GlobalSettingsKeys.RecordAudio))
-                                    _audioRecordingManager.AppendPlayerAudio(tempFloat,
+                                    _audioRecordingManager.AppendPlayerAudio(jitterBufferAudio.Audio,
                                         jitterBufferAudio.ReceivedRadio);
                             }
                         }

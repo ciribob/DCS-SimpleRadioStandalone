@@ -205,15 +205,14 @@ public class AudioRecordingManager
         //same pipeline (ish) as RadioMixingProvider
 
         if (mainAudio?.Count > 0)
-            mixBuffer = pipeline.ProcessClientTransmissions(mixBuffer, mainAudio,
+            pipeline.ProcessClientTransmissions(mixBuffer, 0, mainAudio,
                 out primarySamples);
 
         //handle guard
         if (secondaryAudio?.Count > 0)
         {
             secondaryMixBuffer = new float[Constants.OUTPUT_SEGMENT_FRAMES * 2];
-            secondaryMixBuffer =
-                pipeline.ProcessClientTransmissions(secondaryMixBuffer, secondaryAudio, out secondarySamples);
+                pipeline.ProcessClientTransmissions(secondaryMixBuffer, 0, secondaryAudio, out secondarySamples);
         }
 
         if (primarySamples > 0 || secondarySamples > 0)

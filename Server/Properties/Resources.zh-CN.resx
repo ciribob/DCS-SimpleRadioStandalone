@@ -260,4 +260,10 @@ DCS结束运行后，SRS也会自动关闭进行以更新。
   <data name="MsgBoxUpdateTitle" xml:space="preserve">
     <value>更新可用</value>
   </data>
+  <data name="LabelServerRecordingPath" xml:space="preserve">
+    <value>服务器录音路径</value>
+  </data>
+  <data name="LabelAllowServerRecord" xml:space="preserve">
+    <value>允许服务器录音</value>
+  </data>
 </root>

@@ -276,6 +276,14 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
                                             // only log received transmissions!
                                             if (udpVoicePacket.RetransmissionCount == 0)
                                                 _transmissionLoggingQueue?.LogTransmission(client);
+
+                                            #region Record the transmission if server recording is enabled and client allows recording
+                                            var ServerRecordingEnabled = _serverSettings.GetGeneralSetting(ServerSettingsKeys.SERVER_RECORDING_ENABLED).BoolValue;
+                                            if (client.AllowRecord && ServerRecordingEnabled)
+                                            {
+                                                // TODO: Record the transmission in new thread
+                                            }
+                                            #endregion
                                         }
                                     }
                                 }

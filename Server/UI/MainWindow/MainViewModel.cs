@@ -223,6 +223,35 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public string TransmissionLogEnabledText
             => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
+        public string AllowServerRecordText
+        => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.SERVER_RECORDING_ENABLED).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+
+    private DispatcherTimer _serverRecordingPathDebounceTimer;
+
+    private string _serverRecordingPath =
+    ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.SERVER_RECORDING_PATH).StringValue;
+
+    public string ServerRecordingPath
+    {
+        get => _serverRecordingPath;
+        set
+        {
+            _serverRecordingPath = value.Trim(); // Fix: Changed the backing field to be mutable
+            if (_serverRecordingPathDebounceTimer != null)
+            {
+                _serverRecordingPathDebounceTimer.Stop();
+                _serverRecordingPathDebounceTimer.Tick -= ServerPathChangeDebounceTimerTick;
+                _serverRecordingPathDebounceTimer = null;
+            }
+
+            _serverRecordingPathDebounceTimer = new DispatcherTimer();
+            _serverRecordingPathDebounceTimer.Tick += ServerPathChangeDebounceTimerTick;
+            _serverRecordingPathDebounceTimer.Interval = TimeSpan.FromMilliseconds(500);
+            _serverRecordingPathDebounceTimer.Start();
+
+            NotifyOfPropertyChange(() => ServerRecordingPath);
+        }
+    }
 
         public string ServerPresetsEnabledText
             => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.SERVER_PRESETS_ENABLED).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
@@ -417,7 +446,18 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
             _globalLobbyFrequenciesDebounceTimer = null;
         }
 
-        public void TunedCountToggle()
+        private void ServerPathChangeDebounceTimerTick(object sender, EventArgs e)
+        {
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SERVER_RECORDING_PATH, _serverRecordingPath);
+
+            _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
+
+            _serverRecordingPathDebounceTimer.Stop();
+            _serverRecordingPathDebounceTimer.Tick -= ServerPathChangeDebounceTimerTick;
+            _serverRecordingPathDebounceTimer = null;
+        }
+
+    public void TunedCountToggle()
         {
             var newSetting = TunedCountText != $"{Properties.Resources.BtnOn}";
             ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SHOW_TUNED_COUNT, newSetting);
@@ -453,7 +493,16 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
         }
 
-        public int ArchiveLimit
+        public void AllowServerRecordToggle()
+        {
+            var newSetting = AllowServerRecordText != $"{Properties.Resources.BtnOn}";
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SERVER_RECORDING_ENABLED, newSetting);
+            NotifyOfPropertyChange(() => AllowServerRecordText);
+
+            _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
+    }
+
+    public int ArchiveLimit
         {
             get => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_RETENTION)
                 .IntValue;

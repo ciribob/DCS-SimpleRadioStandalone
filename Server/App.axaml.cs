@@ -17,7 +17,10 @@ public partial class App : Application
 		Properties.Resources.Culture = CultureInfo.CurrentUICulture;
 		if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
 		{
-			desktop.MainWindow = new UI.MainWindow();
+			desktop.MainWindow = new UI.MainWindow()
+			{
+				DataContext = new MainViewModel(),
+			};
 		}
 
 		base.OnFrameworkInitializationCompleted();

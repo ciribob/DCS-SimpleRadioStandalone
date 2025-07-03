@@ -157,4 +157,55 @@ Cancel - Ignore</value>
     <data name="TitleClientList" xml:space="preserve">
         <value>SR Client List</value>
     </data>
+    <data name="SectionLabelRadioSimulation" xml:space="preserve">
+        <value>Radio Simulation Settings</value>
+    </data>
+    <data name="SubSectionLabelRadioBehavior" xml:space="preserve">
+        <value>Radio Behavior</value>
+    </data>
+    <data name="SectionDescriptionRadioSimulation" xml:space="preserve">
+        <value>Settings that only impact the radio simulation. Does not impact how the server program interacts with other programs.</value>
+    </data>
+    <data name="SubSectionDescriptionRadioBehavior" xml:space="preserve">
+        <value>Settings that effect the feel and sound of radios.</value>
+    </data>
+    <data name="ToolTipLOS" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipDistanceLimit" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipRealTx" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipRealRx" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipRadioExpansion" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipStrictEncryption" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipOverrideEffectsOnGlobal" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipRetransmitNodeLimit" xml:space="preserve">
+        <value />
+    </data>
+    <data name="SubSectionLabelRadioSecurity" xml:space="preserve">
+        <value>Radio Security</value>
+    </data>
+    <data name="SubSectionDescriptionRadioSecurity" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipCoalitionSecurity" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipSpectatorAudio" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipTestFreq" xml:space="preserve">
+        <value />
+    </data>
 </root>

@@ -445,6 +445,24 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Settings that only impact the radio simulation. Does not impact how the server program interacts with other programs..
+        /// </summary>
+        public static string SectionDescriptionRadioSimulation {
+            get {
+                return ResourceManager.GetString("SectionDescriptionRadioSimulation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio Simulation Settings.
+        /// </summary>
+        public static string SectionLabelRadioSimulation {
+            get {
+                return ResourceManager.GetString("SectionLabelRadioSimulation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Server Channel Presets.
         /// </summary>
         public static string ServerPresetsEnabled {
@@ -454,11 +472,146 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Settings that effect the feel and sound of radios..
+        /// </summary>
+        public static string SubSectionDescriptionRadioBehavior {
+            get {
+                return ResourceManager.GetString("SubSectionDescriptionRadioBehavior", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string SubSectionDescriptionRadioSecurity {
+            get {
+                return ResourceManager.GetString("SubSectionDescriptionRadioSecurity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio Behavior.
+        /// </summary>
+        public static string SubSectionLabelRadioBehavior {
+            get {
+                return ResourceManager.GetString("SubSectionLabelRadioBehavior", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radio Security.
+        /// </summary>
+        public static string SubSectionLabelRadioSecurity {
+            get {
+                return ResourceManager.GetString("SubSectionLabelRadioSecurity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to SR Client List.
         /// </summary>
         public static string TitleClientList {
             get {
                 return ResourceManager.GetString("TitleClientList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipCoalitionSecurity {
+            get {
+                return ResourceManager.GetString("ToolTipCoalitionSecurity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipDistanceLimit {
+            get {
+                return ResourceManager.GetString("ToolTipDistanceLimit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipLOS {
+            get {
+                return ResourceManager.GetString("ToolTipLOS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipOverrideEffectsOnGlobal {
+            get {
+                return ResourceManager.GetString("ToolTipOverrideEffectsOnGlobal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipRadioExpansion {
+            get {
+                return ResourceManager.GetString("ToolTipRadioExpansion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipRealRx {
+            get {
+                return ResourceManager.GetString("ToolTipRealRx", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipRealTx {
+            get {
+                return ResourceManager.GetString("ToolTipRealTx", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipRetransmitNodeLimit {
+            get {
+                return ResourceManager.GetString("ToolTipRetransmitNodeLimit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipSpectatorAudio {
+            get {
+                return ResourceManager.GetString("ToolTipSpectatorAudio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipStrictEncryption {
+            get {
+                return ResourceManager.GetString("ToolTipStrictEncryption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipTestFreq {
+            get {
+                return ResourceManager.GetString("ToolTipTestFreq", resourceCulture);
             }
         }
     }

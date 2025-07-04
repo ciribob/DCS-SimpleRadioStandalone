@@ -5,6 +5,8 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using Caliburn.Micro;
@@ -14,7 +16,6 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
-using Newtonsoft.Json;
 using NLog;
 using LogManager = NLog.LogManager;
 
@@ -168,8 +169,14 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
                 {
                     var data = new ClientListExport
                         { Clients = _connectedClients.Values, ServerVersion = UpdaterChecker.VERSION };
-                    var json = JsonConvert.SerializeObject(data,
-                        new JsonSerializerSettings { ContractResolver = new JsonNetworkPropertiesResolver() }) + "\n";
+                    var json = JsonSerializer.Serialize(data, new JsonSerializerOptions()
+                    {
+                        TypeInfoResolver = new DefaultJsonTypeInfoResolver()
+                        {
+                            Modifiers = { JsonNetworkPropertiesResolver.StripNetworkIgnored }
+                        },
+                        IncludeFields = true,
+                    }) + "\n";
                     try
                     {
                         File.WriteAllText(exportFilePath, json);
@@ -263,9 +270,15 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
                             }
 
                             var byteData =
-                                Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data,
-                                    new JsonSerializerSettings
-                                        { ContractResolver = new JsonNetworkPropertiesResolver() }) + "\n");
+                                Encoding.UTF8.GetBytes(JsonSerializer.Serialize(data,
+                                    new JsonSerializerOptions()
+                                    {
+                                        TypeInfoResolver = new DefaultJsonTypeInfoResolver()
+                                        {
+                                            Modifiers = { JsonNetworkPropertiesResolver.StripNetworkIgnored }
+                                        },
+                                        IncludeFields = true,
+                                    }) + "\n");
 
                             udpSocket.Send(byteData, byteData.Length, host);
                         }

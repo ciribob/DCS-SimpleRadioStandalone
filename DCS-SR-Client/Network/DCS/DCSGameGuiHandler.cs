@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS.Models.DCSState;
@@ -10,7 +11,6 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
-using Newtonsoft.Json;
 using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS;
@@ -58,8 +58,11 @@ public class DCSGameGuiHandler
                     var bytes = _dcsGameGuiUdpListener.Receive(ref groupEp);
 
                     var updatedPlayerInfo =
-                        JsonConvert.DeserializeObject<DCSPlayerSideInfo>(Encoding.UTF8.GetString(
-                            bytes, 0, bytes.Length));
+                        JsonSerializer.Deserialize<DCSPlayerSideInfo>(Encoding.UTF8.GetString(
+                            bytes, 0, bytes.Length), new JsonSerializerOptions()
+                            {
+                                IncludeFields = true,
+                            });
 
                     if (updatedPlayerInfo != null)
                     {

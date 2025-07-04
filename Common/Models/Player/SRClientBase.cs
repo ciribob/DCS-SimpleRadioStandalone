@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
+using System.Text.Json.Serialization;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
-using Newtonsoft.Json;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 

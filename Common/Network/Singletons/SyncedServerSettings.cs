@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Text.Json;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
-using Newtonsoft.Json;
 using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
@@ -111,7 +111,13 @@ public class SyncedServerSettings
                 try
                 {
                     ServerPresetChannels =
-                        JsonConvert.DeserializeObject<Dictionary<string, List<ServerPresetChannel>>>(kvp.Value);
+                        JsonSerializer.Deserialize<Dictionary<string, List<ServerPresetChannel>>>(kvp.Value, new JsonSerializerOptions()
+                        {
+                            AllowTrailingCommas = true,
+                            PropertyNameCaseInsensitive = true,
+                            ReadCommentHandling = JsonCommentHandling.Skip,
+                            IncludeFields = true,
+                        });
                 }
                 catch (Exception)
                 {

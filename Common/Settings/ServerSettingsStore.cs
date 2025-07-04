@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Text.Json;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
-using Newtonsoft.Json;
 using NLog;
 using SharpConfig;
 
@@ -224,12 +224,18 @@ public class ServerSettingsStore
 
             //I apologise to the programming gods - but this keeps it backwards compatible :/
             settings[nameof(ServerSettingsKeys.SERVER_PRESETS)] =
-                JsonConvert.SerializeObject(_serverChannelPresetHelper.Presets);
+                JsonSerializer.Serialize(_serverChannelPresetHelper.Presets, new JsonSerializerOptions()
+                {
+                    AllowTrailingCommas = true,
+                    PropertyNameCaseInsensitive = true,
+                    ReadCommentHandling = JsonCommentHandling.Skip,
+                    IncludeFields = true,
+                });
         }
         else
         {
             settings[nameof(ServerSettingsKeys.SERVER_PRESETS)] =
-                JsonConvert.SerializeObject(new Dictionary<string, List<ServerPresetChannel>>());
+                JsonSerializer.Serialize(new Dictionary<string, List<ServerPresetChannel>>());
         }
 
         return settings;

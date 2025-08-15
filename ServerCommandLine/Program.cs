@@ -17,6 +17,7 @@ using LogManager = NLog.LogManager;
 namespace Ciribob.DCS.SimpleRadio.Standalone.Server;
 
 internal class Program : IHandle<SRSClientStatus>
+internal class Program : IHandle<SRSClientStatus>
 {
     private readonly EventAggregator _eventAggregator = new();
     private ServerState _serverState;
@@ -166,6 +167,14 @@ internal class Program : IHandle<SRSClientStatus>
         if (options.TransmissionLogEnabled != null && options.TransmissionLogEnabled.HasValue)
             ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED,
                 options.TransmissionLogEnabled.Value);
+        if (options.serverRecordEnabled != null && options.serverRecordEnabled.HasValue)
+        {
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SERVER_RECORDING_ENABLED, options.serverRecordEnabled.Value);
+        }
+        if (options.serverRecordingPath != null && options.serverRecordingPath.HasValue)
+        {
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SERVER_RECORDING_PATH, options.serverRecordingPath.Value);
+        }
         if (options.RadioEffectOverride != null && options.RadioEffectOverride.HasValue)
             ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.RADIO_EFFECT_OVERRIDE,
                 options.RadioEffectOverride.Value);
@@ -356,6 +365,18 @@ public class Options
     public int? HttpServerPort { get; set; }
 
     [Option("radioEffectOverride",
+
+    [Option("serverRecordEnabled",
+    HelpText = "Record all transmissions to a json. Default is false.",
+    Required = false)]
+    public bool? serverRecordEnabled { get; set; }
+
+    [Option("serverRecordingPath",
+    HelpText = "Path For server transmissions recordings. Default is 'C:\\SRS recordings'.",
+    Required = false)]
+    public bool? serverRecordingPath { get; set; }
+
+    [Option("radioEffectOverride",
         HelpText = "Disables Radio Effects on the global frequency (for Music etc). Default is false",
         Required = false)]
     public bool? RadioEffectOverride { get; set; }
@@ -416,10 +437,13 @@ public class Options
             $"{nameof(RetransmissionNodeLimit)}: {RetransmissionNodeLimit}, \n" +
             $"{nameof(StrictRadioEncryption)}: {StrictRadioEncryption}, \n" +
             $"{nameof(TransmissionLogEnabled)}: {TransmissionLogEnabled}, \n" +
+            $"{nameof(serverRecordEnabled)}: {serverRecordEnabled}, \n" +
+            $"{nameof(serverRecordingPath)}: {serverRecordingPath}, \n" +
             $"{nameof(RadioEffectOverride)}: {RadioEffectOverride}, \n" +
             $"{nameof(ServerPresetChannelsEnabled)}: {ServerPresetChannelsEnabled}, \n" +
             $"{nameof(HttpServerEnabled)}: {HttpServerEnabled}, \n" +
             $"{nameof(HttpServerPort)}: {HttpServerPort}, \n" +
             $"{nameof(ServerBindIP)}: {ServerBindIP}";
+        
     }
 }

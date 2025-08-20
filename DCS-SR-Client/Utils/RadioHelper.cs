@@ -3,6 +3,7 @@ using System.Linq;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS.Models.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.RadioChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 
@@ -48,12 +49,12 @@ public static class RadioHelper
             }
     }
 
-    public static bool UpdateRadioFrequency(double frequency, int radioId, bool delta = true, bool inMHz = true)
+    public static bool UpdateRadioFrequency(double requestedValue, int radioId, bool delta = true, bool inMHz = true)
     {
         var inLimit = true;
-        const double MHz = 1000000;
-
-        if (inMHz) frequency = frequency * MHz;
+        
+        var frequency = requestedValue;
+        if (inMHz) frequency *= RadioCalculator.MHz;
 
         var radio = GetRadio(radioId);
 
@@ -64,34 +65,51 @@ public static class RadioHelper
             {
                 if (delta)
                 {
-                    //ignore as its done via set channel which is not delta
-                    if (radio.modulation == Modulation.MIDS) return false;
-
-                    if (GlobalSettingsStore.Instance.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys
-                            .RotaryStyleIncrement))
+                    switch (radio.modulation)
                     {
-                        // Easier to simply shift the decimal place value to the ones position for finding numeral at specific position
-                        double adjustedFrequency = Math.Abs((int)Math.Round(radio.freq / frequency));
+                        case Modulation.MIDS:
+                            radio.freq = Math.Round( RadioCalculator.Link16.Validate(radio.freq + frequency) );
+                            break; 
+                        
+                        default:
+                            if (GlobalSettingsStore.Instance.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys
+                                    .RotaryStyleIncrement))
+                            {
+                                // Easier to simply shift the decimal place value to the ones position for finding numeral at specific position
+                                double adjustedFrequency = Math.Abs((int)Math.Round(radio.freq / frequency));
 
-                        var deltaPosition =
-                            adjustedFrequency % 10 -
-                            adjustedFrequency % 1 /
-                            1; // calculate the value of the position where the delta will be applied
-                        double rollOverValue = frequency < 0 ? 0 : 9;
-                        var futureValue = frequency + radio.freq; // used for checking 10Mhz increments 
+                                var deltaPosition =
+                                    adjustedFrequency % 10 -
+                                    adjustedFrequency % 1 /
+                                    1; // calculate the value of the position where the delta will be applied
+                                double rollOverValue = frequency < 0 ? 0 : 9;
+                                var futureValue = frequency + radio.freq; // used for checking 10Mhz increments 
 
-                        if (Math.Abs(frequency) <= 1000000)
-                            frequency = deltaPosition == rollOverValue ? frequency *= -9 : frequency;
-                        else if (frequency < 0 && radio.freqMin > futureValue)
-                            frequency = 0;
-                        else if (futureValue > radio.freqMax) frequency = 0;
+                                if (Math.Abs(frequency) <= 1000000)
+                                    frequency = deltaPosition == rollOverValue ? frequency *= -9 : frequency;
+                                else if (frequency < 0 && radio.freqMin > futureValue)
+                                    frequency = 0;
+                                else if (futureValue > radio.freqMax) frequency = 0;
+                            }
+
+                            radio.freq = (int)Math.Round(radio.freq + frequency);
+                            
+                            break;
                     }
-
-                    radio.freq = (int)Math.Round(radio.freq + frequency);
                 }
                 else
                 {
-                    radio.freq = (int)Math.Round(frequency);
+                    switch (radio.modulation)
+                    {
+                        case Modulation.MIDS:
+                            radio.freq = RadioCalculator.Link16.ChannelToFrequency((int)requestedValue);
+                            break;
+                        
+                        default:
+                            radio.freq = (int)Math.Round(frequency);
+                            break;
+                    }
+                    
                 }
 
                 //make sure we're not over or under a limit

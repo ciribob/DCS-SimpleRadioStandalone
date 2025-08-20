@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using NLog;
 using LogManager = NLog.LogManager;
@@ -13,8 +14,6 @@ public partial class FilePresetChannelsStore : IPresetChannelsStore
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     private static readonly GlobalSettingsStore _globalSettings = GlobalSettingsStore.Instance;
-    public static  readonly double MHz = 1000000.0;
-    public static readonly double MidsOffsetMHz = 1030.0 * 1000000.0;
 
     private string PresetsFolder
     {
@@ -96,7 +95,7 @@ public partial class FilePresetChannelsStore : IPresetChannelsStore
                         channels.Add(new PresetChannel
                         {
                             Text = name,
-                            Value = frequency * MHz
+                            Value = frequency * RadioCalculator.MHz
                         });
                     }
                     catch (Exception)
@@ -140,7 +139,7 @@ public partial class FilePresetChannelsStore : IPresetChannelsStore
                             channels.Add(new PresetChannel
                             {
                                 Text = name,
-                                Value = midsChannel * MHz / 10 + MidsOffsetMHz,
+                                Value = RadioCalculator.Link16.ChannelToFrequency(midsChannel),
                                 MidsChannel = midsChannel
                             });
                     }

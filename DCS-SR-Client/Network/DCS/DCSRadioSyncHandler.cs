@@ -306,8 +306,31 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
         playerRadioInfo.unit = message.unit;
         overrideFreqAndVol = playerRadioInfo.unitId != message.unitId;
 
-        //save unit id
-        playerRadioInfo.unitId = message.unitId;
+        //save unit id with catches for Combined Arms Slots
+        switch (message.unit)
+        {
+            // Sees all Map Units
+            case "Game-Master" or "Observer":
+                playerRadioInfo.unitId = GroupToUnitId(ServerSettingsKeys.GAMEMASTER_INTERCOM_GROUP)
+                                         + (uint)_clientStateSingleton.IntercomOffset;
+                break;
+            
+            // Sees only Coalition Units
+            case "Tactical-Commander" or "JTAC-Operator":
+                playerRadioInfo.unitId = GroupToUnitId(ServerSettingsKeys.GROUND_COMMANDER_INTERCOM_GROUP)
+                                         + (uint)_clientStateSingleton.IntercomOffset;
+                break;
+            
+            // Spectators & dead players
+            case "Spectator":
+                playerRadioInfo.unitId = GroupToUnitId(ServerSettingsKeys.SPECTATOR_INTERCOM_GROUP);
+                break;
+            
+            // For normal Units, use that unit ID.
+            default:
+                playerRadioInfo.unitId = message.unitId;
+                break;
+        }
         playerRadioInfo.seat = message.seat;
 
 
@@ -742,5 +765,9 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
     {
         _clientStateSingleton.ExternalAWACSModelSelected = false;
         _stopExternalAWACSMode = true;
+    }
+    private uint GroupToUnitId(ServerSettingsKeys intercomGroup)
+    {
+        return DCSPlayerRadioInfo.UnitIdOffset * (uint)ServerSettingsStore.Instance.GetServerSetting(intercomGroup).IntValue;
     }
 }

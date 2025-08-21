@@ -727,7 +727,8 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
             _clientStateSingleton.IntercomOffset = 1;
             while (!_stopExternalAWACSMode)
             {
-                var unitId = DCSPlayerRadioInfo.UnitIdOffset + _clientStateSingleton.IntercomOffset;
+                uint unitId = GroupToUnitId(ServerSettingsKeys.EAM_INTERCOM_GROUP)
+                             + (uint)_clientStateSingleton.IntercomOffset;
 
                 _clientStateSingleton.PlayerCoaltionLocationMetadata.side = coalition;
 
@@ -745,7 +746,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                     simultaneousTransmissionControl = DCSPlayerRadioInfo.SimultaneousTransmissionControl
                         .ENABLED_INTERNAL_SRS_CONTROLS,
                     unit = "EAM",
-                    unitId = (uint)unitId,
+                    unitId = unitId,
                     inAircraft = false
                 });
 
@@ -766,6 +767,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
         _clientStateSingleton.ExternalAWACSModelSelected = false;
         _stopExternalAWACSMode = true;
     }
+
     private uint GroupToUnitId(ServerSettingsKeys intercomGroup)
     {
         return DCSPlayerRadioInfo.UnitIdOffset * (uint)ServerSettingsStore.Instance.GetServerSetting(intercomGroup).IntValue;

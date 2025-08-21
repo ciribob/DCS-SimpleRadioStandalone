@@ -770,6 +770,11 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
 
     private uint GroupToUnitId(ServerSettingsKeys intercomGroup)
     {
-        return DCSPlayerRadioInfo.UnitIdOffset * (uint)ServerSettingsStore.Instance.GetServerSetting(intercomGroup).IntValue;
+        uint group = (uint)ServerSettingsStore.Instance.GetServerSetting(intercomGroup).IntValue;
+        if (group == 0)
+        {
+            group = uint.Clamp(group, 1, 4);
+        }
+        return DCSPlayerRadioInfo.UnitIdOffset * group;
     }
 }

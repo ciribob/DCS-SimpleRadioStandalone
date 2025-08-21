@@ -183,6 +183,18 @@ internal class Program : IHandle<SRSClientStatus>
         if (options.HttpServerPort != null && options.HttpServerPort.HasValue)
             ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.HTTP_SERVER_PORT,
                 options.HttpServerPort.Value.ToString());
+        if (options.SpectatorIntercomGroup != null && options.SpectatorIntercomGroup.HasValue)
+            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.SPECTATOR_INTERCOM_GROUP,
+                options.SpectatorIntercomGroup.Value.ToString());
+        if (options.EamIntercomGroup != null && options.EamIntercomGroup.HasValue)
+            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.EAM_INTERCOM_GROUP,
+                options.EamIntercomGroup.Value.ToString());
+        if (options.GroundCommanderIntercomGroup != null && options.GroundCommanderIntercomGroup.HasValue)
+            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.GROUND_COMMANDER_INTERCOM_GROUP,
+                options.GroundCommanderIntercomGroup.Value.ToString());
+        if (options.GameMasterIntercomGroup != null && options.GameMasterIntercomGroup.HasValue)
+            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.GAMEMASTER_INTERCOM_GROUP,
+                options.GameMasterIntercomGroup.Value.ToString());
 
         Console.WriteLine("Final Settings:");
         foreach (var setting in ServerSettingsStore.Instance.GetAllSettings()) Console.WriteLine(setting);
@@ -364,7 +376,27 @@ public class Options
         HelpText = "Server Bind IP. Default is 0.0.0.0. Dont change unless you know what you're doing!",
         Required = false)]
     public string ServerBindIP { get; set; }
+    
+    [Option("SpectatorIntercomGroup",
+        HelpText = "What group will the Spectator Intercom transmit too. Default is Group 1.",
+        Required = false)]
+    public int? SpectatorIntercomGroup { get; set; }
+    
+    [Option("EamIntercomGroup",
+        HelpText = "What group will the External AWACS Mode Intercom transmit too. Default is Group 2.",
+        Required = false)]
+    public int? EamIntercomGroup { get; set; }
 
+    [Option("GroundCommanderIntercomGroup",
+        HelpText = "What group will the Ground Commander Intercom transmit too. Default is Group 2.",
+        Required = false)]
+    public int? GroundCommanderIntercomGroup { get; set; }
+    
+    [Option("GameMasterIntercomGroup",
+        HelpText = "What group will the Game Master Intercom transmit too. Default is Group 3.",
+        Required = false)]
+    public int? GameMasterIntercomGroup { get; set; }
+    
     [Option('c', "cfg", Required = false,
         HelpText =
             "Configuration file path. Must be the full path to the config file. i.e -cfg=C:\\some-path\\server.cfg")]

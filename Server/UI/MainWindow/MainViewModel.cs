@@ -474,4 +474,45 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
         }
+        
+        public int SpectatorIntercomGroup
+        {
+            get => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.SPECTATOR_INTERCOM_GROUP).IntValue;
+            set
+            {
+                ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SPECTATOR_INTERCOM_GROUP,
+                    value.ToString());
+                _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
+            }
+        }
+        public int EamIntercomGroup
+        {
+            get => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.EAM_INTERCOM_GROUP).IntValue;
+            set
+            {
+                ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.EAM_INTERCOM_GROUP,
+                    value.ToString());
+                _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
+            }
+        }
+        public int GroundCommanderIntercomGroup
+        {
+            get => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.GROUND_COMMANDER_INTERCOM_GROUP).IntValue;
+            set
+            {
+                ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.GROUND_COMMANDER_INTERCOM_GROUP,
+                    value.ToString());
+                _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
+            }
+        }
+        public int GameMasterIntercomGroup
+        {
+            get => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.GAMEMASTER_INTERCOM_GROUP).IntValue;
+            set
+            {
+                ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.GAMEMASTER_INTERCOM_GROUP,
+                    value.ToString());
+                _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
+            }
+        }
 }

@@ -231,6 +231,42 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to EAM Intercom Group.
+        /// </summary>
+        public static string LabelIntercomGroupEam {
+            get {
+                return ResourceManager.GetString("LabelIntercomGroupEam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GM Intercom Group.
+        /// </summary>
+        public static string LabelIntercomGroupGameMaster {
+            get {
+                return ResourceManager.GetString("LabelIntercomGroupGameMaster", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ground Cmdr Intercom Group.
+        /// </summary>
+        public static string LabelIntercomGroupGroundCommander {
+            get {
+                return ResourceManager.GetString("LabelIntercomGroupGroundCommander", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Spectator Intercom Group.
+        /// </summary>
+        public static string LabelIntercomGroupSpectator {
+            get {
+                return ResourceManager.GetString("LabelIntercomGroupSpectator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Line of Sight.
         /// </summary>
         public static string LabelLOS {

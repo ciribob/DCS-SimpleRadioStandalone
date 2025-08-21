@@ -46,6 +46,10 @@
                     <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
 
                 <Button Grid.Row="0"
@@ -516,6 +520,134 @@
                         Height="20"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"/>
+                
+                <Label  Content="{x:Static p:Resources.LabelIntercomGroupSpectator}" 
+                        Grid.Row="25"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"/>
+                <StackPanel Orientation="Vertical"
+                            Grid.Row="25"
+                            Grid.Column="2">
+	                <Grid Width="75">
+		                <Grid.ColumnDefinitions>
+			                <ColumnDefinition Width="*" />
+			                <ColumnDefinition Width="*" />
+		                </Grid.ColumnDefinitions>
+		                <Label Grid.Column="0" FontSize="10" Content="0" HorizontalAlignment="Left" />
+		                <Label HorizontalAlignment="Right" Grid.Column="1" FontSize="10" Content="3" />
+	                </Grid>
+	                <Slider 
+		                Value="{Binding  SpectatorIntercomGroup}"
+		                Width="75"
+		                Height="25"
+		                VerticalAlignment="Center"
+		                Interval="1"
+		                Minimum="0"
+		                Maximum="3"
+		                Ticks="0,1,2,3"
+		                TickPlacement="TopLeft"
+		                IsSnapToTickEnabled="True"
+		                HorizontalAlignment="Center">
+	                </Slider>
+                </StackPanel>
+                
+                <Label  Content="{x:Static p:Resources.LabelIntercomGroupEam}" 
+                        Grid.Row="26"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"/>
+                <StackPanel Orientation="Vertical"
+                            Grid.Row="26"
+                            Grid.Column="2">
+	                <Grid Width="75">
+		                <Grid.ColumnDefinitions>
+			                <ColumnDefinition Width="*" />
+			                <ColumnDefinition Width="*" />
+		                </Grid.ColumnDefinitions>
+		                <Label Grid.Column="0" FontSize="10" Content="0" HorizontalAlignment="Left" />
+		                <Label HorizontalAlignment="Right" Grid.Column="1" FontSize="10" Content="3" />
+	                </Grid>
+	                <Slider 
+		                Value="{Binding  EamIntercomGroup}"
+		                Width="75"
+		                Height="25"
+		                VerticalAlignment="Center"
+		                Interval="1"
+		                Minimum="0"
+		                Maximum="3"
+		                Ticks="0,1,2,3"
+		                TickPlacement="TopLeft"
+		                IsSnapToTickEnabled="True"
+		                HorizontalAlignment="Center">
+	                </Slider>
+                </StackPanel>
+                
+                <Label  Content="{x:Static p:Resources.LabelIntercomGroupGroundCommander}" 
+                        Grid.Row="27"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"/>
+                <StackPanel Orientation="Vertical"
+                            Grid.Row="27"
+                            Grid.Column="2">
+	                <Grid Width="75">
+		                <Grid.ColumnDefinitions>
+			                <ColumnDefinition Width="*" />
+			                <ColumnDefinition Width="*" />
+		                </Grid.ColumnDefinitions>
+		                <Label Grid.Column="0" FontSize="10" Content="0" HorizontalAlignment="Left" />
+		                <Label HorizontalAlignment="Right" Grid.Column="1" FontSize="10" Content="3" />
+	                </Grid>
+	                <Slider 
+		                Value="{Binding  GroundCommanderIntercomGroup}"
+		                Width="75"
+		                Height="25"
+		                VerticalAlignment="Center"
+		                Interval="1"
+		                Minimum="0"
+		                Maximum="3"
+		                Ticks="0,1,2,3"
+		                TickPlacement="TopLeft"
+		                IsSnapToTickEnabled="True"
+		                HorizontalAlignment="Center">
+	                </Slider>
+                </StackPanel>
+                
+                <Label  Content="{x:Static p:Resources.LabelIntercomGroupGameMaster}" 
+                        Grid.Row="28"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"/>
+                <StackPanel Orientation="Vertical"
+                            Grid.Row="28"
+                            Grid.Column="2">
+	                <Grid Width="75">
+		                <Grid.ColumnDefinitions>
+			                <ColumnDefinition Width="*" />
+			                <ColumnDefinition Width="*" />
+		                </Grid.ColumnDefinitions>
+		                <Label Grid.Column="0" FontSize="10" Content="0" HorizontalAlignment="Left" />
+		                <Label HorizontalAlignment="Right" Grid.Column="1" FontSize="10" Content="3" />
+	                </Grid>
+	                <Slider 
+		                Value="{Binding  GameMasterIntercomGroup}"
+		                Width="75"
+		                Height="25"
+		                VerticalAlignment="Center"
+		                Interval="1"
+		                Minimum="0"
+		                Maximum="3"
+		                Ticks="0,1,2,3"
+		                TickPlacement="TopLeft"
+		                IsSnapToTickEnabled="True"
+		                HorizontalAlignment="Center">
+	                </Slider>
+                </StackPanel>
             </Grid>
         </StackPanel>
     </ScrollViewer>

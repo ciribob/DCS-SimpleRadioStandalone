@@ -378,22 +378,22 @@ public class Options
     public string ServerBindIP { get; set; }
     
     [Option("SpectatorIntercomGroup",
-        HelpText = "What group will the Spectator Intercom transmit too. Default is Group 0.",
+        HelpText = "What group will the Spectator Intercom transmit too. Default is Group 1.",
         Required = false)]
     public int? SpectatorIntercomGroup { get; set; }
     
     [Option("EamIntercomGroup",
-        HelpText = "What group will the External AWACS Mode Intercom transmit too. Default is Group 1.",
+        HelpText = "What group will the External AWACS Mode Intercom transmit too. Default is Group 2.",
         Required = false)]
     public int? EamIntercomGroup { get; set; }
 
     [Option("GroundCommanderIntercomGroup",
-        HelpText = "What group will the Ground Commander Intercom transmit too. Default is Group 1.",
+        HelpText = "What group will the Ground Commander Intercom transmit too. Default is Group 2.",
         Required = false)]
     public int? GroundCommanderIntercomGroup { get; set; }
     
     [Option("GameMasterIntercomGroup",
-        HelpText = "What group will the Game Master Intercom transmit too. Default is Group 2.",
+        HelpText = "What group will the Game Master Intercom transmit too. Default is Group 3.",
         Required = false)]
     public int? GameMasterIntercomGroup { get; set; }
     

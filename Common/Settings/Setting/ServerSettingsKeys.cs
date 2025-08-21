@@ -81,9 +81,9 @@ public class DefaultServerSettings
         { ServerSettingsKeys.SERVER_PRESETS_ENABLED.ToString(), "false" },
         { ServerSettingsKeys.HTTP_SERVER_ENABLED.ToString(), "false" },
         { ServerSettingsKeys.HTTP_SERVER_PORT.ToString(), "8080" },
-        { ServerSettingsKeys.SPECTATOR_INTERCOM_GROUP.ToString(), "0" },
-        { ServerSettingsKeys.EAM_INTERCOM_GROUP.ToString(), "1" },
-        { ServerSettingsKeys.GROUND_COMMANDER_INTERCOM_GROUP.ToString(), "1" },
-        { ServerSettingsKeys.GAMEMASTER_INTERCOM_GROUP.ToString(), "2" },
+        { ServerSettingsKeys.SPECTATOR_INTERCOM_GROUP.ToString(), "1" },
+        { ServerSettingsKeys.EAM_INTERCOM_GROUP.ToString(), "2" },
+        { ServerSettingsKeys.GROUND_COMMANDER_INTERCOM_GROUP.ToString(), "2" },
+        { ServerSettingsKeys.GAMEMASTER_INTERCOM_GROUP.ToString(), "3" },
     };
 }

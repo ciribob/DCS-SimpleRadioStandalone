@@ -146,7 +146,7 @@
 															<ListBox.ItemTemplate>
 																<DataTemplate>
 																	<StackPanel Orientation="Horizontal">
-																		<Button Width="25">
+																		<Button Width="25" x:Name="TestFrequenciesRemoveButton">
 																			X
 																		</Button>
 																		<TextBox Text="{Binding}"/>
@@ -154,7 +154,7 @@
 																</DataTemplate>
 															</ListBox.ItemTemplate>
 														</ListBox>
-														<Button>+</Button>
+														<Button x:Name="TestFrequenciesAddButton">+</Button>
 													</StackPanel>
 													<Label VerticalAlignment="Top"
 													       Content="{x:Static p:Resources.LabelTestFreq}"/>

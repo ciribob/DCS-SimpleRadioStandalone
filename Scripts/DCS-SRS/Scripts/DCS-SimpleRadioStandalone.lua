@@ -7653,7 +7653,6 @@ SR.exporters["M-2000D"] = SR.exportRadioM2000C
 SR.exporters["Mirage-F1CE"] = SR.exportRadioF1CE  
 SR.exporters["Mirage-F1EE"]   = SR.exportRadioF1CE
 SR.exporters["Mirage-F1BE"]   = SR.exportRadioF1BE
---SR.exporters["Mirage-F1M-EE"] = SR.exportRadioF1
 SR.exporters["JF-17"] = SR.exportRadioJF17
 SR.exporters["AV8BNA"] = SR.exportRadioAV8BNA
 SR.exporters["AJS37"] = SR.exportRadioAJS37

@@ -1,6 +1,6 @@
 function exportRadioVSNF4(_data, SR)
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
-   
+
     _data.radios[2].name = "AN/ARC-164 UHF"
     _data.radios[2].freq = SR.getRadioFrequency(2)
     _data.radios[2].modulation = 0
@@ -8,7 +8,6 @@ function exportRadioVSNF4(_data, SR)
     _data.radios[2].volume = 1.0
     _data.radios[2].volMode = 1
     _data.radios[2].freqMode = 0
-
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[3].name = "AN/ARC-186(V)"
@@ -25,24 +24,24 @@ function exportRadioVSNF4(_data, SR)
     _data.radios[2].encKey = 1
     _data.radios[2].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
-    _data.control = 0;
+    _data.control = 0
     _data.selected = 1
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
-        _data.ambient = {vol = 0.2,  abType = 'jet' }
+        _data.ambient = { vol = 0.2, abType = "jet" }
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'jet' }
+        _data.ambient = { vol = 0, abType = "jet" }
     end
 
     return _data
 end
 
 local result = {
-   register = function(SR)
-    SR.exporters["VSN_F4C"] = exportRadioVSNF4
-    SR.exporters["VSN_F4B"] = exportRadioVSNF4
-  end
+    register = function(SR)
+        SR.exporters["VSN_F4C"] = exportRadioVSNF4
+        SR.exporters["VSN_F4B"] = exportRadioVSNF4
+    end,
 }
 return result

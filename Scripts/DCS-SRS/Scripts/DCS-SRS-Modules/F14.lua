@@ -1,6 +1,5 @@
 --for F-14
 function exportRadioF14(_data, SR)
-
     _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "" }
 
     local ics_devid = 2
@@ -53,35 +52,33 @@ function exportRadioF14(_data, SR)
     --TODO check
     local _seat = SR.lastKnownSeat --get_param_handle("SEAT"):get()
 
- --   RADIO_ICS_Func_RIO = 402,
---   RADIO_ICS_Func_Pilot = 2044,
-    
+    --   RADIO_ICS_Func_RIO = 402,
+    --   RADIO_ICS_Func_Pilot = 2044,
+
     local _hotMic = false
     if _seat == 0 then
         if SR.getButtonPosition(2044) > -1 then
             _hotMic = true
         end
-
     else
         if SR.getButtonPosition(402) > -1 then
             _hotMic = true
         end
-     end
+    end
 
-    _data.intercomHotMic = _hotMic 
+    _data.intercomHotMic = _hotMic
 
-    if (ARC182_ptt) then
+    if ARC182_ptt then
         _data.selected = 2 -- radios[3] ARC-182
         _data.ptt = true
-    elseif (ARC159_ptt) then
+    elseif ARC159_ptt then
         _data.selected = 1 -- radios[2] ARC-159
         _data.ptt = true
-    elseif (intercom_transmit and not _hotMic) then
-
+    elseif intercom_transmit and not _hotMic then
         -- CHECK ICS Function Selector
         -- If not set to HOT MIC - switch radios and PTT
         -- if set to hot mic - dont switch and ignore
-        
+
         _data.selected = 0 -- radios[1] intercom
         _data.ptt = true
     else
@@ -94,25 +91,23 @@ function exportRadioF14(_data, SR)
         local xmtrSelector = SR.getButtonPosition(381) --402
 
         if xmtrSelector == 0 then
-            _data.radios[2].simul =true
-            _data.radios[3].simul =true
+            _data.radios[2].simul = true
+            _data.radios[3].simul = true
         end
-
     end
 
     _data.control = 1 -- full radio
 
     -- Handle transponder
 
-    _data.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=false,control=0,expansion=false}
+    _data.iff = { status = 0, mode1 = 0, mode2 = -1, mode3 = 0, mode4 = false, control = 0, expansion = false }
 
-    local iffPower =  SR.getSelectorPosition(184,0.25)
+    local iffPower = SR.getSelectorPosition(184, 0.25)
 
-    local iffIdent =  SR.getButtonPosition(167)
+    local iffIdent = SR.getButtonPosition(167)
 
     if iffPower >= 2 then
         _data.iff.status = 1 -- NORMAL
-
 
         if iffIdent == 1 then
             _data.iff.status = 2 -- IDENT (BLINKY THING)
@@ -125,16 +120,19 @@ function exportRadioF14(_data, SR)
         end
     end
 
-    local mode1On =  SR.getButtonPosition(162)
-    _data.iff.mode1 = SR.round(SR.getSelectorPosition(201,0.11111), 0.1)*10+SR.round(SR.getSelectorPosition(200,0.11111), 0.1)
-
+    local mode1On = SR.getButtonPosition(162)
+    _data.iff.mode1 = SR.round(SR.getSelectorPosition(201, 0.11111), 0.1) * 10
+        + SR.round(SR.getSelectorPosition(200, 0.11111), 0.1)
 
     if mode1On ~= 0 then
         _data.iff.mode1 = -1
     end
 
-    local mode3On =  SR.getButtonPosition(164)
-    _data.iff.mode3 = SR.round(SR.getSelectorPosition(199,0.11111), 0.1) * 1000 + SR.round(SR.getSelectorPosition(198,0.11111), 0.1) * 100 + SR.round(SR.getSelectorPosition(2261,0.11111), 0.1)* 10 + SR.round(SR.getSelectorPosition(2262,0.11111), 0.1)
+    local mode3On = SR.getButtonPosition(164)
+    _data.iff.mode3 = SR.round(SR.getSelectorPosition(199, 0.11111), 0.1) * 1000
+        + SR.round(SR.getSelectorPosition(198, 0.11111), 0.1) * 100
+        + SR.round(SR.getSelectorPosition(2261, 0.11111), 0.1) * 10
+        + SR.round(SR.getSelectorPosition(2262, 0.11111), 0.1)
 
     if mode3On ~= 0 then
         _data.iff.mode3 = -1
@@ -143,7 +141,7 @@ function exportRadioF14(_data, SR)
         _data.iff.mode3 = 7700
     end
 
-    local mode4On =  SR.getButtonPosition(181)
+    local mode4On = SR.getButtonPosition(181)
 
     if mode4On == 0 then
         _data.iff.mode4 = false
@@ -153,29 +151,28 @@ function exportRadioF14(_data, SR)
 
     -- SR.log("IFF STATUS"..SR.JSON:encode(_data.iff).."\n\n")
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _door = SR.getButtonPosition(403)
 
-        if _door > 0.2 then 
-            _data.ambient = {vol = 0.3,  abType = 'f14' }
+        if _door > 0.2 then
+            _data.ambient = { vol = 0.3, abType = "f14" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'f14' }
-        end 
-    
+            _data.ambient = { vol = 0.2, abType = "f14" }
+        end
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'f14' }
+        _data.ambient = { vol = 0, abType = "f14" }
     end
 
     return _data
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["F-14B"] = exportRadioF14
-  SR.exporters["F-14A-135-GR"] = exportRadioF14
-  end
+    register = function(SR)
+        SR.exporters["F-14B"] = exportRadioF14
+        SR.exporters["F-14A-135-GR"] = exportRadioF14
+    end,
 }
 return result

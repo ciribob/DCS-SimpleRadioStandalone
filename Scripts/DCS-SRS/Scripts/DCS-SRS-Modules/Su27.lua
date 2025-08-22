@@ -34,7 +34,7 @@ function exportRadioSU27(_data, SR)
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
-    _data.control = 0;
+    _data.control = 0
     _data.selected = 1
 
     if SR.getAmbientVolumeEngine() > 10 then
@@ -43,23 +43,23 @@ function exportRadioSU27(_data, SR)
         --  local _door = SR.getButtonPosition(181)
 
         --  if _door > 0.2 then
-        _data.ambient = { vol = 0.3, abType = 'su27' }
+        _data.ambient = { vol = 0.3, abType = "su27" }
         --  else
         --      _data.ambient = {vol = 0.2,  abType = 'su27' }
         --   end
     else
         -- engine off
-        _data.ambient = { vol = 0, abType = 'su27' }
+        _data.ambient = { vol = 0, abType = "su27" }
     end
 
     return _data
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["Su-27"] = exportRadioSU27
-  SR.exporters["J-11A"] = exportRadioSU27
-  SR.exporters["Su-33"] = exportRadioSU27
-  end
+    register = function(SR)
+        SR.exporters["Su-27"] = exportRadioSU27
+        SR.exporters["J-11A"] = exportRadioSU27
+        SR.exporters["Su-33"] = exportRadioSU27
+    end,
 }
 return result

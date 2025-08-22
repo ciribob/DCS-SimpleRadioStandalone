@@ -1,5 +1,4 @@
 function exportRadioT45(_data, SR)
-
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = true, desc = "" }
 
     local radio1Device = GetDevice(1)
@@ -8,19 +7,19 @@ function exportRadioT45(_data, SR)
     local guardFreq1 = 0
     local mainFreq2 = 0
     local guardFreq2 = 0
-    
-    local comm1Switch = GetDevice(0):get_argument_value(191) 
-    local comm2Switch = GetDevice(0):get_argument_value(192) 
+
+    local comm1Switch = GetDevice(0):get_argument_value(191)
+    local comm2Switch = GetDevice(0):get_argument_value(192)
     local comm1PTT = GetDevice(0):get_argument_value(294)
-    local comm2PTT = GetDevice(0):get_argument_value(294) 
-    local intercomPTT = GetDevice(0):get_argument_value(295)    
+    local comm2PTT = GetDevice(0):get_argument_value(294)
+    local intercomPTT = GetDevice(0):get_argument_value(295)
     local ICSMicSwitch = GetDevice(0):get_argument_value(196) --0 cold, 1 hot
-    
+
     _data.radios[1].name = "Intercom"
     _data.radios[1].freq = 100.0
     _data.radios[1].modulation = 2 --Special intercom modulation
     _data.radios[1].volume = GetDevice(0):get_argument_value(198)
-    
+
     local modeSelector1 = GetDevice(0):get_argument_value(256) -- 0:off, 0.25:T/R, 0.5:T/R+G
     if modeSelector1 == 0.5 and comm1Switch == 1 then
         mainFreq1 = SR.round(radio1Device:get_frequency(), 5000)
@@ -43,7 +42,7 @@ function exportRadioT45(_data, SR)
     arc182.name = "AN/ARC-182(V) - 1"
     arc182.freq = mainFreq1
     arc182.secFreq = guardFreq1
-    arc182.modulation = radio1Device:get_modulation()  
+    arc182.modulation = radio1Device:get_modulation()
     arc182.freqMin = 30.000e6
     arc182.freqMax = 399.975e6
     arc182.volume = GetDevice(0):get_argument_value(246)
@@ -65,12 +64,12 @@ function exportRadioT45(_data, SR)
         guardFreq2 = 0
         mainFreq2 = 0
     end
-    
+
     local arc182_2 = _data.radios[3]
     arc182_2.name = "AN/ARC-182(V) - 2"
     arc182_2.freq = mainFreq2
     arc182_2.secFreq = guardFreq2
-    arc182_2.modulation = radio2Device:get_modulation()  
+    arc182_2.modulation = radio2Device:get_modulation()
     arc182_2.freqMin = 30.000e6
     arc182_2.freqMax = 399.975e6
     arc182_2.volume = GetDevice(0):get_argument_value(270)
@@ -88,29 +87,29 @@ function exportRadioT45(_data, SR)
         _data.selected = -1
         _data.ptt = false
     end
-    
+
     if ICSMicSwitch == 1 then
         _data.intercomHotMic = true
     else
         _data.intercomHotMic = false
     end
 
-    _data.control = 1; -- full radio HOTAS control
+    _data.control = 1 -- full radio HOTAS control
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
-        _data.ambient = {vol = 0.2,  abType = 'jet' }
+        _data.ambient = { vol = 0.2, abType = "jet" }
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'jet' }
+        _data.ambient = { vol = 0, abType = "jet" }
     end
-    
+
     return _data
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["T-45"] = exportRadioT45
-  end
+    register = function(SR)
+        SR.exporters["T-45"] = exportRadioT45
+    end,
 }
 return result

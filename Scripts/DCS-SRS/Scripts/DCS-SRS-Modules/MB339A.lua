@@ -1,5 +1,11 @@
 function exportRadioMB339A(_data, SR)
-    _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = false, desc = "To enable the Intercom HotMic pull the INT knob located on ICS" }
+    _data.capabilities = {
+        dcsPtt = true,
+        dcsIFF = true,
+        dcsRadioSwitch = true,
+        intercomHotMic = false,
+        desc = "To enable the Intercom HotMic pull the INT knob located on ICS",
+    }
 
     local main_panel = GetDevice(0)
 
@@ -7,7 +13,7 @@ function exportRadioMB339A(_data, SR)
     local comm1_device_id = main_panel:get_srs_device_id(1)
     local comm2_device_id = main_panel:get_srs_device_id(2)
     local iff_device_id = main_panel:get_srs_device_id(3)
-    
+
     local ARC150_device = GetDevice(comm1_device_id)
     local SRT_651_device = GetDevice(comm2_device_id)
     local intercom_device = GetDevice(intercom_device_id)
@@ -68,30 +74,29 @@ function exportRadioMB339A(_data, SR)
     _data.iff = {
         status = iff_status,
         mode1 = iff_device:get_mode1_code(),
-        mode2=-1,
+        mode2 = -1,
         mode3 = iff_device:get_mode3_code(),
         -- Mode 4 - not available in real MB-339 but we have decided to include it for gameplay
         mode4 = iff_device:is_mode4_working(),
         control = 0,
-        expansion = false
+        expansion = false,
     }
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
-        _data.ambient = {vol = 0.2,  abType = 'MB339' }
-    
+        _data.ambient = { vol = 0.2, abType = "MB339" }
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'MB339' }
+        _data.ambient = { vol = 0, abType = "MB339" }
     end
 
-    return _data;
+    return _data
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["MB-339A"] = exportRadioMB339A
-  SR.exporters["MB-339APAN"] = exportRadioMB339A
-  end
+    register = function(SR)
+        SR.exporters["MB-339A"] = exportRadioMB339A
+        SR.exporters["MB-339APAN"] = exportRadioMB339A
+    end,
 }
 return result

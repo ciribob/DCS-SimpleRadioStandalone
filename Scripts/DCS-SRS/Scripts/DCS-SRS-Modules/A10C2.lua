@@ -9,8 +9,13 @@ _a10c2.decreaseVol = false
 _a10c2.enableVolumeControl = false
 
 function exportRadioA10C2(_data, SR)
-
-    _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = false, desc = "Using cockpit PTT (HOTAS Mic Switch) requires use of VoIP bindings." }
+    _data.capabilities = {
+        dcsPtt = true,
+        dcsIFF = true,
+        dcsRadioSwitch = true,
+        intercomHotMic = false,
+        desc = "Using cockpit PTT (HOTAS Mic Switch) requires use of VoIP bindings.",
+    }
 
     -- Check if player is in a new aircraft
     if _lastUnitId ~= _data.unitId then
@@ -18,7 +23,7 @@ function exportRadioA10C2(_data, SR)
         local _device = GetDevice(0)
 
         if _device then
-         --   _device:set_argument_value(133, 1.0) -- VHF AM
+            --   _device:set_argument_value(133, 1.0) -- VHF AM
             _device:set_argument_value(171, 1.0) -- UHF
             _device:set_argument_value(147, 1.0) -- VHF FM
             _a10c2.enc = false
@@ -39,8 +44,8 @@ function exportRadioA10C2(_data, SR)
 
     --18 : {"PREV":"PREV","comsec_mode":"KY-58 VOICE","comsec_submode":"CT","dot_mark":".","freq_label_khz":"000","freq_label_mhz":"124","ky_submode_label":"1","lower_left_corner_arc210":"","modulation_label":"AM","prev_manual_freq":"---.---","txt_RT":"RT1"}
     -- 18 : {"PREV":"PREV","comsec_mode":"KY-58 VOICE","comsec_submode":"CT-TD","dot_mark":".","freq_label_khz":"000","freq_label_mhz":"124","ky_submode_label":"4","lower_left_corner_arc210":"","modulation_label":"AM","prev_manual_freq":"---.---","txt_RT":"RT1"}
-    
-    pcall(function() 
+
+    pcall(function()
         local _radioDisplay = SR.getListIndicatorValue(18)
 
         if _radioDisplay["COMSEC"] == "COMSEC" then
@@ -50,15 +55,14 @@ function exportRadioA10C2(_data, SR)
         end
 
         if _radioDisplay.comsec_submode and _radioDisplay.comsec_submode == "PT" then
-            
             _a10c2.encKey = tonumber(_radioDisplay.ky_submode_label)
             _a10c2.enc = false
-
-        elseif _radioDisplay.comsec_submode and (_radioDisplay.comsec_submode == "CT-TD" or _radioDisplay.comsec_submode == "CT") then
-
+        elseif
+            _radioDisplay.comsec_submode
+            and (_radioDisplay.comsec_submode == "CT-TD" or _radioDisplay.comsec_submode == "CT")
+        then
             _a10c2.encKey = tonumber(_radioDisplay.ky_submode_label)
             _a10c2.enc = true
-         
         end
     end)
 
@@ -68,14 +72,13 @@ function exportRadioA10C2(_data, SR)
 
     if _delta > 0 then
         _a10c2.decreaseVol = true
-
     elseif _delta < 0 then
         _a10c2.increaseVol = true
     else
         _a10c2.increaseVol = false
         _a10c2.decreaseVol = false
     end
-       
+
     if _a10c2.enableVolumeControl then
         if _a10c2.increaseVol then
             _a10c2.volume = _a10c2.volume + 0.05
@@ -90,9 +93,12 @@ function exportRadioA10C2(_data, SR)
         if _a10c2.volume < 0.0 then
             _a10c2.volume = 0
         end
-    end 
+    end
 
-    _data.radios[2].volume = _a10c2.volume * SR.getRadioVolume(0, 238, { 0.0, 1.0 }, false) * SR.getRadioVolume(0, 225, { 0.0, 1.0 }, false) * SR.getButtonPosition(226)
+    _data.radios[2].volume = _a10c2.volume
+        * SR.getRadioVolume(0, 238, { 0.0, 1.0 }, false)
+        * SR.getRadioVolume(0, 225, { 0.0, 1.0 }, false)
+        * SR.getButtonPosition(226)
     _data.radios[2].encKey = _a10c2.encKey
     _data.radios[2].enc = _a10c2.enc
 
@@ -119,7 +125,7 @@ function exportRadioA10C2(_data, SR)
     -- Set radio data
     _data.radios[3].name = "AN/ARC-164 UHF"
     _data.radios[3].freq = SR.getRadioFrequency(54)
-    
+
     local modulation = SR.getSelectorPosition(162, 0.1)
 
     --is HQ selected (A on the Radio)
@@ -129,7 +135,10 @@ function exportRadioA10C2(_data, SR)
         _data.radios[3].modulation = 0
     end
 
-    _data.radios[3].volume = SR.getRadioVolume(0, 171, { 0.0, 1.0 }, false) * SR.getRadioVolume(0, 238, { 0.0, 1.0 }, false) * SR.getRadioVolume(0, 227, { 0.0, 1.0 }, false) * SR.getButtonPosition(228)
+    _data.radios[3].volume = SR.getRadioVolume(0, 171, { 0.0, 1.0 }, false)
+        * SR.getRadioVolume(0, 238, { 0.0, 1.0 }, false)
+        * SR.getRadioVolume(0, 227, { 0.0, 1.0 }, false)
+        * SR.getButtonPosition(228)
     _data.radios[3].encMode = 2 -- Mode 2 is set by aircraft
 
     -- Check UHF frequency mode (0 = MNL, 1 = PRESET, 2 = GRD)
@@ -157,9 +166,11 @@ function exportRadioA10C2(_data, SR)
     _data.radios[4].name = "AN/ARC-186(V)FM"
     _data.radios[4].freq = SR.getRadioFrequency(56)
     _data.radios[4].modulation = 1
-    _data.radios[4].volume = SR.getRadioVolume(0, 147, { 0.0, 1.0 }, false) * SR.getRadioVolume(0, 238, { 0.0, 1.0 }, false) * SR.getRadioVolume(0, 223, { 0.0, 1.0 }, false) * SR.getButtonPosition(224)
+    _data.radios[4].volume = SR.getRadioVolume(0, 147, { 0.0, 1.0 }, false)
+        * SR.getRadioVolume(0, 238, { 0.0, 1.0 }, false)
+        * SR.getRadioVolume(0, 223, { 0.0, 1.0 }, false)
+        * SR.getButtonPosition(224)
     _data.radios[4].encMode = 2 -- mode 2 enc is set by aircraft & turned on by aircraft
-
 
     -- KY-58 Radio Encryption
     -- Check if encryption is being used
@@ -187,7 +198,7 @@ function exportRadioA10C2(_data, SR)
         end
     end
 
- -- Mic Switch Radio Select and Transmit - by Dyram
+    -- Mic Switch Radio Select and Transmit - by Dyram
     -- Check Mic Switch position (UP: 751 1.0, DOWN: 751 -1.0, FWD: 752 1.0, AFT: 752 -1.0)
     -- ED broke this as part of the VoIP work
     if SR.getButtonPosition(752) == 1 then
@@ -218,15 +229,15 @@ function exportRadioA10C2(_data, SR)
         _data.ptt = false
     end
 
-    _data.control = 1 -- Overlay  
+    _data.control = 1 -- Overlay
 
     -- Handle transponder
 
-    _data.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=false,control=0,expansion=false}
+    _data.iff = { status = 0, mode1 = 0, mode2 = -1, mode3 = 0, mode4 = false, control = 0, expansion = false }
 
-    local iffPower =  SR.getSelectorPosition(200,0.1)
+    local iffPower = SR.getSelectorPosition(200, 0.1)
 
-    local iffIdent =  SR.getButtonPosition(207) -- -1 is off 0 or more is on
+    local iffIdent = SR.getButtonPosition(207) -- -1 is off 0 or more is on
 
     if iffPower >= 2 then
         _data.iff.status = 1 -- NORMAL
@@ -239,7 +250,6 @@ function exportRadioA10C2(_data, SR)
         -- MIC mode switch - if you transmit on UHF then also IDENT
         -- https://github.com/ciribob/DCS-SimpleRadioStandalone/issues/408
         if iffIdent == -1 then
-
             _data.iff.mic = 2
 
             if _data.ptt and _data.selected == 2 then
@@ -248,17 +258,20 @@ function exportRadioA10C2(_data, SR)
         end
     end
 
-    local mode1On =  SR.getButtonPosition(202)
+    local mode1On = SR.getButtonPosition(202)
 
-    _data.iff.mode1 = SR.round(SR.getButtonPosition(209), 0.1)*100+SR.round(SR.getButtonPosition(210), 0.1)*10
+    _data.iff.mode1 = SR.round(SR.getButtonPosition(209), 0.1) * 100 + SR.round(SR.getButtonPosition(210), 0.1) * 10
 
     if mode1On ~= 0 then
         _data.iff.mode1 = -1
     end
 
-    local mode3On =  SR.getButtonPosition(204)
+    local mode3On = SR.getButtonPosition(204)
 
-    _data.iff.mode3 = SR.round(SR.getButtonPosition(211), 0.1) * 10000 + SR.round(SR.getButtonPosition(212), 0.1) * 1000 + SR.round(SR.getButtonPosition(213), 0.1)* 100 + SR.round(SR.getButtonPosition(214), 0.1) * 10
+    _data.iff.mode3 = SR.round(SR.getButtonPosition(211), 0.1) * 10000
+        + SR.round(SR.getButtonPosition(212), 0.1) * 1000
+        + SR.round(SR.getButtonPosition(213), 0.1) * 100
+        + SR.round(SR.getButtonPosition(214), 0.1) * 10
 
     if mode3On ~= 0 then
         _data.iff.mode3 = -1
@@ -267,7 +280,7 @@ function exportRadioA10C2(_data, SR)
         _data.iff.mode3 = 7700
     end
 
-    local mode4On =  SR.getButtonPosition(208)
+    local mode4On = SR.getButtonPosition(208)
 
     if mode4On ~= 0 then
         _data.iff.mode4 = true
@@ -275,20 +288,19 @@ function exportRadioA10C2(_data, SR)
         _data.iff.mode4 = false
     end
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _door = SR.getButtonPosition(7)
 
-        if _door > 0.1 then 
-            _data.ambient = {vol = 0.3,  abType = 'a10' }
+        if _door > 0.1 then
+            _data.ambient = { vol = 0.3, abType = "a10" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'a10' }
-        end 
-    
+            _data.ambient = { vol = 0.2, abType = "a10" }
+        end
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'a10' }
+        _data.ambient = { vol = 0, abType = "a10" }
     end
 
     -- SR.log("IFF STATUS"..SR.JSON:encode(_data.iff).."\n\n")
@@ -296,8 +308,8 @@ function exportRadioA10C2(_data, SR)
 end
 
 local result = {
-   register = function(SR)
-      SR.exporters["A-10C_2"] = exportRadioA10C2
-  end
+    register = function(SR)
+        SR.exporters["A-10C_2"] = exportRadioA10C2
+    end,
 }
 return result

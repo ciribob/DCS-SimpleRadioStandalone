@@ -1,14 +1,14 @@
-function exportRadioF4U (_data, SR)
-
+function exportRadioF4U(_data, SR)
     -- Reference manual: https://www.vmfa251.org/pdffiles/Corsair%20Manual.pdf
     -- p59 of the pdf (p53 for the manual) is the radio section.
 
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
-    _data.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=false,control=1,expansion=false,mic=-1}
+    _data.iff =
+        { status = 0, mode1 = 0, mode2 = -1, mode3 = 0, mode4 = false, control = 1, expansion = false, mic = -1 }
 
     local devices = {
         Cockpit = 0,
-        Radio = 8
+        Radio = 8,
     }
 
     local buttons = {
@@ -27,11 +27,10 @@ function exportRadioF4U (_data, SR)
     local voiceSelected = SR.getButtonPosition(buttons.C30A_CW_Voice) > 0
     local rxOn = txOn or (batteryOn and vhfOn)
 
-
     -- AN/ARC-5 Radio
     _data.radios[2].name = "AN/ARC-5"
     _data.radios[2].channel = SR.getSelectorPosition(088, 0.33) + 1
-    _data.radios[2].volume = SR.getRadioVolume(devices.Cockpit, 081, {0.0,1.0},false)
+    _data.radios[2].volume = SR.getRadioVolume(devices.Cockpit, 081, { 0.0, 1.0 }, false)
     _data.radios[2].rxOnly = rxOn and not txOn
     _data.radios[2].modulation = anarc5:get_modulation()
 
@@ -67,31 +66,30 @@ function exportRadioF4U (_data, SR)
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
-    _data.control = 0; -- no ptt, same as the FW and 109. No connector.
+    _data.control = 0 -- no ptt, same as the FW and 109. No connector.
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _door = get_param_handle("BASE_SENSOR_CANOPY_STATE"):get()
 
         if _door > 0.5 then
-            _data.ambient = {vol = 0.35,  abType = 'f4u' }
+            _data.ambient = { vol = 0.35, abType = "f4u" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'f4u' }
+            _data.ambient = { vol = 0.2, abType = "f4u" }
         end
-
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'f4u' }
+        _data.ambient = { vol = 0, abType = "f4u" }
     end
 
-    return _data;
+    return _data
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["F4U-1D"] = exportRadioF4U
-  SR.exporters["F4U-1D_CW"] = exportRadioF4U
-  end
+    register = function(SR)
+        SR.exporters["F4U-1D"] = exportRadioF4U
+        SR.exporters["F4U-1D_CW"] = exportRadioF4U
+    end,
 }
 return result

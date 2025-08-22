@@ -1,5 +1,4 @@
 function exportRadioSpitfireLFMkIX(_data, SR)
-
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
     _data.radios[2].name = "A.R.I. 1063" --minimal bug in the ME GUI and in the LUA. SRC5222 is the P-51 radio.
@@ -36,31 +35,30 @@ function exportRadioSpitfireLFMkIX(_data, SR)
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
-    _data.control = 0; -- no ptt, same as the FW and 109. No connector.
+    _data.control = 0 -- no ptt, same as the FW and 109. No connector.
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _door = SR.getButtonPosition(138)
 
-        if _door > 0.1 then 
-            _data.ambient = {vol = 0.35,  abType = 'spitfire' }
+        if _door > 0.1 then
+            _data.ambient = { vol = 0.35, abType = "spitfire" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'spitfire' }
-        end 
-    
+            _data.ambient = { vol = 0.2, abType = "spitfire" }
+        end
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'spitfire' }
+        _data.ambient = { vol = 0, abType = "spitfire" }
     end
 
-    return _data;
+    return _data
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["SpitfireLFMkIX"] = exportRadioSpitfireLFMkIX
-  SR.exporters["SpitfireLFMkIXCW"] = exportRadioSpitfireLFMkIX
-  end
+    register = function(SR)
+        SR.exporters["SpitfireLFMkIX"] = exportRadioSpitfireLFMkIX
+        SR.exporters["SpitfireLFMkIXCW"] = exportRadioSpitfireLFMkIX
+    end,
 }
 return result

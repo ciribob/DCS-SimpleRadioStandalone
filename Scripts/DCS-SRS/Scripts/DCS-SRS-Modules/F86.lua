@@ -1,6 +1,11 @@
 function exportRadioF86Sabre(_data, SR)
-
-    _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "Only one radio by default" }
+    _data.capabilities = {
+        dcsPtt = true,
+        dcsIFF = false,
+        dcsRadioSwitch = false,
+        intercomHotMic = false,
+        desc = "Only one radio by default",
+    }
 
     _data.radios[2].name = "AN/ARC-27"
     _data.radios[2].freq = SR.getRadioFrequency(26)
@@ -55,30 +60,29 @@ function exportRadioF86Sabre(_data, SR)
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
-    _data.control = 0; -- Hotas Controls
+    _data.control = 0 -- Hotas Controls
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _door = SR.getButtonPosition(181)
 
-        if _door > 0.1 then 
-            _data.ambient = {vol = 0.3,  abType = 'f86' }
+        if _door > 0.1 then
+            _data.ambient = { vol = 0.3, abType = "f86" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'f86' }
-        end 
-    
+            _data.ambient = { vol = 0.2, abType = "f86" }
+        end
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'f86' }
+        _data.ambient = { vol = 0, abType = "f86" }
     end
 
-    return _data;
+    return _data
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["F-86F Sabre"] = exportRadioF86Sabre
-  end
+    register = function(SR)
+        SR.exporters["F-86F Sabre"] = exportRadioF86Sabre
+    end,
 }
 return result

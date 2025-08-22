@@ -3,7 +3,6 @@ _f16.radio1 = {}
 _f16.radio1.guard = 0
 
 function exportRadioF16C(_data, SR)
-
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
     -- UHF
     _data.radios[2].name = "AN/ARC-164"
@@ -34,22 +33,21 @@ function exportRadioF16C(_data, SR)
         -- Parse the UFC - LOOK FOR BOTH (OR MAIN)
         local ded = SR.getListIndicatorValue(6)
         --PANEL 6{"Active Frequency or Channel":"305.00","Asterisks on Scratchpad_lhs":"*","Asterisks on Scratchpad_rhs":"*","Bandwidth":"NB","Bandwidth_placeholder":"","COM 1 Mode":"UHF","Preset Frequency":"305.00","Preset Frequency_placeholder":"","Preset Label":"PRE     a","Preset Number":" 1","Preset Number_placeholder":"","Receiver Mode":"BOTH","Scratchpad":"305.00","Scratchpad_placeholder":"","TOD Label":"TOD"}
-        
-        if ded and ded["Receiver Mode"] ~= nil and  ded["COM 1 Mode"] == "UHF" then
+
+        if ded and ded["Receiver Mode"] ~= nil and ded["COM 1 Mode"] == "UHF" then
             if ded["Receiver Mode"] == "BOTH" then
-                _f16.radio1.guard= 243.0 * 1000000
+                _f16.radio1.guard = 243.0 * 1000000
             else
-                _f16.radio1.guard= 0
+                _f16.radio1.guard = 0
             end
         else
             if _data.radios[2].freq < 1000 then
-                _f16.radio1.guard= 0
+                _f16.radio1.guard = 0
             end
         end
 
         _data.radios[2].secFreq = _f16.radio1.guard
-            
-     end
+    end
 
     -- VHF
     _data.radios[3].name = "AN/ARC-222"
@@ -81,27 +79,28 @@ function exportRadioF16C(_data, SR)
         if _radio ~= nil and _channel > 0 and _channel < 7 then
             _radio.encKey = _channel
             _radio.enc = true
-            _radio.volume = SR.getRadioVolume(0, 708, { 0.0, 1.0 }, false) * SR.getRadioVolume(0, 432, { 0.0, 1.0 }, false)--User KY-58 volume if chiper is used
+            _radio.volume = SR.getRadioVolume(0, 708, { 0.0, 1.0 }, false)
+                * SR.getRadioVolume(0, 432, { 0.0, 1.0 }, false) --User KY-58 volume if chiper is used
         end
     end
 
-    local _cipherOnly =  SR.round(SR.getButtonPosition(443),1) < -0.5 --If HOT MIC CIPHER Switch, HOT MIC / OFF / CIPHER set to CIPHER, allow only cipher
-    if _cipherOnly and _data.radios[3].enc ~=true then
+    local _cipherOnly = SR.round(SR.getButtonPosition(443), 1) < -0.5 --If HOT MIC CIPHER Switch, HOT MIC / OFF / CIPHER set to CIPHER, allow only cipher
+    if _cipherOnly and _data.radios[3].enc ~= true then
         _data.radios[3].freq = 0
     end
-    if _cipherOnly and _data.radios[2].enc ~=true then
+    if _cipherOnly and _data.radios[2].enc ~= true then
         _data.radios[2].freq = 0
     end
 
-    _data.control = 0; -- SRS Hotas Controls
+    _data.control = 0 -- SRS Hotas Controls
 
     -- Handle transponder
 
-    _data.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=false,control=0,expansion=false}
+    _data.iff = { status = 0, mode1 = 0, mode2 = -1, mode3 = 0, mode4 = false, control = 0, expansion = false }
 
-    local iffPower =  SR.getSelectorPosition(539,0.1)
+    local iffPower = SR.getSelectorPosition(539, 0.1)
 
-    local iffIdent =  SR.getButtonPosition(125) -- -1 is off 0 or more is on
+    local iffIdent = SR.getButtonPosition(125) -- -1 is off 0 or more is on
 
     if iffPower >= 2 then
         _data.iff.status = 1 -- NORMAL
@@ -109,27 +108,28 @@ function exportRadioF16C(_data, SR)
         if iffIdent == 1 then
             _data.iff.status = 2 -- IDENT (BLINKY THING)
         end
-
     end
 
-    local modeSelector =  SR.getButtonPosition(553)
+    local modeSelector = SR.getButtonPosition(553)
 
     if modeSelector == -1 then
-
         --shares a dial with the mode 3, limit number to max 3
-        local _secondDigit = SR.round(SR.getButtonPosition(548), 0.1)*10
+        local _secondDigit = SR.round(SR.getButtonPosition(548), 0.1) * 10
 
         if _secondDigit > 3 then
             _secondDigit = 3
         end
 
-        _data.iff.mode1 = SR.round(SR.getButtonPosition(546), 0.1)*100 + _secondDigit
+        _data.iff.mode1 = SR.round(SR.getButtonPosition(546), 0.1) * 100 + _secondDigit
     else
         _data.iff.mode1 = -1
     end
 
     if modeSelector ~= 0 then
-        _data.iff.mode3 = SR.round(SR.getButtonPosition(546), 0.1) * 10000 + SR.round(SR.getButtonPosition(548), 0.1) * 1000 + SR.round(SR.getButtonPosition(550), 0.1)* 100 + SR.round(SR.getButtonPosition(552), 0.1) * 10
+        _data.iff.mode3 = SR.round(SR.getButtonPosition(546), 0.1) * 10000
+            + SR.round(SR.getButtonPosition(548), 0.1) * 1000
+            + SR.round(SR.getButtonPosition(550), 0.1) * 100
+            + SR.round(SR.getButtonPosition(552), 0.1) * 10
     else
         _data.iff.mode3 = -1
     end
@@ -139,7 +139,7 @@ function exportRadioF16C(_data, SR)
         _data.iff.mode3 = 7700
     end
 
-    local mode4On =  SR.getButtonPosition(541)
+    local mode4On = SR.getButtonPosition(541)
 
     local mode4Code = SR.getButtonPosition(543)
 
@@ -151,35 +151,34 @@ function exportRadioF16C(_data, SR)
 
     -- SR.log("IFF STATUS"..SR.JSON:encode(_data.iff).."\n\n")
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _door = SR.getButtonPosition(7)
 
-        if _door > 0.1 then 
-            _data.ambient = {vol = 0.3,  abType = 'f16' }
+        if _door > 0.1 then
+            _data.ambient = { vol = 0.3, abType = "f16" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'f16' }
-        end 
-    
+            _data.ambient = { vol = 0.2, abType = "f16" }
+        end
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'f16' }
+        _data.ambient = { vol = 0, abType = "f16" }
     end
 
     return _data
 end
 
 local result = {
-   register = function(SR)
-    SR.exporters["F-16C_50"] = exportRadioF16C
-    SR.exporters["F-16D_50_NS"] = exportRadioF16C
-    SR.exporters["F-16D_52_NS"] = exportRadioF16C
-    SR.exporters["F-16D_50"] = exportRadioF16C
-    SR.exporters["F-16D_52"] = exportRadioF16C
-    SR.exporters["F-16D_Barak_40"] = exportRadioF16C
-    SR.exporters["F-16D_Barak_30"] = exportRadioF16C
-    SR.exporters["F-16I"] = exportRadioF16C
-  end
+    register = function(SR)
+        SR.exporters["F-16C_50"] = exportRadioF16C
+        SR.exporters["F-16D_50_NS"] = exportRadioF16C
+        SR.exporters["F-16D_52_NS"] = exportRadioF16C
+        SR.exporters["F-16D_50"] = exportRadioF16C
+        SR.exporters["F-16D_52"] = exportRadioF16C
+        SR.exporters["F-16D_Barak_40"] = exportRadioF16C
+        SR.exporters["F-16D_Barak_30"] = exportRadioF16C
+        SR.exporters["F-16I"] = exportRadioF16C
+    end,
 }
 return result

@@ -1,11 +1,10 @@
 function exportRadioEagleII(_data, SR)
-
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
     _data.radios[1].name = "Intercom"
     _data.radios[1].freq = 100.0
     _data.radios[1].modulation = 2 --Special intercom modulation
-    _data.radios[1].volume = 1--SR.getRadioVolume(0, 288,{0.0,0.8},false)
+    _data.radios[1].volume = 1 --SR.getRadioVolume(0, 288,{0.0,0.8},false)
 
     _data.radios[2].name = "KY-197A"
     _data.radios[2].freq = SR.getRadioFrequency(5)
@@ -15,7 +14,6 @@ function exportRadioEagleII(_data, SR)
     if _data.radios[2].volume < 0 then
         _data.radios[2].volume = 0
     end
-
 
     -- Intercom button depressed
     -- if(SR.getButtonPosition(133) > 0.5 or SR.getButtonPosition(546) > 0.5) then
@@ -55,22 +53,22 @@ function exportRadioEagleII(_data, SR)
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
-    _data.control = 0; -- HOTAS
+    _data.control = 0 -- HOTAS
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
-        _data.ambient = {vol = 0.2,  abType = 'ChristenEagle' }
+        _data.ambient = { vol = 0.2, abType = "ChristenEagle" }
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'ChristenEagle' }
+        _data.ambient = { vol = 0, abType = "ChristenEagle" }
     end
 
     return _data
 end
 
 local result = {
-   register = function(SR)
-      SR.exporters["Christen Eagle II"] = exportRadioEagleII
-  end
+    register = function(SR)
+        SR.exporters["Christen Eagle II"] = exportRadioEagleII
+    end,
 }
 return result

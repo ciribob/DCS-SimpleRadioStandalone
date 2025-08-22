@@ -1,5 +1,4 @@
 function exportRadioKA50(_data, SR)
-
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
 
     local _panel = GetDevice(0)
@@ -45,31 +44,30 @@ function exportRadioKA50(_data, SR)
         _data.selected = -1
     end
 
-    _data.control = 1;
+    _data.control = 1
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _door = SR.getButtonPosition(38)
 
-        if _door > 0.2 then 
-            _data.ambient = {vol = 0.3,  abType = 'ka50' }
+        if _door > 0.2 then
+            _data.ambient = { vol = 0.3, abType = "ka50" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'ka50' }
-        end 
-    
+            _data.ambient = { vol = 0.2, abType = "ka50" }
+        end
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'ka50' }
+        _data.ambient = { vol = 0, abType = "ka50" }
     end
 
     return _data
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["Ka-50"] = exportRadioKA50
-  SR.exporters["Ka-50_3"] = exportRadioKA50
-  end
+    register = function(SR)
+        SR.exporters["Ka-50"] = exportRadioKA50
+        SR.exporters["Ka-50_3"] = exportRadioKA50
+    end,
 }
 return result

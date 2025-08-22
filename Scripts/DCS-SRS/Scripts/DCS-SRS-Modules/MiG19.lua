@@ -1,6 +1,11 @@
 function exportRadioMIG19(_data, SR)
-
-    _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "Only one radio by default" }
+    _data.capabilities = {
+        dcsPtt = true,
+        dcsIFF = false,
+        dcsRadioSwitch = false,
+        intercomHotMic = false,
+        desc = "Only one radio by default",
+    }
 
     _data.radios[2].name = "RSIU-4V"
     _data.radios[2].freq = SR.getRadioFrequency(17)
@@ -35,30 +40,29 @@ function exportRadioMIG19(_data, SR)
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
-    _data.control = 0; -- Hotas Controls radio
+    _data.control = 0 -- Hotas Controls radio
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _door = SR.getButtonPosition(433)
 
-        if _door > 0.1 then 
-            _data.ambient = {vol = 0.3,  abType = 'mig19' }
+        if _door > 0.1 then
+            _data.ambient = { vol = 0.3, abType = "mig19" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'mig19' }
-        end 
-    
+            _data.ambient = { vol = 0.2, abType = "mig19" }
+        end
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'mig19' }
+        _data.ambient = { vol = 0, abType = "mig19" }
     end
 
-    return _data;
+    return _data
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["MiG-19P"] = exportRadioMIG19
-  end
+    register = function(SR)
+        SR.exporters["MiG-19P"] = exportRadioMIG19
+    end,
 }
 return result

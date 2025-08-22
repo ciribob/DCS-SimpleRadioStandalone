@@ -1,5 +1,4 @@
 function exportRadioMI8(_data, SR)
-
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
 
     -- Doesnt work but might as well allow selection
@@ -60,39 +59,35 @@ function exportRadioMI8(_data, SR)
         _data.ptt = true
     end
 
-
     -- Radio / ICS Switch
     if SR.getButtonPosition(553) > 0.5 then
         _data.selected = 0
     end
 
-    _data.control = 1; -- full radio
+    _data.control = 1 -- full radio
 
-
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _doorLeft = SR.getButtonPosition(216)
         local _doorRight = SR.getButtonPosition(215)
 
-        if _doorLeft > 0.2 or _doorRight > 0.2 then 
-            _data.ambient = {vol = 0.35,  abType = 'mi8' }
+        if _doorLeft > 0.2 or _doorRight > 0.2 then
+            _data.ambient = { vol = 0.35, abType = "mi8" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'mi8' }
-        end 
-    
+            _data.ambient = { vol = 0.2, abType = "mi8" }
+        end
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'mi8' }
+        _data.ambient = { vol = 0, abType = "mi8" }
     end
 
     return _data
-
 end
 
 local result = {
-   register = function(SR)
+    register = function(SR)
         SR.exporters["Mi-8MT"] = exportRadioMI8
-  end
+    end,
 }
 return result

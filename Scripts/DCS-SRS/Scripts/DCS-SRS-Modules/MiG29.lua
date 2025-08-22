@@ -35,7 +35,7 @@ function exportRadioMiG29(_data, SR)
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
-    _data.control = 0;
+    _data.control = 0
     _data.selected = 1
 
     if SR.getAmbientVolumeEngine() > 10 then
@@ -44,23 +44,23 @@ function exportRadioMiG29(_data, SR)
         --  local _door = SR.getButtonPosition(181)
 
         --   if _door > 0.15 then
-        _data.ambient = { vol = 0.3, abType = 'mig29' }
+        _data.ambient = { vol = 0.3, abType = "mig29" }
         --   else
         --      _data.ambient = {vol = 0.2,  abType = 'mig29' }
         --    end
     else
         -- engine off
-        _data.ambient = { vol = 0, abType = 'mig29' }
+        _data.ambient = { vol = 0, abType = "mig29" }
     end
 
     return _data
 end
 
 local result = {
-   register = function(SR)
-    SR.exporters["MiG-29A"] = exportRadioMiG29
-    SR.exporters["MiG-29S"] = exportRadioMiG29
-    SR.exporters["MiG-29G"] = exportRadioMiG29
-  end
+    register = function(SR)
+        SR.exporters["MiG-29A"] = exportRadioMiG29
+        SR.exporters["MiG-29S"] = exportRadioMiG29
+        SR.exporters["MiG-29G"] = exportRadioMiG29
+    end,
 }
 return result

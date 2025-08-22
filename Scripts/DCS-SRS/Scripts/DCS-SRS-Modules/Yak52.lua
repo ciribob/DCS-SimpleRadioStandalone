@@ -1,5 +1,4 @@
 function exportRadioYak52(_data, SR)
-
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
     _data.radios[1].name = "Intercom"
@@ -14,10 +13,10 @@ function exportRadioYak52(_data, SR)
     _data.radios[2].volume = SR.getRadioVolume(0, 90, { 0.0, 1.0 }, false)
 
     -- Intercom button depressed
-    if (SR.getButtonPosition(192) > 0.5 or SR.getButtonPosition(196) > 0.5) then
+    if SR.getButtonPosition(192) > 0.5 or SR.getButtonPosition(196) > 0.5 then
         _data.selected = 1
         _data.ptt = true
-    elseif (SR.getButtonPosition(194) > 0.5 or SR.getButtonPosition(197) > 0.5) then
+    elseif SR.getButtonPosition(194) > 0.5 or SR.getButtonPosition(197) > 0.5 then
         _data.selected = 0
         _data.ptt = true
     else
@@ -51,22 +50,22 @@ function exportRadioYak52(_data, SR)
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
-    _data.control = 1; -- full radio - for expansion radios - DCS controls must be disabled
+    _data.control = 1 -- full radio - for expansion radios - DCS controls must be disabled
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
-        _data.ambient = {vol = 0.2,  abType = 'yak52' }
+        _data.ambient = { vol = 0.2, abType = "yak52" }
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'yak52' }
+        _data.ambient = { vol = 0, abType = "yak52" }
     end
 
     return _data
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["Yak-52"] = exportRadioYak52
-  end
+    register = function(SR)
+        SR.exporters["Yak-52"] = exportRadioYak52
+    end,
 }
 return result

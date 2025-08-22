@@ -15,17 +15,37 @@ function exportRadioA29B(_data, SR)
 
     local _ufcp = SR.getListIndicatorValue(4)
     if _ufcp then
-        if _ufcp.com1_freq then com1_freq = (_ufcp.com1_freq * 1000000) end
-        if _ufcp.com1_mod then com1_mod = _ufcp.com1_mod * 1 end
-        if _ufcp.com1_sql then com1_sql = _ufcp.com1_sql end
-        if _ufcp.com1_pwr then com1_pwr = _ufcp.com1_pwr end
-        if _ufcp.com1_mode then com1_mode = _ufcp.com1_mode * 1 end
+        if _ufcp.com1_freq then
+            com1_freq = (_ufcp.com1_freq * 1000000)
+        end
+        if _ufcp.com1_mod then
+            com1_mod = _ufcp.com1_mod * 1
+        end
+        if _ufcp.com1_sql then
+            com1_sql = _ufcp.com1_sql
+        end
+        if _ufcp.com1_pwr then
+            com1_pwr = _ufcp.com1_pwr
+        end
+        if _ufcp.com1_mode then
+            com1_mode = _ufcp.com1_mode * 1
+        end
 
-        if _ufcp.com2_freq then com2_freq = (_ufcp.com2_freq * 1000000) end
-        if _ufcp.com2_mod then com2_mod = _ufcp.com2_mod * 1 end
-        if _ufcp.com2_sql then com2_sql = _ufcp.com2_sql end
-        if _ufcp.com2_pwr then com2_pwr = _ufcp.com2_pwr end
-        if _ufcp.com2_mode then com2_mode = _ufcp.com2_mode * 1 end
+        if _ufcp.com2_freq then
+            com2_freq = (_ufcp.com2_freq * 1000000)
+        end
+        if _ufcp.com2_mod then
+            com2_mod = _ufcp.com2_mod * 1
+        end
+        if _ufcp.com2_sql then
+            com2_sql = _ufcp.com2_sql
+        end
+        if _ufcp.com2_pwr then
+            com2_pwr = _ufcp.com2_pwr
+        end
+        if _ufcp.com2_mode then
+            com2_mode = _ufcp.com2_mode * 1
+        end
     end
 
     _data.radios[2].name = "XT-6013 COM1"
@@ -79,22 +99,21 @@ function exportRadioA29B(_data, SR)
         local _door = SR.getButtonPosition(26)
 
         if _door > 0.2 then
-            _data.ambient = { vol = 0.3, abType = 'a29' }
+            _data.ambient = { vol = 0.3, abType = "a29" }
         else
-            _data.ambient = { vol = 0.2, abType = 'a29' }
+            _data.ambient = { vol = 0.2, abType = "a29" }
         end
     else
         -- engine off
-        _data.ambient = { vol = 0, abType = 'a29' }
+        _data.ambient = { vol = 0, abType = "a29" }
     end
 
     return _data
 end
 
-
 local result = {
-   register = function(SR)
-      SR.exporters["A-29B"] = exportRadioA29B
-  end
+    register = function(SR)
+        SR.exporters["A-29B"] = exportRadioA29B
+    end,
 }
 return result

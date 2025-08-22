@@ -1,7 +1,13 @@
 local _ah64Mode1Persist = -1 -- Need this persistence for only MODE1 because it's pulled from the XPNDR page; default it to off
 
 function exportRadioAH64D(_data, SR)
-    _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "Recommended: Always Allow SRS Hotkeys - OFF. Bind Intercom Select & PTT, Radio PTT and DCS RTS up down" }
+    _data.capabilities = {
+        dcsPtt = true,
+        dcsIFF = true,
+        dcsRadioSwitch = true,
+        intercomHotMic = true,
+        desc = "Recommended: Always Allow SRS Hotkeys - OFF. Bind Intercom Select & PTT, Radio PTT and DCS RTS up down",
+    }
     _data.control = 1
 
     local _iffSettings = {
@@ -11,20 +17,20 @@ function exportRadioAH64D(_data, SR)
         mode3 = -1,
         mode4 = false,
         control = 0,
-        expansion = false
+        expansion = false,
     }
-    
+
     -- Check if player is in a new aircraft
     if _lastUnitId ~= _data.unitId then
         -- New aircraft; SENS volume is at 0
-            pcall(function()
-                 -- source https://github.com/DCSFlightpanels/dcs-bios/blob/master/Scripts/DCS-BIOS/lib/AH-64D.lua
-                GetDevice(63):performClickableAction(3011, 1) -- Pilot Master
-                GetDevice(63):performClickableAction(3012, 1) -- Pilot SENS
+        pcall(function()
+            -- source https://github.com/DCSFlightpanels/dcs-bios/blob/master/Scripts/DCS-BIOS/lib/AH-64D.lua
+            GetDevice(63):performClickableAction(3011, 1) -- Pilot Master
+            GetDevice(63):performClickableAction(3012, 1) -- Pilot SENS
 
-                GetDevice(62):performClickableAction(3011, 1) -- CoPilot Master
-                GetDevice(62):performClickableAction(3012, 1) -- CoPilot SENS
-            end)
+            GetDevice(62):performClickableAction(3011, 1) -- CoPilot Master
+            GetDevice(62):performClickableAction(3012, 1) -- CoPilot SENS
+        end)
     end
 
     _data.radios[1].name = "Intercom"
@@ -75,14 +81,14 @@ function exportRadioAH64D(_data, SR)
         _iffIdentBtn = SR.getButtonPosition(347) -- PLT comm panel ident button
         _iffEmergency = GetDevice(0):get_argument_value(404) -- PLT Emergency Panel XPNDR Indicator
 
-        local _masterVolume = SR.getRadioVolume(0, 344, { 0.0, 1.0 }, false) 
-        
-        --intercom 
+        local _masterVolume = SR.getRadioVolume(0, 344, { 0.0, 1.0 }, false)
+
+        --intercom
         _data.radios[1].volume = SR.getRadioVolume(0, 345, { 0.0, 1.0 }, false) * _masterVolume
 
         -- VHF
         if SR.getButtonPosition(449) == 0 then
-            _data.radios[2].volume = SR.getRadioVolume(0, 334, { 0.0, 1.0 }, false) * _masterVolume 
+            _data.radios[2].volume = SR.getRadioVolume(0, 334, { 0.0, 1.0 }, false) * _masterVolume
         else
             _data.radios[2].volume = 0
         end
@@ -101,24 +107,23 @@ function exportRadioAH64D(_data, SR)
             _data.radios[4].volume = 0
         end
 
-         -- FM2
+        -- FM2
         if SR.getButtonPosition(452) == 0 then
             _data.radios[5].volume = SR.getRadioVolume(0, 337, { 0.0, 1.0 }, false) * _masterVolume
         else
             _data.radios[5].volume = 0
         end
 
-         -- HF
+        -- HF
         if SR.getButtonPosition(453) == 0 then
             _data.radios[6].volume = SR.getRadioVolume(0, 338, { 0.0, 1.0 }, false) * _masterVolume
         else
             _data.radios[6].volume = 0
         end
 
-         if SR.getButtonPosition(346) ~= 1 then
+        if SR.getButtonPosition(346) ~= 1 then
             _data.intercomHotMic = true
         end
-
     else
         _eufdDevice = SR.getListIndicatorValue(19)
         _mpdLeft = SR.getListIndicatorValue(11)
@@ -126,14 +131,14 @@ function exportRadioAH64D(_data, SR)
         _iffIdentBtn = SR.getButtonPosition(388) -- CPG comm panel ident button
         _iffEmergency = GetDevice(0):get_argument_value(428) -- CPG Emergency Panel XPNDR Indicator
 
-        local _masterVolume = SR.getRadioVolume(0, 385, { 0.0, 1.0 }, false) 
+        local _masterVolume = SR.getRadioVolume(0, 385, { 0.0, 1.0 }, false)
 
-        --intercom 
+        --intercom
         _data.radios[1].volume = SR.getRadioVolume(0, 386, { 0.0, 1.0 }, false) * _masterVolume
 
         -- VHF
         if SR.getButtonPosition(459) == 0 then
-            _data.radios[2].volume = SR.getRadioVolume(0, 375, { 0.0, 1.0 }, false) * _masterVolume 
+            _data.radios[2].volume = SR.getRadioVolume(0, 375, { 0.0, 1.0 }, false) * _masterVolume
         else
             _data.radios[2].volume = 0
         end
@@ -152,14 +157,14 @@ function exportRadioAH64D(_data, SR)
             _data.radios[4].volume = 0
         end
 
-         -- FM2
+        -- FM2
         if SR.getButtonPosition(462) == 0 then
             _data.radios[5].volume = SR.getRadioVolume(0, 378, { 0.0, 1.0 }, false) * _masterVolume
         else
             _data.radios[5].volume = 0
         end
 
-         -- HF
+        -- HF
         if SR.getButtonPosition(463) == 0 then
             _data.radios[6].volume = SR.getRadioVolume(0, 379, { 0.0, 1.0 }, false) * _masterVolume
         else
@@ -169,24 +174,23 @@ function exportRadioAH64D(_data, SR)
         if SR.getButtonPosition(387) ~= 1 then
             _data.intercomHotMic = true
         end
-
     end
 
     if _eufdDevice then
         -- figure out selected
-        if _eufdDevice['Rts_VHF_'] == '<' then
+        if _eufdDevice["Rts_VHF_"] == "<" then
             _data.selected = 1
-        elseif _eufdDevice['Rts_UHF_'] == '<' then
+        elseif _eufdDevice["Rts_UHF_"] == "<" then
             _data.selected = 2
-        elseif _eufdDevice['Rts_FM1_'] == '<' then
+        elseif _eufdDevice["Rts_FM1_"] == "<" then
             _data.selected = 3
-        elseif _eufdDevice['Rts_FM2_'] == '<' then
+        elseif _eufdDevice["Rts_FM2_"] == "<" then
             _data.selected = 4
-        elseif _eufdDevice['Rts_HF_'] == '<' then
+        elseif _eufdDevice["Rts_HF_"] == "<" then
             _data.selected = 5
         end
 
-        if _eufdDevice['Guard'] == 'G' then
+        if _eufdDevice["Guard"] == "G" then
             _data.radios[3].secFreq = 243e6
         end
 
@@ -222,10 +226,10 @@ function exportRadioAH64D(_data, SR)
         _data.radios[5].encKey = tonumber(string.match(_eufdDevice["Cipher_FM2"] or "C1", "^C(%d+)"))
 
         _data.radios[6].enc = _eufdDevice["Cipher_HF"] ~= nil
-        _data.radios[6].encKey =  tonumber(string.match(_eufdDevice["Cipher_HF"] or "C1", "^C(%d+)"))
+        _data.radios[6].encKey = tonumber(string.match(_eufdDevice["Cipher_HF"] or "C1", "^C(%d+)"))
     end
 
-    if (_mpdLeft or _mpdRight) then
+    if _mpdLeft or _mpdRight then
         if _mpdLeft["Mode_S_Codes_Window_text_1"] then -- We're on the XPNDR page on the LEFT MPD
             _ah64Mode1Persist = _mpdLeft["PB24_9"] == "}1" and -1 or string.format("%02d", _mpdLeft["PB7_23"])
         end
@@ -235,7 +239,7 @@ function exportRadioAH64D(_data, SR)
         end
     end
 
-      --CYCLIC_RTS_SW_LEFT 573 CPG 531 PLT
+    --CYCLIC_RTS_SW_LEFT 573 CPG 531 PLT
     local _pttButtonId = 573
     if _seat == 0 then
         _pttButtonId = 531
@@ -243,43 +247,40 @@ function exportRadioAH64D(_data, SR)
 
     local _pilotPTT = SR.getButtonPosition(_pttButtonId)
     if _pilotPTT >= 0.5 then
-
         _data.intercomHotMic = false
         -- intercom
         _data.selected = 0
         _data.ptt = true
-
     elseif _pilotPTT <= -0.5 then
         _data.ptt = true
     end
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _doorLeft = SR.getButtonPosition(795)
         local _doorRight = SR.getButtonPosition(798)
 
-        if _doorLeft > 0.3 or _doorRight > 0.3 then 
-            _data.ambient = {vol = 0.35,  abType = 'ah64' }
+        if _doorLeft > 0.3 or _doorRight > 0.3 then
+            _data.ambient = { vol = 0.35, abType = "ah64" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'ah64' }
-        end 
-    
+            _data.ambient = { vol = 0.2, abType = "ah64" }
+        end
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'ah64' }
+        _data.ambient = { vol = 0, abType = "ah64" }
     end
 
-    for k,v in pairs(_iffSettings) do _data.iff[k] = v end -- IFF table overwrite
+    for k, v in pairs(_iffSettings) do
+        _data.iff[k] = v
+    end -- IFF table overwrite
 
     return _data
-
 end
 
-
 local result = {
-   register = function(SR)
-      SR.exporters["AH-64D_BLK_II"] = exportRadioAH64D
-  end
+    register = function(SR)
+        SR.exporters["AH-64D_BLK_II"] = exportRadioAH64D
+    end,
 }
 return result

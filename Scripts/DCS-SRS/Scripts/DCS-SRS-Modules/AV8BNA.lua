@@ -9,7 +9,6 @@ _av8.radio2.encKey = -1
 _av8.radio2.enc = false
 
 function exportRadioAV8BNA(_data, SR)
-    
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
     local _ufc = SR.getListIndicatorValue(6)
@@ -41,18 +40,15 @@ function exportRadioAV8BNA(_data, SR)
         _av8.radio2.guard = 0
     end
 
-    local getGuardFreq = function (freq,currentGuard)
-
-
+    local getGuardFreq = function(freq, currentGuard)
         if freq > 1000000 then
-
             -- check if LEFT UFC is currently displaying the TR-G for this radio
             --and change state if so
 
             if _ufcScratch and _ufc and _ufcScratch.ufc_right_position then
                 local _ufcFreq = tonumber(_ufcScratch.ufc_right_position)
 
-                if _ufcFreq and _ufcFreq * 1000000 == SR.round(freq,1000) then
+                if _ufcFreq and _ufcFreq * 1000000 == SR.round(freq, 1000) then
                     if _ufc.ODU_Option_1_Text == "TR-G" then
                         return 243.0 * 1000000
                     else
@@ -61,61 +57,50 @@ function exportRadioAV8BNA(_data, SR)
                 end
             end
 
-
             return currentGuard
-
         else
             -- reset state
             return 0
         end
-
     end
 
-    local getEncryption = function ( freq, currentEnc,currentEncKey )
-    if freq > 1000000 then
-
+    local getEncryption = function(freq, currentEnc, currentEncKey)
+        if freq > 1000000 then
             -- check if LEFT UFC is currently displaying the encryption for this radio
- 
 
             if _ufcScratch and _ufcScratch and _ufcScratch.ufc_right_position then
                 local _ufcFreq = tonumber(_ufcScratch.ufc_right_position)
 
-                if _ufcFreq and _ufcFreq * 1000000 == SR.round(freq,1000) then
+                if _ufcFreq and _ufcFreq * 1000000 == SR.round(freq, 1000) then
                     if _ufc.ODU_Option_4_Text == "CIPH" then
-
                         -- validate number
                         -- ODU_Option_5_Text
-                        if string.find(_ufc.ODU_Option_5_Text, "CD",1,true) then
-
-                          local cduStr = string.gsub(_ufc.ODU_Option_5_Text, "CD ", ""):gsub("^%s*(.-)%s*$", "%1")
+                        if string.find(_ufc.ODU_Option_5_Text, "CD", 1, true) then
+                            local cduStr = string.gsub(_ufc.ODU_Option_5_Text, "CD ", ""):gsub("^%s*(.-)%s*$", "%1")
 
                             --remove CD and trim
                             local encNum = tonumber(cduStr)
 
-                            if encNum and encNum > 0 then 
-                                return true,encNum
+                            if encNum and encNum > 0 then
+                                return true, encNum
                             else
-                                return false,-1
+                                return false, -1
                             end
                         else
-                            return false,-1
+                            return false, -1
                         end
                     else
-                        return false,-1
+                        return false, -1
                     end
                 end
             end
 
-
-            return currentEnc,currentEncKey
-
+            return currentEnc, currentEncKey
         else
             -- reset state
-            return false,-1
+            return false, -1
         end
-end
-
-
+    end
 
     _data.radios[2].name = "ARC-210 - COMM1"
     _data.radios[2].freq = SR.getRadioFrequency(2)
@@ -134,11 +119,10 @@ end
     _av8.radio1.encKey = radio1EncKey
 
     if _av8.radio1.enc then
-        _data.radios[2].enc = _av8.radio1.enc 
-        _data.radios[2].encKey = _av8.radio1.encKey 
+        _data.radios[2].enc = _av8.radio1.enc
+        _data.radios[2].encKey = _av8.radio1.encKey
     end
 
-    
     -- get channel selector
     --  local _selector  = SR.getSelectorPosition(448,0.50)
 
@@ -163,8 +147,8 @@ end
     _av8.radio2.encKey = radio2EncKey
 
     if _av8.radio2.enc then
-        _data.radios[3].enc = _av8.radio2.enc 
-        _data.radios[3].encKey = _av8.radio2.encKey 
+        _data.radios[3].enc = _av8.radio2.enc
+        _data.radios[3].encKey = _av8.radio2.encKey
     end
 
     --https://en.wikipedia.org/wiki/AN/ARC-210
@@ -184,32 +168,30 @@ end
     --_data.radios[4].encKey = 1
     --_data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
-
     _data.selected = 1
-    _data.control = 0; -- partial radio, allows hotkeys
+    _data.control = 0 -- partial radio, allows hotkeys
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _door = SR.getButtonPosition(38)
 
-        if _door > 0.2 then 
-            _data.ambient = {vol = 0.35,  abType = 'av8bna' }
+        if _door > 0.2 then
+            _data.ambient = { vol = 0.35, abType = "av8bna" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'av8bna' }
-        end 
-    
+            _data.ambient = { vol = 0.2, abType = "av8bna" }
+        end
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'av8bna' }
+        _data.ambient = { vol = 0, abType = "av8bna" }
     end
 
     return _data
 end
 
 local result = {
-   register = function(SR)
-      SR.exporters["AV8BNA"] = exportRadioAV8BNA
-  end
+    register = function(SR)
+        SR.exporters["AV8BNA"] = exportRadioAV8BNA
+    end,
 }
 return result

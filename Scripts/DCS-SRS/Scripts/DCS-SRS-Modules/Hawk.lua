@@ -1,5 +1,4 @@
 function exportRadioHawk(_data, SR)
-
     local MHZ = 1000000
 
     _data.radios[2].name = "AN/ARC-164 UHF"
@@ -7,7 +6,6 @@ function exportRadioHawk(_data, SR)
     local _selector = SR.getSelectorPosition(221, 0.25)
 
     if _selector == 1 or _selector == 2 then
-
         local _hundreds = SR.getSelectorPosition(226, 0.25) * 100 * MHZ
         local _tens = SR.round(SR.getKnobPosition(0, 227, { 0.0, 0.9 }, { 0, 9 }), 0.1) * 10 * MHZ
         local _ones = SR.round(SR.getKnobPosition(0, 228, { 0.0, 0.9 }, { 0, 9 }), 0.1) * MHZ
@@ -49,23 +47,22 @@ function exportRadioHawk(_data, SR)
         _data.selected = 1
     end
 
-    _data.control = 1; -- full radio
+    _data.control = 1 -- full radio
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
-        _data.ambient = {vol = 0.2,  abType = 'jet' }
-    
+        _data.ambient = { vol = 0.2, abType = "jet" }
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'jet' }
+        _data.ambient = { vol = 0, abType = "jet" }
     end
 
-    return _data;
+    return _data
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["Hawk"] = exportRadioHawk
-  end
+    register = function(SR)
+        SR.exporters["Hawk"] = exportRadioHawk
+    end,
 }
 return result

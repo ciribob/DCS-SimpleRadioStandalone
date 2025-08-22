@@ -1,4 +1,3 @@
-
 local _fa18 = {}
 _fa18.radio1 = {}
 _fa18.radio2 = {}
@@ -8,19 +7,19 @@ _fa18.radio1.guard = 0
 _fa18.radio2.guard = 0
 _fa18.radio3.channel = 127 --127 is disabled for MIDS
 _fa18.radio4.channel = 127
- -- initial IFF status set to -1 to indicate its not initialized, status then set depending on cold/hot start
+-- initial IFF status set to -1 to indicate its not initialized, status then set depending on cold/hot start
 _fa18.iff = {
-    status=-1,
-    mode1=-1,
-    mode2=-1,
-    mode3=-1,
-    mode4=true,
-    control=0,
-    expansion=false,
+    status = -1,
+    mode1 = -1,
+    mode2 = -1,
+    mode3 = -1,
+    mode4 = true,
+    control = 0,
+    expansion = false,
 }
 _fa18.enttries = 0
-_fa18.mode3opt =  ""    -- to distinguish between 3 and 3/C while ED doesn't fix the different codes for those
-_fa18.identEnd = 0      -- time to end IFF ident -(18 seconds)
+_fa18.mode3opt = "" -- to distinguish between 3 and 3/C while ED doesn't fix the different codes for those
+_fa18.identEnd = 0 -- time to end IFF ident -(18 seconds)
 
 --[[
 From NATOPS - https://info.publicintelligence.net/F18-ABCD-000.pdf (VII-23-2)
@@ -35,10 +34,10 @@ Frequency Band(MHz) Modulation  Guard Channel (MHz)
     225 to 399.975      AM/FM       243.0 (AM)
 
 *Cannot transmit on 108 thru 117.995 MHz
-]]--
+]]
+--
 
 function exportRadioFA18C(_data, SR)
-
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
     local _ufc = SR.getListIndicatorValue(6)
@@ -71,39 +70,30 @@ function exportRadioFA18C(_data, SR)
         _fa18.radio2.channel = nil
         _fa18.radio3.channel = 127 --127 is disabled for MIDS
         _fa18.radio4.channel = 127
-        _fa18.iff = {status=-1,mode1=-1,mode2=-1,mode3=-1,mode4=true,control=0,expansion=false}
+        _fa18.iff = { status = -1, mode1 = -1, mode2 = -1, mode3 = -1, mode4 = true, control = 0, expansion = false }
         _fa18.mode3opt = ""
         _fa18.identEnd = 0
         _fa18.link16 = false
         _fa18.scratchpad = {}
     end
 
-    local getGuardFreq = function (freq,currentGuard,modulation)
-
-
+    local getGuardFreq = function(freq, currentGuard, modulation)
         if freq > 1000000 then
-
             -- check if UFC is currently displaying the GRCV for this radio
             --and change state if so
 
             if _ufc and _ufc.UFC_OptionDisplay1 == "GRCV" then
-
                 if _ufc.UFC_ScratchPadNumberDisplay then
                     local _ufcFreq = tonumber(_ufc.UFC_ScratchPadNumberDisplay)
 
                     -- if its the correct radio
-                    if _ufcFreq and _ufcFreq * 1000000 == SR.round(freq,1000) then
+                    if _ufcFreq and _ufcFreq * 1000000 == SR.round(freq, 1000) then
                         if _ufc.UFC_OptionCueing1 == ":" then
-
                             -- GUARD changes based on the tuned frequency
-                            if freq > 108*1000000
-                                    and freq < 135.995*1000000
-                                    and modulation == 0 then
+                            if freq > 108 * 1000000 and freq < 135.995 * 1000000 and modulation == 0 then
                                 return 121.5 * 1000000
                             end
-                            if freq > 108*1000000
-                                    and freq < 399.975*1000000
-                                    and modulation == 0 then
+                            if freq > 108 * 1000000 and freq < 399.975 * 1000000 and modulation == 0 then
                                 return 243 * 1000000
                             end
 
@@ -116,33 +106,24 @@ function exportRadioFA18C(_data, SR)
             end
 
             if currentGuard > 1000 then
-
-                if freq > 108*1000000
-                        and freq < 135.995*1000000
-                        and modulation == 0 then
-
+                if freq > 108 * 1000000 and freq < 135.995 * 1000000 and modulation == 0 then
                     return 121.5 * 1000000
                 end
-                if freq > 108*1000000
-                        and freq < 399.975*1000000
-                        and modulation == 0 then
-
+                if freq > 108 * 1000000 and freq < 399.975 * 1000000 and modulation == 0 then
                     return 243 * 1000000
                 end
             end
 
             return currentGuard
-
         else
             -- reset state
             return 0
         end
-
     end
 
-    local getCommChannel = function (currentDisplay, memorizedValue)
+    local getCommChannel = function(currentDisplay, memorizedValue)
         local maybeChannel = currentDisplay
-        
+
         -- Cue, Guard, Manual, Sea - not channels.
         if string.find(maybeChannel, "^[CGMS]$") then
             return nil -- not channels.
@@ -204,9 +185,7 @@ function exportRadioFA18C(_data, SR)
         _radio.encMode = 2 -- Mode 2 is set by aircraft
         _radio.encKey = _channel
         _radio.enc = true
-
     end
-
 
     -- MIDS
 
@@ -219,7 +198,7 @@ function exportRadioFA18C(_data, SR)
 
     local midsAChannel = _fa18.radio3.channel
     if midsAChannel < 127 and _fa18.link16 then
-        _radio.freq = SR.MIDS_FREQ +  (SR.MIDS_FREQ_SEPARATION * midsAChannel)
+        _radio.freq = SR.MIDS_FREQ + (SR.MIDS_FREQ_SEPARATION * midsAChannel)
         _radio.channel = midsAChannel
     else
         _radio.freq = 1
@@ -235,7 +214,7 @@ function exportRadioFA18C(_data, SR)
 
     local midsBChannel = _fa18.radio4.channel
     if midsBChannel < 127 and _fa18.link16 then
-        _radio.freq = SR.MIDS_FREQ +  (SR.MIDS_FREQ_SEPARATION * midsBChannel)
+        _radio.freq = SR.MIDS_FREQ + (SR.MIDS_FREQ_SEPARATION * midsBChannel)
         _radio.channel = midsBChannel
     else
         _radio.freq = 1
@@ -250,10 +229,11 @@ function exportRadioFA18C(_data, SR)
 
         if batterySwitch == 0 then
             -- cold start, everything off
-            _fa18.iff = {status=0,mode1=-1,mode2=-1,mode3=-1,mode4=false,control=0,expansion=false}
+            _fa18.iff =
+                { status = 0, mode1 = -1, mode2 = -1, mode3 = -1, mode4 = false, control = 0, expansion = false }
         else
             -- hot start, M4 on
-            _fa18.iff = {status=1,mode1=-1,mode2=-1,mode3=-1,mode4=true,control=0,expansion=false}
+            _fa18.iff = { status = 1, mode1 = -1, mode2 = -1, mode3 = -1, mode4 = true, control = 0, expansion = false }
         end
     end
 
@@ -275,7 +255,7 @@ function exportRadioFA18C(_data, SR)
                 -- Update Mode 1
                 if _ufc.UFC_OptionCueing1 == ":" then
                     -- 3-bit digit, followed by a 2-bit one, 5-bit total.
-                    local code = string.match(_ufc.UFC_OptionDisplay1, "1%-([0-7][0-3])")    -- actual code is displayed in the option display
+                    local code = string.match(_ufc.UFC_OptionDisplay1, "1%-([0-7][0-3])") -- actual code is displayed in the option display
                     if code then
                         iff.mode1 = tonumber(code)
                     end
@@ -284,7 +264,7 @@ function exportRadioFA18C(_data, SR)
                 end
 
                 -- Update Mode 2 and 3
-                for modeNumber = 2,3 do
+                for modeNumber = 2, 3 do
                     local mode = "mode" .. modeNumber
                     if _ufc["UFC_OptionCueing" .. modeNumber] == ":" then
                         local optionDisplay = _ufc["UFC_OptionDisplay" .. modeNumber]
@@ -302,7 +282,6 @@ function exportRadioFA18C(_data, SR)
 
                 -- Update Mode 4
                 iff.mode4 = _ufc.UFC_OptionCueing4 == ":"
-
             elseif scratchpadString == "AI" then
                 if iff.status <= 0 then
                     iff.status = 1
@@ -346,7 +325,7 @@ function exportRadioFA18C(_data, SR)
                             -- IFF
                             local mode, code = string.match(scratchpad, "([23])%-([0-7]+)")
                             if mode and code then
-                                _fa18.iff["mode".. mode] = tonumber(code)
+                                _fa18.iff["mode" .. mode] = tonumber(code)
                             end
                             -- Mode 1 is read from the 'cueing' panels (see above)
                         end
@@ -378,20 +357,19 @@ function exportRadioFA18C(_data, SR)
     -- set current IFF settings
     _data.iff = _fa18.iff
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _door = SR.getButtonPosition(181)
 
-        if _door > 0.5 then 
-            _data.ambient = {vol = 0.3,  abType = 'fa18' }
+        if _door > 0.5 then
+            _data.ambient = { vol = 0.3, abType = "fa18" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'fa18' }
-        end 
-    
+            _data.ambient = { vol = 0.2, abType = "fa18" }
+        end
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'fa18' }
+        _data.ambient = { vol = 0, abType = "fa18" }
     end
 
     -- Relay (RLY):
@@ -400,20 +378,20 @@ function exportRadioFA18C(_data, SR)
 
     -- If relay is not OFF, it creates a 2-way relay between COMM 1 and COMM 2.
     local commRelaySwitchPosition = SR.getButtonPosition(commRelaySwitch)
-    if  commRelaySwitchPosition ~= 0 then
+    if commRelaySwitchPosition ~= 0 then
         local comm1 = 2
         local comm2 = 3
-        
+
         local spacing = math.abs(_data.radios[comm1].freq - _data.radios[comm2].freq)
-        
+
         local ky58Desired = commRelaySwitchPosition == 1
-        
+
         -- we can retransmit if:
         -- * The two radios are at least 10MHz apart.
         -- * IF cipher is requested, KY-58 must be powered on.
         if spacing >= 10e6 and (not ky58Desired or _ky58PoweredOn) then
             -- Apply params on COMM 1 (index 2) and COMM 2 (index 3)
-            for commIdx=2,3 do
+            for commIdx = 2, 3 do
                 -- Force in-cockpit
                 _data.radios[commIdx].rtMode = 0
                 -- Set as relay
@@ -431,11 +409,11 @@ function exportRadioFA18C(_data, SR)
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["FA-18C_hornet"] = exportRadioFA18C
-  SR.exporters["FA-18E"] = exportRadioFA18C
-  SR.exporters["FA-18F"] = exportRadioFA18C
-  SR.exporters["EA-18G"] = exportRadioFA18C
-  end
+    register = function(SR)
+        SR.exporters["FA-18C_hornet"] = exportRadioFA18C
+        SR.exporters["FA-18E"] = exportRadioFA18C
+        SR.exporters["FA-18F"] = exportRadioFA18C
+        SR.exporters["EA-18G"] = exportRadioFA18C
+    end,
 }
 return result

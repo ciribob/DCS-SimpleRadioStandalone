@@ -1,5 +1,4 @@
 function exportRadioSK60(_data, SR)
-
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
     _data.radios[1].name = "Intercom"
@@ -28,7 +27,7 @@ function exportRadioSK60(_data, SR)
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-186(V)FM"
-    _data.radios[4].freq = 30.0 * 1000000 
+    _data.radios[4].freq = 30.0 * 1000000
     _data.radios[4].modulation = 1
     _data.radios[4].volume = 1.0
     _data.radios[4].freqMin = 30 * 1000000
@@ -37,32 +36,30 @@ function exportRadioSK60(_data, SR)
     _data.radios[4].freqMode = 1
     _data.radios[4].expansion = true
 
-    _data.control = 0;
+    _data.control = 0
     _data.selected = 1
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _door = SR.getButtonPosition(38)
 
-        if _door < 0.9 then 
-            _data.ambient = {vol = 0.3,  abType = 'sk60' }
+        if _door < 0.9 then
+            _data.ambient = { vol = 0.3, abType = "sk60" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'sk60' }
-        end 
-    
+            _data.ambient = { vol = 0.2, abType = "sk60" }
+        end
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'sk60' }
+        _data.ambient = { vol = 0, abType = "sk60" }
     end
 
     return _data
-
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["SK-60"] = exportRadioSK60
-  end
+    register = function(SR)
+        SR.exporters["SK-60"] = exportRadioSK60
+    end,
 }
 return result

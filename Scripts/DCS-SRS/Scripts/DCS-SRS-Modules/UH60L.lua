@@ -25,12 +25,14 @@ function exportRadioUH60L(_data, SR)
 
     if fm1Power and isDCPower then
         -- radio volume * ics master volume * ics switch
-        fm1Volume = GetDevice(0):get_argument_value(604) * GetDevice(0):get_argument_value(401) * GetDevice(0):get_argument_value(403)
+        fm1Volume = GetDevice(0):get_argument_value(604)
+            * GetDevice(0):get_argument_value(401)
+            * GetDevice(0):get_argument_value(403)
         fm1Freq = fm1Device:get_frequency()
         ARC201FM1Freq = get_param_handle("ARC201FM1param"):get()
         fm1Modulation = get_param_handle("ARC201_FM1_MODULATION"):get()
     end
-    
+
     if not (fm1Power and isDCPower) then
         ARC201FM1Freq = 0
     end
@@ -44,7 +46,7 @@ function exportRadioUH60L(_data, SR)
     _data.radios[2].volMode = 0
     _data.radios[2].freqMode = 0
     _data.radios[2].rtMode = 0
-    
+
     -- AN/ARC-164 UHF
     local arc164Device = GetDevice(5)
     local arc164Power = GetDevice(0):get_argument_value(50) > 0
@@ -54,7 +56,9 @@ function exportRadioUH60L(_data, SR)
 
     if arc164Power and isDCPower then
         -- radio volume * ics master volume * ics switch
-        arc164Volume = GetDevice(0):get_argument_value(51) * GetDevice(0):get_argument_value(401) * GetDevice(0):get_argument_value(404)
+        arc164Volume = GetDevice(0):get_argument_value(51)
+            * GetDevice(0):get_argument_value(401)
+            * GetDevice(0):get_argument_value(404)
         arc164Freq = arc164Device:get_frequency()
         arc164SecFreq = 243e6
     end
@@ -79,16 +83,18 @@ function exportRadioUH60L(_data, SR)
 
     if arc186Power and isDCPower then
         -- radio volume * ics master volume * ics switch
-        arc186Volume = GetDevice(0):get_argument_value(410) * GetDevice(0):get_argument_value(401) * GetDevice(0):get_argument_value(405)
+        arc186Volume = GetDevice(0):get_argument_value(410)
+            * GetDevice(0):get_argument_value(401)
+            * GetDevice(0):get_argument_value(405)
         arc186Freq = get_param_handle("ARC186param"):get() --arc186Device:get_frequency()
         arc186SecFreq = 121.5e6
     end
-    
+
     if not (arc186Power and isDCPower) then
         arc186Freq = 0
-    arc186SecFreq = 0
+        arc186SecFreq = 0
     end
-    
+
     _data.radios[4].name = "AN/ARC-186(V)"
     _data.radios[4].freq = arc186Freq
     _data.radios[4].modulation = 0
@@ -109,12 +115,14 @@ function exportRadioUH60L(_data, SR)
 
     if fm2Power and isDCPower then
         -- radio volume * ics master volume * ics switch
-        fm2Volume = GetDevice(0):get_argument_value(704) * GetDevice(0):get_argument_value(401) * GetDevice(0):get_argument_value(406)
+        fm2Volume = GetDevice(0):get_argument_value(704)
+            * GetDevice(0):get_argument_value(401)
+            * GetDevice(0):get_argument_value(406)
         fm2Freq = fm2Device:get_frequency()
         ARC201FM2Freq = get_param_handle("ARC201FM2param"):get()
         fm2Modulation = get_param_handle("ARC201_FM2_MODULATION"):get()
     end
-    
+
     if not (fm2Power and isDCPower) then
         ARC201FM2Freq = 0
     end
@@ -138,9 +146,9 @@ function exportRadioUH60L(_data, SR)
     _data.radios[6].freqMax = 29.9999e6
     _data.radios[6].volMode = 1
     _data.radios[6].freqMode = 1
-    _data.radios[6].encKey = 1 
+    _data.radios[6].encKey = 1
     _data.radios[6].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting --ANDR0ID Added
-    _data.radios[6].rtMode = 1 
+    _data.radios[6].rtMode = 1
 
     -- Only select radio if power to ICS panel
     local radioXMTSelectorValue = _data.selected or 0
@@ -152,23 +160,23 @@ function exportRadioUH60L(_data, SR)
     _data.selected = radioXMTSelectorValue
     _data.intercomHotMic = GetDevice(0):get_argument_value(402) > 0
     _data.ptt = GetDevice(0):get_argument_value(82) > 0
-    _data.control = 1; -- full radio HOTAS control
+    _data.control = 1 -- full radio HOTAS control
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
-        _data.ambient = {vol = 0.2,  abType = 'uh60' }
+        _data.ambient = { vol = 0.2, abType = "uh60" }
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'uh60' }
+        _data.ambient = { vol = 0, abType = "uh60" }
     end
-    
+
     return _data
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["UH-60L"] = exportRadioUH60L
-  SR.exporters["MH-60R"] = exportRadioUH60L
-  end
+    register = function(SR)
+        SR.exporters["UH-60L"] = exportRadioUH60L
+        SR.exporters["MH-60R"] = exportRadioUH60L
+    end,
 }
 return result

@@ -1,6 +1,11 @@
 function exportRadioMIG21(_data, SR)
-
-    _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "Only one radio by default" }
+    _data.capabilities = {
+        dcsPtt = true,
+        dcsIFF = false,
+        dcsRadioSwitch = false,
+        intercomHotMic = false,
+        desc = "Only one radio by default",
+    }
 
     _data.radios[2].name = "R-832"
     _data.radios[2].freq = SR.getRadioFrequency(22)
@@ -43,30 +48,29 @@ function exportRadioMIG21(_data, SR)
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
-    _data.control = 0; -- hotas radio
+    _data.control = 0 -- hotas radio
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _door = SR.getButtonPosition(1)
 
-        if _door > 0.15 then 
-            _data.ambient = {vol = 0.3,  abType = 'mig21' }
+        if _door > 0.15 then
+            _data.ambient = { vol = 0.3, abType = "mig21" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'mig21' }
-        end 
-    
+            _data.ambient = { vol = 0.2, abType = "mig21" }
+        end
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'mig21' }
+        _data.ambient = { vol = 0, abType = "mig21" }
     end
 
-    return _data;
+    return _data
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["MiG-21Bis"] = exportRadioMIG21
-  end
+    register = function(SR)
+        SR.exporters["MiG-21Bis"] = exportRadioMIG21
+    end,
 }
 return result

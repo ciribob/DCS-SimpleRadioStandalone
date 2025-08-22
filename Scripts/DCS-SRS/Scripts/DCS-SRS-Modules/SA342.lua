@@ -6,8 +6,7 @@ function exportRadioSA342(_data, SR)
     local _uhfId = 31
     local _fmId = 28
 
-    pcall(function() 
-
+    pcall(function()
         local temp = SR.getRadioFrequency(30, 500)
 
         if temp ~= nil then
@@ -16,7 +15,6 @@ function exportRadioSA342(_data, SR)
             _uhfId = 30
         end
     end)
-
 
     _data.radios[1].name = "Intercom"
     _data.radios[1].freq = 100.0
@@ -45,7 +43,6 @@ function exportRadioSA342(_data, SR)
         fm1Push = 456 -- IC2_FM1_Push
         uhfPush = 457 -- IC2_UHF_Push
     end
-    
 
     _data.radios[2].name = "TRAP 138A"
     local MHZ = 1000000
@@ -109,10 +106,10 @@ function exportRadioSA342(_data, SR)
         --check FM encryption
         _data.radios[4].enc = true
     end
-    
+
     if _seat < 2 then
         -- Pilot or Copilot have cockpit controls
-        
+
         if SR.getButtonPosition(vhfPush) > 0.5 then
             _data.selected = 1
         elseif SR.getButtonPosition(uhfPush) > 0.5 then
@@ -121,7 +118,7 @@ function exportRadioSA342(_data, SR)
             _data.selected = 3
         end
 
-        _data.control = 1; -- COCKPIT Controls
+        _data.control = 1 -- COCKPIT Controls
     else
         -- Neither Pilot nor copilot - everything overlay.
         _data.capabilities.dcsRadioSwitch = false
@@ -129,18 +126,18 @@ function exportRadioSA342(_data, SR)
         _data.radios[3].volMode = 1
         _data.radios[4].volMode = 1
 
-        _data.control = 0; -- OVERLAY Controls
+        _data.control = 0 -- OVERLAY Controls
     end
 
-     -- The option reads 'disable HOT_MIC', true means off.
-     _data.intercomHotMic = not SR.getSpecialOption('SA342.HOT_MIC')
+    -- The option reads 'disable HOT_MIC', true means off.
+    _data.intercomHotMic = not SR.getSpecialOption("SA342.HOT_MIC")
 
     -- HANDLE TRANSPONDER
-    _data.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=false,control=0,expansion=false}
+    _data.iff = { status = 0, mode1 = 0, mode2 = -1, mode3 = 0, mode4 = false, control = 0, expansion = false }
 
-    local iffPower =  SR.getButtonPosition(246)
+    local iffPower = SR.getButtonPosition(246)
 
-    local iffIdent =  SR.getButtonPosition(240) -- -1 is off 0 or more is on
+    local iffIdent = SR.getButtonPosition(240) -- -1 is off 0 or more is on
 
     if iffPower > 0 then
         _data.iff.status = 1 -- NORMAL
@@ -150,21 +147,25 @@ function exportRadioSA342(_data, SR)
         end
     end
 
-    local mode1On =  SR.getButtonPosition(248)
-    _data.iff.mode1 = SR.round(SR.getSelectorPosition(234,0.1), 0.1)*10+SR.round(SR.getSelectorPosition(235,0.1), 0.1)
+    local mode1On = SR.getButtonPosition(248)
+    _data.iff.mode1 = SR.round(SR.getSelectorPosition(234, 0.1), 0.1) * 10
+        + SR.round(SR.getSelectorPosition(235, 0.1), 0.1)
 
     if mode1On == 0 then
         _data.iff.mode1 = -1
     end
 
-    local mode3On =  SR.getButtonPosition(250)
-    _data.iff.mode3 = SR.round(SR.getSelectorPosition(236,0.1), 0.1) * 1000 + SR.round(SR.getSelectorPosition(237,0.1), 0.1) * 100 + SR.round(SR.getSelectorPosition(238,0.1), 0.1)* 10 + SR.round(SR.getSelectorPosition(239,0.1), 0.1)
+    local mode3On = SR.getButtonPosition(250)
+    _data.iff.mode3 = SR.round(SR.getSelectorPosition(236, 0.1), 0.1) * 1000
+        + SR.round(SR.getSelectorPosition(237, 0.1), 0.1) * 100
+        + SR.round(SR.getSelectorPosition(238, 0.1), 0.1) * 10
+        + SR.round(SR.getSelectorPosition(239, 0.1), 0.1)
 
     if mode3On == 0 then
         _data.iff.mode3 = -1
     end
 
-    local mode4On =  SR.getButtonPosition(251)
+    local mode4On = SR.getButtonPosition(251)
 
     if mode4On ~= 0 then
         _data.iff.mode4 = true
@@ -172,23 +173,23 @@ function exportRadioSA342(_data, SR)
         _data.iff.mode4 = false
     end
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
-        _data.ambient = {vol = 0.2,  abType = 'sa342' }
+        _data.ambient = { vol = 0.2, abType = "sa342" }
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'sa342' }
+        _data.ambient = { vol = 0, abType = "sa342" }
     end
 
     return _data
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["SA342M"] = exportRadioSA342
-  SR.exporters["SA342L"] = exportRadioSA342
-  SR.exporters["SA342Mistral"] = exportRadioSA342
-  SR.exporters["SA342Minigun"] = exportRadioSA342
-  end
+    register = function(SR)
+        SR.exporters["SA342M"] = exportRadioSA342
+        SR.exporters["SA342L"] = exportRadioSA342
+        SR.exporters["SA342Mistral"] = exportRadioSA342
+        SR.exporters["SA342Minigun"] = exportRadioSA342
+    end,
 }
 return result

@@ -1,6 +1,6 @@
 function exportRadioBF109(_data, SR)
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
-    
+
     _data.radios[2].name = "FuG 16ZY"
     _data.radios[2].freq = SR.getRadioFrequency(14)
     _data.radios[2].modulation = 0
@@ -40,30 +40,29 @@ function exportRadioBF109(_data, SR)
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
-    _data.control = 0; -- hotas radio
+    _data.control = 0 -- hotas radio
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _door = SR.getButtonPosition(95)
 
-        if _door > 0.1 then 
-            _data.ambient = {vol = 0.35,  abType = 'bf109' }
+        if _door > 0.1 then
+            _data.ambient = { vol = 0.35, abType = "bf109" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'bf109' }
-        end 
-    
+            _data.ambient = { vol = 0.2, abType = "bf109" }
+        end
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'bf109' }
+        _data.ambient = { vol = 0, abType = "bf109" }
     end
 
-    return _data;
+    return _data
 end
 
 local result = {
-   register = function(SR)
-      SR.exporters["Bf-109K-4"] = exportRadioBF109
-  end
+    register = function(SR)
+        SR.exporters["Bf-109K-4"] = exportRadioBF109
+    end,
 }
 return result

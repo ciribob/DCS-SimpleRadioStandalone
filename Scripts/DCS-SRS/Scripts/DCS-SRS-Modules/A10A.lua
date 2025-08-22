@@ -34,7 +34,7 @@ function exportRadioA10A(_data, SR)
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
-    _data.control = 0;
+    _data.control = 0
     _data.selected = 1
 
     if SR.getAmbientVolumeEngine() > 10 then
@@ -43,21 +43,21 @@ function exportRadioA10A(_data, SR)
         --  local _door = SR.getButtonPosition(181)
 
         --  if _door > 0.15 then
-        _data.ambient = { vol = 0.3, abType = 'a10' }
+        _data.ambient = { vol = 0.3, abType = "a10" }
         -- else
         --     _data.ambient = {vol = 0.2,  abType = 'a10' }
         --  end
     else
         -- engine off
-        _data.ambient = { vol = 0, abType = 'a10' }
+        _data.ambient = { vol = 0, abType = "a10" }
     end
 
     return _data
 end
 
 local result = {
-   register = function(SR)
-      SR.exporters["A-10A"] = exportRadioA10A
-  end
+    register = function(SR)
+        SR.exporters["A-10A"] = exportRadioA10A
+    end,
 }
 return result

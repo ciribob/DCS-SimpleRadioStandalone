@@ -1,6 +1,5 @@
 local _jf17 = nil
 function exportRadioJF17(_data, SR)
-
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
     -- reset state on aircraft switch
@@ -21,14 +20,14 @@ function exportRadioJF17(_data, SR)
                     enc = false,
                     guard = false,
                 },
-            }
+            },
         }
     end
 
     -- Read ufcp lines.
     local ufcp = {}
 
-    for line=3,6 do
+    for line = 3, 6 do
         ufcp[#ufcp + 1] = SR.getListIndicatorValue(line)["txt_win" .. (line - 2)]
     end
 
@@ -95,7 +94,7 @@ function exportRadioJF17(_data, SR)
         displayedRadio.guard = string.match(ufcp[2], "^RT%+G%s+") ~= nil
     end
 
-    for radioId=2,3 do
+    for radioId = 2, 3 do
         local state = _jf17.radios[radioId]
         local dataRadio = _data.radios[radioId]
         dataRadio.name = "R&S M3AR COMM" .. (radioId - 1)
@@ -129,11 +128,9 @@ function exportRadioJF17(_data, SR)
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
     _data.selected = 1
-    _data.control = 0; -- partial radio, allows hotkeys
+    _data.control = 0 -- partial radio, allows hotkeys
 
-
-
-    _data.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=false,control=0,expansion=false}
+    _data.iff = { status = 0, mode1 = 0, mode2 = -1, mode3 = 0, mode4 = false, control = 0, expansion = false }
 
     local _iff = GetDevice(15)
 
@@ -153,30 +150,29 @@ function exportRadioJF17(_data, SR)
         _data.iff.mode3 = -1
     end
 
-    _data.iff.mode4 =  _iff:is_m6_trs_on()
+    _data.iff.mode4 = _iff:is_m6_trs_on()
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _door = SR.getButtonPosition(181)
 
-        if _door > 0.2 then 
-            _data.ambient = {vol = 0.3,  abType = 'jf17' }
+        if _door > 0.2 then
+            _data.ambient = { vol = 0.3, abType = "jf17" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'jf17' }
-        end 
-    
+            _data.ambient = { vol = 0.2, abType = "jf17" }
+        end
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'jf17' }
+        _data.ambient = { vol = 0, abType = "jf17" }
     end
 
     return _data
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["JF-17"] = exportRadioJF17
-  end
+    register = function(SR)
+        SR.exporters["JF-17"] = exportRadioJF17
+    end,
 }
 return result

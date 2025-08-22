@@ -1,5 +1,4 @@
 function exportRadioFW190(_data, SR)
-
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
     _data.radios[2].name = "FuG 16ZY"
@@ -8,13 +7,12 @@ function exportRadioFW190(_data, SR)
 
     local _volRaw = GetDevice(0):get_argument_value(83)
     if _volRaw >= 0 and _volRaw <= 0.25 then
-        _data.radios[2].volume = (1.0 - SR.getRadioVolume(0, 83,{0,0.5},true)) + 0.5 -- Volume knob is not behaving..
+        _data.radios[2].volume = (1.0 - SR.getRadioVolume(0, 83, { 0, 0.5 }, true)) + 0.5 -- Volume knob is not behaving..
     else
-        _data.radios[2].volume = ((1.0 - SR.getRadioVolume(0, 83,{0,0.5},true)) - 0.5) * -1.0 -- ABS
+        _data.radios[2].volume = ((1.0 - SR.getRadioVolume(0, 83, { 0, 0.5 }, true)) - 0.5) * -1.0 -- ABS
     end
 
     _data.selected = 1
-
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[3].name = "AN/ARC-186(V)"
@@ -42,31 +40,30 @@ function exportRadioFW190(_data, SR)
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
-    _data.control = 0; -- hotas radio
+    _data.control = 0 -- hotas radio
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _door = SR.getButtonPosition(194)
 
-        if _door > 0.1 then 
-            _data.ambient = {vol = 0.35,  abType = 'fw190' }
+        if _door > 0.1 then
+            _data.ambient = { vol = 0.35, abType = "fw190" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'fw190' }
-        end 
-    
+            _data.ambient = { vol = 0.2, abType = "fw190" }
+        end
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'fw190' }
+        _data.ambient = { vol = 0, abType = "fw190" }
     end
 
-    return _data;
+    return _data
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["FW-190D9"] = exportRadioFW190
-  SR.exporters["FW-190A8"] = exportRadioFW190
-  end
+    register = function(SR)
+        SR.exporters["FW-190D9"] = exportRadioFW190
+        SR.exporters["FW-190A8"] = exportRadioFW190
+    end,
 }
 return result

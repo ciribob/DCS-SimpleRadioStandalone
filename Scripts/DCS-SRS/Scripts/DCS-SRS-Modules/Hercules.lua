@@ -1,6 +1,7 @@
 function exportRadioHercules(_data, SR)
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = true, desc = "" }
-    _data.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=false,control=1,expansion=false,mic=-1}
+    _data.iff =
+        { status = 0, mode1 = 0, mode2 = -1, mode3 = 0, mode4 = false, control = 1, expansion = false, mic = -1 }
 
     -- Intercom
     _data.radios[1].name = "Intercom"
@@ -36,7 +37,7 @@ function exportRadioHercules(_data, SR)
     -- Expansions - Server Side Controlled
     -- VHF AM - 116-151.975MHz
     _data.radios[3].name = "AN/ARC-186(V) AM"
-    _data.radios[3].freq = 124.8e6 
+    _data.radios[3].freq = 124.8e6
     _data.radios[3].modulation = 0 -- AM
     _data.radios[3].secFreq = 121.5e6
     _data.radios[3].volume = 1.0
@@ -58,20 +59,20 @@ function exportRadioHercules(_data, SR)
     _data.radios[4].freqMode = 1
     _data.radios[4].expansion = false
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
-        _data.ambient = {vol = 0.2,  abType = 'hercules' }
+        _data.ambient = { vol = 0.2, abType = "hercules" }
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'hercules' }
+        _data.ambient = { vol = 0, abType = "hercules" }
     end
 
-    return _data;
+    return _data
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["Hercules"] = exportRadioHercules
-  end
+    register = function(SR)
+        SR.exporters["Hercules"] = exportRadioHercules
+    end,
 }
 return result

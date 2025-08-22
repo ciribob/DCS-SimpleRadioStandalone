@@ -1,6 +1,11 @@
 function exportRadioF5E(_data, SR)
-
-    _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "Only one radio by default" }
+    _data.capabilities = {
+        dcsPtt = true,
+        dcsIFF = true,
+        dcsRadioSwitch = false,
+        intercomHotMic = false,
+        desc = "Only one radio by default",
+    }
 
     _data.radios[2].name = "AN/ARC-164"
     _data.radios[2].freq = SR.getRadioFrequency(23)
@@ -33,7 +38,7 @@ function exportRadioF5E(_data, SR)
 
     -- Check PTT - By Tarres!
     --NWS works as PTT when wheels up
-    if (SR.getButtonPosition(135) > 0.5 or (SR.getButtonPosition(131) > 0.5 and SR.getButtonPosition(83) > 0.5)) then
+    if SR.getButtonPosition(135) > 0.5 or (SR.getButtonPosition(131) > 0.5 and SR.getButtonPosition(83) > 0.5) then
         _data.ptt = true
     else
         _data.ptt = false
@@ -65,13 +70,13 @@ function exportRadioF5E(_data, SR)
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
-    _data.control = 0; -- hotas radio
+    _data.control = 0 -- hotas radio
 
-    _data.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=false,control=0,expansion=false}
+    _data.iff = { status = 0, mode1 = 0, mode2 = -1, mode3 = 0, mode4 = false, control = 0, expansion = false }
 
-    local iffPower =  SR.getSelectorPosition(200,0.1)
+    local iffPower = SR.getSelectorPosition(200, 0.1)
 
-    local iffIdent =  SR.getButtonPosition(207) -- -1 is off 0 or more is on
+    local iffIdent = SR.getButtonPosition(207) -- -1 is off 0 or more is on
 
     if iffPower >= 2 then
         _data.iff.status = 1 -- NORMAL
@@ -84,7 +89,6 @@ function exportRadioF5E(_data, SR)
         -- MIC mode switch - if you transmit on UHF then also IDENT
         -- https://github.com/ciribob/DCS-SimpleRadioStandalone/issues/408
         if iffIdent == -1 then
-
             _data.iff.mic = 2
 
             if _data.ptt and _data.selected == 2 then
@@ -93,17 +97,20 @@ function exportRadioF5E(_data, SR)
         end
     end
 
-    local mode1On =  SR.getButtonPosition(202)
+    local mode1On = SR.getButtonPosition(202)
 
-    _data.iff.mode1 = SR.round(SR.getButtonPosition(209), 0.1)*100+SR.round(SR.getButtonPosition(210), 0.1)*10
+    _data.iff.mode1 = SR.round(SR.getButtonPosition(209), 0.1) * 100 + SR.round(SR.getButtonPosition(210), 0.1) * 10
 
     if mode1On ~= 0 then
         _data.iff.mode1 = -1
     end
 
-    local mode3On =  SR.getButtonPosition(204)
+    local mode3On = SR.getButtonPosition(204)
 
-    _data.iff.mode3 = SR.round(SR.getButtonPosition(211), 0.1) * 10000 + SR.round(SR.getButtonPosition(212), 0.1) * 1000 + SR.round(SR.getButtonPosition(213), 0.1)* 100 + SR.round(SR.getButtonPosition(214), 0.1) * 10
+    _data.iff.mode3 = SR.round(SR.getButtonPosition(211), 0.1) * 10000
+        + SR.round(SR.getButtonPosition(212), 0.1) * 1000
+        + SR.round(SR.getButtonPosition(213), 0.1) * 100
+        + SR.round(SR.getButtonPosition(214), 0.1) * 10
 
     if mode3On ~= 0 then
         _data.iff.mode3 = -1
@@ -112,7 +119,7 @@ function exportRadioF5E(_data, SR)
         _data.iff.mode3 = 7700
     end
 
-    local mode4On =  SR.getButtonPosition(208)
+    local mode4On = SR.getButtonPosition(208)
 
     if mode4On ~= 0 then
         _data.iff.mode4 = true
@@ -120,28 +127,27 @@ function exportRadioF5E(_data, SR)
         _data.iff.mode4 = false
     end
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _door = SR.getButtonPosition(181)
 
-        if _door > 0.1 then 
-            _data.ambient = {vol = 0.3,  abType = 'f5' }
+        if _door > 0.1 then
+            _data.ambient = { vol = 0.3, abType = "f5" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'f5' }
-        end 
-    
+            _data.ambient = { vol = 0.2, abType = "f5" }
+        end
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'f5' }
+        _data.ambient = { vol = 0, abType = "f5" }
     end
 
-    return _data;
+    return _data
 end
 
 local result = {
-   register = function(SR)
-  SR.exporters["F-5E-3"] = SR.exportRadioF5E
-  end
+    register = function(SR)
+        SR.exporters["F-5E-3"] = SR.exportRadioF5E
+    end,
 }
 return result

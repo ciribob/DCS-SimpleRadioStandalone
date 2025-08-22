@@ -1,11 +1,10 @@
 function exportRadioAJS37(_data, SR)
-
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
     _data.radios[2].name = "FR 22"
     _data.radios[2].freq = SR.getRadioFrequency(30)
     _data.radios[2].modulation = SR.getRadioModulation(30)
-    _data.radios[2].volume =  SR.getRadioVolume(0, 385,{0.0, 1.0},false)
+    _data.radios[2].volume = SR.getRadioVolume(0, 385, { 0.0, 1.0 }, false)
     _data.radios[2].volMode = 0
 
     _data.radios[3].name = "FR 24"
@@ -28,31 +27,30 @@ function exportRadioAJS37(_data, SR)
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
-    _data.control = 0;
+    _data.control = 0
     _data.selected = 1
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _door = SR.getButtonPosition(10)
 
-        if _door > 0.2 then 
-            _data.ambient = {vol = 0.3,  abType = 'ajs37' }
+        if _door > 0.2 then
+            _data.ambient = { vol = 0.3, abType = "ajs37" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'ajs37' }
-        end 
-    
+            _data.ambient = { vol = 0.2, abType = "ajs37" }
+        end
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'ajs37' }
+        _data.ambient = { vol = 0, abType = "ajs37" }
     end
 
     return _data
 end
 
 local result = {
-   register = function(SR)
-      SR.exporters["AJS37"] = exportRadioAJS37
-  end
+    register = function(SR)
+        SR.exporters["AJS37"] = exportRadioAJS37
+    end,
 }
 return result

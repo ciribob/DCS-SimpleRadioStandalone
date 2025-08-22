@@ -1,4 +1,4 @@
-﻿function exportRadioMI8(_data, SR)
+function exportRadioMI8(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
 

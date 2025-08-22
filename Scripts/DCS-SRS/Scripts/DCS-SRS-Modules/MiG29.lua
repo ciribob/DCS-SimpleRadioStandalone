@@ -1,4 +1,4 @@
-﻿function exportRadioMiG29(_data, SR)
+function exportRadioMiG29(_data, SR)
     _data.radios[2].name = "R-862"
     _data.radios[2].freq = 251.0 * 1000000 --V/UHF, frequencies are: VHF range of 100 to 149.975 MHz and UHF range of 220 to 399.975 MHz
     _data.radios[2].modulation = 0

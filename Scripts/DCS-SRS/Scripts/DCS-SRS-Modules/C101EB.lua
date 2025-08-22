@@ -1,4 +1,4 @@
-﻿function exportRadioC101EB(_data, SR)
+function exportRadioC101EB(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "Pull the HOT MIC breaker up to enable HOT MIC" }
 

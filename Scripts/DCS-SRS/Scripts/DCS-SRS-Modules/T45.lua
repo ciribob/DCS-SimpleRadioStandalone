@@ -1,4 +1,4 @@
-﻿function exportRadioT45(_data, SR)
+function exportRadioT45(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = true, desc = "" }
 

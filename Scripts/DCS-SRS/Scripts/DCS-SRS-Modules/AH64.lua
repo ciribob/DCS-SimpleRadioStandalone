@@ -1,4 +1,4 @@
-﻿local _ah64Mode1Persist = -1 -- Need this persistence for only MODE1 because it's pulled from the XPNDR page; default it to off
+local _ah64Mode1Persist = -1 -- Need this persistence for only MODE1 because it's pulled from the XPNDR page; default it to off
 
 function exportRadioAH64D(_data, SR)
     _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "Recommended: Always Allow SRS Hotkeys - OFF. Bind Intercom Select & PTT, Radio PTT and DCS RTS up down" }

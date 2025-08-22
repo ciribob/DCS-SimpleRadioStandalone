@@ -1,4 +1,4 @@
-﻿function exportRadioF5E(_data, SR)
+function exportRadioF5E(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "Only one radio by default" }
 

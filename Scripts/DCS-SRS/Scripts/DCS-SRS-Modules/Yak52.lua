@@ -1,4 +1,4 @@
-﻿function exportRadioYak52(_data, SR)
+function exportRadioYak52(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 

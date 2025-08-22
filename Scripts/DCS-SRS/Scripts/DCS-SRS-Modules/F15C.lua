@@ -1,4 +1,4 @@
-﻿function exportRadioF15C(_data, SR)
+function exportRadioF15C(_data, SR)
 
     _data.radios[2].name = "AN/ARC-164 UHF-1"
     _data.radios[2].freq = 251.0 * 1000000 --225 to 399.975MHZ

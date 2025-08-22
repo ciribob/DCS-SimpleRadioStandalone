@@ -1,5 +1,4 @@
-﻿function exportRadioA4E(_data, SR)
-
+function exportRadioA4E(_data, SR)
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
     --local intercom = GetDevice(4) --commented out for now, may be useful in future
@@ -29,12 +28,12 @@
     arc51.freq = mainFreq
     arc51.secFreq = guardFreq
     arc51.channel = nil -- what is this used for?
-    arc51.modulation = 0  -- AM only
+    arc51.modulation = 0 -- AM only
     arc51.freqMin = 220.000e6
     arc51.freqMax = 399.950e6
 
     -- TODO Check if there are other volume knobs in series
-    arc51.volume = SR.getRadioVolume(0, 365, {0.2, 0.8}, false)
+    arc51.volume = SR.getRadioVolume(0, 365, { 0.2, 0.8 }, false)
     if arc51.volume < 0.0 then
         -- The knob position at startup is 0.0, not 0.2, and it gets scaled to -33.33
         arc51.volume = 0.0
@@ -63,32 +62,30 @@
     _data.radios[4].freqMode = 1
     _data.radios[4].expansion = true
 
-    _data.control = 0;
+    _data.control = 0
     _data.selected = 1
 
-
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _door = SR.getButtonPosition(26)
 
-        if _door > 0.2 then 
-            _data.ambient = {vol = 0.3,  abType = 'A4' }
+        if _door > 0.2 then
+            _data.ambient = { vol = 0.3, abType = "A4" }
         else
-            _data.ambient = {vol = 0.2,  abType = 'A4' }
-        end 
-    
+            _data.ambient = { vol = 0.2, abType = "A4" }
+        end
     else
         -- engine off
-        _data.ambient = {vol = 0, abType = 'A4' }
+        _data.ambient = { vol = 0, abType = "A4" }
     end
 
     return _data
 end
 
 local result = {
-   register = function(SR)
-      SR.exporters["A-4E-C"] = exportRadioA4E
-  end
+    register = function(SR)
+        SR.exporters["A-4E-C"] = exportRadioA4E
+    end,
 }
 return result

@@ -1,4 +1,4 @@
-﻿function exportRadioSA342(_data, SR)
+function exportRadioSA342(_data, SR)
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "" }
 
     -- Check for version

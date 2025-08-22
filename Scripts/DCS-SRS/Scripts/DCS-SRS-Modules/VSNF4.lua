@@ -1,4 +1,4 @@
-﻿function exportRadioVSNF4(_data, SR)
+function exportRadioVSNF4(_data, SR)
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
    
     _data.radios[2].name = "AN/ARC-164 UHF"

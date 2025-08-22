@@ -1,4 +1,4 @@
-﻿function exportRadioF15ESE(_data, SR)
+function exportRadioF15ESE(_data, SR)
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = true, desc = "" }
 
     _data.radios[1].name = "Intercom"

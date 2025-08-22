@@ -1,4 +1,4 @@
-﻿function exportRadioF1CE(_data, SR)
+function exportRadioF1CE(_data, SR)
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
     _data.radios[2].name = "TRAP-136 V/UHF"

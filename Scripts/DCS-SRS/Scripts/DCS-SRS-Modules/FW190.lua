@@ -1,4 +1,4 @@
-﻿function exportRadioFW190(_data, SR)
+function exportRadioFW190(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 

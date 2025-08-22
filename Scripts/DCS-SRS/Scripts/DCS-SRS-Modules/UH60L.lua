@@ -1,4 +1,4 @@
-﻿function exportRadioUH60L(_data, SR)
+function exportRadioUH60L(_data, SR)
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = true, desc = "" }
 
     local isDCPower = SR.getButtonPosition(17) > 0 -- just using battery switch position for now, could tie into DC ESS BUS later?

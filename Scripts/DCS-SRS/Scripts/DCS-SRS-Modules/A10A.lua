@@ -1,4 +1,4 @@
-﻿function exportRadioA10A(_data, SR)
+function exportRadioA10A(_data, SR)
     _data.radios[2].name = "AN/ARC-186(V)"
     _data.radios[2].freq = 124.8 * 1000000 --116,00-151,975 MHz
     _data.radios[2].modulation = 0

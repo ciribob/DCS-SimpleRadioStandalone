@@ -1,4 +1,4 @@
-﻿function exportRadioL39(_data, SR)
+function exportRadioL39(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
 

@@ -1,4 +1,4 @@
-﻿local _mirageEncStatus = false
+local _mirageEncStatus = false
 local _previousEncState = 0
 
 function exportRadioM2000C(_data, SR)

@@ -1,4 +1,4 @@
-﻿--for F-14
+--for F-14
 function exportRadioF14(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "" }

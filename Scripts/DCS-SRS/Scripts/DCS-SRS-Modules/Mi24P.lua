@@ -1,4 +1,4 @@
-﻿function exportRadioMI24P(_data, SR)
+function exportRadioMI24P(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = true, desc = "Use Radio/ICS Switch to control Intercom Hot Mic" }
 

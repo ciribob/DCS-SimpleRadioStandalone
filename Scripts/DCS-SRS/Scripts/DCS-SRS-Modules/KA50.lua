@@ -1,4 +1,4 @@
-﻿function exportRadioKA50(_data, SR)
+function exportRadioKA50(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
 

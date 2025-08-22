@@ -1,4 +1,4 @@
-﻿--for F-4
+--for F-4
 function exportRadioF4(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "Expansion Radio requires Always allow SRS Hotkeys on. 2nd radio is receive only" }

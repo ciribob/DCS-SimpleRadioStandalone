@@ -1,4 +1,4 @@
-﻿function exportRadioUH1H(_data, SR)
+function exportRadioUH1H(_data, SR)
 
     local intercomOn =  SR.getButtonPosition(27)
     _data.radios[1].name = "Intercom"

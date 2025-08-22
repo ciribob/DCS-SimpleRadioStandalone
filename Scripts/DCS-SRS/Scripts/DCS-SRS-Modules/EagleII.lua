@@ -1,4 +1,4 @@
-﻿function exportRadioEagleII(_data, SR)
+function exportRadioEagleII(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 

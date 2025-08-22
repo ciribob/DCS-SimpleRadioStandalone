@@ -1,4 +1,4 @@
-﻿local _av8 = {}
+local _av8 = {}
 _av8.radio1 = {}
 _av8.radio2 = {}
 _av8.radio1.guard = 0

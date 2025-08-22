@@ -1,4 +1,4 @@
-﻿function exportRadioSK60(_data, SR)
+function exportRadioSK60(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 

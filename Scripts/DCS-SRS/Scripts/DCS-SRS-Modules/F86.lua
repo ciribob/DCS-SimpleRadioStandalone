@@ -1,4 +1,4 @@
-﻿function exportRadioF86Sabre(_data, SR)
+function exportRadioF86Sabre(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "Only one radio by default" }
 

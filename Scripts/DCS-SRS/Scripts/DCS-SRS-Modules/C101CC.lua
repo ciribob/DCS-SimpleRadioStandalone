@@ -1,4 +1,4 @@
-﻿function exportRadioC101CC(_data, SR)
+function exportRadioC101CC(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "The hot mic talk button (labeled TALK in cockpit) must be pulled out" }
 

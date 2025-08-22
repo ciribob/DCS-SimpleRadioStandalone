@@ -1,4 +1,4 @@
-﻿function exportRadioPUCARA(_data, SR)
+function exportRadioPUCARA(_data, SR)
    _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
    
    _data.radios[1].name = "Intercom"

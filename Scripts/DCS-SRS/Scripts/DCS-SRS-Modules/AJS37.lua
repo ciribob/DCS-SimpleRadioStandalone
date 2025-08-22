@@ -1,4 +1,4 @@
-﻿function exportRadioAJS37(_data, SR)
+function exportRadioAJS37(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 

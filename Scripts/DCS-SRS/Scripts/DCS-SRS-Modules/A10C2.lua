@@ -1,4 +1,4 @@
-﻿--for A10C2
+--for A10C2
 local _a10c2 = {}
 _a10c2.enc = false
 _a10c2.encKey = 1

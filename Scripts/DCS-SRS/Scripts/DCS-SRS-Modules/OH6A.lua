@@ -1,4 +1,4 @@
-﻿function exportRadioOH6A(_data, SR)
+function exportRadioOH6A(_data, SR)
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = true, desc = "" }
 
     _data.radios[1].name = "Intercom"

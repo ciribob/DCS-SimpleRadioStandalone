@@ -1,4 +1,4 @@
-﻿function exportRadioBF109(_data, SR)
+function exportRadioBF109(_data, SR)
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
     
     _data.radios[2].name = "FuG 16ZY"

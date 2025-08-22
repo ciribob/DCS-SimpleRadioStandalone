@@ -1,4 +1,4 @@
-﻿local _f16 = {}
+local _f16 = {}
 _f16.radio1 = {}
 _f16.radio1.guard = 0
 

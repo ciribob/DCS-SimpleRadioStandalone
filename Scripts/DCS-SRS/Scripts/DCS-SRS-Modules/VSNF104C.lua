@@ -1,4 +1,4 @@
-﻿function exportRadioVSNF104C(_data, SR)
+function exportRadioVSNF104C(_data, SR)
     _data.capabilities	= { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
     _data.control		= 0 -- full radio			
 

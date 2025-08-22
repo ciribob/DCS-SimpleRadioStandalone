@@ -1,4 +1,4 @@
-﻿--for A10C
+--for A10C
 function exportRadioA10C(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = false, desc = "Using cockpit PTT (HOTAS Mic Switch) requires use of VoIP bindings." }

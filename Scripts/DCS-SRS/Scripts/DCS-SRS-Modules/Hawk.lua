@@ -1,4 +1,4 @@
-﻿function exportRadioHawk(_data, SR)
+function exportRadioHawk(_data, SR)
 
     local MHZ = 1000000
 

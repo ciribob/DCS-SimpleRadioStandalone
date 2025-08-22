@@ -1,4 +1,4 @@
-﻿function exportRadioF1BE(_data, SR)
+function exportRadioF1BE(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 

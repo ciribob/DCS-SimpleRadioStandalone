@@ -1,4 +1,4 @@
-﻿local _jf17 = nil
+local _jf17 = nil
 function exportRadioJF17(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }

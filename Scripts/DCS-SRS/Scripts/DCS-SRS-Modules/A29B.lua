@@ -1,4 +1,4 @@
-﻿function exportRadioA29B(_data, SR)
+function exportRadioA29B(_data, SR)
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
     local com1_freq = 0

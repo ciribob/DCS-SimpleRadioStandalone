@@ -1,4 +1,4 @@
-﻿local _ch47 = {}
+local _ch47 = {}
 _ch47.radio1 = {enc=0}
 _ch47.radio2 = {guard=0,enc=false}
 _ch47.radio3 = {guard=0,enc=false}

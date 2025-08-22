@@ -1,4 +1,4 @@
-﻿function exportRadioSpitfireLFMkIX(_data, SR)
+function exportRadioSpitfireLFMkIX(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 

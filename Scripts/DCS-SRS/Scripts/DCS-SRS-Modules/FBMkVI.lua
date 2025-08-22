@@ -1,4 +1,4 @@
-﻿function exportRadioMosquitoFBMkVI (_data, SR)
+function exportRadioMosquitoFBMkVI (_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 

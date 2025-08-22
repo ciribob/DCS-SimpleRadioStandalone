@@ -1,4 +1,4 @@
-﻿function exportRadioF15C(_data)
+﻿function exportRadioF15C(_data, SR)
 
     _data.radios[2].name = "AN/ARC-164 UHF-1"
     _data.radios[2].freq = 251.0 * 1000000 --225 to 399.975MHZ
@@ -59,10 +59,9 @@
     return _data
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["F-15C"] = exportRadioF15C
-end
-
+  end
+}
 return result

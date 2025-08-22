@@ -1,4 +1,4 @@
-﻿function exportRadioA4E(_data)
+﻿function exportRadioA4E(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
@@ -86,10 +86,9 @@
     return _data
 end
 
-local result = { }
-
-function result.register(SR)
-  SR.exporters["A-4E-C"] = exportRadioA4E
-end
-
+local result = {
+   register = function(SR)
+      SR.exporters["A-4E-C"] = exportRadioA4E
+  end
+}
 return result

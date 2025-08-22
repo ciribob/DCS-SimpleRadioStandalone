@@ -1,5 +1,5 @@
 ﻿--for F-14
-function exportRadioF14(_data)
+function exportRadioF14(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "" }
 
@@ -172,11 +172,10 @@ function exportRadioF14(_data)
     return _data
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["F-14B"] = exportRadioF14
   SR.exporters["F-14A-135-GR"] = exportRadioF14
-end
-
+  end
+}
 return result

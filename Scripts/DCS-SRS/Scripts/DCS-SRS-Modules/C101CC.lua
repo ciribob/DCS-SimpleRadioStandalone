@@ -1,4 +1,4 @@
-﻿function exportRadioC101CC(_data)
+﻿function exportRadioC101CC(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "The hot mic talk button (labeled TALK in cockpit) must be pulled out" }
 
@@ -152,10 +152,9 @@
     return _data;
 end
 
-local result = { }
-
-function result.register(SR)
-  SR.exporters["C-101CC"] = exportRadioC101CC
-end
-
+local result = {
+   register = function(SR)
+      SR.exporters["C-101CC"] = exportRadioC101CC
+  end
+}
 return result

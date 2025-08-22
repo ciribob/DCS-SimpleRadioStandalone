@@ -1,4 +1,4 @@
-﻿function exportRadioT45(_data)
+﻿function exportRadioT45(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = true, desc = "" }
 
@@ -108,11 +108,9 @@
     return _data
 end
 
-
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["T-45"] = exportRadioT45
-end
-
+  end
+}
 return result

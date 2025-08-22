@@ -1,4 +1,4 @@
-﻿function exportRadioSA342(_data)
+﻿function exportRadioSA342(_data, SR)
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "" }
 
     -- Check for version
@@ -183,13 +183,12 @@
     return _data
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["SA342M"] = exportRadioSA342
   SR.exporters["SA342L"] = exportRadioSA342
   SR.exporters["SA342Mistral"] = exportRadioSA342
   SR.exporters["SA342Minigun"] = exportRadioSA342
-end
-
+  end
+}
 return result

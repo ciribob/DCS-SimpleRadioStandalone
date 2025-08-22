@@ -8,7 +8,7 @@ _a10c2.increaseVol = false
 _a10c2.decreaseVol = false
 _a10c2.enableVolumeControl = false
 
-function exportRadioA10C2(_data)
+function exportRadioA10C2(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = false, desc = "Using cockpit PTT (HOTAS Mic Switch) requires use of VoIP bindings." }
 
@@ -295,11 +295,9 @@ function exportRadioA10C2(_data)
     return _data
 end
 
-
-local result = { }
-
-function result.register(SR)
-    SR.exporters["A-10C_2"] = exportRadioA10C2
-end
-
+local result = {
+   register = function(SR)
+      SR.exporters["A-10C_2"] = exportRadioA10C2
+  end
+}
 return result

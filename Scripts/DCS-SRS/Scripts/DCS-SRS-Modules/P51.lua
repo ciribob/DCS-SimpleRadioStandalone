@@ -1,4 +1,4 @@
-﻿function exportRadioP51(_data)
+﻿function exportRadioP51(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "Only one radio by default" }
 
@@ -62,12 +62,11 @@
     return _data;
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["P-51D"] = exportRadioP51
   SR.exporters["P-51D-30-NA"] = exportRadioP51
   SR.exporters["TF-51D"] = exportRadioP51
-end
-
+  end
+}
 return result

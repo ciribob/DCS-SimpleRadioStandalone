@@ -1,4 +1,4 @@
-﻿function exportRadioEagleII(_data)
+﻿function exportRadioEagleII(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
@@ -68,11 +68,9 @@
     return _data
 end
 
-
-local result = { }
-
-function result.register(SR)
-  SR.exporters["Christen Eagle II"] = exportRadioEagleII
-end
-
+local result = {
+   register = function(SR)
+      SR.exporters["Christen Eagle II"] = exportRadioEagleII
+  end
+}
 return result

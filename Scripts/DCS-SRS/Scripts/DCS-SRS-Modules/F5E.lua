@@ -1,4 +1,4 @@
-﻿function exportRadioF5E(_data)
+﻿function exportRadioF5E(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "Only one radio by default" }
 
@@ -139,10 +139,9 @@
     return _data;
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["F-5E-3"] = SR.exportRadioF5E
-end
-
+  end
+}
 return result

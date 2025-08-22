@@ -1,4 +1,4 @@
-﻿function exportRadioSK60(_data)
+﻿function exportRadioSK60(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
@@ -60,10 +60,9 @@
 
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["SK-60"] = exportRadioSK60
-end
-
+  end
+}
 return result

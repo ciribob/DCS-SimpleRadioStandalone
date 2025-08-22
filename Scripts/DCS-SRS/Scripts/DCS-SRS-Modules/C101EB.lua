@@ -1,4 +1,4 @@
-﻿function exportRadioC101EB(_data)
+﻿function exportRadioC101EB(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "Pull the HOT MIC breaker up to enable HOT MIC" }
 
@@ -135,10 +135,9 @@
     return _data;
 end
 
-local result = { }
-
-function result.register(SR)
-  SR.exporters["C-101EB"] = exportRadioC101EB
-end
-
+local result = {
+   register = function(SR)
+      SR.exporters["C-101EB"] = exportRadioC101EB
+  end
+}
 return result

@@ -1,7 +1,6 @@
-﻿function exportRadioSU27(_data)
+﻿function exportRadioSU27(_data, SR)
     _data.radios[2].name = "R-800"
-    _data.radios[2].freq = 251.0 *
-    1000000                                --V/UHF, frequencies are: VHF range of 100 to 149.975 MHz and UHF range of 220 to 399.975 MHz
+    _data.radios[2].freq = 251.0 * 1000000 --V/UHF, frequencies are: VHF range of 100 to 149.975 MHz and UHF range of 220 to 399.975 MHz
     _data.radios[2].modulation = 0
     _data.radios[2].secFreq = 121.5 * 1000000
     _data.radios[2].volume = 1.0
@@ -56,13 +55,11 @@
     return _data
 end
 
-
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["Su-27"] = exportRadioSU27
   SR.exporters["J-11A"] = exportRadioSU27
   SR.exporters["Su-33"] = exportRadioSU27
-end
-
+  end
+}
 return result

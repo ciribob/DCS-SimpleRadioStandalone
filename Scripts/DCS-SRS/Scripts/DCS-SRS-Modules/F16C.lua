@@ -2,7 +2,7 @@
 _f16.radio1 = {}
 _f16.radio1.guard = 0
 
-function exportRadioF16C(_data)
+function exportRadioF16C(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
     -- UHF
@@ -170,10 +170,8 @@ function exportRadioF16C(_data)
     return _data
 end
 
-
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
     SR.exporters["F-16C_50"] = exportRadioF16C
     SR.exporters["F-16D_50_NS"] = exportRadioF16C
     SR.exporters["F-16D_52_NS"] = exportRadioF16C
@@ -182,6 +180,6 @@ function result.register(SR)
     SR.exporters["F-16D_Barak_40"] = exportRadioF16C
     SR.exporters["F-16D_Barak_30"] = exportRadioF16C
     SR.exporters["F-16I"] = exportRadioF16C
-end
-
+  end
+}
 return result

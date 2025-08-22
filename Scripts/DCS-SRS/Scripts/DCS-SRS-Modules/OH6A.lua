@@ -1,6 +1,5 @@
-﻿function exportRadioOH6A(_data)
+﻿function exportRadioOH6A(_data, SR)
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = true, desc = "" }
-
 
     _data.radios[1].name = "Intercom"
     _data.radios[1].freq = 100.0
@@ -119,11 +118,9 @@
     return _data
 end
 
-
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["OH-6A"] = exportRadioOH6A
-end
-
+  end
+}
 return result

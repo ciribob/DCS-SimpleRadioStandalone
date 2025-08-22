@@ -1,4 +1,4 @@
-﻿function exportRadioAJS37(_data)
+﻿function exportRadioAJS37(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
@@ -50,10 +50,9 @@
     return _data
 end
 
-local result = { }
-
-function result.register(SR)
-  SR.exporters["AJS37"] = exportRadioAJS37
-end
-
+local result = {
+   register = function(SR)
+      SR.exporters["AJS37"] = exportRadioAJS37
+  end
+}
 return result

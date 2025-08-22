@@ -1,4 +1,4 @@
-﻿function exportRadioBF109(_data)
+﻿function exportRadioBF109(_data, SR)
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
     
     _data.radios[2].name = "FuG 16ZY"
@@ -61,10 +61,9 @@
     return _data;
 end
 
-local result = { }
-
-function result.register(SR)
-  SR.exporters["Bf-109K-4"] = exportRadioBF109
-end
-
+local result = {
+   register = function(SR)
+      SR.exporters["Bf-109K-4"] = exportRadioBF109
+  end
+}
 return result

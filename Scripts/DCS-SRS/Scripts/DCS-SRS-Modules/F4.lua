@@ -1,5 +1,5 @@
 ﻿--for F-4
-function exportRadioF4(_data)
+function exportRadioF4(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = true, desc = "Expansion Radio requires Always allow SRS Hotkeys on. 2nd radio is receive only" }
 
@@ -118,10 +118,9 @@ function exportRadioF4(_data)
     return _data
 end
 
-local result = { }
-
-function result.register(SR)
-  SR.exporters["F-4E-45MC"] = exportRadioF4
-end
-
+local result = {
+   register = function(SR)
+      SR.exporters["F-4E-45MC"] = exportRadioF4
+  end
+}
 return result

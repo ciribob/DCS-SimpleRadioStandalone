@@ -1,4 +1,4 @@
-﻿function exportRadioMI8(_data)
+﻿function exportRadioMI8(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
 
@@ -90,10 +90,9 @@
 
 end
 
-local result = { }
-
-function result.register(SR)
-  SR.exporters["Mi-8MT"] = exportRadioMI8
-end
-
+local result = {
+   register = function(SR)
+        SR.exporters["Mi-8MT"] = exportRadioMI8
+  end
+}
 return result

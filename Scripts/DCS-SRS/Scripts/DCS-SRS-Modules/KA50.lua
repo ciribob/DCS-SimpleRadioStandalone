@@ -1,4 +1,4 @@
-﻿function exportRadioKA50(_data)
+﻿function exportRadioKA50(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
 
@@ -64,15 +64,12 @@
     end
 
     return _data
-
 end
 
-
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["Ka-50"] = exportRadioKA50
   SR.exporters["Ka-50_3"] = exportRadioKA50
-end
-
+  end
+}
 return result

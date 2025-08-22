@@ -8,7 +8,7 @@ _av8.radio2.guard = 0
 _av8.radio2.encKey = -1
 _av8.radio2.enc = false
 
-function exportRadioAV8BNA(_data)
+function exportRadioAV8BNA(_data, SR)
     
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
@@ -36,7 +36,7 @@ function exportRadioAV8BNA(_data)
 
     --SR.log("UFC Scratch:\n"..SR.JSON:encode(SR.getListIndicatorValue(5)).."\n\n")
 
-    if _lastUnitId ~= _data.unitId then
+    if SR._lastUnitId ~= _data.unitId then
         _av8.radio1.guard = 0
         _av8.radio2.guard = 0
     end
@@ -207,11 +207,9 @@ end
     return _data
 end
 
-
-local result = { }
-
-function result.register(SR)
-  SR.exporters["AV8BNA"] = exportRadioAV8BNA
-end
-
+local result = {
+   register = function(SR)
+      SR.exporters["AV8BNA"] = exportRadioAV8BNA
+  end
+}
 return result

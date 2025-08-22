@@ -4,7 +4,7 @@ _ch47.radio2 = {guard=0,enc=false}
 _ch47.radio3 = {guard=0,enc=false}
 
 
-function exportRadioCH47F(_data)
+function exportRadioCH47F(_data, SR)
 
     -- RESET
     if _lastUnitId ~= _data.unitId then
@@ -294,11 +294,9 @@ function exportRadioCH47F(_data)
 
 end
 
-
-local result = { }
-
-function result.register(SR)
-  SR.exporters["CH-47Fbl1"] = exportRadioCH47F
-end
-
+local result = {
+   register = function(SR)
+      SR.exporters["CH-47Fbl1"] = exportRadioCH47F
+  end
+}
 return result

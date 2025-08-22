@@ -1,4 +1,4 @@
-﻿function exportRadioFW190(_data)
+﻿function exportRadioFW190(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
@@ -63,11 +63,10 @@
     return _data;
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["FW-190D9"] = exportRadioFW190
   SR.exporters["FW-190A8"] = exportRadioFW190
-end
-
+  end
+}
 return result

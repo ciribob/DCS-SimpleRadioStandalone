@@ -1,4 +1,4 @@
-﻿function exportRadioSH60B(_data)
+﻿function exportRadioSH60B(_data, SR)
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = true, desc = "" }
 
     local isDCPower = SR.getButtonPosition(17) > 0 -- just using battery switch position for now, could tie into DC ESS BUS later?
@@ -165,11 +165,9 @@
     return _data
 end
 
-
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["SH60B"] = exportRadioSH60B
-end
-
+  end
+}
 return result

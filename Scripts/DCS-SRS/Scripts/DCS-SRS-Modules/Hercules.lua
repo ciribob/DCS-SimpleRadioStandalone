@@ -1,4 +1,4 @@
-﻿function exportRadioHercules(_data)
+﻿function exportRadioHercules(_data, SR)
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = true, desc = "" }
     _data.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=false,control=1,expansion=false,mic=-1}
 
@@ -69,10 +69,9 @@
     return _data;
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["Hercules"] = exportRadioHercules
-end
-
+  end
+}
 return result

@@ -1,4 +1,4 @@
-﻿function exportRadioP47(_data)
+﻿function exportRadioP47(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "Only one radio by default" }
 
@@ -63,12 +63,11 @@
     return _data;
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["P-47D-30"] = exportRadioP47
   SR.exporters["P-47D-30bl1"] = exportRadioP47
   SR.exporters["P-47D-40"] = exportRadioP47
-end
-
+  end
+}
 return result

@@ -1,13 +1,9 @@
-﻿function exportRadioF15ESE(_data)
-
-
+﻿function exportRadioF15ESE(_data, SR)
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = true, desc = "" }
 
     _data.radios[1].name = "Intercom"
     _data.radios[1].freq = 100.0
     _data.radios[1].modulation = 2 --Special intercom modulation
- 
- 
 
     _data.radios[2].name = "AN/ARC-164 UHF-1"
     _data.radios[2].freq = SR.getRadioFrequency(7)
@@ -140,11 +136,9 @@
     return _data
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["F-15ESE"] = exportRadioF15ESE
-end
-
+  end
+}
 return result
-

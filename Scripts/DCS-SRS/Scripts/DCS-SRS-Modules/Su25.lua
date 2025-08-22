@@ -1,4 +1,4 @@
-﻿function exportRadioSU25(_data)
+﻿function exportRadioSU25(_data, SR)
     _data.radios[2].name = "R-862"
     _data.radios[2].freq = 251.0 *
     1000000                                --V/UHF, frequencies are: VHF range of 100 to 149.975 MHz and UHF range of 220 to 399.975 MHz
@@ -53,11 +53,10 @@
     return _data
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["Su-25"] = exportRadioSU25
   SR.exporters["Su-25T"] = exportRadioSU25
-end
-
+  end
+}
 return result

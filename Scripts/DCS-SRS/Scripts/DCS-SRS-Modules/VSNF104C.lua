@@ -1,4 +1,4 @@
-﻿function exportRadioVSNF104C(_data)
+﻿function exportRadioVSNF104C(_data, SR)
     _data.capabilities	= { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
     _data.control		= 0 -- full radio			
 
@@ -146,11 +146,9 @@
     return _data;
 end
 
-
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["VSN_F104C"] = exportRadioVSNF104C
-end
-
+  end
+}
 return result

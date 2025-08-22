@@ -1,4 +1,4 @@
-﻿function exportRadioMB339A(_data)
+﻿function exportRadioMB339A(_data, SR)
     _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = false, desc = "To enable the Intercom HotMic pull the INT knob located on ICS" }
 
     local main_panel = GetDevice(0)
@@ -88,11 +88,10 @@
     return _data;
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["MB-339A"] = exportRadioMB339A
   SR.exporters["MB-339APAN"] = exportRadioMB339A
-end
-
+  end
+}
 return result

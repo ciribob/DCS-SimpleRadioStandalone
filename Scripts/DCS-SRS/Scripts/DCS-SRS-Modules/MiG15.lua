@@ -1,4 +1,4 @@
-﻿function exportRadioMIG15(_data)
+﻿function exportRadioMIG15(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "Only one radio by default" }
 
@@ -63,10 +63,9 @@
     return _data;
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["MiG-15bis"] = exportRadioMIG15
-end
-
+  end
+}
 return result

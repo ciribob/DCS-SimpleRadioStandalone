@@ -1,4 +1,4 @@
-﻿function exportRadioF4U (_data)
+﻿function exportRadioF4U (_data, SR)
 
     -- Reference manual: https://www.vmfa251.org/pdffiles/Corsair%20Manual.pdf
     -- p59 of the pdf (p53 for the manual) is the radio section.
@@ -88,11 +88,10 @@
     return _data;
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["F4U-1D"] = exportRadioF4U
   SR.exporters["F4U-1D_CW"] = exportRadioF4U
-end
-
+  end
+}
 return result

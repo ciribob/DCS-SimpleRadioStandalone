@@ -1,4 +1,4 @@
-﻿function exportRadioF1BE(_data)
+﻿function exportRadioF1BE(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
@@ -129,10 +129,9 @@
     return _data
 end
 
-local result = { }
-
-function result.register(SR)
-  SR.exporters["Mirage-F1BE"] = exportRadioF1BE
-end
-
+local result = {
+   register = function(SR)
+      SR.exporters["Mirage-F1BE"] = exportRadioF1BE
+  end
+}
 return result

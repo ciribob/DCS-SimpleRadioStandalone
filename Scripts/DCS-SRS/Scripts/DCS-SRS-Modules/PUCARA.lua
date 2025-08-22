@@ -1,4 +1,4 @@
-﻿function exportRadioPUCARA(_data)
+﻿function exportRadioPUCARA(_data, SR)
    _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
    
    _data.radios[1].name = "Intercom"
@@ -67,10 +67,9 @@
     return _data
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
     SR.exporters["PUCARA"] = exportRadioPUCARA
-end
-
+  end
+}
 return result

@@ -1,4 +1,4 @@
-﻿function exportRadioVSNF4(_data)
+﻿function exportRadioVSNF4(_data, SR)
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
    
     _data.radios[2].name = "AN/ARC-164 UHF"
@@ -39,12 +39,10 @@
     return _data
 end
 
-
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
     SR.exporters["VSN_F4C"] = exportRadioVSNF4
     SR.exporters["VSN_F4B"] = exportRadioVSNF4
-end
-
+  end
+}
 return result

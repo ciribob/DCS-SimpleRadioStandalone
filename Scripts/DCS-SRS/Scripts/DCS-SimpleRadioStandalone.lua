@@ -237,7 +237,7 @@ function SR.exporter()
           --  list_cockpit_params()
           --  SR.log(SR.debugDump(getmetatable(GetDevice(1))).."\n\n")
 
-            _update = aircraftExporter(_update)
+            _update = aircraftExporter(_update, SR)
         else
             -- FC 3
             _update.radios[2].name = "FC3 VHF"
@@ -347,7 +347,7 @@ function SR.exporter()
         -- Allows for custom radio's using the DCS-Plugin scheme.
         local aircraftExporter = SR.exporters[_update.unit]
         if aircraftExporter then
-            _update = aircraftExporter(_update)
+            _update = aircraftExporter(_update, SR)
         end
 
         -- Disable camera position if you're not in a vehicle now

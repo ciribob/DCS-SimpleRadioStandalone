@@ -1,5 +1,5 @@
 ﻿--for A10C
-function exportRadioA10C(_data)
+function exportRadioA10C(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = false, desc = "Using cockpit PTT (HOTAS Mic Switch) requires use of VoIP bindings." }
 
@@ -208,10 +208,9 @@ function exportRadioA10C(_data)
     return _data
 end
 
-local result = { }
-
-function result.register(SR)
-    SR.exporters["A-10C"] = exportRadioA10C
-end
-
+local result = {
+   register = function(SR)
+      SR.exporters["A-10C"] = exportRadioA10C
+  end
+}
 return result

@@ -1,4 +1,4 @@
-﻿function exportRadioL39(_data)
+﻿function exportRadioL39(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
 
@@ -72,11 +72,10 @@
     return _data
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["L-39C"] = exportRadioL39
   SR.exporters["L-39ZA"] = exportRadioL39
-end
-
+  end
+}
 return result

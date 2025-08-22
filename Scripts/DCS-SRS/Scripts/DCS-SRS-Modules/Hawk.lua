@@ -1,4 +1,4 @@
-﻿function exportRadioHawk(_data)
+﻿function exportRadioHawk(_data, SR)
 
     local MHZ = 1000000
 
@@ -63,10 +63,9 @@
     return _data;
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["Hawk"] = exportRadioHawk
-end
-
+  end
+}
 return result

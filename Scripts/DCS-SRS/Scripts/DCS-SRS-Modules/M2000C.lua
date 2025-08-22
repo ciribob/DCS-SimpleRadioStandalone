@@ -1,7 +1,7 @@
 ﻿local _mirageEncStatus = false
 local _previousEncState = 0
 
-function exportRadioM2000C(_data)
+function exportRadioM2000C(_data, SR)
 
     local RED_devid = 20
     local GREEN_devid = 19
@@ -169,12 +169,10 @@ function exportRadioM2000C(_data)
     return _data
 end
 
-
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["M-2000C"] = exportRadioM2000C
   SR.exporters["M-2000D"] = exportRadioM2000C
-end
-
+  end
+}
 return result

@@ -1,4 +1,4 @@
-﻿function exportRadioMIG19(_data)
+﻿function exportRadioMIG19(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "Only one radio by default" }
 
@@ -56,11 +56,9 @@
     return _data;
 end
 
-
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["MiG-19P"] = exportRadioMIG19
-end
-
+  end
+}
 return result

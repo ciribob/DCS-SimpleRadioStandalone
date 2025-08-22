@@ -1,5 +1,5 @@
 ﻿local _jf17 = nil
-function exportRadioJF17(_data)
+function exportRadioJF17(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
@@ -174,10 +174,9 @@ function exportRadioJF17(_data)
     return _data
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["JF-17"] = exportRadioJF17
-end
-
+  end
+}
 return result

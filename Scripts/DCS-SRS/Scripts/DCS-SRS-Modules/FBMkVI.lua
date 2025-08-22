@@ -1,4 +1,4 @@
-﻿function exportRadioMosquitoFBMkVI (_data)
+﻿function exportRadioMosquitoFBMkVI (_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
@@ -76,10 +76,9 @@
     return _data;
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["MosquitoFBMkVI"] = exportRadioMosquitoFBMkVI
-end
-
+  end
+}
 return result

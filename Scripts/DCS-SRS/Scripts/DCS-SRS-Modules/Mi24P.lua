@@ -1,4 +1,4 @@
-﻿function exportRadioMI24P(_data)
+﻿function exportRadioMI24P(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = true, desc = "Use Radio/ICS Switch to control Intercom Hot Mic" }
 
@@ -144,11 +144,9 @@
 
 end
 
-
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["Mi-24P"] = exportRadioMI24P
-end
-
+  end
+}
 return result

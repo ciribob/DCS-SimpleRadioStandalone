@@ -1,4 +1,4 @@
-﻿function exportRadioF86Sabre(_data)
+﻿function exportRadioF86Sabre(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "Only one radio by default" }
 
@@ -76,11 +76,9 @@
     return _data;
 end
 
-
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["F-86F Sabre"] = exportRadioF86Sabre
-end
-
+  end
+}
 return result

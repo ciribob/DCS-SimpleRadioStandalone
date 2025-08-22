@@ -37,7 +37,7 @@ Frequency Band(MHz) Modulation  Guard Channel (MHz)
 *Cannot transmit on 108 thru 117.995 MHz
 ]]--
 
-function exportRadioFA18C(_data)
+function exportRadioFA18C(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
@@ -430,14 +430,12 @@ function exportRadioFA18C(_data)
     return _data
 end
 
-
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["FA-18C_hornet"] = exportRadioFA18C
   SR.exporters["FA-18E"] = exportRadioFA18C
   SR.exporters["FA-18F"] = exportRadioFA18C
   SR.exporters["EA-18G"] = exportRadioFA18C
-end
-
+  end
+}
 return result

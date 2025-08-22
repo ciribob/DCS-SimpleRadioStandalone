@@ -1,4 +1,4 @@
-﻿function exportRadioA10A(_data)
+﻿function exportRadioA10A(_data, SR)
     _data.radios[2].name = "AN/ARC-186(V)"
     _data.radios[2].freq = 124.8 * 1000000 --116,00-151,975 MHz
     _data.radios[2].modulation = 0
@@ -55,20 +55,9 @@
     return _data
 end
 
---for A10C2
-local _a10c2 = {}
-_a10c2.enc = false
-_a10c2.encKey = 1
-_a10c2.volume = 1
-_a10c2.lastVolPos = 0
-_a10c2.increaseVol = false
-_a10c2.decreaseVol = false
-_a10c2.enableVolumeControl = false
-
-local result = { }
-
-function result.register(SR)
-    SR.exporters["A-10A"] = exportRadioA10A
-end
-
+local result = {
+   register = function(SR)
+      SR.exporters["A-10A"] = exportRadioA10A
+  end
+}
 return result

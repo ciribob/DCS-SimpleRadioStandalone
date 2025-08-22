@@ -1,5 +1,5 @@
 ﻿local _oh58RetranPersist = nil -- For persistence of retrans variable
-function exportRadioOH58D(_data)
+function exportRadioOH58D(_data, SR)
     _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = true, desc = "VOX control for intercom volume" }
 
 
@@ -208,10 +208,9 @@ function exportRadioOH58D(_data)
     return _data
 end
 
-local result = { }
-
-function result.register(SR)
+local result = {
+   register = function(SR)
   SR.exporters["OH58D"] = exportRadioOH58D
-end
-
+  end
+}
 return result

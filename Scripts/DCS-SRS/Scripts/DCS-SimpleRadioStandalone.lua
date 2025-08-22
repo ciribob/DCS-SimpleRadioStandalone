@@ -4,6 +4,46 @@
 -- Run the installer to correctly install this file
 local SR = {}
 
+-- Known radio presets (think make and model).
+SR.RadioModels = {
+    Intercom = "intercom",
+
+    -- WW2
+    AN_ARC5 = "arc5",
+    FUG_16_ZY = "fug16zy",
+    R1155 = "r1155",
+    SCR522A = "scr522a",
+    T1154 = "t1154",
+
+    -- Western
+    AN_ARC27 = "arc27",
+    AN_ARC51 = "arc51",
+    AN_ARC51BX = "arc51",
+    AN_ARC131 = "arc131",
+    AN_ARC134 = "arc134",
+    AN_ARC164 = "arc164",
+    AN_ARC182 = "arc186",
+    AN_ARC186 = "arc186",
+    AN_ARC201D = "arc201d",
+    AN_ARC210 = "arc210",
+    AN_ARC220 = "arc220",
+    AN_ARC222 = "arc222",
+    LINK16 = "link16",
+    
+
+    -- Eastern
+    Baklan_5 = "baklan5",
+    JADRO_1A = "jadro1a",
+    R_800 = "r800",
+    R_828 = "r828",
+    R_832M = "r832m",
+    R_852 = "r852",
+    R_862 = "r862",
+    R_863 = "r863",
+    R_864 = "r864",
+    RSI_6K = "rsi6k",
+}
+
 SR.SEAT_INFO_PORT = 9087
 SR.LOS_RECEIVE_PORT = 9086
 SR.LOS_SEND_TO_PORT = 9085
@@ -186,7 +226,7 @@ function SR.exporter()
             capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" },
             radios = {
                 -- Radio 1 is always Intercom
-                { name = "", freq = 100, modulation = 3, volume = 1.0, secFreq = 0, freqMin = 1, freqMax = 1, encKey = 0, enc = false, encMode = 0, freqMode = 0, guardFreqMode = 0, volMode = 0, expansion = false, rtMode = 2 },
+                { name = "", freq = 100, modulation = 3, volume = 1.0, secFreq = 0, freqMin = 1, freqMax = 1, encKey = 0, enc = false, encMode = 0, freqMode = 0, guardFreqMode = 0, volMode = 0, expansion = false, rtMode = 2, model = SR.RadioModels.Intercom },
                 { name = "", freq = 0, modulation = 3, volume = 1.0, secFreq = 0, freqMin = 1, freqMax = 1, encKey = 0, enc = false, encMode = 0, freqMode = 0, guardFreqMode = 0, volMode = 0, expansion = false, rtMode = 2 }, -- enc means encrypted
                 { name = "", freq = 0, modulation = 3, volume = 1.0, secFreq = 0, freqMin = 1, freqMax = 1, encKey = 0, enc = false, encMode = 0, freqMode = 0, guardFreqMode = 0, volMode = 0, expansion = false, rtMode = 2 },
                 { name = "", freq = 0, modulation = 3, volume = 1.0, secFreq = 0, freqMin = 1, freqMax = 1, encKey = 0, enc = false, encMode = 0, freqMode = 0, guardFreqMode = 0, volMode = 0, expansion = false, rtMode = 2 },
@@ -497,6 +537,7 @@ function SR.exportRadioA10A(_data)
     _data.radios[2].freqMax = 151.975 * 1000000
     _data.radios[2].volMode = 1
     _data.radios[2].freqMode = 1
+    _data.radios[2].model = SR.RadioModels.AN_ARC186
 
     _data.radios[3].name = "AN/ARC-164 UHF"
     _data.radios[3].freq = 251.0 * 1000000 --225-399.975 MHZ
@@ -507,6 +548,7 @@ function SR.exportRadioA10A(_data)
     _data.radios[3].freqMax = 399.975 * 1000000
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
+    _data.radios[3].model = SR.RadioModels.AN_ARC164
 
     _data.radios[3].encKey = 1
     _data.radios[3].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
@@ -519,6 +561,7 @@ function SR.exportRadioA10A(_data)
     _data.radios[4].freqMax = 76 * 1000000
     _data.radios[4].volMode = 1
     _data.radios[4].freqMode = 1
+    _data.radios[4].model = SR.RadioModels.AN_ARC186
 
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
@@ -556,6 +599,7 @@ function SR.exportRadioMiG29(_data)
     _data.radios[2].freqMax = 399.975 * 1000000
     _data.radios[2].volMode = 1
     _data.radios[2].freqMode = 1
+    _data.radios[2].model = SR.RadioModels.R_862
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[3].name = "AN/ARC-186(V)"
@@ -568,6 +612,7 @@ function SR.exportRadioMiG29(_data)
     _data.radios[3].expansion = true
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
+    _data.radios[3].model = SR.RadioModels.AN_ARC186
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-164 UHF"
@@ -582,6 +627,7 @@ function SR.exportRadioMiG29(_data)
     _data.radios[4].freqMode = 1
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[4].model = SR.RadioModels.AN_ARC164
 
     _data.control = 0;
     _data.selected = 1
@@ -616,6 +662,7 @@ function SR.exportRadioSU25(_data)
     _data.radios[2].freqMax = 399.975 * 1000000
     _data.radios[2].volMode = 1
     _data.radios[2].freqMode = 1
+    _data.radios[2].model = SR.RadioModels.R_862
 
     _data.radios[3].name = "R-828"
     _data.radios[3].freq = 30.0 * 1000000 --20 - 60 MHz.
@@ -625,6 +672,7 @@ function SR.exportRadioSU25(_data)
     _data.radios[3].freqMax = 59.975 * 1000000
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
+    _data.radios[3].model = SR.RadioModels.R_828
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-164 UHF"
@@ -639,6 +687,7 @@ function SR.exportRadioSU25(_data)
     _data.radios[4].freqMode = 1
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[4].model = SR.RadioModels.AN_ARC164
 
     _data.control = 0;
     _data.selected = 1
@@ -672,6 +721,7 @@ function SR.exportRadioSU27(_data)
     _data.radios[2].freqMax = 399.975 * 1000000
     _data.radios[2].volMode = 1
     _data.radios[2].freqMode = 1
+    _data.radios[2].model = SR.RadioModels.R_800
 
     _data.radios[3].name = "R-864"
     _data.radios[3].freq = 3.5 * 1000000 --HF frequencies in the 3-10Mhz, like the Jadro
@@ -681,6 +731,7 @@ function SR.exportRadioSU27(_data)
     _data.radios[3].freqMax = 10 * 1000000
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
+    _data.radios[3].model = SR.RadioModels.R_864
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-164 UHF"
@@ -697,6 +748,7 @@ function SR.exportRadioSU27(_data)
     _data.radios[4].freqMode = 1
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[4].model = SR.RadioModels.AN_ARC164
 
     _data.control = 0;
     _data.selected = 1
@@ -752,35 +804,41 @@ function SR.exportRadioAH64D(_data)
     _data.radios[1].freq = 100.0
     _data.radios[1].modulation = 2 --Special intercom modulation
     _data.radios[1].volMode = 0
+    _data.radios[1].model = SR.RadioModels.Intercom
 
     _data.radios[2].name = "AN/ARC-186 VHF"
     _data.radios[2].freq = SR.getRadioFrequency(58)
     _data.radios[2].modulation = SR.getRadioModulation(58)
     _data.radios[2].volMode = 0
+    _data.radios[2].model = SR.RadioModels.AN_ARC186
 
     _data.radios[3].name = "AN/ARC-164 UHF"
     _data.radios[3].freq = SR.getRadioFrequency(57)
     _data.radios[3].modulation = SR.getRadioModulation(57)
     _data.radios[3].volMode = 0
     _data.radios[3].encMode = 2
+    _data.radios[3].model = SR.RadioModels.AN_ARC164
 
     _data.radios[4].name = "AN/ARC201D FM1"
     _data.radios[4].freq = SR.getRadioFrequency(59)
     _data.radios[4].modulation = SR.getRadioModulation(59)
     _data.radios[4].volMode = 0
     _data.radios[4].encMode = 2
+    _data.radios[4].model = SR.RadioModels.AN_ARC201D
 
     _data.radios[5].name = "AN/ARC-201D FM2"
     _data.radios[5].freq = SR.getRadioFrequency(60)
     _data.radios[5].modulation = SR.getRadioModulation(60)
     _data.radios[5].volMode = 0
     _data.radios[5].encMode = 2
+    _data.radios[5].model = SR.RadioModels.AN_ARC201D
 
     _data.radios[6].name = "AN/ARC-220 HF"
     _data.radios[6].freq = SR.getRadioFrequency(61)
     _data.radios[6].modulation = 0
     _data.radios[6].volMode = 0
     _data.radios[6].encMode = 2 -- As of DCS ver 2.9.4.53627 the HF preset functionality is bugged, but I'll leave this here in hopes ED fixes the bug
+    _data.radios[6].model = SR.RadioModels.AN_ARC220
 
     local _seat = get_param_handle("SEAT"):get() -- PLT/CPG ?
     local _eufdDevice = nil
@@ -1014,6 +1072,7 @@ function SR.exportRadioUH60L(_data)
     _data.radios[1].volMode = 0
     _data.radios[1].freqMode = 0
     _data.radios[1].rtMode = 0
+    _data.radios[1].model = SR.RadioModels.Intercom
 
     -- Pilots' AN/ARC-201 FM
     local fm1Device = GetDevice(6)
@@ -1043,6 +1102,7 @@ function SR.exportRadioUH60L(_data)
     _data.radios[2].volMode = 0
     _data.radios[2].freqMode = 0
     _data.radios[2].rtMode = 0
+    _data.radios[2].model = SR.RadioModels.AN_ARC201D
     
     -- AN/ARC-164 UHF
     local arc164Device = GetDevice(5)
@@ -1068,6 +1128,7 @@ function SR.exportRadioUH60L(_data)
     _data.radios[3].volMode = 0
     _data.radios[3].freqMode = 0
     _data.radios[3].rtMode = 0
+    _data.radios[3].model = SR.RadioModels.AN_ARC164
 
     -- AN/ARC-186 VHF
     local arc186Device = GetDevice(8)
@@ -1098,6 +1159,7 @@ function SR.exportRadioUH60L(_data)
     _data.radios[4].volMode = 0
     _data.radios[4].freqMode = 0
     _data.radios[4].rtMode = 0
+    _data.radios[4].model = SR.RadioModels.AN_ARC186
 
     -- Copilot's AN/ARC-201 FM
     local fm2Device = GetDevice(10)
@@ -1127,6 +1189,7 @@ function SR.exportRadioUH60L(_data)
     _data.radios[5].volMode = 0
     _data.radios[5].freqMode = 0
     _data.radios[5].rtMode = 0
+    _data.radios[5].model = SR.RadioModels.AN_ARC201D
 
     -- AN/ARC-220 HF radio - not implemented in module, freqs must be changed through SRS UI
     _data.radios[6].name = "AN/ARC-220"
@@ -1140,6 +1203,7 @@ function SR.exportRadioUH60L(_data)
     _data.radios[6].encKey = 1 
     _data.radios[6].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting --ANDR0ID Added
     _data.radios[6].rtMode = 1 
+    _data.radios[6].model = SR.RadioModels.AN_ARC220
 
     -- Only select radio if power to ICS panel
     local radioXMTSelectorValue = _data.selected or 0
@@ -1181,6 +1245,7 @@ function SR.exportRadioSH60B(_data)
     _data.radios[1].volMode = 0
     _data.radios[1].freqMode = 0
     _data.radios[1].rtMode = 0
+    _data.radios[1].model = SR.RadioModels.Intercom
 
     -- Copilot's AN/ARC-182 FM (COM1)
     local fm2Device = GetDevice(8)
@@ -1215,6 +1280,7 @@ function SR.exportRadioSH60B(_data)
     _data.radios[2].volMode = 0
     _data.radios[2].freqMode = 0
     _data.radios[2].rtMode = 0
+    _data.radios[2].model = SR.RadioModels.AN_ARC182
 
     -- Pilots' AN/ARC-182 FM (COM2)
     local fm1Device = GetDevice(6)
@@ -1249,6 +1315,7 @@ function SR.exportRadioSH60B(_data)
     _data.radios[3].volMode = 0
     _data.radios[3].freqMode = 0
     _data.radios[3].rtMode = 0
+    _data.radios[3].model = SR.RadioModels.AN_ARC182
     
     --D/L not implemented in module, using a "dummy radio" for now
     _data.radios[4].name = "DATA LINK (D/L)"
@@ -1261,7 +1328,8 @@ function SR.exportRadioSH60B(_data)
     _data.radios[4].freqMode = 1
     _data.radios[4].encKey = 1 
     _data.radios[4].encMode = 0 
-    _data.radios[4].rtMode = 1 
+    _data.radios[4].rtMode = 1
+    _data.radios[4].model = SR.RadioModels.LINK16 
 
     -- AN/ARC-174A HF radio - not implemented in module, freqs must be changed through SRS UI
     _data.radios[5].name = "AN/ARC-174(A)"
@@ -1274,7 +1342,7 @@ function SR.exportRadioSH60B(_data)
     _data.radios[5].freqMode = 1
     _data.radios[5].encKey = 1 
     _data.radios[5].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting --ANDR0ID Added
-    _data.radios[5].rtMode = 1 
+    _data.radios[5].rtMode = 1
 
     -- Only select radio if power to ICS panel
     local radioXMTSelectorValue = _data.selected or 0
@@ -1314,6 +1382,7 @@ function SR.exportRadioSH60B(_data)
     _data.radios[6].volMode = 0
     _data.radios[6].freqMode = 0
     _data.radios[6].rtMode = 0
+    _data.radios[6].model = SR.RadioModels.AN_ARC164
 
     _data.selected = radioXMTSelectorValue
     _data.intercomHotMic = GetDevice(0):get_argument_value(402) > 0
@@ -1366,6 +1435,7 @@ function SR.exportRadioA4E(_data)
     arc51.modulation = 0  -- AM only
     arc51.freqMin = 220.000e6
     arc51.freqMax = 399.950e6
+    arc51.model = SR.RadioModels.AN_ARC51BX
 
     -- TODO Check if there are other volume knobs in series
     arc51.volume = SR.getRadioVolume(0, 365, {0.2, 0.8}, false)
@@ -1385,6 +1455,7 @@ function SR.exportRadioA4E(_data)
     _data.radios[3].expansion = true
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
+    _data.radios[3].model = SR.RadioModels.AN_ARC186
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-186(V)FM"
@@ -1396,6 +1467,7 @@ function SR.exportRadioA4E(_data)
     _data.radios[4].volMode = 1
     _data.radios[4].freqMode = 1
     _data.radios[4].expansion = true
+    _data.radios[4].model = SR.RadioModels.AN_ARC186
 
     _data.control = 0;
     _data.selected = 1
@@ -1429,12 +1501,14 @@ function SR.exportRadioSK60(_data)
     _data.radios[1].modulation = 2 --Special intercom modulation
     _data.radios[1].volume = 1.0
     _data.radios[1].volMode = 1
+    _data.radios[1].model = SR.RadioModels.Intercom
 
     _data.radios[2].name = "AN/ARC-164 UHF"
     _data.radios[2].freq = SR.getRadioFrequency(6)
     _data.radios[2].modulation = 1
     _data.radios[2].volume = 1.0
     _data.radios[2].volMode = 1
+    _data.radios[2].model = SR.RadioModels.AN_ARC164
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[3].name = "AN/ARC-186(V)"
@@ -1447,6 +1521,7 @@ function SR.exportRadioSK60(_data)
     _data.radios[3].expansion = true
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
+    _data.radios[3].model = SR.RadioModels.AN_ARC186
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-186(V)FM"
@@ -1458,6 +1533,7 @@ function SR.exportRadioSK60(_data)
     _data.radios[4].volMode = 1
     _data.radios[4].freqMode = 1
     _data.radios[4].expansion = true
+    _data.radios[4].model = SR.RadioModels.AN_ARC186
 
     _data.control = 0;
     _data.selected = 1
@@ -1506,6 +1582,7 @@ function SR.exportRadioT45(_data)
     _data.radios[1].freq = 100.0
     _data.radios[1].modulation = 2 --Special intercom modulation
     _data.radios[1].volume = GetDevice(0):get_argument_value(198)
+    _data.radios[1].model = SR.RadioModels.Intercom
     
     local modeSelector1 = GetDevice(0):get_argument_value(256) -- 0:off, 0.25:T/R, 0.5:T/R+G
     if modeSelector1 == 0.5 and comm1Switch == 1 then
@@ -1533,6 +1610,7 @@ function SR.exportRadioT45(_data)
     arc182.freqMin = 30.000e6
     arc182.freqMax = 399.975e6
     arc182.volume = GetDevice(0):get_argument_value(246)
+    arc182.model = SR.RadioModels.AN_ARC182
 
     local modeSelector2 = GetDevice(0):get_argument_value(280) -- 0:off, 0.25:T/R, 0.5:T/R+G
     if modeSelector2 == 0.5 and comm2Switch == 1 then
@@ -1560,6 +1638,7 @@ function SR.exportRadioT45(_data)
     arc182_2.freqMin = 30.000e6
     arc182_2.freqMax = 399.975e6
     arc182_2.volume = GetDevice(0):get_argument_value(270)
+    arc182_2.model = SR.RadioModels.AN_ARC182
 
     if comm1PTT == 1 then
         _data.selected = 1 -- comm 1
@@ -1602,6 +1681,7 @@ function SR.exportRadioPUCARA(_data)
    _data.radios[1].freq = 100.0
    _data.radios[1].modulation = 2 --Special intercom modulation
    _data.radios[1].volume = GetDevice(0):get_argument_value(764)
+   _data.radios[1].model = SR.RadioModels.Intercom
     
     local comm1Switch = GetDevice(0):get_argument_value(762) 
     local comm2Switch = GetDevice(0):get_argument_value(763) 
@@ -1916,6 +1996,7 @@ function SR.exportRadioVSNF4(_data)
     _data.radios[2].volume = 1.0
     _data.radios[2].volMode = 1
     _data.radios[2].freqMode = 0
+    _data.radios[2].model = SR.RadioModels.AN_ARC164
 
 
     -- Expansion Radio - Server Side Controlled
@@ -1929,6 +2010,7 @@ function SR.exportRadioVSNF4(_data)
     _data.radios[3].expansion = true
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
+    _data.radios[3].model = SR.RadioModels.AN_ARC186
 
     _data.radios[2].encKey = 1
     _data.radios[2].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
@@ -1957,6 +2039,7 @@ function SR.exportRadioHercules(_data)
     _data.radios[1].modulation = 2 --Special intercom modulation
     _data.radios[1].volume = 1.0
     _data.radios[1].volMode = 1 -- Overlay control
+    _data.radios[1].model = SR.RadioModels.Intercom
 
     -- AN/ARC-164(V) Radio
     -- Use the Pilot's volume for any station other
@@ -1981,6 +2064,7 @@ function SR.exportRadioHercules(_data)
     _data.radios[2].freqMax = 399.975e6
     _data.radios[2].volMode = 0
     _data.radios[2].freqMode = 0
+    _data.radios[2].model = SR.RadioModels.AN_ARC164
 
     -- Expansions - Server Side Controlled
     -- VHF AM - 116-151.975MHz
@@ -1994,6 +2078,7 @@ function SR.exportRadioHercules(_data)
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
     _data.radios[3].expansion = false
+    _data.radios[3].model = SR.RadioModels.AN_ARC186
 
     -- VHF FM - 30-87.975MHz
     _data.radios[4].name = "AN/ARC-186(V) FM"
@@ -2006,6 +2091,7 @@ function SR.exportRadioHercules(_data)
     _data.radios[4].volMode = 1
     _data.radios[4].freqMode = 1
     _data.radios[4].expansion = false
+    _data.radios[4].model = SR.RadioModels.AN_ARC186
 
     if SR.getAmbientVolumeEngine()  > 10 then
         -- engine on
@@ -2029,6 +2115,7 @@ function SR.exportRadioF15C(_data)
     _data.radios[2].freqMax = 399.975 * 1000000
     _data.radios[2].volMode = 1
     _data.radios[2].freqMode = 1
+    _data.radios[2].model = SR.RadioModels.AN_ARC164
 
     _data.radios[2].encKey = 1
     _data.radios[2].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
@@ -2043,6 +2130,7 @@ function SR.exportRadioF15C(_data)
 
     _data.radios[3].encKey = 1
     _data.radios[3].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[3].model = SR.RadioModels.AN_ARC164
 
 
     -- Expansion Radio - Server Side Controlled
@@ -2056,6 +2144,7 @@ function SR.exportRadioF15C(_data)
     _data.radios[4].expansion = true
     _data.radios[4].volMode = 1
     _data.radios[4].freqMode = 1
+    _data.radios[4].model = SR.RadioModels.AN_ARC186
 
     _data.control = 0;
     _data.selected = 1
@@ -2087,17 +2176,20 @@ function SR.exportRadioF15ESE(_data)
     _data.radios[1].name = "Intercom"
     _data.radios[1].freq = 100.0
     _data.radios[1].modulation = 2 --Special intercom modulation
+    _data.radios[1].model = SR.RadioModels.Intercom
  
  
 
     _data.radios[2].name = "AN/ARC-164 UHF-1"
     _data.radios[2].freq = SR.getRadioFrequency(7)
     _data.radios[2].modulation = SR.getRadioModulation(7)
+    _data.radios[2].model = SR.RadioModels.AN_ARC164
 
 
     _data.radios[3].name = "AN/ARC-164 UHF-2"
     _data.radios[3].freq = SR.getRadioFrequency(8)
     _data.radios[3].modulation = SR.getRadioModulation(8)
+    _data.radios[3].model = SR.RadioModels.AN_ARC164
 
     -- TODO check
     local _seat = SR.lastKnownSeat --get_param_handle("SEAT"):get()
@@ -2229,6 +2321,7 @@ function SR.exportRadioUH1H(_data)
     _data.radios[1].freq = 100.0
     _data.radios[1].modulation = 2 --Special intercom modulation
     _data.radios[1].volume =  SR.getRadioVolume(0, 29, { 0.3, 1.0 }, true)
+    _data.radios[1].model = SR.RadioModels.Intercom
 
     if intercomOn > 0.5 then
         --- control hot mic instead of turning it on and off
@@ -2240,6 +2333,7 @@ function SR.exportRadioUH1H(_data)
     _data.radios[2].freq = SR.getRadioFrequency(23)
     _data.radios[2].modulation = 1
     _data.radios[2].volume = SR.getRadioVolume(0, 37, { 0.3, 1.0 }, true)
+    _data.radios[2].model = SR.RadioModels.AN_ARC131
 
     if fmOn < 0.5 then
         _data.radios[2].freq = 1
@@ -2250,6 +2344,7 @@ function SR.exportRadioUH1H(_data)
     _data.radios[3].freq = SR.getRadioFrequency(22)
     _data.radios[3].modulation = 0
     _data.radios[3].volume = SR.getRadioVolume(0, 21, { 0.0, 1.0 }, true)
+    _data.radios[3].model = SR.RadioModels.AN_ARC51BX
 
     -- get channel selector
     local _selector = SR.getSelectorPosition(15, 0.1)
@@ -2274,6 +2369,7 @@ function SR.exportRadioUH1H(_data)
     _data.radios[4].freq = SR.getRadioFrequency(20)
     _data.radios[4].modulation = 0
     _data.radios[4].volume = SR.getRadioVolume(0, 9, { 0.0, 0.60 }, false)
+    _data.radios[4].model = SR.RadioModels.AN_ARC134
 
     if vhfOn < 0.5 then
         _data.radios[4].freq = 1
@@ -2423,11 +2519,13 @@ function SR.exportRadioCH47F(_data)
     _data.radios[1].name = "Intercom"
     _data.radios[1].freq = 100.0
     _data.radios[1].modulation = 2 --Special intercom modulation
+    _data.radios[1].model = SR.RadioModels.Intercom
 
 
     _data.radios[2].name = "AN/ARC-201 FM1" -- ARC 201
     _data.radios[2].freq = SR.getRadioFrequency(51)
     _data.radios[2].modulation = SR.getRadioModulation(51)
+    _data.radios[2].model = SR.RadioModels.AN_ARC201D
 
     _data.radios[2].encKey = 1
     _data.radios[2].encMode = 3 -- Cockpit Toggle + Gui Enc key setting
@@ -2437,6 +2535,7 @@ function SR.exportRadioCH47F(_data)
     _data.radios[3].name = "AN/ARC-164 UHF" -- ARC_164
     _data.radios[3].freq = SR.getRadioFrequency(49)
     _data.radios[3].modulation = SR.getRadioModulation(49)
+    _data.radios[3].model = SR.RadioModels.AN_ARC164
 
     _data.radios[3].encKey = 1
     _data.radios[3].encMode = 3 -- Cockpit Toggle + Gui Enc key setting
@@ -2446,6 +2545,7 @@ function SR.exportRadioCH47F(_data)
     _data.radios[4].name = "AN/ARC-186 VHF" -- ARC_186
     _data.radios[4].freq = SR.getRadioFrequency(50)
     _data.radios[4].modulation = SR.getRadioModulation(50)
+    _data.radios[4].model = SR.RadioModels.AN_ARC186
 
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 3 -- Cockpit Toggle + Gui Enc key setting
@@ -2464,6 +2564,7 @@ function SR.exportRadioCH47F(_data)
     _data.radios[5].name = "AN/ARC-220 HF" -- ARC_220
     _data.radios[5].freq = SR.getRadioFrequency(52)
     _data.radios[5].modulation = SR.getRadioModulation(52)
+    _data.radios[5].model = SR.RadioModels.AN_ARC220
 
     _data.radios[5].encMode = 0
 
@@ -2472,6 +2573,7 @@ function SR.exportRadioCH47F(_data)
    -- _data.radios[6].freq = SR.getRadioFrequency(32)
     _data.radios[6].freq = 32000000
     _data.radios[6].modulation = 1
+    _data.radios[6].model = SR.RadioModels.AN_ARC201D
 
     _data.radios[6].freqMin = 20.0 * 1000000
     _data.radios[6].freqMax = 60.0 * 1000000
@@ -2726,6 +2828,7 @@ function SR.exportRadioSA342(_data)
     _data.radios[1].modulation = 2 --Special intercom modulation
     _data.radios[1].volume = 1.0
     _data.radios[1].volMode = 1
+    _data.radios[1].model = SR.RadioModels.Intercom
 
     -- TODO check
     local _seat = SR.lastKnownSeat --get_param_handle("SEAT"):get()
@@ -2895,24 +2998,28 @@ function SR.exportRadioOH58D(_data)
     _data.radios[1].freq = 100.0
     _data.radios[1].modulation = 2 --Special intercom modulation
     _data.radios[1].volMode = 0
+    _data.radios[1].model = SR.RadioModels.Intercom
 
     _data.radios[2].name = "AN/ARC-201D FM1"
     _data.radios[2].freq = SR.getRadioFrequency(29)
     _data.radios[2].modulation = SR.getRadioModulation(29)
     _data.radios[2].volMode = 0
     _data.radios[2].encMode = 2
+    _data.radios[2].model = SR.RadioModels.AN_ARC201D
 
     _data.radios[3].name = "AN/ARC-164 UHF"
     _data.radios[3].freq = SR.getRadioFrequency(30)
     _data.radios[3].modulation = SR.getRadioModulation(30)
     _data.radios[3].volMode = 0
     _data.radios[3].encMode = 2
+    _data.radios[3].model = SR.RadioModels.AN_ARC164
 
     _data.radios[4].name = "AN/ARC-186 VHF"
     _data.radios[4].freq = SR.getRadioFrequency(31)
     _data.radios[4].modulation = SR.getRadioModulation(31)
     _data.radios[4].volMode = 0
     _data.radios[4].encMode = 2
+    _data.radios[4].model = SR.RadioModels.AN_ARC186
 
 
     _data.radios[5].name = "AN/ARC-201D FM2"
@@ -2920,6 +3027,7 @@ function SR.exportRadioOH58D(_data)
     _data.radios[5].modulation = SR.getRadioModulation(32)
     _data.radios[5].volMode = 0
     _data.radios[5].encMode = 2
+    _data.radios[5].model = SR.RadioModels.AN_ARC201D
 
     local _seat = SR.lastKnownSeat --get_param_handle("SEAT"):get()
     local _hotMic = 0
@@ -3116,6 +3224,7 @@ function SR.exportRadioOH6A(_data)
     _data.radios[3].freq = SR.getRadioFrequency(14)
     _data.radios[3].modulation = SR.getRadioModulation(14)
     _data.radios[3].volMode = 0
+    _data.radios[3].model = SR.RadioModels.AN_ARC51
 
 
     local _seat = SR.lastKnownSeat --get_param_handle("SEAT"):get()
@@ -3227,6 +3336,7 @@ function SR.exportRadioKA50(_data)
 
     _data.radios[2].name = "R-800L14 V/UHF"
     _data.radios[2].freq = SR.getRadioFrequency(48)
+    _data.radios[2].model = SR.RadioModels.R_800
 
     -- Get modulation mode
     local switch = _panel:get_argument_value(417)
@@ -3242,6 +3352,7 @@ function SR.exportRadioKA50(_data)
     _data.radios[3].modulation = 1
     _data.radios[3].volume = SR.getRadioVolume(0, 372, { 0.0, 1.0 }, false)
     _data.radios[3].channel = SR.getSelectorPosition(371, 0.1) + 1
+    _data.radios[3].model = SR.RadioModels.R_828
 
     --expansion radios
     _data.radios[4].name = "SPU-9 SW"
@@ -3297,9 +3408,11 @@ function SR.exportRadioMI8(_data)
     _data.radios[1].freq = 100.0
     _data.radios[1].modulation = 2 --Special intercom modulation
     _data.radios[1].volume = 1.0
+    _data.radios[1].model = SR.RadioModels.Intercom
 
     _data.radios[2].name = "R-863"
     _data.radios[2].freq = SR.getRadioFrequency(38)
+    _data.radios[2].model = SR.RadioModels.R_863
 
     local _modulation = GetDevice(0):get_argument_value(369)
     if _modulation > 0.5 then
@@ -3321,11 +3434,13 @@ function SR.exportRadioMI8(_data)
     _data.radios[3].freq = SR.getRadioFrequency(37, 500)
     _data.radios[3].modulation = 0
     _data.radios[3].volume = SR.getRadioVolume(0, 743, { 0.0, 1.0 }, false)
+    _data.radios[3].model = SR.RadioModels.JADRO_1A
 
     _data.radios[4].name = "R-828"
     _data.radios[4].freq = SR.getRadioFrequency(39, 50000)
     _data.radios[4].modulation = 1
     _data.radios[4].volume = SR.getRadioVolume(0, 737, { 0.0, 1.0 }, false)
+    _data.radios[4].model = SR.RadioModels.R_828
 
     --guard mode for R-863 Radio
     local uhfModeKnob = SR.getSelectorPosition(153, 1)
@@ -3390,12 +3505,14 @@ function SR.exportRadioMI24P(_data)
     _data.radios[1].modulation = 2 --Special intercom modulation
     _data.radios[1].volume = 1.0
     _data.radios[1].volMode = 0
+    _data.radios[1].model = SR.RadioModels.Intercom
 
     _data.radios[2].name = "R-863"
     _data.radios[2].freq = SR.getRadioFrequency(49)
     _data.radios[2].modulation = SR.getRadioModulation(49)
     _data.radios[2].volume = SR.getRadioVolume(0, 511, { 0.0, 1.0 }, false)
     _data.radios[2].volMode = 0
+    _data.radios[2].model = SR.RadioModels.R_863
 
     local guard = SR.getSelectorPosition(507, 1)
     if guard == 1 and _data.radios[2].freq > 1000 then
@@ -3408,12 +3525,14 @@ function SR.exportRadioMI24P(_data)
     _data.radios[3].modulation = 1 --SR.getRadioModulation(50)
     _data.radios[3].volume = SR.getRadioVolume(0, 339, { 0.0, 1.0 }, false)
     _data.radios[3].volMode = 0
+    _data.radios[3].model = SR.RadioModels.R_828
 
     _data.radios[4].name = "JADRO-1I"
     _data.radios[4].freq = SR.getRadioFrequency(50, 500)
     _data.radios[4].modulation = SR.getRadioModulation(50)
     _data.radios[4].volume = SR.getRadioVolume(0, 426, { 0.0, 1.0 }, false)
     _data.radios[4].volMode = 0
+    _data.radios[4].model = SR.RadioModels.JADRO_1A
 
     -- listen only radio - moved to expansion
     _data.radios[5].name = "R-852"
@@ -3422,6 +3541,7 @@ function SR.exportRadioMI24P(_data)
     _data.radios[5].volume = SR.getRadioVolume(0, 517, { 0.0, 1.0 }, false)
     _data.radios[5].volMode = 0
     _data.radios[5].expansion = true
+    _data.radios[5].model = SR.RadioModels.R_852
 
     -- TODO check
     local _seat = SR.lastKnownSeat --get_param_handle("SEAT"):get()
@@ -3535,11 +3655,13 @@ function SR.exportRadioL39(_data)
     _data.radios[1].freq = 100.0
     _data.radios[1].modulation = 2 --Special intercom modulation
     _data.radios[1].volume = SR.getRadioVolume(0, 288, { 0.0, 0.8 }, false)
+    _data.radios[1].model = SR.RadioModels.Intercom
 
     _data.radios[2].name = "R-832M"
     _data.radios[2].freq = SR.getRadioFrequency(19)
     _data.radios[2].modulation = 0
     _data.radios[2].volume = SR.getRadioVolume(0, 289, { 0.0, 0.8 }, false)
+    _data.radios[2].model = SR.RadioModels.R_832M
 
     -- Intercom button depressed
     if (SR.getButtonPosition(133) > 0.5 or SR.getButtonPosition(546) > 0.5) then
@@ -3564,6 +3686,7 @@ function SR.exportRadioL39(_data)
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
     _data.radios[3].expansion = true
+    _data.radios[3].model = SR.RadioModels.AN_ARC186
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-164 UHF"
@@ -3578,6 +3701,7 @@ function SR.exportRadioL39(_data)
     _data.radios[4].expansion = true
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[4].model = SR.RadioModels.AN_ARC164
 
     _data.control = 1; -- full radio - for expansion radios - DCS controls must be disabled
 
@@ -3609,6 +3733,7 @@ function SR.exportRadioEagleII(_data)
     _data.radios[1].freq = 100.0
     _data.radios[1].modulation = 2 --Special intercom modulation
     _data.radios[1].volume = 1--SR.getRadioVolume(0, 288,{0.0,0.8},false)
+    _data.radios[1].model = SR.RadioModels.Intercom
 
     _data.radios[2].name = "KY-197A"
     _data.radios[2].freq = SR.getRadioFrequency(5)
@@ -3643,6 +3768,7 @@ function SR.exportRadioEagleII(_data)
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
     _data.radios[3].expansion = true
+    _data.radios[3].model = SR.RadioModels.AN_ARC186
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-164 UHF"
@@ -3657,6 +3783,7 @@ function SR.exportRadioEagleII(_data)
     _data.radios[4].expansion = true
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[4].model = SR.RadioModels.AN_ARC164
 
     _data.control = 0; -- HOTAS
 
@@ -3680,11 +3807,13 @@ function SR.exportRadioYak52(_data)
     _data.radios[1].modulation = 2 --Special intercom modulation
     _data.radios[1].volume = 1.0
     _data.radios[1].volMode = 1
+    _data.radios[1].model = SR.RadioModels.Intercom
 
     _data.radios[2].name = "Baklan 5"
     _data.radios[2].freq = SR.getRadioFrequency(27)
     _data.radios[2].modulation = 0
     _data.radios[2].volume = SR.getRadioVolume(0, 90, { 0.0, 1.0 }, false)
+    _data.radios[2].model = SR.RadioModels.Baklan_5
 
     -- Intercom button depressed
     if (SR.getButtonPosition(192) > 0.5 or SR.getButtonPosition(196) > 0.5) then
@@ -3709,6 +3838,7 @@ function SR.exportRadioYak52(_data)
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
     _data.radios[3].expansion = true
+    _data.radios[3].model = SR.RadioModels.AN_ARC186
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-164 UHF"
@@ -3723,6 +3853,7 @@ function SR.exportRadioYak52(_data)
     _data.radios[4].expansion = true
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[4].model = SR.RadioModels.AN_ARC164
 
     _data.control = 1; -- full radio - for expansion radios - DCS controls must be disabled
 
@@ -3761,12 +3892,13 @@ function SR.exportRadioA10C(_data)
     _data.radios[2].freq = SR.getRadioFrequency(55)
     _data.radios[2].modulation = 0
     _data.radios[2].volume = SR.getRadioVolume(0, 133, { 0.0, 1.0 }, false) * SR.getRadioVolume(0, 238, { 0.0, 1.0 }, false) * SR.getRadioVolume(0, 225, { 0.0, 1.0 }, false) * SR.getButtonPosition(226)
-
+    _data.radios[2].model = SR.RadioModels.AN_ARC186
 
     -- UHF
     -- Set radio data
     _data.radios[3].name = "AN/ARC-164 UHF"
     _data.radios[3].freq = SR.getRadioFrequency(54)
+    _data.radios[3].model = SR.RadioModels.AN_ARC164
     
     local modulation = SR.getSelectorPosition(162, 0.1)
 
@@ -3809,7 +3941,7 @@ function SR.exportRadioA10C(_data)
     _data.radios[4].modulation = 1
     _data.radios[4].volume = SR.getRadioVolume(0, 147, { 0.0, 1.0 }, false) * SR.getRadioVolume(0, 238, { 0.0, 1.0 }, false) * SR.getRadioVolume(0, 223, { 0.0, 1.0 }, false) * SR.getButtonPosition(224)
     _data.radios[4].encMode = 2 -- mode 2 enc is set by aircraft & turned on by aircraft
-
+    _data.radios[4].model = SR.RadioModels.AN_ARC186
 
     -- KY-58 Radio Encryption
     -- Check if encryption is being used
@@ -3986,6 +4118,7 @@ function SR.exportRadioA10C2(_data)
     _data.radios[2].freq = SR.getRadioFrequency(55)
     _data.radios[2].modulation = SR.getRadioModulation(55)
     _data.radios[2].encMode = 2 -- Mode 2 is set by aircraft
+    _data.radios[2].model = SR.RadioModels.AN_ARC210
 
     --18 : {"PREV":"PREV","comsec_mode":"KY-58 VOICE","comsec_submode":"CT","dot_mark":".","freq_label_khz":"000","freq_label_mhz":"124","ky_submode_label":"1","lower_left_corner_arc210":"","modulation_label":"AM","prev_manual_freq":"---.---","txt_RT":"RT1"}
     -- 18 : {"PREV":"PREV","comsec_mode":"KY-58 VOICE","comsec_submode":"CT-TD","dot_mark":".","freq_label_khz":"000","freq_label_mhz":"124","ky_submode_label":"4","lower_left_corner_arc210":"","modulation_label":"AM","prev_manual_freq":"---.---","txt_RT":"RT1"}
@@ -4069,6 +4202,7 @@ function SR.exportRadioA10C2(_data)
     -- Set radio data
     _data.radios[3].name = "AN/ARC-164 UHF"
     _data.radios[3].freq = SR.getRadioFrequency(54)
+    _data.radios[3].model = SR.RadioModels.AN_ARC164
     
     local modulation = SR.getSelectorPosition(162, 0.1)
 
@@ -4109,7 +4243,7 @@ function SR.exportRadioA10C2(_data)
     _data.radios[4].modulation = 1
     _data.radios[4].volume = SR.getRadioVolume(0, 147, { 0.0, 1.0 }, false) * SR.getRadioVolume(0, 238, { 0.0, 1.0 }, false) * SR.getRadioVolume(0, 223, { 0.0, 1.0 }, false) * SR.getButtonPosition(224)
     _data.radios[4].encMode = 2 -- mode 2 enc is set by aircraft & turned on by aircraft
-
+    _data.radios[4].model = SR.RadioModels.AN_ARC186
 
     -- KY-58 Radio Encryption
     -- Check if encryption is being used
@@ -4412,6 +4546,7 @@ function SR.exportRadioFA18C(_data)
     _radio.freq = SR.getRadioFrequency(38)
     _radio.modulation = SR.getRadioModulation(38)
     _radio.volume = SR.getRadioVolume(0, 108, { 0.0, 1.0 }, false)
+    _radio.model = SR.RadioModels.AN_ARC210
     -- _radio.encMode = 2 -- Mode 2 is set by aircraft
 
     _fa18.radio1.channel = getCommChannel(_ufc.UFC_Comm1Display, _fa18.radio1.channel)
@@ -4426,6 +4561,7 @@ function SR.exportRadioFA18C(_data)
     _radio.freq = SR.getRadioFrequency(39)
     _radio.modulation = SR.getRadioModulation(39)
     _radio.volume = SR.getRadioVolume(0, 123, { 0.0, 1.0 }, false)
+    _radio.model = SR.RadioModels.AN_ARC210
     -- _radio.encMode = 2 -- Mode 2 is set by aircraft
 
     _fa18.radio2.channel = getCommChannel(_ufc.UFC_Comm2Display, _fa18.radio2.channel)
@@ -4462,6 +4598,7 @@ function SR.exportRadioFA18C(_data)
     _radio.modulation = 6
     _radio.volume = SR.getRadioVolume(0, 362, { 0.0, 1.0 }, false)
     _radio.encMode = 2 -- Mode 2 is set by aircraft
+    _radio.model = SR.RadioModels.LINK16
 
     local midsAChannel = _fa18.radio3.channel
     if midsAChannel < 127 and _fa18.link16 then
@@ -4478,6 +4615,7 @@ function SR.exportRadioFA18C(_data)
     _radio.modulation = 6
     _radio.volume = SR.getRadioVolume(0, 361, { 0.0, 1.0 }, false)
     _radio.encMode = 2 -- Mode 2 is set by aircraft
+    _radio.model = SR.RadioModels.LINK16
 
     local midsBChannel = _fa18.radio4.channel
     if midsBChannel < 127 and _fa18.link16 then
@@ -4689,6 +4827,7 @@ function SR.exportRadioF16C(_data)
     _data.radios[2].modulation = SR.getRadioModulation(36)
     _data.radios[2].volume = SR.getRadioVolume(0, 430, { 0.0, 1.0 }, false)
     _data.radios[2].encMode = 2
+    _data.radios[2].model = SR.RadioModels.AN_ARC164
 
     -- C&I Backup/UFC by Raffson, aka Stoner
     local _cni = SR.getButtonPosition(542)
@@ -4737,6 +4876,7 @@ function SR.exportRadioF16C(_data)
     _data.radios[3].encMode = 2
     _data.radios[3].guardFreqMode = 1
     _data.radios[3].secFreq = 121.5 * 1000000
+    _data.radios[3].model = SR.RadioModels.AN_ARC222
 
     -- KY-58 Radio Encryption
     local _ky58Power = SR.round(SR.getButtonPosition(707), 0.1)
@@ -4856,6 +4996,7 @@ function SR.exportRadioF86Sabre(_data)
     _data.radios[2].freq = SR.getRadioFrequency(26)
     _data.radios[2].modulation = 0
     _data.radios[2].volume = SR.getRadioVolume(0, 806, { 0.1, 0.9 }, false)
+    _data.radios[2].model = SR.RadioModels.AN_ARC27
 
     -- get channel selector
     local _channel = SR.getSelectorPosition(807, 0.01)
@@ -4890,6 +5031,7 @@ function SR.exportRadioF86Sabre(_data)
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
     _data.radios[3].expansion = true
+    _data.radios[3].model = SR.RadioModels.AN_ARC186
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-164 UHF"
@@ -4904,6 +5046,7 @@ function SR.exportRadioF86Sabre(_data)
     _data.radios[4].expansion = true
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[4].model = SR.RadioModels.AN_ARC164
 
     _data.control = 0; -- Hotas Controls
 
@@ -4934,6 +5077,7 @@ function SR.exportRadioMIG15(_data)
     _data.radios[2].freq = SR.getRadioFrequency(30)
     _data.radios[2].modulation = 0
     _data.radios[2].volume = SR.getRadioVolume(0, 126, { 0.1, 0.9 }, false)
+    _data.radios[2].model = SR.RadioModels.RSI_6K
 
     _data.selected = 1
 
@@ -4955,6 +5099,7 @@ function SR.exportRadioMIG15(_data)
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
     _data.radios[3].expansion = true
+    _data.radios[3].model = SR.RadioModels.AN_ARC186
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-164 UHF"
@@ -4969,6 +5114,7 @@ function SR.exportRadioMIG15(_data)
     _data.radios[4].expansion = true
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[4].model = SR.RadioModels.AN_ARC164
 
     _data.control = 0; -- Hotas Controls radio
 
@@ -4999,6 +5145,7 @@ function SR.exportRadioMIG19(_data)
     _data.radios[2].freq = SR.getRadioFrequency(17)
     _data.radios[2].modulation = 0
     _data.radios[2].volume = SR.getRadioVolume(0, 327, { 0.0, 1.0 }, false)
+    _data.radios[2].model = SR.RadioModels.RSI_6K
 
     _data.selected = 1
 
@@ -5013,6 +5160,7 @@ function SR.exportRadioMIG19(_data)
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
     _data.radios[3].expansion = true
+    _data.radios[3].model = SR.RadioModels.AN_ARC186
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-164 UHF"
@@ -5027,6 +5175,7 @@ function SR.exportRadioMIG19(_data)
     _data.radios[4].expansion = true
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[4].model = SR.RadioModels.AN_ARC164
 
     _data.control = 0; -- Hotas Controls radio
 
@@ -5057,6 +5206,7 @@ function SR.exportRadioMIG21(_data)
     _data.radios[2].freq = SR.getRadioFrequency(22)
     _data.radios[2].modulation = 0
     _data.radios[2].volume = SR.getRadioVolume(0, 210, { 0.0, 1.0 }, false)
+    _data.radios[2].model = SR.RadioModels.R_832M
 
     _data.radios[2].channel = SR.getSelectorPosition(211, 0.05)
 
@@ -5079,6 +5229,7 @@ function SR.exportRadioMIG21(_data)
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
     _data.radios[3].expansion = true
+    _data.radios[3].model = SR.RadioModels.AN_ARC186
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-164 UHF"
@@ -5093,6 +5244,7 @@ function SR.exportRadioMIG21(_data)
     _data.radios[4].expansion = true
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[4].model = SR.RadioModels.AN_ARC164
 
     _data.control = 0; -- hotas radio
 
@@ -5122,6 +5274,7 @@ function SR.exportRadioF5E(_data)
     _data.radios[2].name = "AN/ARC-164"
     _data.radios[2].freq = SR.getRadioFrequency(23)
     _data.radios[2].volume = SR.getRadioVolume(0, 309, { 0.0, 1.0 }, false)
+    _data.radios[2].model = SR.RadioModels.AN_ARC164
 
     local modulation = SR.getSelectorPosition(327, 0.1)
 
@@ -5167,6 +5320,7 @@ function SR.exportRadioF5E(_data)
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
     _data.radios[3].expansion = true
+    _data.radios[3].model = SR.RadioModels.AN_ARC186
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-164 UHF"
@@ -5181,6 +5335,7 @@ function SR.exportRadioF5E(_data)
     _data.radios[4].expansion = true
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[4].model = SR.RadioModels.AN_ARC164
 
     _data.control = 0; -- hotas radio
 
@@ -5264,6 +5419,7 @@ function SR.exportRadioP51(_data)
     _data.radios[2].freq = SR.getRadioFrequency(24)
     _data.radios[2].modulation = 0
     _data.radios[2].volume = SR.getRadioVolume(0, 116, { 0.0, 1.0 }, false)
+    _data.radios[2].model = SR.RadioModels.SCR522A
 
     _data.selected = 1
 
@@ -5284,6 +5440,7 @@ function SR.exportRadioP51(_data)
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
     _data.radios[3].expansion = true
+    _data.radios[3].model = SR.RadioModels.AN_ARC186
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-164 UHF"
@@ -5298,6 +5455,7 @@ function SR.exportRadioP51(_data)
     _data.radios[4].expansion = true
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[4].model = SR.RadioModels.AN_ARC164
 
     _data.control = 0; -- hotas radio
 
@@ -5329,6 +5487,7 @@ function SR.exportRadioP47(_data)
     _data.radios[2].freq = SR.getRadioFrequency(23)
     _data.radios[2].modulation = 0
     _data.radios[2].volume = SR.getRadioVolume(0, 77, { 0.0, 1.0 }, false)
+    _data.radios[2].model = SR.RadioModels.SCR522A
 
     _data.selected = 1
 
@@ -5350,6 +5509,7 @@ function SR.exportRadioP47(_data)
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
     _data.radios[3].expansion = true
+    _data.radios[3].model = SR.RadioModels.AN_ARC186
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-164 UHF"
@@ -5364,6 +5524,7 @@ function SR.exportRadioP47(_data)
     _data.radios[4].expansion = true
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[4].model = SR.RadioModels.AN_ARC164
 
     _data.control = 0; -- hotas radio
 
@@ -5393,6 +5554,7 @@ function SR.exportRadioFW190(_data)
     _data.radios[2].name = "FuG 16ZY"
     _data.radios[2].freq = SR.getRadioFrequency(15)
     _data.radios[2].modulation = 0
+    _data.radios[2].model = SR.RadioModels.FUG_16_ZY
 
     local _volRaw = GetDevice(0):get_argument_value(83)
     if _volRaw >= 0 and _volRaw <= 0.25 then
@@ -5415,6 +5577,7 @@ function SR.exportRadioFW190(_data)
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
     _data.radios[3].expansion = true
+    _data.radios[3].model = SR.RadioModels.AN_ARC186
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-164 UHF"
@@ -5429,6 +5592,7 @@ function SR.exportRadioFW190(_data)
     _data.radios[4].expansion = true
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[4].model = SR.RadioModels.AN_ARC164
 
     _data.control = 0; -- hotas radio
 
@@ -5458,6 +5622,7 @@ function SR.exportRadioBF109(_data)
     _data.radios[2].freq = SR.getRadioFrequency(14)
     _data.radios[2].modulation = 0
     _data.radios[2].volume = SR.getRadioVolume(0, 130, { 0.0, 1.0 }, false)
+    _data.radios[2].model = SR.RadioModels.FUG_16_ZY
 
     if (SR.getButtonPosition(150)) > 0.5 then
         _data.ptt = true
@@ -5478,6 +5643,7 @@ function SR.exportRadioBF109(_data)
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
     _data.radios[3].expansion = true
+    _data.radios[3].model = SR.RadioModels.AN_ARC186
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-164 UHF"
@@ -5492,6 +5658,7 @@ function SR.exportRadioBF109(_data)
     _data.radios[4].expansion = true
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[4].model = SR.RadioModels.AN_ARC164
 
     _data.control = 0; -- hotas radio
 
@@ -5523,6 +5690,7 @@ function SR.exportRadioSpitfireLFMkIX (_data)
     _data.radios[2].modulation = 0
     _data.radios[2].volMode = 1
     _data.radios[2].volume = 1.0 --no volume control
+    _data.radios[2].model = SR.RadioModels.SCR522A
 
     _data.selected = 1
 
@@ -5537,6 +5705,7 @@ function SR.exportRadioSpitfireLFMkIX (_data)
     _data.radios[3].volMode = 1
     _data.radios[3].freqMode = 1
     _data.radios[3].expansion = true
+    _data.radios[3].model = SR.RadioModels.AN_ARC186
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-164 UHF"
@@ -5551,6 +5720,7 @@ function SR.exportRadioSpitfireLFMkIX (_data)
     _data.radios[4].expansion = true
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[4].model = SR.RadioModels.AN_ARC164
 
     _data.control = 0; -- no ptt, same as the FW and 109. No connector.
 
@@ -5582,11 +5752,13 @@ function SR.exportRadioMosquitoFBMkVI (_data)
     _data.radios[1].modulation = 2
     _data.radios[1].volume = 1.0
     _data.radios[1].volMode = 1
+    _data.radios[1].model = SR.RadioModels.Intercom
 
     _data.radios[2].name = "SCR522A" 
     _data.radios[2].freq = SR.getRadioFrequency(24)
     _data.radios[2].modulation = 0
     _data.radios[2].volume = SR.getRadioVolume(0, 364, { 0.0, 1.0 }, false)
+    _data.radios[2].model = SR.RadioModels.SCR522A
 
     --TODO check
     local _seat = SR.lastKnownSeat --get_param_handle("SEAT"):get()
@@ -5608,12 +5780,14 @@ function SR.exportRadioMosquitoFBMkVI (_data)
     _data.radios[3].freq = SR.getRadioFrequency(27,500,true)
     _data.radios[3].modulation = 0
     _data.radios[3].volume = SR.getRadioVolume(0, 229, { 0.0, 1.0 }, false)
+    _data.radios[3].model = SR.RadioModels.R1155
 
     _data.radios[4].name = "T1154" 
     _data.radios[4].freq = SR.getRadioFrequency(26,500,true)
     _data.radios[4].modulation = 0
     _data.radios[4].volume = 1
     _data.radios[4].volMode = 1
+    _data.radios[4].model = SR.RadioModels.T1154
 
 
     -- Expansion Radio - Server Side Controlled
@@ -5627,6 +5801,7 @@ function SR.exportRadioMosquitoFBMkVI (_data)
     _data.radios[5].volMode = 1
     _data.radios[5].freqMode = 1
     _data.radios[5].expansion = true
+    _data.radios[5].model = SR.RadioModels.AN_ARC210
 
     _data.control = 0; -- no ptt, same as the FW and 109. No connector.
     _data.selected = 1
@@ -5660,10 +5835,12 @@ function SR.exportRadioC101EB(_data)
     _data.radios[1].freq = 100
     _data.radios[1].modulation = 2
     _data.radios[1].volume = SR.getRadioVolume(0, 403, { 0.0, 1.0 }, false)
+    _data.radios[1].model = SR.RadioModels.Intercom
 
     _data.radios[2].name = "AN/ARC-164 UHF"
     _data.radios[2].modulation = 0
     _data.radios[2].volume = SR.getRadioVolume(0, 234, { 0.0, 1.0 }, false)
+    _data.radios[2].model = SR.RadioModels.AN_ARC164
 
     local _selector = SR.getSelectorPosition(232, 0.25)
 
@@ -5683,6 +5860,7 @@ function SR.exportRadioC101EB(_data)
     _data.radios[3].volume = SR.getRadioVolume(0, 412, { 0.0, 1.0 }, false)
 
     _data.radios[3].freq = SR.getRadioFrequency(10)
+    _data.radios[3].model = SR.RadioModels.AN_ARC134
 
     local _seat = GetDevice(0):get_current_seat()
 
@@ -5799,6 +5977,7 @@ function SR.exportRadioC101CC(_data)
     _data.radios[1].freq = 100
     _data.radios[1].modulation = 2
     _data.radios[1].volume = SR.getRadioVolume(0, 403, { 0.0, 1.0 }, false)
+    _data.radios[1].model = SR.RadioModels.Intercom
 
     _data.radios[2].name = "V/TVU-740"
     _data.radios[2].freq = SR.getRadioFrequency(11)
@@ -5964,6 +6143,7 @@ function SR.exportRadioMB339A(_data)
     _data.radios[1].freq = 100
     _data.radios[1].modulation = 2
     _data.radios[1].volume = intercom_device:get_volume()
+    _data.radios[1].model = SR.RadioModels.Intercom
 
     -- AN/ARC-150(V)2 - COMM1 Radio
     _data.radios[2].name = "AN/ARC-150(V)2 - UHF COMM1"
@@ -6056,6 +6236,7 @@ function SR.exportRadioHawk(_data)
     end
     _data.radios[2].modulation = 0
     _data.radios[2].volume = 1
+    _data.radios[2].model = SR.RadioModels.AN_ARC164
 
     _data.radios[3].name = "ARI 23259/1"
     _data.radios[3].freq = SR.getRadioFrequency(7)
@@ -6351,6 +6532,7 @@ function SR.exportRadioF1CE(_data)
     _data.radios[4].expansion = true
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[4].model = SR.RadioModels.AN_ARC210
 
     _data.control = 0;
 
@@ -6384,6 +6566,7 @@ function SR.exportRadioF1BE(_data)
     _data.radios[1].modulation = 2
     _data.radios[1].volume = 1.0
     _data.radios[1].volMode = 1.0
+    _data.radios[1].model = SR.RadioModels.Intercom
 
 
     _data.radios[2].name = "TRAP-136 V/UHF"
@@ -6453,6 +6636,7 @@ function SR.exportRadioF1BE(_data)
     _data.radios[4].expansion = true
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[4].model = SR.RadioModels.AN_ARC210
 
    -- SR.lastKnownSeat = 1
 
@@ -6805,6 +6989,7 @@ end
     _data.radios[2].modulation = SR.getRadioModulation(2)
     _data.radios[2].volume = SR.getRadioVolume(0, 298, { 0.0, 1.0 }, false)
     _data.radios[2].encMode = 2 -- mode 2 enc is set by aircraft & turned on by aircraft
+    _data.radios[2].model = SR.RadioModels.AN_ARC210
 
     local radio1Guard = getGuardFreq(_data.radios[2].freq, _av8.radio1.guard)
 
@@ -6834,6 +7019,7 @@ end
     _data.radios[3].modulation = SR.getRadioModulation(3)
     _data.radios[3].volume = SR.getRadioVolume(0, 299, { 0.0, 1.0 }, false)
     _data.radios[3].encMode = 2 -- mode 2 enc is set by aircraft & turned on by aircraft
+    _data.radios[3].model = SR.RadioModels.AN_ARC210
 
     local radio2Guard = getGuardFreq(_data.radios[3].freq, _av8.radio2.guard)
 
@@ -6911,6 +7097,7 @@ function SR.exportRadioF14(_data)
     _data.radios[1].freq = 100.0
     _data.radios[1].modulation = 2 --Special intercom modulation
     _data.radios[1].volume = ICS_device:get_volume()
+    _data.radios[1].model = SR.RadioModels.Intercom
 
     _data.radios[2].name = "AN/ARC-159(V)"
     _data.radios[2].freq = ARC159_device:is_on() and SR.round(ARC159_device:get_frequency(), 5000) or 1
@@ -6931,6 +7118,7 @@ function SR.exportRadioF14(_data)
     _data.radios[3].freq = ARC182_device:is_on() and SR.round(ARC182_device:get_frequency(), 5000) or 1
     _data.radios[3].modulation = ARC182_device:get_modulation()
     _data.radios[3].volume = ARC182_device:get_volume()
+    _data.radios[3].model = SR.RadioModels.AN_ARC182
     if ARC182_device:is_guard_enabled() then
         _data.radios[3].secFreq = SR.round(ARC182_device:get_guard_freq(), 5000)
     else
@@ -7087,11 +7275,13 @@ function SR.exportRadioF4(_data)
     _data.radios[1].freq = 100.0
     _data.radios[1].modulation = 2 --Special intercom modulation
     _data.radios[1].volume = ICS_device:get_volume()
+    _data.radios[1].model = SR.RadioModels.Intercom
 
     _data.radios[2].name = "AN/ARC-164 COMM"
     _data.radios[2].freq = ARC164_device:is_on() and SR.round(ARC164_device:get_frequency(), 5000) or 1
     _data.radios[2].modulation = radio_modulation
     _data.radios[2].volume = ARC164_device:get_volume()
+    _data.radios[2].model = SR.RadioModels.AN_ARC164
     if ARC164_device:is_guard_enabled() then
         _data.radios[2].secFreq = 243.0 * 1000000
     else
@@ -7115,6 +7305,7 @@ function SR.exportRadioF4(_data)
     _data.radios[3].enc = is_encrypted
     _data.radios[3].encMode = 2
     _data.radios[3].rxOnly = true
+    _data.radios[3].model = SR.RadioModels.AN_ARC164
 
 
     -- Expansion Radio - Server Side Controlled
@@ -7128,6 +7319,7 @@ function SR.exportRadioF4(_data)
     _data.radios[4].expansion = true
     _data.radios[4].volMode = 1
     _data.radios[4].freqMode = 1
+    _data.radios[4].model = SR.RadioModels.AN_ARC186
  
     _data.intercomHotMic = intercom_hot_mic
 
@@ -7213,6 +7405,7 @@ function SR.exportRadioAJS37(_data)
     _data.radios[4].freqMode = 1
     _data.radios[4].encKey = 1
     _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
+    _data.radios[4].model = SR.RadioModels.AN_ARC164
 
     _data.control = 0;
     _data.selected = 1
@@ -7272,6 +7465,7 @@ function SR.exportRadioF4U (_data)
     _data.radios[2].volume = SR.getRadioVolume(devices.Cockpit, 081, {0.0,1.0},false)
     _data.radios[2].rxOnly = rxOn and not txOn
     _data.radios[2].modulation = anarc5:get_modulation()
+    _data.radios[2].model = SR.RadioModels.AN_ARC5
 
     if voiceSelected and (txOn or rxOn) then
         _data.radios[2].freq = SR.round(anarc5:get_frequency(), 5e3) or 0

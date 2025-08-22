@@ -56,10 +56,9 @@ public enum ProfileSettingsKeys
     RadioBackgroundNoiseEffect,
     NATOToneVolume,
     HQToneVolume,
-    FMNoiseVolume,
-    VHFNoiseVolume,
-    UHFNoiseVolume,
-    HFNoiseVolume,
+    NoiseGainDB,
+    HFNoiseGainDB,
+    PerRadioModelEffects,
 
     PTTStartDelay,
 
@@ -127,10 +126,9 @@ public class ProfileSettingsStore
         { ProfileSettingsKeys.NATOToneVolume.ToString(), "1.2" },
         { ProfileSettingsKeys.HQToneVolume.ToString(), "0.3" },
 
-        { ProfileSettingsKeys.VHFNoiseVolume.ToString(), "0.15" },
-        { ProfileSettingsKeys.HFNoiseVolume.ToString(), "0.15" },
-        { ProfileSettingsKeys.UHFNoiseVolume.ToString(), "0.15" },
-        { ProfileSettingsKeys.FMNoiseVolume.ToString(), "0.4" },
+        { ProfileSettingsKeys.NoiseGainDB.ToString(), "0" },
+        { ProfileSettingsKeys.HFNoiseGainDB.ToString(), "0" },
+        { ProfileSettingsKeys.PerRadioModelEffects.ToString(), "true" },
 
         { ProfileSettingsKeys.AMCollisionVolume.ToString(), "1.0" },
 

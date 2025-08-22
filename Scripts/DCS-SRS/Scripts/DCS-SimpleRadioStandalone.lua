@@ -114,6 +114,10 @@ end
 
 -- Function to load mods' SRS plugin script
 function SR.LoadModsPlugins()
+    -- Load SRS Maintained Modules
+    local SRSModulesPath = lfs.writedir() .. [[Mods\Services\DCS-SRS\Scripts\DCS-SRS-Modules]]
+    SR.ModsPuginsRecursiveSearch(SRSModulesPath)
+
     -- Check the 3 main Mods sub-folders
     local aircraftModsPath = lfs.writedir() .. [[Mods\Aircraft]]
     SR.ModsPuginsRecursiveSearch(aircraftModsPath)
@@ -143,17 +147,23 @@ function SR.ModsPuginsRecursiveSearch(modsPath)
     for modFolder in lfs.dir(modsPath) do
         modAutoloadPath = modsPath..[[\]]..modFolder..[[\SRS\autoload.lua]]
 
-        -- If the Mod declares an SRS autoload file we process it
-        mode, errmsg = lfs.attributes (modAutoloadPath, "mode")
-        if mode ~= nil and mode == "file" then
-            -- Try to load the Mod's script through a protected environment to avoid to invalidate SRS entirely if the script contains any error
-            local status, error = pcall(function () loadfile(modAutoloadPath)().register(SR) end)
-            
-            if error then
-                SR.error("Failed loading SRS Mod plugin due to an error in '"..modAutoloadPath.."'")
-            else
-                SR.log("Loaded SRS Mod plugin '"..modAutoloadPath.."'")
-            end
+        SR.LoadModule(modAutoloadPath)
+    end
+end
+
+function SR.LoadModule(modulePath)
+    local mode, errmsg
+
+    -- If the Mod declares an SRS autoload file we process it
+    mode, errmsg = lfs.attributes (modulePath, "mode")
+    if mode ~= nil and mode == "file" then
+        -- Try to load the Mod's script through a protected environment to avoid to invalidate SRS entirely if the script contains any error
+        local status, error = pcall(function () loadfile(modulePath)().register(SR) end)
+        
+        if error then
+            SR.error("Failed loading SRS Mod plugin due to an error in '"..modulePath.."'")
+        else
+            SR.log("Loaded SRS Mod plugin '"..modulePath.."'")
         end
     end
 end

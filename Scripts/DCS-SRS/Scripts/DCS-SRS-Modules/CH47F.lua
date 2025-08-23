@@ -125,13 +125,11 @@ function exportRadioCH47F(_data, SR)
 
         _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
         _data.control = 1 -- Full Radio
-
     elseif _seat == 1 then --624
         _pilotCopilotRadios(624, 1283)
 
         _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
         _data.control = 1 -- Full Radio
-
     elseif _seat == 2 then --657
         _pilotCopilotRadios(657, -1)
 

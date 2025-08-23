@@ -130,7 +130,6 @@ function exportRadioJF17(_data, SR)
     _data.selected = 1
     _data.control = 0 -- partial radio, allows hotkeys
 
-
     _data.iff = { status = 0, mode1 = 0, mode2 = -1, mode3 = 0, mode4 = false, control = 0, expansion = false }
 
     local _iff = GetDevice(15)

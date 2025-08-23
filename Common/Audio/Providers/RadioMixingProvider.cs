@@ -7,6 +7,7 @@ using NAudio.SoundFont;
 using NAudio.Utils;
 using NAudio.Wave;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 
@@ -72,17 +73,21 @@ public class RadioMixingProvider : ISampleProvider
     /// <returns>Number of samples read</returns>
     public int Read(float[] buffer, int offset, int count)
     {
+        var floatPool = ArrayPool<float>.Shared;
         // Accumulate in local mono buffer before switching to stereo.
-        var monoBuffer = new float[count / 2];
+        var monoBuffer = floatPool.Rent(count / 2);
         
+        var monoBufferLength = count / 2; // Array pool can give us an array that is larger.
+        Array.Clear(monoBuffer, 0, monoBufferLength);
+
         // Read effects.
-        var monoOffset = ReadEffects(monoBuffer, 0, monoBuffer.Length);
+        var monoOffset = ReadEffects(monoBuffer, 0, monoBufferLength);
 
         // Read any available audio that we have queued up.
-        monoOffset += ReadMixBuffer(monoBuffer, monoOffset, monoBuffer.Length - monoOffset);
+        monoOffset += ReadMixBuffer(monoBuffer, monoOffset, monoBufferLength - monoOffset);
 
         // Are we starved? Rehydrate.
-        if (monoOffset < monoBuffer.Length)
+        if (monoOffset < monoBufferLength)
         {
             List<DeJitteredTransmission> mainAudio = new();
             List<DeJitteredTransmission> secondaryAudio = new();
@@ -99,7 +104,7 @@ public class RadioMixingProvider : ISampleProvider
                     var source = sources[index];
 
                     //ask for count/2 as the source is MONO but the request for this is STEREO
-                    var transmission = source.JitterBufferProviderInterface[radioId].Read(monoBuffer.Length - monoOffset);
+                    var transmission = source.JitterBufferProviderInterface[radioId].Read(monoBufferLength - monoOffset);
 
                     if (transmission.PCMAudioLength > 0)
                     {
@@ -137,7 +142,7 @@ public class RadioMixingProvider : ISampleProvider
             }
 
             // #FIXME: Should copy into mixBuffer, and use that throughout as our primary mixdown here.
-            monoOffset += HandleStartEndTones(hasIncomingAudio || availableInBuffer > 0, ky58Tone, monoBuffer, monoOffset, monoBuffer.Length - monoOffset);
+            monoOffset += HandleStartEndTones(hasIncomingAudio || availableInBuffer > 0, ky58Tone, monoBuffer, monoOffset, monoBufferLength - monoOffset);
 
             // Queue new audio (if any).
             if (hasIncomingAudio)
@@ -162,11 +167,12 @@ public class RadioMixingProvider : ISampleProvider
                 if (secondaryAudio.Count > 0)
                 {
                     var secondarySamples = 0;
-                    var secondaryMixBuffer = new float[longestSecondaryLength];
+                    var secondaryMixBuffer = floatPool.Rent(longestSecondaryLength);
                     pipeline.ProcessClientTransmissions(secondaryMixBuffer, 0, secondaryAudio, out secondarySamples);
 
                     // Mix with primary.
                     AudioManipulationHelper.MixArraysNoClipping(secondaryMixBuffer.AsSpan(0, secondarySamples), targetSpan);
+                    floatPool.Return(secondaryMixBuffer);
                 }
 
                 //now clip all mixing
@@ -174,7 +180,7 @@ public class RadioMixingProvider : ISampleProvider
                 availableInBuffer += targetSpan.Length;
 
                 // Drain newly queued audio.
-                monoOffset += ReadMixBuffer(monoBuffer, monoOffset, monoBuffer.Length - monoOffset);
+                monoOffset += ReadMixBuffer(monoBuffer, monoOffset, monoBufferLength - monoOffset);
             }
         }
 
@@ -194,6 +200,7 @@ public class RadioMixingProvider : ISampleProvider
             SeparateAudio(monoBuffer, 0, monoOffset, buffer, offset, radioId);
         }
 
+        floatPool.Return(monoBuffer);
         return monoOffset * 2; // double because of mono -> stereo.
     }
 

@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Caliburn.Micro;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Utility;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models;
@@ -28,6 +28,7 @@ using WebRtcVadSharp;
 using WPFCustomMessageBox;
 using Application = Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Opus.Application;
 using LogManager = NLog.LogManager;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Utility;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
 
@@ -82,7 +83,7 @@ public class AudioManager : IHandle<SRClientUpdateMessage>
     private EventDrivenResampler _resampler;
 
     private float _speakerBoost = 1.0f;
-    private Preprocessor _speex;
+    private SpeexProcessor _speex;
 
     private byte[] _tempMicOutputBuffer;
 
@@ -205,7 +206,7 @@ public class AudioManager : IHandle<SRClientUpdateMessage>
         _encoder.ForwardErrorCorrection = false;
 
         //speex
-        _speex = new Preprocessor(Constants.MIC_SEGMENT_FRAMES, Constants.MIC_SAMPLE_RATE);
+        _speex = new SpeexProcessor(Constants.MIC_SEGMENT_FRAMES, Constants.MIC_SAMPLE_RATE);
     }
 
 

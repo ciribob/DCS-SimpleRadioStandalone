@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using NAudio.Wave;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility.Speex;
+using System.Buffers;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers;
 
 public class ClientAudioProvider : AudioProvider
 {
     private readonly Random _random = new();
-    public float[] PcmAudioFloat { get; set; } = new float[Constants.OUTPUT_SAMPLE_RATE * 120 / 1000]; // max Opus frame size.
+    private static readonly int MaxSamples = Constants.OUTPUT_SAMPLE_RATE * 120 / 1000; // 120ms is the max opus frame size.
+
+    private Preprocessor speex = new Preprocessor(Constants.OUTPUT_SAMPLE_RATE * 20 / 1000, Constants.OUTPUT_SAMPLE_RATE);
 
     //progress per radio
     private readonly Dictionary<string, int>[] ambientEffectProgress;
@@ -44,6 +49,12 @@ public class ClientAudioProvider : AudioProvider
         ambientEffectProgress = new Dictionary<string, int>[radios];
 
         for (var i = 0; i < radios; i++) ambientEffectProgress[i] = new Dictionary<string, int>();
+
+        // Default target is 8000, give it a bit more range.
+        speex.AutomaticGainControl = true;
+        speex.AutomaticGainControlTarget = 15000;
+        speex.AutomaticGainControlLevelMax = 30;
+        speex.AutomaticGainControlDecrement = -40;
     }
 
     public JitterBufferProviderInterface[] JitterBufferProviderInterface { get; }
@@ -57,8 +68,33 @@ public class ClientAudioProvider : AudioProvider
 
         var newTransmission = LikelyNewTransmission();
 
+        var shortPool = ArrayPool<short>.Shared;
+
+        var pcmAudioShort = shortPool.Rent(MaxSamples);
+
         // Target buffer contains at least one frame.
-        var decodedLength = _decoder.DecodeFloat(audio.EncodedAudio, PcmAudioFloat, newTransmission);
+        //var decodedLength = _decoder.DecodeFloat(audio.EncodedAudio, PcmAudioFloat, newTransmission);
+        var decodedLength = _decoder.DecodeShort(audio.EncodedAudio, pcmAudioShort, newTransmission);
+
+        if (newTransmission)
+        {
+            speex.Reset();
+        }
+
+        for (var i = 0; i < decodedLength; i += speex.FrameSize)
+        {
+            speex.Process(new ArraySegment<short>(pcmAudioShort, i, Math.Min(decodedLength, speex.FrameSize)));
+        }
+
+        var floatPool = ArrayPool<float>.Shared;
+        var pcmAudioFloat = floatPool.Rent(decodedLength);
+
+        for (var i = 0; i < decodedLength; ++i)
+        {
+            pcmAudioFloat[i] = pcmAudioShort[i] / (short.MaxValue + 1f);
+        }
+
+        shortPool.Return(pcmAudioShort);
 
         if (decodedLength <= 0)
         {
@@ -74,7 +110,7 @@ public class ClientAudioProvider : AudioProvider
             decrytable =
                 audio.Decryptable /* || (audio.Encryption == 0) <--- this test has already been performed by all callers and would require another call to check for STRICT_AUDIO_ENCRYPTION */;
 
-        var pcmAudio = PcmAudioFloat.AsSpan(0, decodedLength);
+        var pcmAudio = pcmAudioFloat.AsSpan(0, decodedLength);
         if (decrytable)
         {
             //adjust for LOS + Distance + Volume
@@ -94,26 +130,7 @@ public class ClientAudioProvider : AudioProvider
         LastUpdate = DateTime.Now.Ticks;
 
         //return and skip jitter buffer if its passthrough as its local mic
-        if (passThrough)
-            //return MONO PCM 16 as bytes
-            // NOT MONO PCM 32
-            return new JitterBufferAudio
-            {
-                Audio = pcmAudio.ToArray(),
-                PacketNumber = audio.PacketNumber,
-                Decryptable = decrytable,
-                Modulation = (Modulation)audio.Modulation,
-                ReceivedRadio = audio.ReceivedRadio,
-                Volume = audio.Volume,
-                IsSecondary = audio.IsSecondary,
-                Frequency = audio.Frequency,
-                NoAudioEffects = audio.NoAudioEffects,
-                Guid = audio.ClientGuid,
-                OriginalClientGuid = audio.OriginalClientGuid,
-                Encryption = audio.Encryption
-            };
-
-        JitterBufferProviderInterface[audio.ReceivedRadio].AddSamples(new JitterBufferAudio
+        var jitter = new JitterBufferAudio
         {
             Audio = pcmAudio.ToArray(),
             PacketNumber = audio.PacketNumber,
@@ -127,8 +144,15 @@ public class ClientAudioProvider : AudioProvider
             Guid = audio.ClientGuid,
             OriginalClientGuid = audio.OriginalClientGuid,
             Encryption = audio.Encryption
-        });
+        };
 
+        floatPool.Return(pcmAudioFloat);
+        if (passThrough)
+            //return MONO PCM 16 as bytes
+            // NOT MONO PCM 32
+            return jitter;
+
+        JitterBufferProviderInterface[audio.ReceivedRadio].AddSamples(jitter);
 
         return null;
     }

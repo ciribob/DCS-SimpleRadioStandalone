@@ -113,7 +113,7 @@ public class OpusDecoder : IDisposable
                 //https://notabug.org/xiph/opus/raw/v0.9.10/include/opus_defines.h
                 var ret = API.opus_decoder_ctl(_decoder,
                     4028); //reset opus state - packets missing and it'll get confused
-                if (ret < 0) throw new Exception("Error Resetting Oppus");
+                if (ret < 0) throw new Exception("Error Resetting Opus");
             }
 
             if (inputOpusData != null)
@@ -133,6 +133,44 @@ public class OpusDecoder : IDisposable
             throw new Exception("Decoding failed - " + (Errors)length);
 
         return decoded;
+    }
+
+    /// <summary>
+    ///     Produces i16 samples from Opus encoded data.
+    /// </summary>
+    /// <param name="inputOpusData">Opus encoded data to decode, <c>null</c> for dropped packet.</param>
+    /// <param name="decoded">Output buffer.</param>
+    /// <returns>Number of decoded samples.</returns>
+    public int DecodeShort(byte[] inputOpusData, short[] decoded, bool reset = false)
+    {
+        if (disposed)
+            throw new ObjectDisposedException("OpusDecoder");
+
+
+        if (reset)
+        {
+            //https://notabug.org/xiph/opus/raw/v0.9.10/include/opus_defines.h
+            var ret = API.opus_decoder_ctl(_decoder,
+                4028); //reset opus state - packets missing and it'll get confused
+            if (ret < 0) throw new Exception("Error Resetting Opus");
+        }
+
+        var length = 0;
+        unsafe
+        {
+            fixed (short* pcmOut = decoded)
+            {
+                var payloadLength = inputOpusData != null ? inputOpusData.Length : 0;
+                length = API.opus_decode(_decoder, inputOpusData, payloadLength, new IntPtr(pcmOut), decoded.Length / OutputChannels,
+                        ForwardErrorCorrection ? 1 : 0);
+
+            }
+        }
+
+        if (length < 0)
+            throw new Exception("Decoding failed - " + (Errors)length);
+
+        return length;
     }
 
     /// <summary>

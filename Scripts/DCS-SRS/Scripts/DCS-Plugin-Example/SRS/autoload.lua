@@ -2,9 +2,9 @@
 --   function SR.exportRadio...(_data)
 -- in file DCS-SimpleRadioStandalone.lua
 
-function exportRadioMyModName(_data)
+function exportRadioMyModName(_data, SR)
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
-    _data.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=0,control=1,expansion=false,mic=-1}
+    _data.iff = { status = 0, mode1 = 0, mode2 = -1, mode3 = 0, mode4 = 0, control = 1, expansion = false, mic = -1 }
 
     -- COMM1 Radio
     _data.radios[2].name = "AN/ARC-186(V)"
@@ -18,14 +18,12 @@ function exportRadioMyModName(_data)
     _data.radios[2].freqMode = 1
     _data.radios[2].expansion = true
 
-    return _data;
+    return _data
 end
 
-
-local result = { }
-
-function result.register(SR)
-  SR.exporters["MyModName"] = exportRadioMyModName
-end
-
+local result = {
+    register = function(SR)
+        SR.exporters["MyModName"] = exportRadioMyModName
+    end,
+}
 return result

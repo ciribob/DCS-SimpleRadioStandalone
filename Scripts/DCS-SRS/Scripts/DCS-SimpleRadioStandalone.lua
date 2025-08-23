@@ -297,8 +297,8 @@ function SR.exporter()
             _update.ambient = {vol = 0.2, abType = 'jet' }
         end
 
-        _lastUnitId = _update.unitId
-        _lastUnitType = _data.Name
+        SR.lastKnownUnitId = _update.unitId
+        SR.lastKnownUnitType = _data.Name
     else
         local _slot = ''
 
@@ -358,8 +358,8 @@ function SR.exporter()
         --_update.latLng = _latLng
         --SR.lastKnownPos = _point
 
-        _lastUnitId = ""
-        _lastUnitType = ""
+        SR.lastKnownUnitId = ""
+        SR.lastKnownUnitType = ""
     end
 
     _update.seat = SR.lastKnownSeat

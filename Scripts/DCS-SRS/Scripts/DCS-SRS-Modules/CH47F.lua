@@ -5,7 +5,7 @@ _ch47.radio3 = { guard = 0, enc = false }
 
 function exportRadioCH47F(_data, SR)
     -- RESET
-    if _lastUnitId ~= _data.unitId then
+    if SR.lastKnownUnitId ~= _data.unitId then
         _ch47.radio1 = { enc = 0 }
         _ch47.radio2 = { guard = 0, enc = 0 }
         _ch47.radio3 = { guard = 0, enc = 0 }
@@ -125,11 +125,13 @@ function exportRadioCH47F(_data, SR)
 
         _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
         _data.control = 1 -- Full Radio
+
     elseif _seat == 1 then --624
         _pilotCopilotRadios(624, 1283)
 
         _data.capabilities = { dcsPtt = true, dcsIFF = false, dcsRadioSwitch = true, intercomHotMic = false, desc = "" }
         _data.control = 1 -- Full Radio
+
     elseif _seat == 2 then --657
         _pilotCopilotRadios(657, -1)
 

@@ -21,7 +21,7 @@ function exportRadioAH64D(_data, SR)
     }
 
     -- Check if player is in a new aircraft
-    if _lastUnitId ~= _data.unitId then
+    if SR.lastKnownUnitId ~= _data.unitId then
         -- New aircraft; SENS volume is at 0
         pcall(function()
             -- source https://github.com/DCSFlightpanels/dcs-bios/blob/master/Scripts/DCS-BIOS/lib/AH-64D.lua

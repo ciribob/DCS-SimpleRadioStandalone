@@ -35,7 +35,7 @@ function exportRadioAV8BNA(_data, SR)
 
     --SR.log("UFC Scratch:\n"..SR.JSON:encode(SR.getListIndicatorValue(5)).."\n\n")
 
-    if SR._lastUnitId ~= _data.unitId then
+    if SR.lastKnownUnitId ~= _data.unitId then
         _av8.radio1.guard = 0
         _av8.radio2.guard = 0
     end

@@ -9,7 +9,7 @@ function exportRadioA10C(_data, SR)
     }
 
     -- Check if player is in a new aircraft
-    if _lastUnitId ~= _data.unitId then
+    if SR.lastKnownUnitId ~= _data.unitId then
         -- New aircraft; Reset volumes to 100%
         local _device = GetDevice(0)
 

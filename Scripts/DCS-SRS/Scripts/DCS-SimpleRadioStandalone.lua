@@ -19,6 +19,8 @@ SR.unicast = true --DONT CHANGE THIS
 SR.lastKnownPos = { x = 0, y = 0, z = 0 }
 SR.lastKnownSeat = 0
 SR.lastKnownSlot = ''
+SR.lastKnownUnitId = "" -- used for a10c volume
+SR.lastKnownUnitType = ""    -- used for F/A-18C ENT button
 
 SR.MIDS_FREQ = 1030.0 * 1000000 -- Start at UHF 300
 SR.MIDS_FREQ_SEPARATION = 1.0 * 100000 -- 0.1 MHZ between MIDS channels
@@ -77,8 +79,6 @@ end
 local _prevLuaExportActivityNextEvent = LuaExportActivityNextEvent
 local _prevLuaExportBeforeNextFrame = LuaExportBeforeNextFrame
 
-local _lastUnitId = "" -- used for a10c volume
-local _lastUnitType = ""    -- used for F/A-18C ENT button
 local _tNextSRS = 0
 
 SR.exporters = {}   -- exporter table. Initialized at the end

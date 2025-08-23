@@ -116,7 +116,9 @@ end
 function SR.LoadModsPlugins()
     -- Load SRS Maintained Modules
     local SRSModulesPath = lfs.writedir() .. [[Mods\Services\DCS-SRS\Scripts\DCS-SRS-Modules]]
-    SR.ModsPuginsRecursiveSearch(SRSModulesPath)
+    for moduleFile in lfs.dir(SRSModulesPath) do
+        SR.LoadModule(SRSModulesPath ..[[\]].. moduleFile, false)
+    end
 
     -- Check the 3 main Mods sub-folders
     local aircraftModsPath = lfs.writedir() .. [[Mods\Aircraft]]
@@ -147,22 +149,22 @@ function SR.ModsPuginsRecursiveSearch(modsPath)
     for modFolder in lfs.dir(modsPath) do
         modAutoloadPath = modsPath..[[\]]..modFolder..[[\SRS\autoload.lua]]
 
-        SR.LoadModule(modAutoloadPath)
+        -- If the Mod declares an SRS autoload file we process it
+        SR.LoadModule(modAutoloadPath, true)
     end
 end
 
-function SR.LoadModule(modulePath)
+function SR.LoadModule(modulePath, notifySucess)
     local mode, errmsg
-
-    -- If the Mod declares an SRS autoload file we process it
-    mode, errmsg = lfs.attributes (modulePath, "mode")
+    mode, errmsg = lfs.attributes(modulePath, "mode")
+    
     if mode ~= nil and mode == "file" then
         -- Try to load the Mod's script through a protected environment to avoid to invalidate SRS entirely if the script contains any error
-        local status, error = pcall(function () loadfile(modulePath)().register(SR) end)
+        local status, error = pcall(function() loadfile(modulePath)().register(SR) end)
         
         if error then
             SR.error("Failed loading SRS Mod plugin due to an error in '"..modulePath.."'")
-        else
+        elseif (notifySucess) then
             SR.log("Loaded SRS Mod plugin '"..modulePath.."'")
         end
     end

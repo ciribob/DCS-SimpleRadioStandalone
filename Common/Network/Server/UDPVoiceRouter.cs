@@ -1,3 +1,12 @@
+using Caliburn.Micro;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Recording;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Models;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Server.TransmissionLogging;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
+using NLog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -8,14 +17,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Caliburn.Micro;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Models;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Server.TransmissionLogging;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
-using NLog;
 using LogManager = NLog.LogManager;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Server;
@@ -46,7 +47,8 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
 
     private UdpClient _listener;
     //private List<double> _recordingFrequencies = new();
-    // private AudioRecordingManager _recordingManager;
+    private UDPVoicePackeRecorder _recordingManager = null;
+
 
     private volatile bool _stop;
     private List<double> _testFrequencies = new();
@@ -120,6 +122,16 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
     {
         _transmissionLoggingQueue = new TransmissionLoggingQueue();
         _transmissionLoggingQueue.Start();
+
+        #region recording UDP packets
+        if (_serverSettings.GetGeneralSetting(ServerSettingsKeys.RECORD_VOICE_TRANSMISSIONS_ENABLED).BoolValue)
+        {
+            _recordingManager = new UDPVoicePackeRecorder();
+            //INIT ARCHIVE RETENTION TIME - Default is 15 minutes
+            _recordingManager.MaxArchiveGap = TimeSpan.FromMinutes(_serverSettings.GetGeneralSetting(ServerSettingsKeys.RECORD_VOICE_TRANSMISSIONS_RETENTION).IntValue);
+        }
+            
+        #endregion
 
         //start threads
         //packets that need processing
@@ -214,10 +226,6 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
 
     private void ProcessPackets()
     {
-        // _recordingManager = new AudioRecordingManager();
-        //
-        // _recordingManager.Start(_recordingFrequencies);
-
         while (!_stop)
             try
             {
@@ -276,6 +284,26 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
                                             // only log received transmissions!
                                             if (udpVoicePacket.RetransmissionCount == 0)
                                                 _transmissionLoggingQueue?.LogTransmission(client);
+
+                                            #region Record the transmission if server recording is enabled and client allows recording
+                                            if (client.AllowRecord && _recordingManager != null)
+                                            {
+                                                // TODO: 
+                                                // Record the transmission (UDPVoicePacket) to JSON in new thread
+                                                var packetCopy = udpVoicePacket; // capture for closure
+                                                new Thread(() =>
+                                                {
+                                                    try
+                                                    {
+                                                        _recordingManager.SavePacket(client, packetCopy);
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+                                                        Logger.Error(ex, "Failed to save UDPVoicePacket to JSON");
+                                                    }
+                                                }).Start();
+                                            }
+                                            #endregion
                                         }
                                     }
                                 }

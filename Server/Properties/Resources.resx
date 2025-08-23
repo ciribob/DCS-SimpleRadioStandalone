@@ -263,4 +263,10 @@ Cancel - Ignore</value>
   <data name="MsgBoxUpdateTitle" xml:space="preserve">
     <value>Update available</value>
   </data>
+  <data name="LabelRecordVoiceTransmission" xml:space="preserve">
+    <value>Record Voice Transmissions</value>
+  </data>
+  <data name="LabelRecordVoiceTransmissionPath" xml:space="preserve">
+    <value>Recorded Voice Transmissions Path</value>
+  </data>
 </root>

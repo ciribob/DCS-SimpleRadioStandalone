@@ -223,8 +223,11 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public string TransmissionLogEnabledText
             => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
+        public string RecordVoiceTransmissionText
+            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.RECORD_VOICE_TRANSMISSIONS_ENABLED).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
-        public string ServerPresetsEnabledText
+
+    public string ServerPresetsEnabledText
             => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.SERVER_PRESETS_ENABLED).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
         
     public string ListeningPort
@@ -453,7 +456,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
         }
 
-        public int ArchiveLimit
+    public int ArchiveLimit
         {
             get => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_RETENTION)
                 .IntValue;
@@ -465,8 +468,17 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
                 _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
             }
         }
-        
-        public void ServerPresetsEnabledToggle()
+
+    public void RecordVoiceTransmissionToggle()
+        {
+            var newSetting = RecordVoiceTransmissionText != $"{Properties.Resources.BtnOn}";
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.RECORD_VOICE_TRANSMISSIONS_ENABLED, newSetting);
+            NotifyOfPropertyChange(() => RecordVoiceTransmissionText);
+
+            _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
+        }
+
+    public void ServerPresetsEnabledToggle()
         {
             var newSetting = ServerPresetsEnabledText != $"{Properties.Resources.BtnOn}";
             ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SERVER_PRESETS_ENABLED, newSetting);

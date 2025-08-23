@@ -38,6 +38,9 @@ public enum ServerSettingsKeys
     SERVER_PRESETS = 31,
     HTTP_SERVER_ENABLED = 32,
     HTTP_SERVER_PORT = 33,
+    RECORD_VOICE_TRANSMISSIONS_ENABLED = 34,
+    RECORD_VOICE_TRANSMISSIONS_PATH = 35,
+    RECORD_VOICE_TRANSMISSIONS_RETENTION = 36,
 }
 
 public class DefaultServerSettings
@@ -76,6 +79,9 @@ public class DefaultServerSettings
         { ServerSettingsKeys.SERVER_IP.ToString(), "0.0.0.0" },
         { ServerSettingsKeys.SERVER_PRESETS_ENABLED.ToString(), "false" },
         { ServerSettingsKeys.HTTP_SERVER_ENABLED.ToString(), "false" },
-        { ServerSettingsKeys.HTTP_SERVER_PORT.ToString(), "8080" }
+        { ServerSettingsKeys.HTTP_SERVER_PORT.ToString(), "8080" },
+        { ServerSettingsKeys.RECORD_VOICE_TRANSMISSIONS_ENABLED.ToString(), "false" },
+        { ServerSettingsKeys.RECORD_VOICE_TRANSMISSIONS_PATH.ToString(), @"C:\SRS_Recorded_Voice_Transmissions\" },
+        { ServerSettingsKeys.RECORD_VOICE_TRANSMISSIONS_RETENTION.ToString(), "15" },
     };
 }

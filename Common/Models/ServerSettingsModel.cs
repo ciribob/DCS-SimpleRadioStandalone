@@ -1,6 +1,11 @@
-﻿namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Models;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-public class ServerSettingsModel
+namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Models;
+
+public class ServerSettingsModel : INotifyPropertyChanged
 {
 	public bool IsLineOfSightEnabled {get; set;}
 	public bool IsDistanceLimitEnabled {get; set;}
@@ -13,11 +18,7 @@ public class ServerSettingsModel
 	public bool IsCoalitionAudioSecurityEnabled {get; set;}
 	public bool IsSpectatorAudioDisabled {get; set;}
 
-	public string[] TestFrequencies { get; set; } = new string[2] { "125.2", "142.5" };
-
-
-
-
+	public ObservableCollection<string> TestFrequencies { get; set; } = new() { "125.2", "142.5" };
 
 	public int ServerPort { get; set; }
 	public bool IsClientExportEnabled {get; set;}
@@ -28,7 +29,7 @@ public class ServerSettingsModel
 	public bool IsCheckForBetaUpdatesEnabled { get; set; }
 	public bool IsRadioEncryptionAllowed { get; set; }
 	public bool IsShowTunedCountEnabled { get; set; }
-	public string GlobalLobbyFrequencies { get; set; }
+	public ObservableCollection<string> GlobalLobbyFrequencies { get; set; } = new();
 	public bool IsShowTransmitterNameEnabled { get; set; }
 	public bool IsLotAtcExportEnabled { get; set; }
 	public int LotAtcExportPort { get; set; }
@@ -42,4 +43,20 @@ public class ServerSettingsModel
 	public string ServerPresetsPath { get; set; }
 	public bool IsHTTPServerEnabled { get; set; }
 	public int HTTPServerPort { get; set; }
+	
+	
+	public event PropertyChangedEventHandler PropertyChanged;
+
+	protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+	{
+		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+	}
+
+	protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+	{
+		if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+		field = value;
+		OnPropertyChanged(propertyName);
+		return true;
+	}
 }

@@ -141,20 +141,23 @@
 												
 												<StackPanel Orientation="Horizontal"
 												            ToolTip.Tip="{x:Static p:Resources.ToolTipTestFreq}" >
-													<StackPanel>
+													<StackPanel Width="100" Margin="5" >
 														<ListBox ItemsSource="{Binding ServerSettings.TestFrequencies}">
 															<ListBox.ItemTemplate>
 																<DataTemplate>
 																	<StackPanel Orientation="Horizontal">
-																		<Button Width="25" x:Name="TestFrequenciesRemoveButton">
-																			X
-																		</Button>
-																		<TextBox Text="{Binding}"/>
+																		<Button Width="25" Content="X" 
+																		        Tag="{ Binding}"
+																		        Click="TestFrequenciesRemoveButton_OnClick" />
+																		<Label Content="{Binding}"/>
 																	</StackPanel>
 																</DataTemplate>
 															</ListBox.ItemTemplate>
 														</ListBox>
-														<Button x:Name="TestFrequenciesAddButton">+</Button>
+														<StackPanel Orientation="Horizontal">
+															<TextBox Width="75" Margin="0" x:Name="TestFrequencyTextBox"/>
+															<Button Width="25" Click="TestFrequenciesAddButton_OnClick" Content="+"/>
+														</StackPanel>
 													</StackPanel>
 													<Label VerticalAlignment="Top"
 													       Content="{x:Static p:Resources.LabelTestFreq}"/>
@@ -176,7 +179,24 @@
 												</StackPanel>
 												
 												<StackPanel Orientation="Horizontal">
-													<TextBox />
+													<StackPanel Width="100" Margin="5" >
+														<ListBox ItemsSource="{Binding ServerSettings.GlobalLobbyFrequencies}">
+															<ListBox.ItemTemplate>
+																<DataTemplate>
+																	<StackPanel Orientation="Horizontal">
+																		<Button Width="25" Content="X" 
+																		        Tag="{ Binding}"
+																		        Click="GlobalFrequenciesRemoveButton_OnClick" />
+																		<Label Content="{Binding}"/>
+																	</StackPanel>
+																</DataTemplate>
+															</ListBox.ItemTemplate>
+														</ListBox>
+														<StackPanel Orientation="Horizontal">
+															<TextBox Width="75" Margin="0" x:Name="GlobalFrequencyTextBox"/>
+															<Button Width="25" Click="GlobalFrequenciesAddButton_OnClick" Content="+"/>
+														</StackPanel>
+													</StackPanel>
 													<Label Content="{x:Static p:Resources.LabelGlobalLobbyFreq}"/>
 												</StackPanel>
 												

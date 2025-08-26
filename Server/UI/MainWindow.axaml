@@ -46,7 +46,8 @@
 			        x:Name="ServerStartStop"
 			        HorizontalAlignment="Stretch"
 			        Width="200"
-			        Content="To Bind"/>
+			        Content="To Bind"
+			        Command="{Binding StartStopCommand }"/>
 			<TabControl Grid.Row="1">
 				<TabItem Header="Settings">
 					<ScrollViewer VerticalScrollBarVisibility="Visible" Margin="-10,0,-10,0" >

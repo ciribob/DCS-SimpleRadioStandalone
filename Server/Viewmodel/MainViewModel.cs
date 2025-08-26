@@ -15,9 +15,18 @@ public partial class MainViewModel : ObservableObject
 		Running,
 		Stopping,
 	}
-	
-	[ObservableProperty] private ServerSettingsModel _serverSettings;
 	RunningState ServerRunning {get; set;}
+	[ObservableProperty] private ServerSettingsModel _serverSettings;
+
+	private ProcessStartInfo _processInfo = new ProcessStartInfo()
+	{
+		CreateNoWindow = true, 
+		UseShellExecute = true, 
+		RedirectStandardOutput = true, 
+		RedirectStandardError = true, 
+		RedirectStandardInput = true, 
+		FileName = ""
+	};
 	
 	public MainViewModel()
 	{
@@ -32,12 +41,12 @@ public partial class MainViewModel : ObservableObject
 		{
 			case RunningState.Stopped:
 				ServerRunning = RunningState.Starting;
-
+				//Process.Start
 				ServerRunning = RunningState.Running;
 				break;
 			case RunningState.Running:
 				ServerRunning = RunningState.Stopping;
-				
+				// Process. Stop?
 				ServerRunning = RunningState.Stopped;
 				break;
 			

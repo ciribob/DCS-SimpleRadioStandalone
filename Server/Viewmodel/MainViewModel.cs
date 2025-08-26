@@ -5,7 +5,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.viewmodel;
 
 public partial class MainViewModel : ObservableObject
 {
+	enum RunningState
+	{
+		Stopped,
+		Starting,
+		Running,
+		Stopping,
+	}
+	
 	[ObservableProperty] private ServerSettingsModel _serverSettings;
+	RunningState ServerRunning {get; set;}
 	
 	public MainViewModel()
 	{

@@ -89,6 +89,7 @@ public enum GlobalSettingsKeys
     RecordAudio,
     SingleFileMixdown,
     RecordingQuality,
+    RecordingFormat,
     DisallowedAudioTone,
     VOX,
     VOXMode,
@@ -322,6 +323,7 @@ public class GlobalSettingsStore
         { GlobalSettingsKeys.RecordAudio.ToString(), "false" },
         { GlobalSettingsKeys.SingleFileMixdown.ToString(), "false" },
         { GlobalSettingsKeys.RecordingQuality.ToString(), "V3" },
+        { GlobalSettingsKeys.RecordingFormat.ToString(), "mp3" },
         { GlobalSettingsKeys.DisallowedAudioTone.ToString(), "false" },
 
         { GlobalSettingsKeys.VOX.ToString(), "false" },

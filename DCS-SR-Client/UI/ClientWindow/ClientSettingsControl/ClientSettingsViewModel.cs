@@ -16,6 +16,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.RadioOverlayWind
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Recording;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
@@ -355,6 +356,18 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         set
         {
             _globalSettings.SetClientSetting(GlobalSettingsKeys.SingleFileMixdown, value);
+            NotifyPropertyChanged();
+        }
+    }
+
+    public IReadOnlyList<string> RecordingFormats => AudioRecordingManager.Instance.AvailableFormats;
+
+    public string SelectedRecordingFormat
+    {
+        get => _globalSettings.GetClientSetting(GlobalSettingsKeys.RecordingFormat).StringValue;
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.RecordingFormat, value);
             NotifyPropertyChanged();
         }
     }

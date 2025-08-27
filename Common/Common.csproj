@@ -36,6 +36,7 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Caliburn.Micro.Core" Version="4.0.230" />
+        <PackageReference Include="Concentus.Oggfile" Version="1.0.6" />
         <PackageReference Include="MathNet.Filtering" Version="0.7.0" />
         <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
         <PackageReference Include="Microsoft.NETCore.Platforms" Version="7.0.4" />

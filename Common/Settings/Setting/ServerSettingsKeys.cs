@@ -38,6 +38,10 @@ public enum ServerSettingsKeys
     SERVER_PRESETS = 31,
     HTTP_SERVER_ENABLED = 32,
     HTTP_SERVER_PORT = 33,
+    SPECTATOR_INTERCOM_GROUP = 34,
+    EAM_INTERCOM_GROUP = 35,
+    GROUND_COMMANDER_INTERCOM_GROUP = 36,
+    GAMEMASTER_INTERCOM_GROUP = 37,
 }
 
 public class DefaultServerSettings
@@ -76,6 +80,10 @@ public class DefaultServerSettings
         { ServerSettingsKeys.SERVER_IP.ToString(), "0.0.0.0" },
         { ServerSettingsKeys.SERVER_PRESETS_ENABLED.ToString(), "false" },
         { ServerSettingsKeys.HTTP_SERVER_ENABLED.ToString(), "false" },
-        { ServerSettingsKeys.HTTP_SERVER_PORT.ToString(), "8080" }
+        { ServerSettingsKeys.HTTP_SERVER_PORT.ToString(), "8080" },
+        { ServerSettingsKeys.SPECTATOR_INTERCOM_GROUP.ToString(), "1" },
+        { ServerSettingsKeys.EAM_INTERCOM_GROUP.ToString(), "2" },
+        { ServerSettingsKeys.GROUND_COMMANDER_INTERCOM_GROUP.ToString(), "2" },
+        { ServerSettingsKeys.GAMEMASTER_INTERCOM_GROUP.ToString(), "3" },
     };
 }

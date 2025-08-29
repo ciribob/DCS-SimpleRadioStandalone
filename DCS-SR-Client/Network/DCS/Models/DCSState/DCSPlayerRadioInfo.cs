@@ -25,7 +25,7 @@ public class DCSPlayerRadioInfo
 
     [JsonIgnore]
     public static readonly uint
-        UnitIdOffset = 100000000; // this is where non aircraft "Unit" Ids start from for satcom intercom
+        UnitIdOffset = 10^8; // this is where non aircraft "Unit" Ids start from for satcom intercom
 
     public Ambient ambient = new()
     {

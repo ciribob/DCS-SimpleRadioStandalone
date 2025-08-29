@@ -263,4 +263,16 @@ Cancel - Ignore</value>
   <data name="MsgBoxUpdateTitle" xml:space="preserve">
     <value>Update available</value>
   </data>
+  <data name="LabelIntercomGroupSpectator" xml:space="preserve">
+    <value>Spectator Intercom Group</value>
+  </data>
+  <data name="LabelIntercomGroupEam" xml:space="preserve">
+    <value>EAM Intercom Group</value>
+  </data>
+  <data name="LabelIntercomGroupGroundCommander" xml:space="preserve">
+    <value>Ground Cmdr Intercom Group</value>
+  </data>
+  <data name="LabelIntercomGroupGameMaster" xml:space="preserve">
+    <value>GM Intercom Group</value>
+  </data>
 </root>

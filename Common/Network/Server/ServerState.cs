@@ -39,6 +39,11 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
     private volatile bool _stop = true;
     private HttpServer _httpServer;
 
+    #region WebsocketVoiceServer properties
+    private WebSocketVoiceServer _wsVoiceServer = null;
+    private CancellationTokenSource _wsCts;
+    #endregion
+
     public ServerState(IEventAggregator eventAggregator)
     {
         _eventAggregator = eventAggregator;
@@ -105,18 +110,17 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
         if (_serverListener == null)
         {
             PopulateBanList();
+            StartExport();
+            StartHttpServer(); //need to come before initializing UDPVoiceRouter so WS server will be ready if enabled
+
             _stop = false;
-            _serverListener = new UDPVoiceRouter(_connectedClients, _eventAggregator);
+            _serverListener = new UDPVoiceRouter(_connectedClients, _eventAggregator, _wsVoiceServer);
             var listenerThread = new Thread(_serverListener.Listen);
             listenerThread.Start();
 
             _serverSync = new ServerSync(_connectedClients, _bannedIps, _eventAggregator);
             var serverSyncThread = new Thread(_serverSync.StartListening);
             serverSyncThread.Start();
-
-            StartExport();
-
-            StartHttpServer();
         }
     }
 
@@ -124,6 +128,13 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
     {
         _httpServer = new HttpServer(_connectedClients, this);
         _httpServer.Start();
+        StartWebSocketVoiceServer(); // Start the WebSocket voice server just if HTTP server is enabled (because the clients need to register there to get data)
+    }
+
+    private void StartWebSocketVoiceServer()
+    {
+        _wsVoiceServer = new WebSocketVoiceServer(() => HttpServer.GetRecordingClientIds());
+        Task.Run(() => _wsVoiceServer.Start());
     }
 
     public void StopServer()
@@ -136,6 +147,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
             _serverListener.RequestStop();
             _serverListener = null;
             _httpServer?.Stop();
+            _wsVoiceServer?.Stop();
         }
     }
 

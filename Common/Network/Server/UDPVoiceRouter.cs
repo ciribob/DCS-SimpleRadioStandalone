@@ -53,11 +53,14 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
 
     private TransmissionLoggingQueue _transmissionLoggingQueue;
 
-    public UDPVoiceRouter(ConcurrentDictionary<string, SRClientBase> clientsList, IEventAggregator eventAggregator)
+    private readonly WebSocketVoiceServer _wsVoiceServer;
+
+    public UDPVoiceRouter(ConcurrentDictionary<string, SRClientBase> clientsList, IEventAggregator eventAggregator, WebSocketVoiceServer wsVoiceServer)
     {
         _clientsList = clientsList;
         _eventAggregator = eventAggregator;
         _eventAggregator.SubscribeOnBackgroundThread(this);
+        _wsVoiceServer = wsVoiceServer;
 
         var freqString = _serverSettings.GetGeneralSetting(ServerSettingsKeys.TEST_FREQUENCIES).StringValue;
         UpdateTestFrequencies(freqString);
@@ -264,6 +267,15 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
                                         // Only trigger transmitting frequency update for "proper" packets (excluding invalid frequencies and magic ping packets with modulation 4)
                                         if (mainFrequency > 0)
                                         {
+                                            #region Push to WebSocket clients
+                                            if (client.AllowRecord)
+                                            {
+                                                var packetCopy = udpVoicePacket;
+                                                _ = _wsVoiceServer.BroadcastVoicePacket(udpPacket.RawBytes, CancellationToken.None);
+                                            }
+                                            #endregion
+
+
                                             var mainModulation = (Modulation)udpVoicePacket.Modulations[0];
                                             if (mainModulation == Modulation.INTERCOM)
                                                 client.TransmittingFrequency = "INTERCOM";

@@ -38,6 +38,8 @@ public enum ServerSettingsKeys
     SERVER_PRESETS = 31,
     HTTP_SERVER_ENABLED = 32,
     HTTP_SERVER_PORT = 33,
+    WEBSOCKET_SERVER_ENABLED = 34,
+    WEBSOCKET_SERVER_PORT = 35,
 }
 
 public class DefaultServerSettings
@@ -76,6 +78,8 @@ public class DefaultServerSettings
         { ServerSettingsKeys.SERVER_IP.ToString(), "0.0.0.0" },
         { ServerSettingsKeys.SERVER_PRESETS_ENABLED.ToString(), "false" },
         { ServerSettingsKeys.HTTP_SERVER_ENABLED.ToString(), "false" },
-        { ServerSettingsKeys.HTTP_SERVER_PORT.ToString(), "8080" }
+        { ServerSettingsKeys.HTTP_SERVER_PORT.ToString(), "8080" },
+        { ServerSettingsKeys.WEBSOCKET_SERVER_ENABLED.ToString(), "false" },
+        { ServerSettingsKeys.WEBSOCKET_SERVER_PORT.ToString(), "8081" },
     };
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -27,6 +28,9 @@ public class HttpServer
     private static readonly string CLIENT_KICK_GUID = "/client/kick/guid";
     private static readonly string CLIENT_KICK_NAME = "/client/kick/name";
     private static readonly string CLIENTS_LIST = "/clients";
+    private static readonly string CLIENT_REGISTER_VOICE = "/client/register/voice";
+
+    private static readonly ConcurrentDictionary<string, DateTime> _recordingClients = new();
 
     public HttpServer(ConcurrentDictionary<string, SRClientBase> connectedClients, ServerState serverState)
     {
@@ -182,6 +186,23 @@ public class HttpServer
 
                 context.Response.StatusCode = 404;
             }
+            else if (context.Request.Url.AbsolutePath == CLIENT_REGISTER_VOICE)
+            {
+                // Generate a unique ID for the recording client
+                var id = Guid.NewGuid().ToString();
+                _recordingClients[id] = DateTime.UtcNow;
+
+                // Respond with the generated ID as JSON
+                context.Response.StatusCode = 200;
+                context.Response.ContentType = "application/json";
+                var responseJson = $"{{\"id\":\"{id}\"}}";
+                var buffer = Encoding.UTF8.GetBytes(responseJson);
+                context.Response.OutputStream.Write(buffer, 0, buffer.Length);
+                context.Response.OutputStream.Flush();
+
+                Logger.Info($"Recording client '{id}' registered for voice stream.");
+                return;
+            }
             else
             {
                 context.Response.StatusCode = 404;
@@ -191,5 +212,10 @@ public class HttpServer
         {
             context.Response.StatusCode = 404;
         }
+    }
+
+    public static IEnumerable<string> GetRecordingClientIds()
+    {
+        return _recordingClients.Keys;
     }
 }

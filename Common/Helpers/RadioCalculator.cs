@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
@@ -91,5 +92,50 @@ public class RadioCalculator
 
         //distance^2 and height^2 
         return Math.Sqrt(distance * distance + height * height);
+    }
+    
+    public const double MHz = 1e6;
+
+    public static class Link16
+    {
+        public static double BaseFreq => ( 1030.0 * MHz );
+
+        public static double ChannelSeperation => ( 0.1 * MHz ); // 0.1Mhz
+        
+        public static double MinimalFrequency => BaseFreq;
+        public static double MaximalFrequency => (BaseFreq + (127.0 * ChannelSeperation));
+
+        public static double ChannelToFrequency(int channel)
+        {
+            int clampedChannel = Link16.Validate(channel);
+            return (BaseFreq + (ChannelSeperation * clampedChannel));
+        }
+        
+        public static int FrequencyToChannel(double frequency)
+        {
+            double clampedFrequency = Validate( frequency );
+            return (int)((clampedFrequency - BaseFreq) / ChannelSeperation);
+        }
+
+        /// <summary>
+        /// Ensures that the input is in bounds.
+        /// </summary>
+        /// <param name="frequency"></param>
+        /// <returns></returns>
+        public static double Validate(double frequency)
+        {
+            return Math.Clamp( frequency, MinimalFrequency, MaximalFrequency );
+        }
+
+        /// <summary>
+        /// Ensures that the input is in bounds.
+        /// </summary>
+        /// <param name="Channel"></param>
+        /// <returns></returns>
+        public static int Validate(int Channel)
+        {
+            return Math.Clamp(Channel, 0, 127);
+        }
+        
     }
 }

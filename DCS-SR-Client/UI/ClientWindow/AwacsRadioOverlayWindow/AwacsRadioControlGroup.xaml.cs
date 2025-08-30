@@ -7,6 +7,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS.Models.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.RadioOverlayWindow.PresetChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
@@ -19,7 +20,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.AwacsRadioOv
 /// </summary>
 public partial class RadioControlGroup : UserControl
 {
-    private const double MHz = 1000000;
     private const int MaxSimultaneousTransmissions = 3;
     private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
     private readonly ConnectedClientsSingleton _connectClientsSingleton = ConnectedClientsSingleton.Instance;
@@ -92,6 +92,7 @@ public partial class RadioControlGroup : UserControl
     private void RadioFrequencyOnLostFocus(object sender, RoutedEventArgs routedEventArgs)
     {
         double freq = 0;
+
         // Some locales/cultures (e.g. German) do not parse "." as decimal points since they use decimal commas ("123,45"), leading to "123.45" being parsed as "12345" and frequencies being set too high
         // Using an invariant culture makes sure the decimal point is parsed properly for all locales - replacing any commas makes sure people entering numbers in a weird format still get correct results
         if (double.TryParse(RadioFrequency.Text.Replace(',', '.').Trim(), NumberStyles.AllowDecimalPoint,
@@ -220,15 +221,25 @@ public partial class RadioControlGroup : UserControl
             }
             else
             {
-                Up10.Visibility = Visibility.Hidden;
-                Up1.Visibility = Visibility.Hidden;
-                Up01.Visibility = Visibility.Hidden;
+                Up10.Visibility = Visibility.Visible;
+                Up1.Visibility = Visibility.Visible;
+                Up01.Visibility = Visibility.Visible;
+
+                Down10.Visibility = Visibility.Visible;
+                Down1.Visibility = Visibility.Visible;
+                Down01.Visibility = Visibility.Visible;
+                
+                Up10.IsEnabled = true;
+                Up1.IsEnabled = true;
+                Up01.IsEnabled = true;
+                
+                Down10.IsEnabled = true;
+                Down1.IsEnabled = true;
+                Down01.IsEnabled = true;
+                
                 Up001.Visibility = Visibility.Hidden;
                 Up0001.Visibility = Visibility.Hidden;
-
-                Down10.Visibility = Visibility.Hidden;
-                Down1.Visibility = Visibility.Hidden;
-                Down01.Visibility = Visibility.Hidden;
+                
                 Down001.Visibility = Visibility.Hidden;
                 Down0001.Visibility = Visibility.Hidden;
             }
@@ -369,11 +380,18 @@ public partial class RadioControlGroup : UserControl
             }
             else if (currentRadio.modulation == Modulation.MIDS) //MIDS
             {
-                RadioFrequency.Text = Properties.Resources.OverlayMIDS;
-                if (currentRadio.channel >= 0)
-                    RadioMetaData.Text = " " + Properties.Resources.OverlayChannelPrefix + " " + currentRadio.channel;
-                else
-                    RadioMetaData.Text = " " + Properties.Resources.ValueOFF;
+                switch (RadioCalculator.Link16.FrequencyToChannel(currentRadio.freq))
+                {
+                    case > 0:
+                        if (!RadioFrequency.IsFocused || currentRadio.freqMode == DCSRadio.FreqMode.COCKPIT) 
+                            RadioFrequency.Text = RadioCalculator.Link16.FrequencyToChannel(currentRadio.freq).ToString();
+                        RadioMetaData.Text = Properties.Resources.OverlayMIDS;
+                        break;
+                    default:
+                        RadioFrequency.Text = "";
+                        RadioMetaData.Text = Properties.Resources.ValueOFF;
+                        break;
+                }
             }
             else
             {
@@ -381,19 +399,27 @@ public partial class RadioControlGroup : UserControl
                     || currentRadio.freqMode == DCSRadio.FreqMode.COCKPIT
                     || currentRadio.modulation == Modulation.DISABLED)
                     RadioFrequency.Text =
-                        (currentRadio.freq / MHz).ToString("0.000",
+                        (currentRadio.freq / RadioCalculator.MHz).ToString("0.000",
                             CultureInfo.InvariantCulture); //make number UK / US style with decimals not commas!
 
-                if (currentRadio.modulation == Modulation.AM)
-                    RadioMetaData.Text = "AM";
-                else if (currentRadio.modulation == Modulation.FM)
-                    RadioMetaData.Text = "FM";
-                else if (currentRadio.modulation == Modulation.SINCGARS)
-                    RadioMetaData.Text = "SG";
-                else if (currentRadio.modulation == Modulation.HAVEQUICK)
-                    RadioMetaData.Text = "HQ";
-                else
-                    RadioMetaData.Text += "";
+                switch (currentRadio.modulation)
+                {
+                    case Modulation.AM:
+                        RadioMetaData.Text = Properties.Resources.OverlayAM;
+                        break;
+                    case Modulation.FM:
+                        RadioMetaData.Text = Properties.Resources.OverlayFM;
+                        break;
+                    case Modulation.SINCGARS:
+                        RadioMetaData.Text = Properties.Resources.OverlaySG;
+                        break;
+                    case Modulation.HAVEQUICK:
+                        RadioMetaData.Text = Properties.Resources.OverlayHQ;
+                        break;
+                    default:
+                        RadioMetaData.Text += "";
+                        break;
+                }
 
                 if (currentRadio.secFreq > 100) RadioMetaData.Text += " G";
 

@@ -770,7 +770,7 @@ By keeping this enabled I can judge the usage of SRS, and which versions are sti
     <value>Intercom Hot Mic</value>
   </data>
     <data name="OverlayMIDS" xml:space="preserve">
-    <value>MIDS</value>
+    <value>DL</value>
   </data>
     <data name="OverlayNoIntercom" xml:space="preserve">
     <value>NO INTERCOM</value>
@@ -1244,4 +1244,16 @@ Requires Tx or Rx Effects On</value>
 <data name="ServerPresetsConfiguration" xml:space="preserve">
     <value>Channel Presets Configuration</value>
   </data>
+    <data name="OverlayAM" xml:space="preserve">
+      <value>AM</value>
+    </data>
+    <data name="OverlayFM" xml:space="preserve">
+      <value>FM</value>
+    </data>
+    <data name="OverlaySG" xml:space="preserve">
+      <value>SG</value>
+    </data>
+    <data name="OverlayHQ" xml:space="preserve">
+      <value>HQ</value>
+    </data>
 </root>

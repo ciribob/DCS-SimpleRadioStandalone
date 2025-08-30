@@ -101,7 +101,7 @@ public class PresetChannelsViewModel : INotifyPropertyChanged, IHandle<ProfileCh
 
         var radios = ClientStateSingleton.Instance.DcsPlayerRadioInfo.radios;
 
-        var radio = radios[_radioId];
+        var radio = radios[_radioId - 1];
         
         var presetChannelSettingsEnum = ServerPresetConfiguration.USE_CLIENT_AND_SERVER_IF_SET;
             

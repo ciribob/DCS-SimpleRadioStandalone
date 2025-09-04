@@ -3169,6 +3169,54 @@ function SR.exportRadioOH58D(_data)
     end
     -- FM RETRAN END
 
+    -- IFF START 
+    local _iffSettings
+    if _iffSettings == nil then _iffSettings = { status = 1, mode1 = 00, mode2 = 1200, mode3 = 0000, mode4 = 1, control = 0, expansion = false, mic=-1 } end
+        -- Status: 0 = off, 1 = on, 2 == ident
+
+    local _HLP_IFF_Switch = SR.getButtonPosition(269) -- HLP_IFF Circuit Breaker, 2-Position Thumb, 0 or 1
+        -- ??? HLP_IFF_CMPTR Circuit Breaker 
+    local _MFK_Ident_Button = SR.getButtonPosition(213) -- MFK_Ident Button, 0 or 1
+    -- local _MFK_IFF = SR.getButtonPosition(209) -- MFK_IFF Button, 0 or 1
+
+    
+    if _mpdLeft["CT"] == "IFF PAGE 1" then
+        -- SR.log(_mpdLeft["TEXT"]) -- Yields: "M1       00\nM2       1200\nM3A      0000\nMS ID    XX-XXXX\nM4       A"
+        -- Find Pattern: "M1 +([%d]+)\nM2 +([%d]+)\nM3A +([%d]+)"
+        
+        -- Code below will parse the first line of the Center box, but there is no functionality to change that box.
+        --      Mode 1 works, but mode 2 & mode 3 dont seem to be findable.
+        -- local _, _, Find_Mode1, Find_Mode2, Find_Mode3 = string.find(_mpdLeft["TEXT"], "M1 +([%d]+)\\nM2 +([%d]+)\\nM3A +([%d]+)")
+        -- SR.log( "M1:".. Find_Mode1 .. " M2:" .. Find_Mode2 .. " M3:" .. Find_Mode3 )
+        
+        Parsed = { mode1 = 00, mode2 = 1200, mode3 = 0000, mode4 = 1 } -- There is no way to change the defaults at the moment.
+
+        if _mpdLeft["L2RIGHT_TEXT"] == "OFF" then _iffSettings.mode1 = -1 else _iffSettings.mode1 = Parsed.mode1 end -- Mode 1
+        if _mpdLeft["L3RIGHT_TEXT"] == "OFF" then _iffSettings.mode2 = -1 else _iffSettings.mode2 = Parsed.mode2 end -- Mode 2
+        if _mpdLeft["L4RIGHT_TEXT"] == "OFF" then _iffSettings.mode3 = -1 else _iffSettings.mode3 = Parsed.mode3 end -- Mode 3
+        if _mpdLeft["R2LOWER_TEXT"] == "OFF" then _iffSettings.mode4 =  0 else _iffSettings.mode4 = Parsed.mode4 end -- Mode 4
+        
+        if _mpdLeft["L1LEFT_BORDERCONTAINER"] then _iffSettings.status = 0 end -- Norm or Stby
+    end
+    
+    if _mpdRight["CT"] == "IFF PAGE 1" then
+        Parsed = { mode1 = 00, mode2 = 1200, mode3 = 0000, mode4 = 1 } -- There is no way to change the defaults at the moment.
+
+        if _mpdRight["L2RIGHT_TEXT"] == "OFF" then _iffSettings.mode1 = -1 else _iffSettings.mode1 = Parsed.mode1 end -- Mode 1
+        if _mpdRight["L3RIGHT_TEXT"] == "OFF" then _iffSettings.mode2 = -1 else _iffSettings.mode2 = Parsed.mode2 end -- Mode 2
+        if _mpdRight["L4RIGHT_TEXT"] == "OFF" then _iffSettings.mode3 = -1 else _iffSettings.mode3 = Parsed.mode3 end -- Mode 3
+        if _mpdRight["R2LOWER_TEXT"] == "OFF" then _iffSettings.mode4 =  0 else _iffSettings.mode4 = Parsed.mode4 end -- Mode 4
+        
+        if _mpdRight["L1LEFT_BORDERCONTAINER"] then _iffSettings.status = 0 end -- Norm or Stby
+    end
+        
+    --SR.log("Status: " .. _iffSettings.status .. " M1:".._iffSettings.mode1.." M2:".._iffSettings.mode2.." M3:".._iffSettings.mode3.." M4:".._iffSettings.mode4.." control:".._iffSettings.control.." Mic:".._iffSettings.mic)
+    
+    _data.iff = _iffSettings
+    if _MFK_Ident_Button == 1 and _iffSettings.status == 1 then _data.iff.status = 2 end
+    if _HLP_IFF_Switch == 0 then _data.iff.status = 0 end
+    -- IFF END
+
     if _cyclicICSPtt > 0.5 then
         _data.ptt = true
         _data.selected = 0

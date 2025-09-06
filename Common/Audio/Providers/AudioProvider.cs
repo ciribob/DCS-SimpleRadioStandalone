@@ -13,12 +13,8 @@ public abstract class AudioProvider
 
     protected OpusDecoder _decoder;
 
-    protected bool passThrough;
-
-    protected AudioProvider(bool passThrough)
+    protected AudioProvider()
     {
-        this.passThrough = passThrough;
-
         _decoder = OpusDecoder.Create(Constants.OUTPUT_SAMPLE_RATE, 1);
         _decoder.ForwardErrorCorrection = false;
         _decoder.MaxDataBytes = Constants.OUTPUT_SAMPLE_RATE * 4;
@@ -29,15 +25,13 @@ public abstract class AudioProvider
     //is it a new transmission?
     protected bool LikelyNewTransmission()
     {
-        if (passThrough) return false;
-
         //400 ms since last update
         var now = DateTime.Now.Ticks;
 
         return TimeSpan.FromTicks(now - LastUpdate) > JitterBufferProviderInterface.JITTER_MS;
     }
 
-    public abstract JitterBufferAudio AddClientAudioSamples(ClientAudio audio);
+    public abstract int AddClientAudioSamples(ClientAudio audio);
 
 
     //destructor to clear up opus

@@ -1,704 +1,689 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-    <!-- 
-      Microsoft ResX Schema 
-      
-      Version 2.0
-      
-      The primary goals of this format is to allow a simple XML format 
-      that is mostly human readable. The generation and parsing of the 
-      various data types are done through the TypeConverter classes 
-      associated with the data types.
-      
-      Example:
-      
-      ... ado.net/XML headers & schema ...
-      <resheader name="resmimetype">text/microsoft-resx</resheader>
-      <resheader name="version">2.0</resheader>
-      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-          <value>[base64 mime encoded serialized .NET Framework object]</value>
-      </data>
-      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-          <comment>This is a comment</comment>
-      </data>
-                  
-      There are any number of "resheader" rows that contain simple 
-      name/value pairs.
-      
-      Each data row contains a name, and value. The row also contains a 
-      type or mimetype. Type corresponds to a .NET class that support 
-      text/value conversion through the TypeConverter architecture. 
-      Classes that don't support this are serialized and stored with the 
-      mimetype set.
-      
-      The mimetype is used for serialized objects, and tells the 
-      ResXResourceReader how to depersist the object. This is currently not 
-      extensible. For a given mimetype the value must be set accordingly:
-      
-      Note - application/x-microsoft.net.object.binary.base64 is the format 
-      that the ResXResourceWriter will generate, however the reader can 
-      read any of the formats listed below.
-      
-      mimetype: application/x-microsoft.net.object.binary.base64
-      value   : The object must be serialized with 
-              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-              : and then encoded with base64 encoding.
-      
-      mimetype: application/x-microsoft.net.object.soap.base64
-      value   : The object must be serialized with 
-              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-              : and then encoded with base64 encoding.
-  
-      mimetype: application/x-microsoft.net.object.bytearray.base64
-      value   : The object must be serialized into a byte array 
-              : using a System.ComponentModel.TypeConverter
-              : and then encoded with base64 encoding.
-      -->
-    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata"
-                id="root"
-                xmlns="">
-        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
-        <xsd:element name="root" msdata:IsDataSet="true">
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
             <xsd:complexType>
-                <xsd:choice maxOccurs="unbounded">
-                    <xsd:element name="metadata">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" use="required" type="xsd:string"/>
-                            <xsd:attribute name="type" type="xsd:string"/>
-                            <xsd:attribute name="mimetype" type="xsd:string"/>
-                            <xsd:attribute ref="xml:space"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="assembly">
-                        <xsd:complexType>
-                            <xsd:attribute name="alias" type="xsd:string"/>
-                            <xsd:attribute name="name" type="xsd:string"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="data">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
-                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
-                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
-                            <xsd:attribute ref="xml:space"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                    <xsd:element name="resheader">
-                        <xsd:complexType>
-                            <xsd:sequence>
-                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
-                            </xsd:sequence>
-                            <xsd:attribute name="name" type="xsd:string" use="required"/>
-                        </xsd:complexType>
-                    </xsd:element>
-                </xsd:choice>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
-        </xsd:element>
-    </xsd:schema>
-    <resheader name="resmimetype">
-        <value>text/microsoft-resx</value>
-    </resheader>
-    <resheader name="version">
-        <value>2.0</value>
-    </resheader>
-    <resheader name="reader">
-        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
-            PublicKeyToken=b77a5c561934e089
-        </value>
-    </resheader>
-    <resheader name="writer">
-        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
-            PublicKeyToken=b77a5c561934e089
-        </value>
-    </resheader>
-    <data name="AllowAnonymousUsage" xml:space="preserve">
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllowAnonymousUsage" xml:space="preserve">
     <value>Allow Anonymous Usage Stats</value>
   </data>
-    <data name="AllowDCSPTT" xml:space="preserve">
+  <data name="AllowDCSPTT" xml:space="preserve">
     <value>Allow INCOCKPIT DCS Controlled PTT</value>
   </data>
-    <data name="AllowRotaryIncrement" xml:space="preserve">
+  <data name="AllowRotaryIncrement" xml:space="preserve">
     <value>Rotary Style Frequency Increment/Decrement</value>
   </data>
-    <data name="AllowTransmissionsRecord" xml:space="preserve">
+  <data name="AllowTransmissionsRecord" xml:space="preserve">
     <value>Allow Transmissions To Be Recorded</value>
   </data>
-    <data name="AllowXInputController" xml:space="preserve">
+  <data name="AllowXInputController" xml:space="preserve">
     <value>Allow XInput Controller (Xbox controller)</value>
   </data>
-    <data name="AlwaysAllowHotas" xml:space="preserve">
+  <data name="AlwaysAllowHotas" xml:space="preserve">
     <value>ALWAYS allow SRS Hotkeys</value>
   </data>
-    <data name="AlwaysAllowTransponderOverlay" xml:space="preserve">
+  <data name="AlwaysAllowTransponderOverlay" xml:space="preserve">
     <value>ALWAYS allow Transponder Overlay Controls</value>
   </data>
-    <data name="AudioHeader" xml:space="preserve">
+  <data name="AudioHeader" xml:space="preserve">
     <value>Audio</value>
   </data>
-    <assembly alias="System.Windows.Forms"
-              name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"/>
-    <data name="audio_headset" type="System.Resources.ResXFileRef, System.Windows.Forms">
-        <value>..\audio-headset.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral,
-            PublicKeyToken=b03f5f7f11d50a3a
-        </value>
-    </data>
-    <data name="AutoConnectEnabled" xml:space="preserve">
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="audio_headset" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\audio-headset.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AutoConnectEnabled" xml:space="preserve">
     <value>Auto Connect</value>
   </data>
-    <data name="AutoConnectHeader" xml:space="preserve">
+  <data name="AutoConnectHeader" xml:space="preserve">
     <value>Auto Connect</value>
   </data>
-    <data name="AutoConnectMismatchPrompt" xml:space="preserve">
+  <data name="AutoConnectMismatchPrompt" xml:space="preserve">
     <value>Auto Connect Mismatch Prompt</value>
   </data>
-    <data name="AutoConnectPrompt" xml:space="preserve">
+  <data name="AutoConnectPrompt" xml:space="preserve">
     <value>Auto Connect Prompt</value>
   </data>
-    <data name="AutoSelectChannel" xml:space="preserve">
+  <data name="AutoSelectChannel" xml:space="preserve">
     <value>Auto Select First Channel Preset</value>
   </data>
-    <data name="AutoSelectInputProfile" xml:space="preserve">
+  <data name="AutoSelectInputProfile" xml:space="preserve">
     <value>Auto Select Profile For Aircraft</value>
   </data>
-    <data name="BackgroundRadioNoise" xml:space="preserve">
+  <data name="BackgroundRadioNoise" xml:space="preserve">
     <value>Enable Background Radio Effects
 (UHF/VHF/HF/FM)</value>
   </data>
-    <data name="BtnClose" xml:space="preserve">
+  <data name="BtnClose" xml:space="preserve">
     <value>Close</value>
   </data>
-    <data name="BtnDisable" xml:space="preserve">
+  <data name="BtnDisable" xml:space="preserve">
     <value>Disable</value>
   </data>
-    <data name="BtnEnable" xml:space="preserve">
+  <data name="BtnEnable" xml:space="preserve">
     <value>Enable</value>
   </data>
-    <data name="BtnTransponderIDENT" xml:space="preserve">
+  <data name="BtnTransponderIDENT" xml:space="preserve">
     <value>IDENT</value>
   </data>
-    <data name="ButtonLabel" xml:space="preserve">
+  <data name="ButtonLabel" xml:space="preserve">
     <value>Button</value>
   </data>
-    <data name="CHANGEME" xml:space="preserve">
+  <data name="CHANGEME" xml:space="preserve">
     <value>PLACE_HOLDER</value>
   </data>
-    <data name="CheckForBetaUpdates" xml:space="preserve">
+  <data name="CheckForBetaUpdates" xml:space="preserve">
     <value>Check for beta updates</value>
   </data>
-
-    <data name="ClientWindowTitle" xml:space="preserve">
+  <data name="ClientWindowTitle" xml:space="preserve">
     <value>DCS-SRS Client</value>
   </data>
-    <data name="ConnectedClientsLabel" xml:space="preserve">
+  <data name="ConnectedClientsLabel" xml:space="preserve">
     <value>Connected Clients:</value>
   </data>
-    <data name="ConnectExternalAWACSMode" xml:space="preserve">
+  <data name="ConnectExternalAWACSMode" xml:space="preserve">
     <value>Connect External AWACS Mode (EAM)</value>
   </data>
-    <data name="ControlsHeader" xml:space="preserve">
+  <data name="ControlsHeader" xml:space="preserve">
     <value>Controls</value>
   </data>
-    <data name="ControlsTab" xml:space="preserve">
+  <data name="ControlsTab" xml:space="preserve">
     <value>Controls</value>
   </data>
-    <data name="CopyProfile" xml:space="preserve">
+  <data name="CopyProfile" xml:space="preserve">
     <value>Copy Profile</value>
   </data>
-    <data name="CreateProfile" xml:space="preserve">
+  <data name="CreateProfile" xml:space="preserve">
     <value>Create Profile</value>
   </data>
-    <data name="CurrentPositionLabel" xml:space="preserve">
+  <data name="CurrentPositionLabel" xml:space="preserve">
     <value>Current Position:</value>
   </data>
-    <data name="CurrentUnitLabel" xml:space="preserve">
+  <data name="CurrentUnitLabel" xml:space="preserve">
     <value>Unit:</value>
   </data>
-    <data name="CurrentProfile" xml:space="preserve">
+  <data name="CurrentProfile" xml:space="preserve">
     <value>Current Profile:</value>
   </data>
-    <data name="CurrentProfileNone" xml:space="preserve">
+  <data name="CurrentProfileNone" xml:space="preserve">
     <value>None</value>
   </data>
-    <data name="DefaultMicrophone" xml:space="preserve">
+  <data name="DefaultMicrophone" xml:space="preserve">
     <value>Default Microphone</value>
   </data>
-    <data name="DefaultNoPassthru" xml:space="preserve">
+  <data name="DefaultNoPassthru" xml:space="preserve">
     <value>NO MIC OUTPUT / PASSTHROUGH</value>
   </data>
-    <data name="DefaultSpeakers" xml:space="preserve">
+  <data name="DefaultSpeakers" xml:space="preserve">
     <value>Default Speakers</value>
   </data>
-    <data name="DeleteProfile" xml:space="preserve">
+  <data name="DeleteProfile" xml:space="preserve">
     <value>Delete Profile</value>
   </data>
-    <data name="DeviceClear" xml:space="preserve">
+  <data name="DeviceClear" xml:space="preserve">
     <value>Clear</value>
   </data>
-    <data name="DeviceControl" xml:space="preserve">
+  <data name="DeviceControl" xml:space="preserve">
     <value>Control</value>
   </data>
-    <data name="DeviceLabel" xml:space="preserve">
+  <data name="DeviceLabel" xml:space="preserve">
     <value>Device</value>
   </data>
-    <data name="DeviceSet" xml:space="preserve">
+  <data name="DeviceSet" xml:space="preserve">
     <value>Set</value>
   </data>
-    <data name="DisallowedAudioTone" xml:space="preserve">
+  <data name="DisallowedAudioTone" xml:space="preserve">
     <value>Record Tone for Disallowed Audio</value>
   </data>
-    <data name="DisconnectExternalAWACSMode" xml:space="preserve">
+  <data name="DisconnectExternalAWACSMode" xml:space="preserve">
     <value>Disconnect External AWACS MODE (EAM)</value>
   </data>
-    <data name="Donate_OnClick" xml:space="preserve">
+  <data name="Donate_OnClick" xml:space="preserve">
     <value>Please Support SRS through Patreon</value>
   </data>
-    <data name="EAMExpanderHeader" xml:space="preserve">
+  <data name="EAMExpanderHeader" xml:space="preserve">
     <value>External AWACS Mode (EAM)</value>
   </data>
-    <data name="EffectVolume0" xml:space="preserve">
+  <data name="EffectVolume0" xml:space="preserve">
     <value>0%</value>
   </data>
-    <data name="EffectVolume100" xml:space="preserve">
+  <data name="EffectVolume100" xml:space="preserve">
     <value>100%</value>
   </data>
-    <data name="EffectVolume200" xml:space="preserve">
+  <data name="EffectVolume200" xml:space="preserve">
     <value>200%</value>
   </data>
-    <data name="ExpandInputDevices" xml:space="preserve">
+  <data name="ExpandInputDevices" xml:space="preserve">
     <value>Allow More Controller Input Devices</value>
   </data>
-    <data name="ExternalAWACSModeNameLabel" xml:space="preserve">
+  <data name="ExternalAWACSModeNameLabel" xml:space="preserve">
     <value>EAM name</value>
   </data>
-    <data name="ExternalAWACSModePasswordLabel" xml:space="preserve">
+  <data name="ExternalAWACSModePasswordLabel" xml:space="preserve">
     <value>EAM coalition password</value>
   </data>
-    <data name="FavAddEAM" xml:space="preserve">
+  <data name="FavAddEAM" xml:space="preserve">
     <value>EAM coalition password</value>
   </data>
-    <data name="FavAddName" xml:space="preserve">
+  <data name="FavAddName" xml:space="preserve">
     <value>Name</value>
   </data>
-    <data name="FavAddNewConfig" xml:space="preserve">
+  <data name="FavAddNewConfig" xml:space="preserve">
     <value>Add new configuration</value>
   </data>
-    <data name="FavAddServer" xml:space="preserve">
+  <data name="FavAddServer" xml:space="preserve">
     <value>ServerAddress</value>
   </data>
-    <data name="FavListDefault" xml:space="preserve">
+  <data name="FavListDefault" xml:space="preserve">
     <value>Is Default</value>
   </data>
-    <data name="FavListEAM" xml:space="preserve">
+  <data name="FavListEAM" xml:space="preserve">
     <value>EAM coal. pass</value>
   </data>
-    <data name="FavListName" xml:space="preserve">
+  <data name="FavListName" xml:space="preserve">
     <value>Name</value>
   </data>
-    <data name="FavListServer" xml:space="preserve">
+  <data name="FavListServer" xml:space="preserve">
     <value>ServerAddress/port</value>
   </data>
-    <data name="FavouritesSeversHeader" xml:space="preserve">
+  <data name="FavouritesSeversHeader" xml:space="preserve">
     <value>Favourites</value>
   </data>
-    <data name="FavouritesSeversTab" xml:space="preserve">
+  <data name="FavouritesSeversTab" xml:space="preserve">
     <value>Favourites</value>
   </data>
-    <data name="FavRmSelected" xml:space="preserve">
+  <data name="FavRmSelected" xml:space="preserve">
     <value>Remove Selected</value>
   </data>
-    <data name="FMEffectVolume" xml:space="preserve">
-    <value>FM Effect Volume</value>
-  </data>
-    <data name="AmbientEffectToggle" xml:space="preserve">
+  <data name="AmbientEffectToggle" xml:space="preserve">
     <value>Enable Ambient Cockpit Effects</value>
   </data>
-    <data name="AmbientEffectIntercomToggle" xml:space="preserve">
+  <data name="AmbientEffectIntercomToggle" xml:space="preserve">
     <value>Enable Ambient Intercom Effects</value>
   </data>
-    <data name="AmbientEffectVolume" xml:space="preserve">
+  <data name="AmbientEffectVolume" xml:space="preserve">
     <value>Ambient Cockpit Effect Volume</value>
   </data>
-    <data name="GameConnectionStatusLabel" xml:space="preserve">
+  <data name="GameConnectionStatusLabel" xml:space="preserve">
     <value>Game</value>
   </data>
-    <data name="GeneralTab" xml:space="preserve">
+  <data name="GeneralTab" xml:space="preserve">
     <value>General</value>
   </data>
-    <data name="GlobalSettingsHeader" xml:space="preserve">
+  <data name="GlobalSettingsHeader" xml:space="preserve">
     <value>Global Settings</value>
   </data>
-    <data name="HelpHeader" xml:space="preserve">
+  <data name="HelpHeader" xml:space="preserve">
     <value>Help &amp; About</value>
   </data>
-    <data name="HelpLocalizationNotes" xml:space="preserve">
+  <data name="HelpLocalizationNotes" xml:space="preserve">
     <value>Current Language: EN. Localization Ready.
 Please consider help translating SRS to your language.
 </value>
   </data>
-    <data name="HelpP1" xml:space="preserve">
+  <data name="HelpP1" xml:space="preserve">
     <value>
 DCS In-game SRS Overlay</value>
   </data>
-    <data name="HelpP1L1" xml:space="preserve">
+  <data name="HelpP1L1" xml:space="preserve">
     <value>SRS has an optional DCS in-game overlay - to toggle use</value>
   </data>
-    <data name="HelpP1L2" xml:space="preserve">
+  <data name="HelpP1L2" xml:space="preserve">
     <value>Left Ctrl + Left Shift + ESC.</value>
   </data>
-    <data name="HelpP1L3" xml:space="preserve">
+  <data name="HelpP1L3" xml:space="preserve">
     <value>This will toggle through various states including hidden. The position and visibility state are automatically saved.</value>
   </data>
-    <data name="HelpP2" xml:space="preserve">
+  <data name="HelpP2" xml:space="preserve">
     <value>Speaker and Microphone Boost</value>
   </data>
-    <data name="HelpP2L1" xml:space="preserve">
+  <data name="HelpP2L1" xml:space="preserve">
     <value>Please preview your audio first</value>
   </data>
-    <data name="HelpP2L2" xml:space="preserve">
+  <data name="HelpP2L2" xml:space="preserve">
     <value>using the preview option to make sure that your microphone and speakers are configured correctly.</value>
   </data>
-    <data name="HelpP2L3" xml:space="preserve">
+  <data name="HelpP2L3" xml:space="preserve">
     <value>Speaker boost can be set higher to counteract the volume reduction caused by clipping and the radio effects. If speaker boost is too high - you may have issues where other windows sounds are too loud. Reduce the boost to fix this.</value>
   </data>
-    <data name="HelpP3" xml:space="preserve">
+  <data name="HelpP3" xml:space="preserve">
     <value>Troubleshooting</value>
   </data>
-    <data name="HelpP3L1" xml:space="preserve">
+  <data name="HelpP3L1" xml:space="preserve">
     <value>If you have any issues with the SRS please get help on the dedicated Discord channel</value>
   </data>
-    <data name="HelpP3L2" xml:space="preserve">
+  <data name="HelpP3L2" xml:space="preserve">
     <value>here</value>
   </data>
-    <data name="HelpP3L3" xml:space="preserve">
+  <data name="HelpP3L3" xml:space="preserve">
     <value>and make sure to follow the information in #common-issues first before asking for help in #support</value>
   </data>
-    <data name="HelpP4" xml:space="preserve">
+  <data name="HelpP4" xml:space="preserve">
     <value>Input Device not detected?</value>
   </data>
-    <data name="HelpP4L1" xml:space="preserve">
+  <data name="HelpP4L1" xml:space="preserve">
     <value>If your input device isn't detected - try enabling "Allow more input devices" and restart the client.</value>
   </data>
-    <data name="HelpP4L2" xml:space="preserve">
+  <data name="HelpP4L2" xml:space="preserve">
     <value>If ALL devices then stop working - turn the setting off and please post you clientlog.txt on the dedicated SRS</value>
   </data>
-    <data name="HelpP4L3" xml:space="preserve">
+  <data name="HelpP4L3" xml:space="preserve">
     <value>Discord Channel</value>
   </data>
-    <data name="HelpP4L4" xml:space="preserve">
+  <data name="HelpP4L4" xml:space="preserve">
     <value>in order for me to help you add the device to the whitelist.</value>
   </data>
-    <data name="HelpP5" xml:space="preserve">
+  <data name="HelpP5" xml:space="preserve">
     <value>Fixed Channels</value>
   </data>
-    <data name="HelpP5L1" xml:space="preserve">
+  <data name="HelpP5L1" xml:space="preserve">
     <value>To create a fixed channel list to be used on FC3 aircraft radios and expansion radios, simply create a text file with the frequencies</value>
   </data>
-    <data name="HelpP5L2" xml:space="preserve">
+  <data name="HelpP5L2" xml:space="preserve">
     <value>you want, with a new frequency on each line, named after the radio you want the fixed channels for in the SimpleRadio Folder where the radio is installed.</value>
   </data>
-    <data name="HelpP5L3" xml:space="preserve">
+  <data name="HelpP5L3" xml:space="preserve">
     <value>Special characters (-,/ etc) can be ignored as can the case.</value>
   </data>
-    <data name="HelpP5L4" xml:space="preserve">
+  <data name="HelpP5L4" xml:space="preserve">
     <value>Full list of Frequencies &amp; Radio Names</value>
   </data>
-    <data name="HelpP5L5" xml:space="preserve">
+  <data name="HelpP5L5" xml:space="preserve">
     <value>For example, for the FC3 F15C Radio, AN/ARC-164 UHF 1, create a text file called "ANARC-164 UHF1.txt" or "anarc164 uhf1.txt".</value>
   </data>
-    <data name="HelpP5L6" xml:space="preserve">
+  <data name="HelpP5L6" xml:space="preserve">
     <value>Add the frequencies within the supported ranges (check the link above for ranges) and save the file.</value>
   </data>
-    <data name="HelpP5L7" xml:space="preserve">
+  <data name="HelpP5L7" xml:space="preserve">
     <value>The file will be automatically loaded for that radio when you jump into that aircraft or manually reloaded with the Reload button on the channel tab on the overlay</value>
   </data>
-    <data name="HelpP5L8" xml:space="preserve">
+  <data name="HelpP5L8" xml:space="preserve">
     <value>here</value>
   </data>
-    <data name="HelpP6" xml:space="preserve">
+  <data name="HelpP6" xml:space="preserve">
     <value>Latest Version &amp; Updates</value>
   </data>
-    <data name="HelpP6L1" xml:space="preserve">
+  <data name="HelpP6L1" xml:space="preserve">
     <value>You can always get the latest version from GitHubs Release section for SRS:</value>
   </data>
-    <data name="HelpP6L2" xml:space="preserve">
+  <data name="HelpP6L2" xml:space="preserve">
     <value>https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
   </data>
-    <data name="HelpP6L3" xml:space="preserve">
+  <data name="HelpP6L3" xml:space="preserve">
     <value>Older versions are</value>
   </data>
-    <data name="HelpP6L4" xml:space="preserve">
+  <data name="HelpP6L4" xml:space="preserve">
     <value>here</value>
   </data>
-    <data name="HelpTab" xml:space="preserve">
+  <data name="HelpTab" xml:space="preserve">
     <value>Help</value>
   </data>
-    <data name="HFEffectVolume" xml:space="preserve">
-    <value>HF Effect Volume</value>
-  </data>
-    <data name="HQEffect" xml:space="preserve">
+  <data name="HQEffect" xml:space="preserve">
     <value>Enable HAVEQUICK Effect</value>
   </data>
-    <data name="InputAwacsOverlay" xml:space="preserve">
+  <data name="InputAwacsOverlay" xml:space="preserve">
     <value>Awacs Toggle</value>
   </data>
-    <data name="InputDown0001" xml:space="preserve">
+  <data name="InputDown0001" xml:space="preserve">
     <value>Down 0.001MHz</value>
   </data>
-    <data name="InputDown001" xml:space="preserve">
+  <data name="InputDown001" xml:space="preserve">
     <value>Down 0.01MHz</value>
   </data>
-    <data name="InputDown01" xml:space="preserve">
+  <data name="InputDown01" xml:space="preserve">
     <value>Down 0.1MHz</value>
   </data>
-    <data name="InputDown1" xml:space="preserve">
+  <data name="InputDown1" xml:space="preserve">
     <value>Down 1MHz</value>
   </data>
-    <data name="InputDown10" xml:space="preserve">
+  <data name="InputDown10" xml:space="preserve">
     <value>Down 10MHz</value>
   </data>
-    <data name="InputDown100" xml:space="preserve">
+  <data name="InputDown100" xml:space="preserve">
     <value>Down 100MHz</value>
   </data>
-    <data name="InputEncryptionDecrease" xml:space="preserve">
+  <data name="InputEncryptionDecrease" xml:space="preserve">
     <value>Encryption Key Down</value>
   </data>
-    <data name="InputEncryptionIncrease" xml:space="preserve">
+  <data name="InputEncryptionIncrease" xml:space="preserve">
     <value>Encryption Key Up</value>
   </data>
-    <data name="InputIntercom" xml:space="preserve">
+  <data name="InputIntercom" xml:space="preserve">
     <value>Intercom Select</value>
   </data>
-    <data name="InputIntercomPTT" xml:space="preserve">
+  <data name="InputIntercomPTT" xml:space="preserve">
     <value>Special Intercom Select &amp; PTT</value>
   </data>
-    <data name="InputModifier" xml:space="preserve">
+  <data name="InputModifier" xml:space="preserve">
     <value>Modifier</value>
   </data>
-    <data name="InputNextRadio" xml:space="preserve">
+  <data name="InputNextRadio" xml:space="preserve">
     <value>Select Next Radio</value>
   </data>
-    <data name="InputPreviousRadio" xml:space="preserve">
+  <data name="InputPreviousRadio" xml:space="preserve">
     <value>Select Previous Radio</value>
   </data>
-    <data name="InputPTT" xml:space="preserve">
+  <data name="InputPTT" xml:space="preserve">
     <value>Push To Talk - PTT</value>
   </data>
-    <data name="InputRadio1" xml:space="preserve">
+  <data name="InputRadio1" xml:space="preserve">
     <value>Radio 1</value>
   </data>
-    <data name="InputRadio10" xml:space="preserve">
+  <data name="InputRadio10" xml:space="preserve">
     <value>Radio 10</value>
   </data>
-    <data name="InputRadio2" xml:space="preserve">
+  <data name="InputRadio2" xml:space="preserve">
     <value>Radio 2</value>
   </data>
-    <data name="InputRadio3" xml:space="preserve">
+  <data name="InputRadio3" xml:space="preserve">
     <value>Radio 3</value>
   </data>
-    <data name="InputRadio4" xml:space="preserve">
+  <data name="InputRadio4" xml:space="preserve">
     <value>Radio 4</value>
   </data>
-    <data name="InputRadio5" xml:space="preserve">
+  <data name="InputRadio5" xml:space="preserve">
     <value>Radio 5</value>
   </data>
-    <data name="InputRadio6" xml:space="preserve">
+  <data name="InputRadio6" xml:space="preserve">
     <value>Radio 6</value>
   </data>
-    <data name="InputRadio7" xml:space="preserve">
+  <data name="InputRadio7" xml:space="preserve">
     <value>Radio 7</value>
   </data>
-    <data name="InputRadio8" xml:space="preserve">
+  <data name="InputRadio8" xml:space="preserve">
     <value>Radio 8</value>
   </data>
-    <data name="InputRadio9" xml:space="preserve">
+  <data name="InputRadio9" xml:space="preserve">
     <value>Radio 9</value>
   </data>
-    <data name="InputRadioChannelDown" xml:space="preserve">
+  <data name="InputRadioChannelDown" xml:space="preserve">
     <value>Radio Channel Down</value>
   </data>
-    <data name="InputRadioChannelUp" xml:space="preserve">
+  <data name="InputRadioChannelUp" xml:space="preserve">
     <value>Radio Channel Up</value>
   </data>
-    <data name="InputRadioOverlay" xml:space="preserve">
+  <data name="InputRadioOverlay" xml:space="preserve">
     <value>Overlay Toggle</value>
   </data>
-    <data name="InputRadioVolumeDown" xml:space="preserve">
+  <data name="InputRadioVolumeDown" xml:space="preserve">
     <value>Radio Volume Down</value>
   </data>
-    <data name="InputRadioVolumeUp" xml:space="preserve">
+  <data name="InputRadioVolumeUp" xml:space="preserve">
     <value>Radio Volume Up</value>
   </data>
-    <data name="InputTextNone" xml:space="preserve">
+  <data name="InputTextNone" xml:space="preserve">
     <value>None</value>
   </data>
-    <data name="InputToggleEncryption" xml:space="preserve">
+  <data name="InputToggleEncryption" xml:space="preserve">
     <value>Toggle Encryption</value>
   </data>
-    <data name="InputToggleGuard" xml:space="preserve">
+  <data name="InputToggleGuard" xml:space="preserve">
     <value>Toggle Guard</value>
   </data>
-    <data name="InputTransponderIDENT" xml:space="preserve">
+  <data name="InputTransponderIDENT" xml:space="preserve">
     <value>Transponder IDENT Toggle</value>
   </data>
-    <data name="InputUp0001" xml:space="preserve">
+  <data name="InputUp0001" xml:space="preserve">
     <value>Up 0.001MHz</value>
   </data>
-    <data name="InputUp001" xml:space="preserve">
+  <data name="InputUp001" xml:space="preserve">
     <value>Up 0.01MHz</value>
   </data>
-    <data name="InputUp01" xml:space="preserve">
+  <data name="InputUp01" xml:space="preserve">
     <value>Up 0.1MHz</value>
   </data>
-    <data name="InputUp1" xml:space="preserve">
+  <data name="InputUp1" xml:space="preserve">
     <value>Up 1MHz</value>
   </data>
-    <data name="InputUp10" xml:space="preserve">
+  <data name="InputUp10" xml:space="preserve">
     <value>Up 10MHz</value>
   </data>
-    <data name="InputUp100" xml:space="preserve">
+  <data name="InputUp100" xml:space="preserve">
     <value>Up 100MHz</value>
   </data>
-    <data name="IntegrationHeader" xml:space="preserve">
+  <data name="IntegrationHeader" xml:space="preserve">
     <value>Controls / Cockpit Integration</value>
   </data>
-    <data name="IntercomConfig" xml:space="preserve">
+  <data name="IntercomConfig" xml:space="preserve">
     <value>Intercom Audio Channel</value>
   </data>
-    <data name="IntercomEndTransmitEffect" xml:space="preserve">
+  <data name="IntercomEndTransmitEffect" xml:space="preserve">
     <value>Intercom Transmit End Effect</value>
   </data>
-    <data name="IntercomStartTransmitEffect" xml:space="preserve">
+  <data name="IntercomStartTransmitEffect" xml:space="preserve">
     <value>Intercom Transmit Start Effect</value>
   </data>
-    <data name="LotATCConnectionStatusLabel" xml:space="preserve">
+  <data name="LotATCConnectionStatusLabel" xml:space="preserve">
     <value>LotATC</value>
   </data>
-    <data name="MicAGC" xml:space="preserve">
+  <data name="MicAGC" xml:space="preserve">
     <value>Microphone Automatic Gain Control</value>
   </data>
-    <data name="MicDenoise" xml:space="preserve">
+  <data name="MicDenoise" xml:space="preserve">
     <value>Microphone Noise Suppression </value>
   </data>
-    <data name="MicLabel" xml:space="preserve">
+  <data name="MicLabel" xml:space="preserve">
     <value>Microphone</value>
   </data>
-    <data name="MicrophoneHeader" xml:space="preserve">
+  <data name="MicrophoneHeader" xml:space="preserve">
     <value>Microphone</value>
   </data>
-    <data name="Minimisetotray" xml:space="preserve">
+  <data name="Minimisetotray" xml:space="preserve">
     <value>Minimise to tray</value>
   </data>
-    <data name="MiscellanousHeader" xml:space="preserve">
+  <data name="MiscellanousHeader" xml:space="preserve">
     <value>Miscellanous Settings</value>
   </data>
-    <data name="MsgBoxAdmin" xml:space="preserve">
+  <data name="MsgBoxAdmin" xml:space="preserve">
     <value>SRS Admin Privileges</value>
   </data>
-    <data name="MsgBoxAdminText" xml:space="preserve">
+  <data name="MsgBoxAdminText" xml:space="preserve">
     <value>SRS Requires admin rights to be able to read keyboard input in the background. 
 
 If you do not use any keyboard binds you can disable SRS Admin Privileges. 
 
 For this setting to take effect SRS must be restarted</value>
   </data>
-    <data name="MsgBoxAudioError" xml:space="preserve">
+  <data name="MsgBoxAudioError" xml:space="preserve">
     <value>Audio Output Error</value>
   </data>
-    <data name="MsgBoxAudioErrorText" xml:space="preserve">
+  <data name="MsgBoxAudioErrorText" xml:space="preserve">
     <value>Problem initialising Audio Output!
 
 Try a different Output device and please post your clientlog.txt to the support Discord server.
 
 Join support Discord server now?</value>
   </data>
-    <data name="MsgBoxAutoConnect" xml:space="preserve">
+  <data name="MsgBoxAutoConnect" xml:space="preserve">
     <value>Auto Connect</value>
   </data>
-    <data name="MsgBoxAutoConnectText" xml:space="preserve">
+  <data name="MsgBoxAutoConnectText" xml:space="preserve">
     <value>Would you like to try to auto-connect to DCS-SRS @</value>
   </data>
-    <data name="MsgBoxConfirm" xml:space="preserve">
+  <data name="MsgBoxConfirm" xml:space="preserve">
     <value>Confirmation</value>
   </data>
-    <data name="MsgBoxConfirmDeleteText" xml:space="preserve">
+  <data name="MsgBoxConfirmDeleteText" xml:space="preserve">
     <value>Are you sure you want to delete</value>
   </data>
-    <data name="MsgBoxError" xml:space="preserve">
+  <data name="MsgBoxError" xml:space="preserve">
     <value>Error</value>
   </data>
-    <data name="MsgBoxErrorInputText" xml:space="preserve">
+  <data name="MsgBoxErrorInputText" xml:space="preserve">
     <value>Cannot delete the default input!</value>
   </data>
-    <data name="MsgBoxErrorRenameText" xml:space="preserve">
+  <data name="MsgBoxErrorRenameText" xml:space="preserve">
     <value>Cannot rename the default input!</value>
   </data>
-    <data name="MsgBoxInvalidIP" xml:space="preserve">
+  <data name="MsgBoxInvalidIP" xml:space="preserve">
     <value>Host Name Error</value>
   </data>
-    <data name="MsgBoxInvalidIPText" xml:space="preserve">
+  <data name="MsgBoxInvalidIPText" xml:space="preserve">
     <value>Invalid IP or Host Name!</value>
   </data>
-    <data name="MsgBoxMicPassthru" xml:space="preserve">
+  <data name="MsgBoxMicPassthru" xml:space="preserve">
     <value>Warning</value>
   </data>
-    <data name="MsgBoxMicPassthruText" xml:space="preserve">
+  <data name="MsgBoxMicPassthruText" xml:space="preserve">
     <value>Mic Output and Speaker Output should not be set to the same device!
 
 Mic Output is just for recording and not for use as a sidetone. You will hear yourself with a small delay!
 
 Hit disconnect and change Mic Output / Passthrough</value>
   </data>
-    <data name="MsgBoxMismatch" xml:space="preserve">
+  <data name="MsgBoxMismatch" xml:space="preserve">
     <value>Auto Connect Mismatch</value>
   </data>
-    <data name="MsgBoxMismatchText1" xml:space="preserve">
+  <data name="MsgBoxMismatchText1" xml:space="preserve">
     <value>The SRS server advertised by DCS @</value>
   </data>
-    <data name="MsgBoxMismatchText2" xml:space="preserve">
+  <data name="MsgBoxMismatchText2" xml:space="preserve">
     <value>does not match the SRS server @</value>
   </data>
-    <data name="MsgBoxMismatchText3" xml:space="preserve">
+  <data name="MsgBoxMismatchText3" xml:space="preserve">
     <value>you are currently connected to.</value>
   </data>
-    <data name="MsgBoxMismatchText4" xml:space="preserve">
+  <data name="MsgBoxMismatchText4" xml:space="preserve">
     <value>Would you like to connect to the advertised SRS server?</value>
   </data>
-    <data name="MsgBoxNotVisible" xml:space="preserve">
+  <data name="MsgBoxNotVisible" xml:space="preserve">
     <value>SRS window position reset</value>
   </data>
-    <data name="MsgBoxNotVisibleText" xml:space="preserve">
+  <data name="MsgBoxNotVisibleText" xml:space="preserve">
     <value>The SRS client window is no longer visible likely due to a monitor reconfiguration.\n\nThe position will be reset to default to fix this issue.</value>
   </data>
-    <data name="MsgBoxPleaseTick" xml:space="preserve">
+  <data name="MsgBoxPleaseTick" xml:space="preserve">
     <value>Please leave this ticked</value>
   </data>
-    <data name="MsgBoxPleaseTickText" xml:space="preserve">
+  <data name="MsgBoxPleaseTickText" xml:space="preserve">
     <value>Please leave this ticked - SRS logging is extremely minimal (you can verify by looking at the source) - and limited to: Country &amp; SRS Version on startup.
 
 By keeping this enabled I can judge the usage of SRS, and which versions are still in use for support.</value>
   </data>
-    <data name="MsgBoxRescan" xml:space="preserve">
+  <data name="MsgBoxRescan" xml:space="preserve">
     <value>Controller Input Devices Rescanned</value>
   </data>
-    <data name="MsgBoxRescanText" xml:space="preserve">
+  <data name="MsgBoxRescanText" xml:space="preserve">
     <value>New controller input devices can now be used</value>
   </data>
-    <data name="MsgBoxRestart" xml:space="preserve">
+  <data name="MsgBoxRestart" xml:space="preserve">
     <value>Restart SimpleRadio Standalone</value>
   </data>
-    <data name="MsgBoxRestartExpandText" xml:space="preserve">
+  <data name="MsgBoxRestartExpandText" xml:space="preserve">
     <value>You must restart SRS for this setting to take effect.
 
 Turning this on will allow almost any DirectX device to be used as input expect a Mouse but WILL LIKELY cause issues with other devices being detected. 
@@ -707,541 +692,552 @@ Use SRS Device Listing (see Discord) instead to enable the missing device.
 
 Do not turn on unless you know what you're doing :)</value>
   </data>
-    <data name="MsgBoxRestartXInputText" xml:space="preserve">
+  <data name="MsgBoxRestartXInputText" xml:space="preserve">
     <value>You must restart SRS for this setting to take effect.</value>
   </data>
-    <data name="MsgBoxSetSRSPath" xml:space="preserve">
+  <data name="MsgBoxSetSRSPath" xml:space="preserve">
     <value>SRS Client Path</value>
   </data>
-    <data name="MsgBoxSetSRSPathText" xml:space="preserve">
+  <data name="MsgBoxSetSRSPathText" xml:space="preserve">
     <value>SRS Path set to: </value>
   </data>
-    <data name="MsgBoxThankYou" xml:space="preserve">
+  <data name="MsgBoxThankYou" xml:space="preserve">
     <value>Thank You!</value>
   </data>
-    <data name="MsgBoxThankYouText" xml:space="preserve">
+  <data name="MsgBoxThankYouText" xml:space="preserve">
     <value>Thank you for enabling this!
 
 By keeping this enabled I can judge the usage of SRS, and which versions are still in use for support.</value>
   </data>
-    <data name="NATORadioTone" xml:space="preserve">
+  <data name="NATORadioTone" xml:space="preserve">
     <value>Enable FM Radio Tone</value>
   </data>
-    <data name="OverlayAvailableCockpit" xml:space="preserve">
+  <data name="OverlayAvailableCockpit" xml:space="preserve">
     <value>Available in Cockpit</value>
   </data>
-    <data name="OverlayAwacsPanel" xml:space="preserve">
+  <data name="OverlayAwacsPanel" xml:space="preserve">
     <value>AWACS / GCI Panel</value>
   </data>
-    <data name="OverlayChannelPrefix" xml:space="preserve">
+  <data name="OverlayChannelPrefix" xml:space="preserve">
     <value>CNH</value>
   </data>
-    <data name="OverlayChannelTab" xml:space="preserve">
+  <data name="OverlayChannelTab" xml:space="preserve">
     <value>Ch.</value>
   </data>
-    <data name="OverlayCockpitControls" xml:space="preserve">
+  <data name="OverlayCockpitControls" xml:space="preserve">
     <value>Cockpit Controls</value>
   </data>
-    <data name="OverlayDCSIFF" xml:space="preserve">
+  <data name="OverlayDCSIFF" xml:space="preserve">
     <value>DCS IFF</value>
   </data>
-    <data name="OverlayDCSPTT" xml:space="preserve">
+  <data name="OverlayDCSPTT" xml:space="preserve">
     <value>DCS PTT Controls</value>
   </data>
-    <data name="OverlayDCSRadioSwitch" xml:space="preserve">
+  <data name="OverlayDCSRadioSwitch" xml:space="preserve">
     <value>DCS Radio Switch Controls</value>
   </data>
-    <data name="OverlayDisabledSRS" xml:space="preserve">
+  <data name="OverlayDisabledSRS" xml:space="preserve">
     <value>- Disabled in SRS</value>
   </data>
-    <data name="OverlayEncryptionKey" xml:space="preserve">
+  <data name="OverlayEncryptionKey" xml:space="preserve">
     <value>Encryption Key</value>
   </data>
-    <data name="OverlayEncryptionTab" xml:space="preserve">
+  <data name="OverlayEncryptionTab" xml:space="preserve">
     <value>Enc</value>
   </data>
-    <data name="OverlayHotasControls" xml:space="preserve">
+  <data name="OverlayHotasControls" xml:space="preserve">
     <value>HOTAS Controls</value>
   </data>
-    <data name="OverlayIntercom" xml:space="preserve">
+  <data name="OverlayIntercom" xml:space="preserve">
     <value>INTERCOM</value>
   </data>
-    <data name="OverlayIntercomHotMic" xml:space="preserve">
+  <data name="OverlayIntercomHotMic" xml:space="preserve">
     <value>Intercom Hot Mic</value>
   </data>
-    <data name="OverlayMIDS" xml:space="preserve">
+  <data name="OverlayMIDS" xml:space="preserve">
     <value>MIDS</value>
   </data>
-    <data name="OverlayNoIntercom" xml:space="preserve">
+  <data name="OverlayNoIntercom" xml:space="preserve">
     <value>NO INTERCOM</value>
   </data>
-    <data name="OverlayNoRadio" xml:space="preserve">
+  <data name="OverlayNoRadio" xml:space="preserve">
     <value>No Radio</value>
   </data>
-    <data name="OverlayNotAvailable" xml:space="preserve">
+  <data name="OverlayNotAvailable" xml:space="preserve">
     <value>Not Available - SRS Overlay Controls Only</value>
   </data>
-    <data name="OverlayPresetReload" xml:space="preserve">
+  <data name="OverlayPresetReload" xml:space="preserve">
     <value>Reload</value>
   </data>
-    <data name="OverlayRadioCapabilities" xml:space="preserve">
+  <data name="OverlayRadioCapabilities" xml:space="preserve">
     <value>Radio Capabilities</value>
   </data>
-    <data name="OverlayRadioTab" xml:space="preserve">
+  <data name="OverlayRadioTab" xml:space="preserve">
     <value>Radio</value>
   </data>
-    <data name="OverlaySimulTransOFF" xml:space="preserve">
+  <data name="OverlaySimulTransOFF" xml:space="preserve">
     <value>Simul. Transmission OFF</value>
   </data>
-    <data name="OverlaySimulTransON" xml:space="preserve">
+  <data name="OverlaySimulTransON" xml:space="preserve">
     <value>Simul. Transmission ON</value>
   </data>
-    <data name="OverlaySimulTransST" xml:space="preserve">
+  <data name="OverlaySimulTransST" xml:space="preserve">
     <value>ST</value>
   </data>
-    <data name="OverlayTransponder" xml:space="preserve">
+  <data name="OverlayTransponder" xml:space="preserve">
     <value>TRANSPONDER</value>
   </data>
-    <data name="PlayConnectionSounds" xml:space="preserve">
+  <data name="PlayConnectionSounds" xml:space="preserve">
     <value>Play connection sounds</value>
   </data>
-    <data name="PresetsFolderBrowseButton" xml:space="preserve">
+  <data name="PresetsFolderBrowseButton" xml:space="preserve">
     <value>Browse Presets Folder...</value>
   </data>
-    <data name="PresetsFolderResetButton" xml:space="preserve">
+  <data name="PresetsFolderResetButton" xml:space="preserve">
     <value>Reset</value>
   </data>
-    <data name="PreviewAudio" xml:space="preserve">
+  <data name="PreviewAudio" xml:space="preserve">
     <value>Audio Preview</value>
   </data>
-    <data name="PreviewAudioStop" xml:space="preserve">
+  <data name="PreviewAudioStop" xml:space="preserve">
     <value>Stop Preview</value>
   </data>
-    <data name="ProfileHeader" xml:space="preserve">
+  <data name="ProfileHeader" xml:space="preserve">
     <value>Profile</value>
   </data>
-    <data name="ProfileSettingsHeader" xml:space="preserve">
+  <data name="ProfileSettingsHeader" xml:space="preserve">
     <value>Profile Settings</value>
   </data>
-    <data name="PTTReleaseDelay" xml:space="preserve">
+  <data name="PTTReleaseDelay" xml:space="preserve">
     <value>Push to Talk Release Delay (ms) - SRS Hotkeys only</value>
   </data>
-    <data name="PTTReleaseDelay0" xml:space="preserve">
+  <data name="PTTReleaseDelay0" xml:space="preserve">
     <value>0</value>
   </data>
-    <data name="PTTReleaseDelay1000" xml:space="preserve">
+  <data name="PTTReleaseDelay1000" xml:space="preserve">
     <value>1000</value>
   </data>
-    <data name="PTTReleaseDelay500" xml:space="preserve">
+  <data name="PTTReleaseDelay500" xml:space="preserve">
     <value>500</value>
   </data>
-    <data name="PTTStartDelay" xml:space="preserve">
+  <data name="PTTStartDelay" xml:space="preserve">
     <value>Push to Talk Start Delay (ms) - SRS Hotkeys only</value>
   </data>
-    <data name="PTTStartDelay0" xml:space="preserve">
+  <data name="PTTStartDelay0" xml:space="preserve">
     <value>0</value>
   </data>
-    <data name="PTTStartDelay1000" xml:space="preserve">
+  <data name="PTTStartDelay1000" xml:space="preserve">
     <value>1000</value>
   </data>
-    <data name="PTTStartDelay500" xml:space="preserve">
+  <data name="PTTStartDelay500" xml:space="preserve">
     <value>500</value>
   </data>
-    <data name="Radio10Config" xml:space="preserve">
+  <data name="Radio10Config" xml:space="preserve">
     <value>Radio 10 Audio Channel</value>
   </data>
-    <data name="Radio1Config" xml:space="preserve">
+  <data name="Radio1Config" xml:space="preserve">
     <value>Radio 1 Audio Channel</value>
   </data>
-    <data name="Radio2Config" xml:space="preserve">
+  <data name="Radio2Config" xml:space="preserve">
     <value>Radio 2 Audio Channel</value>
   </data>
-    <data name="Radio3Config" xml:space="preserve">
+  <data name="Radio3Config" xml:space="preserve">
     <value>Radio 3 Audio Channel</value>
   </data>
-    <data name="Radio4Config" xml:space="preserve">
+  <data name="Radio4Config" xml:space="preserve">
     <value>Radio 4 Audio Channel</value>
   </data>
-    <data name="Radio5Config" xml:space="preserve">
+  <data name="Radio5Config" xml:space="preserve">
     <value>Radio 5 Audio Channel</value>
   </data>
-    <data name="Radio6Config" xml:space="preserve">
+  <data name="Radio6Config" xml:space="preserve">
     <value>Radio 6 Audio Channel</value>
   </data>
-    <data name="Radio7Config" xml:space="preserve">
+  <data name="Radio7Config" xml:space="preserve">
     <value>Radio 7 Audio Channel</value>
   </data>
-    <data name="Radio8Config" xml:space="preserve">
+  <data name="Radio8Config" xml:space="preserve">
     <value>Radio 8 Audio Channel</value>
   </data>
-    <data name="Radio9Config" xml:space="preserve">
+  <data name="Radio9Config" xml:space="preserve">
     <value>Radio 9 Audio Channel</value>
   </data>
-    <data name="RadioChannelEqual" xml:space="preserve">
+  <data name="RadioChannelEqual" xml:space="preserve">
     <value>Equal</value>
   </data>
-    <data name="RadioChannelLeft" xml:space="preserve">
+  <data name="RadioChannelLeft" xml:space="preserve">
     <value>Left</value>
   </data>
-    <data name="RadioChannelRight" xml:space="preserve">
+  <data name="RadioChannelRight" xml:space="preserve">
     <value>Right</value>
   </data>
-    <data name="RadioEffectHeader" xml:space="preserve">
+  <data name="RadioEffectHeader" xml:space="preserve">
     <value>Radio Effect Settings</value>
   </data>
-    <data name="RadioEncryptionEffectsToggle" xml:space="preserve">
+  <data name="RadioEncryptionEffectsToggle" xml:space="preserve">
     <value>Radio Encryption Effects
 Requires Tx or Rx Effects On</value>
   </data>
-    <data name="RadioEndTransmitEffect" xml:space="preserve">
+  <data name="RadioEndTransmitEffect" xml:space="preserve">
     <value>Radio Transmit End Effect</value>
   </data>
-    <data name="RadioMIDSToggle" xml:space="preserve">
+  <data name="RadioMIDSToggle" xml:space="preserve">
     <value>MIDS Tx &amp; Rx Effect
 Requires Tx or Rx Effects On</value>
   </data>
-    <data name="RadioOverlayTaskbarItem" xml:space="preserve">
+  <data name="RadioOverlayTaskbarItem" xml:space="preserve">
     <value>Hide Overlay Taskbar Item</value>
   </data>
-    <data name="RadioRxEffects" xml:space="preserve">
+  <data name="RadioRxEffects" xml:space="preserve">
     <value>Radio Rx Effects</value>
   </data>
-    <data name="RadioRxEnd" xml:space="preserve">
+  <data name="RadioRxEnd" xml:space="preserve">
     <value>End</value>
   </data>
-    <data name="RadioRxStart" xml:space="preserve">
+  <data name="RadioRxStart" xml:space="preserve">
     <value>Start</value>
   </data>
-    <data name="RadioSoundEffects" xml:space="preserve">
+  <data name="RadioSoundEffects" xml:space="preserve">
     <value>Enable Radio Voice Effect</value>
   </data>
-    <data name="RadioSoundEffectsClipping" xml:space="preserve">
+  <data name="RadioSoundEffectsClipping" xml:space="preserve">
     <value>Enable Clipping Effect (Requires Radio effects on!)</value>
   </data>
-    <data name="RadioStartTransmitEffect" xml:space="preserve">
+  <data name="RadioStartTransmitEffect" xml:space="preserve">
     <value>Radio Transmit Start Effect</value>
   </data>
-    <data name="RadioSwitchIsPTT" xml:space="preserve">
+  <data name="RadioSwitchIsPTT" xml:space="preserve">
     <value>Radio Switch works as Push To Talk (PTT)</value>
   </data>
-    <data name="RadioTxEffects" xml:space="preserve">
+  <data name="RadioTxEffects" xml:space="preserve">
     <value>Radio Tx Effects</value>
   </data>
-    <data name="RadioTxEnd" xml:space="preserve">
+  <data name="RadioTxEnd" xml:space="preserve">
     <value>End</value>
   </data>
-    <data name="RadioTxStart" xml:space="preserve">
+  <data name="RadioTxStart" xml:space="preserve">
     <value>Start</value>
   </data>
-    <data name="RecordingHeader" xml:space="preserve">
+  <data name="RecordingHeader" xml:space="preserve">
     <value>Recording</value>
   </data>
-    <data name="RecordingQuality" xml:space="preserve">
-    <value>Recording Quality</value>
+  <data name="RecordingQuality" xml:space="preserve">
+    <value>Recording Quality (mp3 only)</value>
   </data>
-    <data name="RecordingQuality0" xml:space="preserve">
+  <data name="RecordingQuality0" xml:space="preserve">
     <value>0 - Highest</value>
   </data>
-    <data name="RecordingQuality9" xml:space="preserve">
+  <data name="RecordingQuality9" xml:space="preserve">
     <value>Lowest - 9</value>
   </data>
-    <data name="RecordTransmissions" xml:space="preserve">
+  <data name="RecordTransmissions" xml:space="preserve">
     <value>Record Transmissions</value>
   </data>
-    <data name="RefocusDCS" xml:space="preserve">
+  <data name="RefocusDCS" xml:space="preserve">
     <value>Auto Refocus DCS</value>
   </data>
-    <data name="RenameProfile" xml:space="preserve">
+  <data name="RenameProfile" xml:space="preserve">
     <value>Rename Profile</value>
   </data>
-    <data name="RequireAdminToggle" xml:space="preserve">
+  <data name="RequireAdminToggle" xml:space="preserve">
     <value>Require Admin</value>
   </data>
-    <data name="RescanInputDevices" xml:space="preserve">
+  <data name="RescanInputDevices" xml:space="preserve">
     <value>Rescan Controller Input Devices</value>
   </data>
-    <data name="Reset" xml:space="preserve">
+  <data name="Reset" xml:space="preserve">
     <value>Reset</value>
   </data>
-    <data name="ResetRadioOverlay" xml:space="preserve">
+  <data name="ResetRadioOverlay" xml:space="preserve">
     <value>Reset Radio Overlay</value>
   </data>
-    <data name="Server" xml:space="preserve">
+  <data name="Server" xml:space="preserve">
     <value>Server</value>
   </data>
-    <data name="ServerConnectionStatusLabel" xml:space="preserve">
+  <data name="ServerConnectionStatusLabel" xml:space="preserve">
     <value>Server</value>
   </data>
-    <data name="ServerWindowTitle" xml:space="preserve">
+  <data name="ServerWindowTitle" xml:space="preserve">
     <value>Server Settings</value>
   </data>
-    <data name="SetSRSPath" xml:space="preserve">
+  <data name="SetSRSPath" xml:space="preserve">
     <value>Set SRS Path for DCS</value>
   </data>
-    <data name="SetSRSPathBtn" xml:space="preserve">
+  <data name="SetSRSPathBtn" xml:space="preserve">
     <value>Set Path</value>
   </data>
-    <data name="SettingsTab" xml:space="preserve">
+  <data name="SettingsTab" xml:space="preserve">
     <value>Settings</value>
   </data>
-    <data name="SetupHeader" xml:space="preserve">
+  <data name="SetupHeader" xml:space="preserve">
     <value>Setup</value>
   </data>
-    <data name="ShowAwacsOverlay" xml:space="preserve">
+  <data name="ShowAwacsOverlay" xml:space="preserve">
     <value>Toggle AWACS Overlay</value>
   </data>
-    <data name="ShowClientList" xml:space="preserve">
+  <data name="ShowClientList" xml:space="preserve">
     <value>Toggle Client List</value>
   </data>
-    <data name="ShowOverlay" xml:space="preserve">
+  <data name="ShowOverlay" xml:space="preserve">
     <value>Toggle Radio Overlay</value>
   </data>
-    <data name="ShowTransmitterName" xml:space="preserve">
+  <data name="ShowTransmitterName" xml:space="preserve">
     <value>Show Transmitter Name (Requires Server ON too)</value>
   </data>
-    <data name="SingleFileMixdown" xml:space="preserve">
+  <data name="SingleFileMixdown" xml:space="preserve">
     <value>Record to Single File</value>
   </data>
-    <data name="SpeakerBoost" xml:space="preserve">
+  <data name="SpeakerBoost" xml:space="preserve">
     <value>Speaker Boost:</value>
   </data>
-    <data name="SpeakerBoostLabel" xml:space="preserve">
+  <data name="SpeakerBoostLabel" xml:space="preserve">
     <value>+/- %</value>
   </data>
-    <data name="SpeakerLabel" xml:space="preserve">
+  <data name="SpeakerLabel" xml:space="preserve">
     <value>Speakers &amp; Optional Mic Output</value>
   </data>
-    <data name="SRSInterfaceHeader" xml:space="preserve">
+  <data name="SRSInterfaceHeader" xml:space="preserve">
     <value>SRS Interface</value>
   </data>
-    <data name="SrvAllowRadioEncryption" xml:space="preserve">
+  <data name="SrvAllowRadioEncryption" xml:space="preserve">
     <value>Allow Radio Encryption</value>
   </data>
-    <data name="SrvCoalitionSecurity" xml:space="preserve">
+  <data name="SrvCoalitionSecurity" xml:space="preserve">
     <value>Coalition Security</value>
   </data>
-    <data name="SrvDistance" xml:space="preserve">
+  <data name="SrvDistance" xml:space="preserve">
     <value>Distance Limitations</value>
   </data>
-    <data name="SrvExternalAWACSMode" xml:space="preserve">
+  <data name="SrvExternalAWACSMode" xml:space="preserve">
     <value>External AWACS Mode</value>
   </data>
-    <data name="SrvLineOfSight" xml:space="preserve">
+  <data name="SrvLineOfSight" xml:space="preserve">
     <value>Line Of Sight</value>
   </data>
-    <data name="SrvNodeLimit" xml:space="preserve">
+  <data name="SrvNodeLimit" xml:space="preserve">
     <value>Retransmit Node Limit</value>
   </data>
-    <data name="SrvRadioExpansion" xml:space="preserve">
+  <data name="SrvRadioExpansion" xml:space="preserve">
     <value>Radio Expansion</value>
   </data>
-    <data name="SrvRadioRXInterference" xml:space="preserve">
+  <data name="SrvRadioRXInterference" xml:space="preserve">
     <value>IRL Radio Rx Interfence</value>
   </data>
-    <data name="SrvRealRadio" xml:space="preserve">
+  <data name="SrvRealRadio" xml:space="preserve">
     <value>IRL Radio Tx Behaviour</value>
   </data>
-    <data name="SrvServerVersion" xml:space="preserve">
+  <data name="SrvServerVersion" xml:space="preserve">
     <value>Server Version</value>
   </data>
-    <data name="SrvShowTransmitterName" xml:space="preserve">
+  <data name="SrvShowTransmitterName" xml:space="preserve">
     <value>Show Transmitter Name</value>
   </data>
-    <data name="SrvPresetsEnabled" xml:space="preserve">
+  <data name="SrvPresetsEnabled" xml:space="preserve">
     <value>Server Presets Enabled</value>
   </data>
-    <data name="SrvSpectatorAudio" xml:space="preserve">
+  <data name="SrvEAMRadioPresetEnabled" xml:space="preserve">
+    <value>Server EAM Radio Preset Enabled</value>
+  </data>
+  <data name="SrvSpectatorAudio" xml:space="preserve">
     <value>Spectator Audio</value>
   </data>
-    <data name="SrvStrictRadioEncryption" xml:space="preserve">
+  <data name="SrvStrictRadioEncryption" xml:space="preserve">
     <value>Strict Radio Encryption</value>
   </data>
-    <data name="SrvTunedClientCount" xml:space="preserve">
+  <data name="SrvTunedClientCount" xml:space="preserve">
     <value>Show Tuned Client Count</value>
   </data>
-    <data name="Startminimised" xml:space="preserve">
+  <data name="Startminimised" xml:space="preserve">
     <value>Start Minimised</value>
   </data>
-    <data name="StartStop" xml:space="preserve">
+  <data name="StartStop" xml:space="preserve">
     <value>Connect</value>
   </data>
-    <data name="StartStopConnecting" xml:space="preserve">
+  <data name="StartStopConnecting" xml:space="preserve">
     <value>Connecting...</value>
   </data>
-    <data name="StartStopDisconnect" xml:space="preserve">
+  <data name="StartStopDisconnect" xml:space="preserve">
     <value>Disconnect</value>
   </data>
-    <data name="status_connected" type="System.Resources.ResXFileRef, System.Windows.Forms">
-        <value>..\status-connected.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral,
-            PublicKeyToken=b03f5f7f11d50a3a
-        </value>
-    </data>
-    <data name="status_disconnected" type="System.Resources.ResXFileRef, System.Windows.Forms">
-        <value>..\status-disconnected.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral,
-            PublicKeyToken=b03f5f7f11d50a3a
-        </value>
-    </data>
-    <data name="status_disconnected_error" type="System.Resources.ResXFileRef, System.Windows.Forms">
-        <value>..\status-disconnected-error.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral,
-            PublicKeyToken=b03f5f7f11d50a3a
-        </value>
-    </data>
-    <data name="status_disconnected_game" type="System.Resources.ResXFileRef, System.Windows.Forms">
-        <value>..\status-disconnected-game.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral,
-            PublicKeyToken=b03f5f7f11d50a3a
-        </value>
-    </data>
-    <data name="TemplateHeader" xml:space="preserve">
+  <data name="status_connected" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\status-connected.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="status_disconnected" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\status-disconnected.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="status_disconnected_error" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\status-disconnected-error.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="status_disconnected_game" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\status-disconnected-game.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TemplateHeader" xml:space="preserve">
     <value>Template</value>
   </data>
-    <data name="ToggleServerSettings" xml:space="preserve">
+  <data name="ToggleServerSettings" xml:space="preserve">
     <value>Show Server Settings</value>
   </data>
-    <data name="ToolTipOpacity" xml:space="preserve">
+  <data name="ToolTipOpacity" xml:space="preserve">
     <value>Window Opacity</value>
   </data>
-    <data name="ToolTipRetransmit" xml:space="preserve">
+  <data name="ToolTipRetransmit" xml:space="preserve">
     <value>Retransmit</value>
   </data>
-    <data name="ToolTipSelectedRadio" xml:space="preserve">
+  <data name="ToolTipSelectedRadio" xml:space="preserve">
     <value>Selected Radio</value>
   </data>
-    <data name="ToolTipSimulTrans" xml:space="preserve">
+  <data name="ToolTipSimulTrans" xml:space="preserve">
     <value>Simultaneous Transmission</value>
   </data>
-    <data name="ToolTipTransponder" xml:space="preserve">
+  <data name="ToolTipTransponder" xml:space="preserve">
     <value>Activate / Deactivate Transponder</value>
   </data>
-    <data name="ToolTipTransponderMode2" xml:space="preserve">
+  <data name="ToolTipTransponderMode2" xml:space="preserve">
     <value>Mode 2</value>
   </data>
-    <data name="ToolTipTransponderMode4" xml:space="preserve">
+  <data name="ToolTipTransponderMode4" xml:space="preserve">
     <value>Mode 4</value>
   </data>
-    <data name="UHFEffectVolume" xml:space="preserve">
-    <value>UHF Effect Volume</value>
-  </data>
-    <data name="VAICOMTXInhibitEnabled" xml:space="preserve">
+  <data name="VAICOMTXInhibitEnabled" xml:space="preserve">
     <value>Allow VAICOM TX Inhibit</value>
   </data>
-    <data name="ValueAvailable" xml:space="preserve">
+  <data name="ValueAvailable" xml:space="preserve">
     <value>Available</value>
   </data>
-    <data name="ValueDISABLED" xml:space="preserve">
+  <data name="ValueDISABLED" xml:space="preserve">
     <value>DISABLED</value>
   </data>
-    <data name="ValueENABLED" xml:space="preserve">
+  <data name="ValueENABLED" xml:space="preserve">
     <value>ENABLED</value>
   </data>
-    <data name="ValueNotAvailable" xml:space="preserve">
+  <data name="ValueNotAvailable" xml:space="preserve">
     <value>Not Available</value>
   </data>
-    <data name="ValueOFF" xml:space="preserve">
+  <data name="ValueOFF" xml:space="preserve">
     <value>OFF</value>
   </data>
-    <data name="ValueON" xml:space="preserve">
+  <data name="ValueON" xml:space="preserve">
     <value>ON</value>
   </data>
-    <data name="ValueUnavailable" xml:space="preserve">
+  <data name="ValueUnavailable" xml:space="preserve">
     <value>Unavailable</value>
   </data>
-    <data name="ValueUnknown" xml:space="preserve">
+  <data name="ValueUnknown" xml:space="preserve">
     <value>Unknown</value>
   </data>
-    <data name="VHFEffectVolume" xml:space="preserve">
-    <value>VHF Effect Volume</value>
-  </data>
-    <data name="VOIPConnectionStatusLabel" xml:space="preserve">
+  <data name="VOIPConnectionStatusLabel" xml:space="preserve">
     <value>VOIP</value>
   </data>
-    <data name="VOXEnabled" xml:space="preserve">
+  <data name="VOXEnabled" xml:space="preserve">
     <value>Use Voice Detection (VOX) on Intercom Hot Mic</value>
   </data>
-    <data name="VOXHeader" xml:space="preserve">
+  <data name="VOXHeader" xml:space="preserve">
     <value>Intercom Hot Mic Voice Detection</value>
   </data>
-    <data name="VOXMinimimumTXTime" xml:space="preserve">
+  <data name="VOXMinimimumTXTime" xml:space="preserve">
     <value>Voice Detection minimum transmission length (ms)</value>
   </data>
-    <data name="VOXMinimimumTXTime0" xml:space="preserve">
+  <data name="VOXMinimimumTXTime0" xml:space="preserve">
     <value>0</value>
   </data>
-    <data name="VOXMinimimumTXTime1000" xml:space="preserve">
+  <data name="VOXMinimimumTXTime1000" xml:space="preserve">
     <value>1000</value>
   </data>
-    <data name="VOXMinimimumTXTime2000" xml:space="preserve">
+  <data name="VOXMinimimumTXTime2000" xml:space="preserve">
     <value>2000</value>
   </data>
-    <data name="VOXMinimumRMS" xml:space="preserve">
+  <data name="VOXMinimumRMS" xml:space="preserve">
     <value>Voice Detection Threshold</value>
   </data>
-    <data name="VOXMinimumRMSHigher" xml:space="preserve">
+  <data name="VOXMinimumRMSHigher" xml:space="preserve">
     <value>Higher</value>
   </data>
-    <data name="VOXMinimumRMSLower" xml:space="preserve">
+  <data name="VOXMinimumRMSLower" xml:space="preserve">
     <value>Lower</value>
   </data>
-    <data name="VOXMode" xml:space="preserve">
+  <data name="VOXMode" xml:space="preserve">
     <value>Voice Detection Sensitivity</value>
   </data>
-    <data name="VOXModeHigher" xml:space="preserve">
+  <data name="VOXModeHigher" xml:space="preserve">
     <value>Higher</value>
   </data>
-    <data name="VOXModeLower" xml:space="preserve">
+  <data name="VOXModeLower" xml:space="preserve">
     <value>Lower</value>
   </data>
-    <data name="OverlayPresetCreate" xml:space="preserve">
+  <data name="OverlayPresetCreate" xml:space="preserve">
     <value>Create</value>
   </data>
-    <data name="ToolTipEAMButton" xml:space="preserve">
+  <data name="ToolTipEAMButton" xml:space="preserve">
     <value>External AWACS Mode</value>
   </data>
-    <data name="ToolTipEAMButtonL1" xml:space="preserve">
+  <data name="ToolTipEAMButtonL1" xml:space="preserve">
     <value>External AWACS Mode (EAM) allows you to use the AWACS functionality of SRS without having to run DCS.</value>
   </data>
-    <data name="ToolTipEAMButtonL2" xml:space="preserve">
+  <data name="ToolTipEAMButtonL2" xml:space="preserve">
     <value>Enter the side password provided to you by the SRS server admin to confirm a side selection.</value>
   </data>
-    <data name="ToolTipEAMName" xml:space="preserve">
+  <data name="ToolTipEAMName" xml:space="preserve">
     <value>External AWACS Mode name</value>
   </data>
-    <data name="ToolTipEAMNameL1" xml:space="preserve">
+  <data name="ToolTipEAMNameL1" xml:space="preserve">
     <value>Choose a name to display in the client list and export of the SRS server.</value>
   </data>
-    <data name="ToolTipSavedAddressTab" xml:space="preserve">
+  <data name="ToolTipSavedAddressTab" xml:space="preserve">
     <value>Go to saved address tab</value>
   </data>
-    <data name="ToolTipEAMPassword" xml:space="preserve">
+  <data name="ToolTipEAMPassword" xml:space="preserve">
     <value>External AWACS Mode coalition password</value>
   </data>
-    <data name="ToolTipEAMPasswordL1" xml:space="preserve">
+  <data name="ToolTipEAMPasswordL1" xml:space="preserve">
     <value>The coalition password is provided to you by the SRS server admin.</value>
   </data>
-    <data name="ToolTipEAMPasswordL2" xml:space="preserve">
+  <data name="ToolTipEAMPasswordL2" xml:space="preserve">
     <value>Entering the correct password for a coalitions allows you to access that side's comms.</value>
   </data>
-    <data name="ToolTipNoMic" xml:space="preserve">
+  <data name="ToolTipNoMic" xml:space="preserve">
     <value>No microphone available</value>
   </data>
-    <data name="ToolTipNoMicL1" xml:space="preserve">
+  <data name="ToolTipNoMicL1" xml:space="preserve">
     <value>No valid microphone is available - others will not be able to hear you.</value>
   </data>
-    <data name="ToolTipNoMicL2" xml:space="preserve">
+  <data name="ToolTipNoMicL2" xml:space="preserve">
     <value>You can still use SRS to listen to radio calls, but will not be able to transmit anything yourself.</value>
   </data>
-    <data name="ToolTipRecordQuality" xml:space="preserve">
+  <data name="ToolTipRecordQuality" xml:space="preserve">
     <value>Quality can only be set if Record Transmissions is set to off</value>
   </data>
-    <data name="ToolTipVOXButton" xml:space="preserve">
+  <data name="ToolTipVOXButton" xml:space="preserve">
     <value>Enables Voice Detection if Hot Mic on intercom is used</value>
   </data>
-    <data name="ToolTipVOXSensitivity" xml:space="preserve">
+  <data name="ToolTipVOXSensitivity" xml:space="preserve">
     <value>The higher the sensitivity the less likely voice will be missed, but the higher the chance of a false positive</value>
   </data>
-    <data name="DisableExpansionRadios" xml:space="preserve">
+  <data name="DisableExpansionRadios" xml:space="preserve">
     <value>Disable Expansion Radios</value>
   </data>
-<data name="ServerPresetsConfiguration" xml:space="preserve">
+  <data name="RecordingFormat" xml:space="preserve">
+    <value>Recording Format (requires restart)</value>
+  </data>
+  <data name="NoiseGainDB" xml:space="preserve">
+    <value>Noise Gain (dB)</value>
+  </data>
+  <data name="ServerPresetsConfiguration" xml:space="preserve">
     <value>Channel Presets Configuration</value>
+  </data>
+  <data name="AllowServerEAMRadioPreset" xml:space="preserve">
+    <value>Allow the Server to configure EAM radios if set</value>
+  </data>
+  <data name="HFNoiseGainDB" xml:space="preserve">
+    <value>HF Noise Gain (dB)</value>
+  </data>
+  <data name="PerRadioModelEffects" xml:space="preserve">
+    <value>Enable Per Radio Model Effects</value>
+  </data>
+  <data name="RecordingFormat" xml:space="preserve">
+    <value>Recording Format (requires restart)</value>
   </data>
 </root>

@@ -22,12 +22,6 @@ jobs:
     - name: Build
       run: msbuild /p:Configuration=Release /p:Platform=x64 /p:SourceLinkCreate=false
 
-    - name: Archive
-      uses: actions/upload-artifact@v4
-      with:
-        name: DCS-SimpleRadioStandalone
-        path: install-build
-
     - name: Setup VSTest
       uses: Malcolmnixon/Setup-VSTest@v3
 
@@ -35,3 +29,27 @@ jobs:
       run: VSTest.Console DCS-SR-CommonTests\bin\Release\net8.0-windows\DCS-SR-CommonTests.dll
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+  publish:
+    name: publish
+    runs-on: windows-2022
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: '8.0.x'
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v1
+    - name: Restore NuGet packages
+      run: nuget restore
+    - name: Publish
+      run: ./publish.ps1 -NoSign
+    - name: Archive
+      uses: actions/upload-artifact@v4
+      with:
+        name: DCS-SimpleRadioStandalone-CI
+        path: install-build
+
+

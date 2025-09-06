@@ -5,7 +5,7 @@
     xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Properties"
     Title="{x:Static p:Resources.ServerWindowTitle}"
-    Width="300"
+    Width="400"
     Height="300"
     ResizeMode="NoResize">
     <StackPanel Orientation="Vertical">
@@ -19,6 +19,8 @@
 
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
@@ -206,14 +208,13 @@
                        HorizontalContentAlignment="Center"
                        VerticalContentAlignment="Center"
                        Content="{x:Static p:Resources.ValueUnknown}" />
-
+                
                 <Label Grid.Row="13"
                        Grid.Column="0"
                        HorizontalContentAlignment="Center"
                        VerticalContentAlignment="Center"
-                       Content="{x:Static p:Resources.SrvServerVersion}" />
-
-                <Label Name="ServerVersion"
+                       Content="{x:Static p:Resources.SrvEAMRadioPresetEnabled}" />
+                <Label Name="ServerEAMRadioPresetEnabled"
                        Grid.Row="13"
                        Grid.Column="1"
                        HorizontalContentAlignment="Center"
@@ -224,10 +225,23 @@
                        Grid.Column="0"
                        HorizontalContentAlignment="Center"
                        VerticalContentAlignment="Center"
+                       Content="{x:Static p:Resources.SrvServerVersion}" />
+
+                <Label Name="ServerVersion"
+                       Grid.Row="14"
+                       Grid.Column="1"
+                       HorizontalContentAlignment="Center"
+                       VerticalContentAlignment="Center"
+                       Content="{x:Static p:Resources.ValueUnknown}" />
+
+                <Label Grid.Row="15"
+                       Grid.Column="0"
+                       HorizontalContentAlignment="Center"
+                       VerticalContentAlignment="Center"
                        Content="{x:Static p:Resources.SrvNodeLimit}" />
 
                 <Label Name="NodeLimit"
-                       Grid.Row="14"
+                       Grid.Row="15"
                        Grid.Column="1"
                        HorizontalContentAlignment="Center"
                        VerticalContentAlignment="Center"

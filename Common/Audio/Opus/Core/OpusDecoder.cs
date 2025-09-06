@@ -113,7 +113,7 @@ public class OpusDecoder : IDisposable
                 //https://notabug.org/xiph/opus/raw/v0.9.10/include/opus_defines.h
                 var ret = API.opus_decoder_ctl(_decoder,
                     4028); //reset opus state - packets missing and it'll get confused
-                if (ret < 0) throw new Exception("Error Resetting Oppus");
+                if (ret < 0) throw new Exception("Error Resetting Opus");
             }
 
             if (inputOpusData != null)
@@ -136,13 +136,12 @@ public class OpusDecoder : IDisposable
     }
 
     /// <summary>
-    ///     Produces Float samples from Opus encoded data.
+    ///     Produces i16 samples from Opus encoded data.
     /// </summary>
     /// <param name="inputOpusData">Opus encoded data to decode, <c>null</c> for dropped packet.</param>
-    /// <param name="dataLength">Length of data to decode or skipped data if <paramref name="inputOpusData" /> is <c>null</c>.</param>
-    /// <param name="decodedLength">Set to the length of the decoded sample data.</param>
-    /// <returns>PCM audio samples.</returns>
-    public int DecodeFloat(byte[] inputOpusData, float[] decoded, bool reset = false)
+    /// <param name="decoded">Output buffer.</param>
+    /// <returns>Number of decoded samples.</returns>
+    public int DecodeShort(byte[] inputOpusData, short[] decoded, int samples, bool reset = false)
     {
         if (disposed)
             throw new ObjectDisposedException("OpusDecoder");
@@ -159,17 +158,56 @@ public class OpusDecoder : IDisposable
         var length = 0;
         unsafe
         {
-            fixed (byte* input = inputOpusData)
+            fixed (short* pcmOut = decoded)
             {
-                fixed (float* pcmOut = decoded)
+                var payloadLength = inputOpusData != null ? inputOpusData.Length : 0;
+                length = API.opus_decode(_decoder, inputOpusData, payloadLength, new IntPtr(pcmOut), samples / OutputChannels,
+                        ForwardErrorCorrection ? 1 : 0);
+
+            }
+        }
+
+        if (length < 0)
+            throw new Exception("Decoding failed - " + (Errors)length);
+
+        return length;
+    }
+
+    /// <summary>
+    ///     Produces Float samples from Opus encoded data.
+    /// </summary>
+    /// <param name="inputOpusData">Opus encoded data to decode, <c>null</c> for dropped packet.</param>
+    /// <param name="dataLength">Length of data to decode or skipped data if <paramref name="inputOpusData" /> is <c>null</c>.</param>
+    /// <param name="decodedLength">Set to the length of the decoded sample data.</param>
+    /// <returns>PCM audio samples.</returns>
+    public int DecodeFloat(byte[] inputOpusData, Memory<float> decoded, bool reset = false)
+    {
+        if (disposed)
+            throw new ObjectDisposedException("OpusDecoder");
+
+
+        if (reset)
+        {
+            //https://notabug.org/xiph/opus/raw/v0.9.10/include/opus_defines.h
+            var ret = API.opus_decoder_ctl(_decoder,
+                4028); //reset opus state - packets missing and it'll get confused
+            if (ret < 0) throw new Exception("Error Resetting Opus");
+        }
+
+        var length = 0;
+        using (var pinned = decoded.Pin())
+        {
+            unsafe
+            {
+                fixed (byte* input = inputOpusData)
                 {
                     var payloadLength = input != null ? inputOpusData.Length : 0;
-                    length = API.opus_decode_float(_decoder, input, payloadLength, pcmOut, decoded.Length / OutputChannels,
+                    length = API.opus_decode_float(_decoder, input, payloadLength, (float*)pinned.Pointer, decoded.Length / OutputChannels,
                             ForwardErrorCorrection ? 1 : 0);
-                
                 }
             }
         }
+        
 
         if (length < 0)
             throw new Exception("Decoding failed - " + (Errors)length);

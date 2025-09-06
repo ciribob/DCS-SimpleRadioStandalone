@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Utility;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Opus.Core;
@@ -13,6 +13,7 @@ using NAudio.Wave;
 using NLog;
 using WPFCustomMessageBox;
 using Application = Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Opus.Application;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Utility;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
 
@@ -34,7 +35,7 @@ internal class AudioPreview
 
     private float _speakerBoost = 1.0f;
 
-    private Preprocessor _speex;
+    private SpeexProcessor _speex;
     //private readonly CircularBuffer _circularBuffer = new CircularBuffer();
 
     private VolumeSampleProviderWithPeak _volumeSampleProvider;
@@ -118,7 +119,7 @@ internal class AudioPreview
 
         try
         {
-            _speex = new Preprocessor(Constants.MIC_SEGMENT_FRAMES, Constants.MIC_SAMPLE_RATE);
+            _speex = new SpeexProcessor(Constants.MIC_SEGMENT_FRAMES, Constants.MIC_SAMPLE_RATE);
             //opus
             _encoder = OpusEncoder.Create(Constants.MIC_SAMPLE_RATE, 1, Application.Voip);
             _encoder.ForwardErrorCorrection = false;
@@ -130,7 +131,15 @@ internal class AudioPreview
 
             if (device == null) device = WasapiCapture.GetDefaultCaptureDevice();
 
-            device.AudioEndpointVolume.Mute = false;
+            try
+            {
+                device.AudioEndpointVolume.Mute = false;
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex, "Failed to forcibly unmute: " + ex.Message);
+            }
+            
 
             _wasapiCapture = new WasapiCapture(device, true);
             _wasapiCapture.ShareMode = AudioClientShareMode.Shared;

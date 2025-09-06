@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility;
@@ -8,7 +9,7 @@ using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers;
 
-public class JitterBufferProviderInterface
+internal class JitterBufferProviderInterface
 {
 
     public static readonly int MAXIMUM_BUFFER_SIZE_MS = 2500;
@@ -32,9 +33,7 @@ public class JitterBufferProviderInterface
 
     private DeJitteredTransmission lastTransmission;
 
-    private float[] returnBuffer;
-
-    public JitterBufferProviderInterface(WaveFormat waveFormat)
+    internal JitterBufferProviderInterface(WaveFormat waveFormat)
     {
         WaveFormat = waveFormat;
 
@@ -45,12 +44,16 @@ public class JitterBufferProviderInterface
 
     public WaveFormat WaveFormat { get; }
 
-    public DeJitteredTransmission Read(int count)
+    private static readonly ArrayPool<float> PCMPool = ArrayPool<float>.Shared;
+
+    internal ref DeJitteredTransmission Read(int count)
     {
         //  int now = Environment.TickCount;
         var now = DateTime.Now.Ticks;
         var timeSinceLastDequeue = TimeSpan.FromTicks(now - _lastPacketTicks);
-        returnBuffer = BufferHelpers.Ensure(returnBuffer, count);
+
+        var pcmBuffer = PCMPool.Rent(count);
+        pcmBuffer.AsSpan(0, count).Clear();
 
         //other implementation of waiting
         //            if(_delayedUntil > now)
@@ -71,7 +74,7 @@ public class JitterBufferProviderInterface
 
             do
             {
-                read = read + _circularBuffer.Read(returnBuffer, read, count - read);
+                read = read + _circularBuffer.Read(pcmBuffer, read, count - read);
 
                 if (read < count)
                 {
@@ -97,7 +100,10 @@ public class JitterBufferProviderInterface
                             NoAudioEffects = audio.NoAudioEffects,
                             Guid = audio.Guid,
                             OriginalClientGuid = audio.OriginalClientGuid,
-                            Encryption = audio.Encryption
+                            Encryption = audio.Encryption,
+                            ReceivingPower = audio.ReceivingPower,
+                            LineOfSightLoss = audio.LineOfSightLoss,
+                            Ambient = audio.Ambient,
                         };
 
                         if (_lastRead > 0)
@@ -121,7 +127,8 @@ public class JitterBufferProviderInterface
                         }
 
                         _lastRead = audio.PacketNumber;
-                        _circularBuffer.Write(audio.Audio, 0, audio.Audio.Length);
+                        _circularBuffer.Write(audio.Audio, 0, audio.AudioLength);
+                        audio.Dispose();
                         _lastPacketTicks = now;
                     }
                     else if (timeSinceLastDequeue < JITTER_MS)
@@ -154,14 +161,21 @@ public class JitterBufferProviderInterface
         lastTransmission.PCMAudioLength = read;
 
         if (read > 0)
-            lastTransmission.PCMMonoAudio = returnBuffer;
+        {
+            lastTransmission.PCMMonoAudio = pcmBuffer;
+        }
+            
         else
+        {
             lastTransmission.PCMMonoAudio = null;
+            PCMPool.Return(pcmBuffer);
+        }
+            
 
-        return lastTransmission;
+        return ref lastTransmission;
     }
 
-    public void AddSamples(JitterBufferAudio jitterBufferAudio)
+    internal void AddSamples(JitterBufferAudio jitterBufferAudio)
     {
         lock (_lock)
         {
@@ -180,10 +194,20 @@ public class JitterBufferProviderInterface
                            Constants
                                .OUTPUT_AUDIO_LENGTH_MS; // this isnt quite true as there can be padding audio but good enough
 
-                if (time > MAXIMUM_BUFFER_SIZE_MS)
+                var timeOverBudget = time - MAXIMUM_BUFFER_SIZE_MS;
+                if (timeOverBudget > 0)
                 {
-                    _bufferedAudio.Clear();
-                    Logger.Warn($"Cleared Audio buffer - length was {time} ms");
+                    Logger.Warn($"Skipping Audio buffer - length was {time} ms, {timeOverBudget} ms will be skipped.");
+                    // Compute how many packet we can ditch.
+                    var toSkip = timeOverBudget / Constants.OUTPUT_AUDIO_LENGTH_MS;
+                    for (; toSkip > 0 && _bufferedAudio.Count > 0; --toSkip)
+                    {
+                        _bufferedAudio.First.Value.Dispose();
+                        _bufferedAudio.RemoveFirst();
+                    }
+                        
+
+                    _lastRead = 0;
                 }
 
                 for (var it = _bufferedAudio.First; it != null;)
@@ -220,6 +244,16 @@ public class JitterBufferProviderInterface
                     it = next;
                 }
             }
+        }
+    }
+
+    internal void Dispose(ref DeJitteredTransmission transmission)
+    {
+        if (transmission.PCMMonoAudio != null)
+        {
+            PCMPool.Return(transmission.PCMMonoAudio);
+            transmission.PCMMonoAudio = null;
+            transmission.PCMAudioLength = 0;
         }
     }
 }

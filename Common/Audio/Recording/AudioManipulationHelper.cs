@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Recording;
 
@@ -65,38 +67,29 @@ public static class AudioManipulationHelper
         //return necessarySamples
     }
 
-    public static float[] MixArraysClipped(float[] array1, int array1Length, float[] array2, int array2Length,
-        out int count)
+    public static void MixArraysClipped(Span<float> destination, ReadOnlySpan<float> samples)
     {
-        if (array1Length > array2Length)
+        var count = Math.Min(destination.Length, samples.Length);
+
+        var vectorSize = Vector<float>.Count;
+        var remainder = count % vectorSize;
+        var v_minusOne = -Vector<float>.One;
+        for (var i = 0; i < count - remainder; i += vectorSize)
         {
-            for (var i = 0; i < array2Length; i++)
-            {
-                array1[i] += array2[i];
+            var v_destination = Vector.LoadUnsafe(ref MemoryMarshal.GetReference(destination), (nuint)i);
+            var v_samples = Vector.LoadUnsafe(ref MemoryMarshal.GetReference(samples), (nuint)i);
 
-                //clip
-                if (array1[i] > 1f)
-                    array1[i] = 1.0f;
-                else if (array1[i] < -1f) array1[i] = -1.0f;
-            }
+            v_destination = Vector.Max(v_minusOne, Vector.Min(v_destination + v_samples, Vector<float>.One));
 
-            count = array1Length;
-            return array1;
+            Vector.StoreUnsafe(v_destination, ref MemoryMarshal.GetReference(destination), (nuint)i);
         }
 
-        for (var i = 0; i < array1Length; i++)
+        for (var i = count - remainder; i < count; ++i)
         {
-            array2[i] += array1[i];
-
-            //clip
-            if (array2[i] > 1f)
-                array2[i] = 1.0f;
-            else if (array2[i] < -1.0f) array2[i] = -1.0f;
+            destination[i] = Math.Clamp(destination[i] + samples[i], -1f, 1f);
         }
-
-        count = array2Length;
-        return array2;
     }
+  
 
     public static int MixArraysNoClipping(Span<float> array1, Span<float> array2)
     {
@@ -114,9 +107,21 @@ public static class AudioManipulationHelper
 
     public static void ClipArray(Span<float> array)
     {
-        for (var i = 0; i < array.Length; i++)
-            if (array[i] > 1f)
-                array[i] = 1.0f;
-            else if (array[i] < -1.0f) array[i] = -1.0f;
+        var vectorSize = Vector<float>.Count;
+        var remainder = array.Length % vectorSize;
+        var v_minusOne = -Vector<float>.One;
+        for (var i = 0; i < array.Length - remainder; i += vectorSize)
+        {
+            var v_samples = Vector.LoadUnsafe(ref MemoryMarshal.GetReference(array), (nuint)i);
+
+            v_samples = Vector.Max(v_minusOne, Vector.Min(v_samples, Vector<float>.One));
+
+            Vector.StoreUnsafe(v_samples, ref MemoryMarshal.GetReference(array), (nuint)i);
+        }
+
+        for (var i = array.Length - remainder; i < array.Length; ++i)
+        {
+            array[i] = Math.Clamp(array[i], -1f, 1f);
+        }
     }
 }

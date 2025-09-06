@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -7,6 +8,8 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
+using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Recording;
@@ -28,27 +31,21 @@ public class AudioRecordingManager
     private readonly List<CircularFloatBuffer> _clientRawQueues;
 
     private readonly ConnectedClientsSingleton _connectedClientsSingleton = ConnectedClientsSingleton.Instance;
-    private readonly int _maxSamples;
     private readonly List<AudioRecordingStreamHydrated> _playerFullQueues;
     private readonly List<CircularFloatBuffer> _playerRawQueues;
     private readonly List<AudioRecordingStream> _radioFullQueues;
 
     // TODO: drop in favor of AudioManager.OUTPUT_SAMPLE_RATE
-    private readonly int _sampleRate;
+    private int SampleRate { get; } = Constants.OUTPUT_SAMPLE_RATE;
+    private int MaxSamples => SampleRate * MAX_BUFFER_SECONDS;
 
-    private readonly ClientEffectsPipeline pipeline = new();
-
-    private AudioRecordingLameWriter _audioRecordingWriter;
+    private AudioRecordingWriterBase _audioRecordingWriter;
     private string _clientGuid; //player guid
     private bool _processThreadDone;
 
     private bool _stop;
-
     private AudioRecordingManager()
     {
-        _sampleRate = Constants.OUTPUT_SAMPLE_RATE;
-        _maxSamples = _sampleRate * MAX_BUFFER_SECONDS;
-
         _stop = true;
 
         _clientRawQueues = new List<CircularFloatBuffer>();
@@ -57,6 +54,8 @@ public class AudioRecordingManager
         _playerFullQueues = new List<AudioRecordingStreamHydrated>();
         _radioFullQueues = new List<AudioRecordingStream>();
     }
+
+    public IReadOnlyList<string> AvailableFormats { get; } = new List<string>() { "mp3", "opus" };
 
     public static AudioRecordingManager Instance
     {
@@ -80,8 +79,8 @@ public class AudioRecordingManager
 
         var isRecording = false;
 
-        var clientBuffer = new float[_maxSamples];
-        var playerBuffer = new float[_maxSamples];
+        var clientBuffer = new float[MaxSamples];
+        var playerBuffer = new float[MaxSamples];
 
         _processThreadDone = false;
 
@@ -187,41 +186,18 @@ public class AudioRecordingManager
         _processThreadDone = true;
     }
 
-    private float[] SingleRadioMixDown(List<DeJitteredTransmission> mainAudio,
-        List<DeJitteredTransmission> secondaryAudio, int radio, out int count)
+    private static AudioRecordingWriterBase CreateWriter(IReadOnlyList<AudioRecordingStream> streams, int sampleRate, int maxSamples)
     {
-        //should be no more than 80 ms of audio
-        //should really be 40 but just in case
-        //TODO reuse this but return a new array of the right length
-        var mixBuffer = new float[Constants.OUTPUT_SEGMENT_FRAMES * 2];
-        var secondaryMixBuffer = new float[0];
-
-        var primarySamples = 0;
-        var secondarySamples = 0;
-        var outputSamples = 0;
-
-        //run this sample through - mix down all the audio for now PER radio 
-        //we can then decide what to do with it later
-        //same pipeline (ish) as RadioMixingProvider
-
-        if (mainAudio?.Count > 0)
-            pipeline.ProcessClientTransmissions(mixBuffer, 0, mainAudio,
-                out primarySamples);
-
-        //handle guard
-        if (secondaryAudio?.Count > 0)
+        var desired = GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.RecordingFormat).StringValue;
+        switch (desired)
         {
-            secondaryMixBuffer = new float[Constants.OUTPUT_SEGMENT_FRAMES * 2];
-                pipeline.ProcessClientTransmissions(secondaryMixBuffer, 0, secondaryAudio, out secondarySamples);
+            case "mp3":
+                return new AudioRecordingLameWriter(streams, sampleRate, maxSamples);
+
+            case "opus":
+            default:
+                return new AudioRecordingOpusWriter(streams, sampleRate, maxSamples);
         }
-
-        if (primarySamples > 0 || secondarySamples > 0)
-            mixBuffer = AudioManipulationHelper.MixArraysClipped(mixBuffer, primarySamples, secondaryMixBuffer,
-                secondarySamples, out outputSamples);
-
-        count = outputSamples;
-
-        return mixBuffer;
     }
 
     public void Start(string clientGuid)
@@ -249,11 +225,11 @@ public class AudioRecordingManager
 
         for (var i = 0; i < MAX_RADIOS; i++)
         {
-            _clientRawQueues.Add(new CircularFloatBuffer(_maxSamples));
-            _playerRawQueues.Add(new CircularFloatBuffer(_maxSamples));
+            _clientRawQueues.Add(new CircularFloatBuffer(MaxSamples));
+            _playerRawQueues.Add(new CircularFloatBuffer(MaxSamples));
 
-            _clientFullQueues.Add(new AudioRecordingStreamHydrated(_maxSamples, $"{i}.c"));
-            _playerFullQueues.Add(new AudioRecordingStreamHydrated(_maxSamples, $"{i}.p"));
+            _clientFullQueues.Add(new AudioRecordingStreamHydrated(MaxSamples, $"{i}.c"));
+            _playerFullQueues.Add(new AudioRecordingStreamHydrated(MaxSamples, $"{i}.p"));
 
             var streams = new List<AudioRecordingStream>
             {
@@ -277,14 +253,14 @@ public class AudioRecordingManager
             {
                 new AudioRecordingStreamMixer(_radioFullQueues, "-All")
             };
-            _audioRecordingWriter = new AudioRecordingLameWriter(streams, _sampleRate, _maxSamples);
+            _audioRecordingWriter = CreateWriter(streams, SampleRate, MaxSamples);
         }
         else
         {
             // write per-radio audio files. create a write with N streams, one for each of the
             // radios.
 
-            _audioRecordingWriter = new AudioRecordingLameWriter(_radioFullQueues, _sampleRate, _maxSamples);
+            _audioRecordingWriter = CreateWriter(_radioFullQueues, SampleRate, MaxSamples);
         }
 
         _stop = false;
@@ -305,64 +281,61 @@ public class AudioRecordingManager
         }
     }
 
-    public void AppendPlayerAudio(float[] transmission, int radioId)
+    public void AppendPlayerAudio(float[] transmission, int length, int radioId)
     {
         //only record if we need too
         if (!_stop && GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.RecordAudio))
-            _playerRawQueues[radioId]?.Write(transmission, 0, transmission.Length);
+            _playerRawQueues[radioId]?.Write(transmission, 0, length);
     }
 
-    public void AppendClientAudio(List<DeJitteredTransmission> mainAudio, List<DeJitteredTransmission> secondaryAudio,
-        int radioId)
+    internal void AppendClientAudio(int radioId, IReadOnlyList<TransmissionSegment> segments)
     {
-        //only record if we need too
-        if (!_stop && GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.RecordAudio))
+        if (_stop || GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.RecordAudio) == false)
+            return;
+        
+        // Audio is preprocessed, all we need to do is run the filtering and mixdown.
+        var floatPool = ArrayPool<float>.Shared;
+
+        var mixLength = 0;
+        float[] mixBuffer = null;
+        var disallowedTone = GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.DisallowedAudioTone);
+        foreach (var segment in segments)
         {
-            mainAudio = FilterTransmisions(mainAudio);
-            secondaryAudio = FilterTransmisions(secondaryAudio);
-
-            var buf = SingleRadioMixDown(mainAudio, secondaryAudio, radioId, out var count);
-            if (count > 0) _clientRawQueues[radioId].Write(buf, 0, count);
-        }
-    }
-
-    private List<DeJitteredTransmission> FilterTransmisions(List<DeJitteredTransmission> originalTransmissions)
-    {
-        if (originalTransmissions == null || originalTransmissions.Count == 0)
-            return new List<DeJitteredTransmission>();
-
-        var filteredTransmisions = new List<DeJitteredTransmission>();
-
-        foreach (var transmission in originalTransmissions)
-            if (_connectedClientsSingleton.TryGetValue(transmission.OriginalClientGuid, out var client))
+            if (_connectedClientsSingleton.TryGetValue(segment.OriginalClientGuid, out var client))
             {
-                if (client.AllowRecord
-                    || transmission.OriginalClientGuid ==
-                    _clientGuid) // Assume that client intends to record their outgoing transmissions
+                var segmentSpan = segment.AudioSpan;
+                if (mixLength < segmentSpan.Length)
                 {
-                    filteredTransmisions.Add(transmission);
-                }
-                else if (GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.DisallowedAudioTone))
-                {
-                    var toneTransmission = new DeJitteredTransmission
+                    var resizedBuffer = floatPool.Rent(segmentSpan.Length);
+                    if (mixBuffer != null)
                     {
-                        PCMMonoAudio =
-                            AudioManipulationHelper.SineWaveOut(transmission.PCMAudioLength, _sampleRate, 0.25),
-                        ReceivedRadio = transmission.ReceivedRadio,
-                        PCMAudioLength = transmission.PCMAudioLength,
-                        Decryptable = transmission.Decryptable,
-                        Frequency = transmission.Frequency,
-                        Guid = transmission.Guid,
-                        IsSecondary = transmission.IsSecondary,
-                        Modulation = transmission.Modulation,
-                        NoAudioEffects = transmission.NoAudioEffects,
-                        OriginalClientGuid = transmission.OriginalClientGuid,
-                        Volume = transmission.Volume
-                    };
-                    filteredTransmisions.Add(toneTransmission);
+                        mixBuffer.AsSpan(0, mixLength).CopyTo(resizedBuffer);
+                        floatPool.Return(mixBuffer);
+                    }
+
+                    // Make sure the newly allocated area is clear.
+                    resizedBuffer.AsSpan(mixLength, segmentSpan.Length - mixLength).Clear();
+                    mixBuffer = resizedBuffer;
+                    mixLength = segmentSpan.Length;
+                }
+
+                if (client.AllowRecord
+                    || segment.OriginalClientGuid == _clientGuid) // Assume that client intends to record their outgoing transmissions
+                {
+                    AudioManipulationHelper.MixArraysClipped(mixBuffer.AsSpan(0, segmentSpan.Length), segmentSpan);
+                }
+                else if (disallowedTone)
+                {
+                    var audioTone = AudioManipulationHelper.SineWaveOut(segmentSpan.Length, SampleRate, 0.25);
+                    AudioManipulationHelper.MixArraysClipped(mixBuffer.AsSpan(0, segmentSpan.Length), audioTone.AsSpan(0, audioTone.Length));
                 }
             }
+        }
 
-        return filteredTransmisions;
+        if (mixLength > 0)
+        {
+            _clientRawQueues[radioId].Write(mixBuffer, 0, mixLength);
+            floatPool.Return(mixBuffer);
+        }
     }
 }

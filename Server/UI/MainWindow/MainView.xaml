@@ -46,6 +46,8 @@
                     <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
 
                 <Button Grid.Row="0"
@@ -511,6 +513,22 @@
                 <Button x:Name="ServerPresetsEnabledToggle"
                         Content="{Binding ServerPresetsEnabledText}"
                         Grid.Row="24"
+                        Grid.Column="2"
+                        Width="75"
+                        Height="20"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"/>
+                
+                <Label Content="{x:Static p:Resources.ServerEAMRadioPresetEnabled}"
+                       Grid.Row="25"
+                       Grid.Column="0"
+                       Grid.ColumnSpan="2"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"/>
+                
+                <Button x:Name="ServerEAMRadioPresetEnabledToggle"
+                        Content="{Binding ServerEAMRadioPresetEnabledText}"
+                        Grid.Row="25"
                         Grid.Column="2"
                         Width="75"
                         Height="20"

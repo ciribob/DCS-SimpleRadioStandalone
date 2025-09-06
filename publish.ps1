@@ -1,3 +1,27 @@
+param(
+    [switch]$NoSign,
+    [switch]$Zip
+)
+
+$MSBuildExe="msbuild"
+if ($null -eq (Get-Command $MSBuildExe -ErrorAction SilentlyContinue)) {
+    $MSBuildExe="C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe"
+    Write-Warning "MSBuild not in path, using $MSBuildExe"
+    
+    if ($null -eq (Get-Command $MSBuildExe -ErrorAction SilentlyContinue)) {
+        Writer-Error "Cannot find MSBuild (aborting)"
+        exit 1
+    }
+}
+
+if ($NoSign) {
+    Write-Warning "Signing has been disabled."
+}
+
+if ($Zip) {
+    Write-Host "Zip archive will be created!" -ForegroundColor Green
+}
+
 # Publish script for SRS projects
 $framework = "net8.0-windows"
 $outputPath = ".\install-build"
@@ -14,7 +38,7 @@ $commonParams = @(
 
 # Define the path to signtool.exe
 $signToolPath = "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22000.0\x86\signtool.exe"
-if (-not (Test-Path $signToolPath)) {
+if (-not $NoSign -and -not (Test-Path $signToolPath)) {
     Write-Error "SignTool.exe not found at $signToolPath. Please verify the path."
     exit 1
 }
@@ -114,7 +138,7 @@ Write-Host "Building SRS-Lua-Wrapper..." -ForegroundColor Green
 Remove-Item "$outputPath\Scripts" -Recurse -ErrorAction SilentlyContinue
 Write-Host "Copy Scripts..." -ForegroundColor Green
 Copy-Item "./Scripts" -Destination "$outputPath\Scripts" -Recurse
-& "C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" `
+&  $MSBuildExe `
     ".\SRS-Lua-Wrapper\SRS-Lua-Wrapper.vcxproj" `
     /p:Configuration=Release `
     /p:Platform=x64 `
@@ -134,6 +158,11 @@ dotnet publish "./Installer\Installer.csproj" `
     --self-contained false `
     @commonParams
 
+# VC Redist
+Write-Host "Downloading VC redistributables..." -ForegroundColor Green
+Invoke-WebRequest -Uri "https://aka.ms/vs/17/release/vc_redist.x64.exe" -OutFile "$outputPath\VC_redist.x64.exe"
+
+
 ##Prep Directory
 Write-Host "Clean up and prepare Installer and AutoUpdater .exe's in the root" -ForegroundColor Green
 Copy-Item "$outputPath\Installer\Installer.exe" -Destination "./$outputPath"
@@ -145,6 +174,11 @@ Write-Host "Publishing complete! Check the $outputPath directory for the publish
 
 ##Now Sign
 Write-Host "Signing files"
+
+if ($NoSign) {
+    Write-Host "Skipped"
+    exit 0
+}
 
 # Define the root path to search for files to be signed
 # The script will recursively find all .dll and .exe files in this path and its subdirectories.
@@ -211,4 +245,39 @@ if ($null -eq $filesToSign -or $filesToSign.Count -eq 0) {
             Write-Error "An error occurred while trying to run SignTool.exe for $filePath. Error: $($_.Exception.Message)"
         }
     }
+}
+
+if(!$Zip){
+    exit 0
+}
+
+### Zip
+
+Write-Host "Creating zip archive..." -ForegroundColor Green
+
+
+Write-Host "Removing old zip files from '$outputPath'..." -ForegroundColor Yellow
+Remove-Item -Path "$outputPath\*.zip" -ErrorAction SilentlyContinue
+
+
+$installerPath = "$outputPath\Installer.exe"
+if (Test-Path $installerPath) {
+    $version = (Get-Item -Path $installerPath).VersionInfo.ProductVersion
+    Write-Host "Found installer version: $version" -ForegroundColor Cyan
+} else {
+    Write-Error "Installer.exe not found at $installerPath. Cannot determine version."
+    exit 1
+}
+
+
+$zipFileName = "DCS-SimpleRadioStandalone-$version.zip"
+$zipFilePath = Join-Path -Path (Get-Item -Path $outputPath).FullName -ChildPath $zipFileName
+
+
+try {
+    Compress-Archive -Path "$outputPath\*" -DestinationPath $zipFilePath -Force
+    Write-Host "Successfully created zip file at: $zipFilePath" -ForegroundColor Green
+} catch {
+    Write-Error "Failed to create the zip archive. Error: $($_.Exception.Message)"
+    exit 1
 }

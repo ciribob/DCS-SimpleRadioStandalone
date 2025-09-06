@@ -1,5 +1,5 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
-using MathNet.Filtering;
+using NAudio.Dsp;
 using NAudio.Wave;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers;
@@ -8,9 +8,9 @@ public class RadioFilter : ISampleProvider
 {
     public static readonly float BOOST = 1.5f;
     public static readonly float CLIPPING_MAX = 4000 / 32768f;
-    public static readonly float CLIPPING_MIN = 4000 / 32768f * -1;
+    public static readonly float CLIPPING_MIN = -CLIPPING_MAX;
 
-    private readonly OnlineFilter[] _filters;
+    private readonly BiQuadFilter[] _filters;
     //    private Stopwatch _stopwatch;
 
     private readonly GlobalSettingsStore _globalSettings = GlobalSettingsStore.Instance;
@@ -19,25 +19,13 @@ public class RadioFilter : ISampleProvider
     public RadioFilter(ISampleProvider sampleProvider)
     {
         _source = sampleProvider;
-        _filters = new OnlineFilter[2];
-
-        /**
-         * From Coug4r
-         * Apart from adding noise i'm only doing 3 things in this order:
-            - Custom clipping (which basicly creates the overmodulation effect)
-            - Run the audio through bandpass filter 1
-            - Run the audio through bandpass filter 2
-
-            These are the values i use for the bandpass filters:
-            1 - low 560, high 3900
-            2 - low 100, high 4500
-
-         */
-
-        _filters[0] = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, sampleProvider.WaveFormat.SampleRate, 560,
-            3900);
-        _filters[1] = OnlineFilter.CreateBandpass(ImpulseResponse.Finite, sampleProvider.WaveFormat.SampleRate, 100,
-            4500);
+        _filters = new BiQuadFilter[]
+        {
+            // ARC-210 prepass
+            BiQuadFilter.HighPassFilter(Constants.OUTPUT_SAMPLE_RATE, 1700, 0.53f),
+            BiQuadFilter.BandPassFilterConstantSkirtGain(Constants.OUTPUT_SAMPLE_RATE, 2801, 0.5f),
+            BiQuadFilter.LowPassFilter(Constants.OUTPUT_SAMPLE_RATE, 5538, 0.05f)
+        };
     }
 
     public WaveFormat WaveFormat => _source.WaveFormat;
@@ -50,7 +38,7 @@ public class RadioFilter : ISampleProvider
 
         for (var n = 0; n < sampleCount; n++)
         {
-            var audio = (double)buffer[offset + n];
+            var audio = buffer[offset + n];
             if (audio == 0) continue;
             // because we have silence in one channel (if a user picks radio left or right ear) we don't want to transform it or it'll play in both
 
@@ -64,13 +52,13 @@ public class RadioFilter : ISampleProvider
             for (var i = 0; i < _filters.Length; i++)
             {
                 var filter = _filters[i];
-                audio = filter.ProcessSample(audio);
+                audio = filter.Transform(audio);
 
                 if (double.IsNaN(audio))
                     audio = buffer[offset + n];
             }
 
-            buffer[offset + n] = (float)audio * BOOST;
+            buffer[offset + n] = audio * BOOST;
         }
 
         //   Console.WriteLine("Read:"+samplesRead+" Time - " + _stopwatch.ElapsedMilliseconds);

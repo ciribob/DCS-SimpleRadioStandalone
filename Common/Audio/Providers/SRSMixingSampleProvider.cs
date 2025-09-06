@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using NAudio.Utils;
 using NAudio.Wave;
@@ -13,7 +14,6 @@ public class SRSMixingSampleProvider : ISampleProvider
 {
     private const int MaxInputs = 1024; // protect ourselves against doing something silly
     private readonly List<ISampleProvider> sources;
-    private float[] sourceBuffer;
 
     /// <summary>
     ///     Creates a new MixingSampleProvider, with no inputs, but a specified WaveFormat
@@ -70,13 +70,15 @@ public class SRSMixingSampleProvider : ISampleProvider
     public int Read(float[] buffer, int offset, int count)
     {
         var outputSamples = 0;
-        sourceBuffer = BufferHelpers.Ensure(sourceBuffer, count);
+        var floatPool = ArrayPool<float>.Shared;
+        var sourceBuffer = floatPool.Rent(count);
         lock (sources)
         {
             var index = sources.Count - 1;
             while (index >= 0)
             {
                 var source = sources[index];
+                Array.Clear(sourceBuffer, 0, count);
                 var samplesRead = source.Read(sourceBuffer, 0, count);
                 var outIndex = offset;
                 for (var n = 0; n < samplesRead; n++)
@@ -91,12 +93,30 @@ public class SRSMixingSampleProvider : ISampleProvider
                 index--;
             }
         }
+        floatPool.Return(sourceBuffer);
+
+        // Stability: Ensure we have reasonable values.
+        // #TODO: Vectorize?
+        for (var i = 0; i < outputSamples; ++i)
+        {
+            if (float.IsFinite(buffer[offset + i]))
+            {
+                buffer[i] = Math.Clamp(buffer[offset + i], -1f, 1f);
+            }
+            else
+            {
+                buffer[offset + i] = 0;
+            }
+        }
 
         // optionally ensure we return a full buffer
         if (ReadFully && outputSamples < count)
         {
-            var outputIndex = offset + outputSamples;
-            while (outputIndex < offset + count) buffer[outputIndex++] = 0;
+            // NB: Cannot use Array.Clear, as this is/may come from a WaveBuffer which does type punting.
+            for (var i = outputSamples; i < count; ++i)
+            {
+                buffer[offset + i] = 0;
+            }
             outputSamples = count;
         }
 

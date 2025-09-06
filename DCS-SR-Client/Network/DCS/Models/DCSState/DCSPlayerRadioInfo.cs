@@ -191,7 +191,7 @@ public class DCSPlayerRadioInfo
                 modulation = radio.modulation,
                 retransmit = radio.retransmit,
                 secFreq = radio.secFreq,
-                Name = radio.name,
+                Model = radio.model,
             };
         }
 

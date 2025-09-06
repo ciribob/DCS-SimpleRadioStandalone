@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.LameWrapper;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.NetCoreServer;
+using NAudio.Wave;
+using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.LameWrapper;
-using NAudio.Wave;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.NAudioLame;
 #pragma warning disable IDE1006 // Naming Styles
@@ -383,24 +385,33 @@ public class LameMP3FileWriter : Stream
     /// <summary>Dummy Length.  Always 0.</summary>
     public override long Length => 0;
 
+    public override void Write(ReadOnlySpan<byte> bytes)
+    {
+        while (!bytes.IsEmpty)
+        {
+            
+            var blockSize = Math.Min(_inBuffer.nBytes - inPosition, bytes.Length);
+
+            var sourceSpan = bytes.Slice(0, blockSize);
+            var targetSpan = MemoryMarshal.Cast<double, byte>(_inBuffer.doubles.AsSpan()).Slice(inPosition, blockSize);
+            sourceSpan.CopyTo(targetSpan);
+
+            inPosition += blockSize;
+
+            if (inPosition >= _inBuffer.nBytes)
+                Encode();
+
+            bytes = bytes.Slice(sourceSpan.Length);
+        }
+    }
+
     /// <summary>Add data to output buffer, sending to encoder when buffer full</summary>
     /// <param name="buffer">Source buffer</param>
     /// <param name="offset">Offset of data in buffer</param>
     /// <param name="count">Length of data</param>
     public override void Write(byte[] buffer, int offset, int count)
     {
-        while (count > 0)
-        {
-            var blockSize = Math.Min(_inBuffer.nBytes - inPosition, count);
-            Buffer.BlockCopy(buffer, offset, _inBuffer.bytes, inPosition, blockSize);
-
-            inPosition += blockSize;
-            count -= blockSize;
-            offset += blockSize;
-
-            if (inPosition >= _inBuffer.nBytes)
-                Encode();
-        }
+        Write(new ReadOnlySpan<byte>(buffer, offset, count));
     }
 
     /// <summary>Finalise compression, add final output to output stream and close encoder</summary>

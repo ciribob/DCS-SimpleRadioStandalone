@@ -19,6 +19,7 @@ public class HttpServer
     private readonly bool _enabled;
     private readonly int _port;
     private readonly ServerState _serverState;
+    private readonly string _authentication;
 
     private HttpListener _listener;
     
@@ -27,6 +28,7 @@ public class HttpServer
     private static readonly string CLIENT_KICK_GUID = "/client/kick/guid";
     private static readonly string CLIENT_KICK_NAME = "/client/kick/name";
     private static readonly string CLIENTS_LIST = "/clients";
+    private static readonly string API_HEADER = "X-API-KEY";
 
     public HttpServer(ConcurrentDictionary<string, SRClientBase> connectedClients, ServerState serverState)
     {
@@ -34,6 +36,7 @@ public class HttpServer
         _serverState = serverState;
         _port = ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.HTTP_SERVER_PORT).IntValue;
         _enabled = ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.HTTP_SERVER_ENABLED).BoolValue;
+        _authentication = ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.HTTP_SERVER_API_KEY).RawValue.Trim();
     }
 
     public void Start()
@@ -43,7 +46,8 @@ public class HttpServer
             _listener = new HttpListener();
             _listener.Prefixes.Add("http://*:" + _port + "/");
             _listener.Start();
-            Logger.Info("HTTP Server Started on Port " + _port);
+            Logger.Info($"HTTP Server Started on Port: {_port}");
+            Logger.Info($"HTTP Server Header {API_HEADER} Required: {_authentication}" );
             Receive();
         }
         else
@@ -110,6 +114,13 @@ public class HttpServer
         if (context.Request.Url == null)
             return;
 
+        if (context.Request.Headers.Get(API_HEADER) != _authentication)
+        {
+            context.Response.StatusCode = 401;
+            context.Response.StatusDescription = $"Unauthorized - Verify you've sent the Header: {API_HEADER} YOU_API_KEY correctly. The API KEY will be printed in the logs on server startup";
+            return;
+        }
+        
         if (context.Request.HttpMethod == "GET" && context.Request.Url != null &&
             context.Request.Url.AbsolutePath == CLIENTS_LIST)
         {

@@ -25,4 +25,7 @@ public struct DeJitteredTransmission
     public string Guid { get; set; }
 
     public string OriginalClientGuid { get; set; }
+    public double ReceivingPower { get; internal set; }
+    public float LineOfSightLoss { get; internal set; }
+    public Ambient Ambient { get; internal set; }
 }

@@ -1,8 +1,49 @@
--- Version 2.2.0.5
+-- Version 2.3.0.3
+
 -- Special thanks to Cap. Zeen, Tarres and Splash for all the help
 -- with getting the radio information :)
 -- Run the installer to correctly install this file
 local SR = {}
+
+-- Known radio presets (think make and model).
+SR.RadioModels = {
+    Intercom = "intercom",
+
+    -- WW2
+    AN_ARC5 = "arc5",
+    FUG_16_ZY = "fug16zy",
+    R1155 = "r1155",
+    SCR522A = "scr522a",
+    T1154 = "t1154",
+
+    -- Western
+    AN_ARC27 = "arc27",
+    AN_ARC51 = "arc51",
+    AN_ARC51BX = "arc51",
+    AN_ARC131 = "arc131",
+    AN_ARC134 = "arc134",
+    AN_ARC164 = "arc164",
+    AN_ARC182 = "arc186",
+    AN_ARC186 = "arc186",
+    AN_ARC201D = "arc201d",
+    AN_ARC210 = "arc210",
+    AN_ARC220 = "arc220",
+    AN_ARC222 = "arc222",
+    LINK16 = "link16",
+    
+
+    -- Eastern
+    Baklan_5 = "baklan5",
+    JADRO_1A = "jadro1a",
+    R_800 = "r800",
+    R_828 = "r828",
+    R_832M = "r832m",
+    R_852 = "r852",
+    R_862 = "r862",
+    R_863 = "r863",
+    R_864 = "r864",
+    RSI_6K = "rsi6k",
+}
 
 SR.SEAT_INFO_PORT = 9087
 SR.LOS_RECEIVE_PORT = 9086
@@ -172,7 +213,35 @@ function SR.LoadModule(modulePath, notifySucess)
     end
 end
 
+function SR.shouldUseUnitDetails(_slot)
+
+    if  _slot == "Tactical-Commander" or _slot == "Game-Master" or _slot == "JTAC-Operator" or _slot == "Observer"  then
+        return false
+    end
+    
+    return true
+end
+
 function SR.exporter()
+
+    local _slot = ''
+
+    if SR.lastKnownSlot == nil or SR.lastKnownSlot == '' then
+        _slot = 'Spectator'
+    else
+        if string.find(SR.lastKnownSlot, 'artillery_commander') then
+            _slot = "Tactical-Commander"
+        elseif string.find(SR.lastKnownSlot, 'instructor') then
+            _slot = "Game-Master"
+        elseif string.find(SR.lastKnownSlot, 'forward_observer') then
+            _slot = "JTAC-Operator" -- "JTAC"
+        elseif string.find(SR.lastKnownSlot, 'observer') then
+            _slot = "Observer"
+        else
+            _slot = SR.lastKnownSlot
+        end
+    end
+    
     local _update
     local _data = LoGetSelfData()
 
@@ -188,7 +257,7 @@ function SR.exporter()
         end
     end
 
-    if _data ~= nil then
+    if _data ~= nil and SR.shouldUseUnitDetails(_slot) then
         _update = {
             name = "",
             unit = "",
@@ -415,6 +484,8 @@ function SR.exporter()
                 _slot = SR.lastKnownSlot
             end
         end
+
+        -- There may be a unit but we're purposely ignoring it if you're in a special slot
         --Ground Commander or spectator
         _update = {
             name = "Unknown",
@@ -615,11 +686,13 @@ function SR.exporter()
             _update = aircraftExporter(_update, SR)
         end
 
-        -- Disable camera position if you're not in a vehicle now
-        --local _latLng,_point = SR.exportCameraLocation()
-        --
-        --_update.latLng = _latLng
-        --SR.lastKnownPos = _point
+        -- Use vehicle position if we have one so when you join a vehicle you get LOS etc
+        if _data ~= nil then
+            local _latLng,_point = SR.exportPlayerLocation(_data)
+
+            _update.latLng = _latLng
+            SR.lastKnownPos = _point
+        end
 
         SR.lastKnownUnitId = ""
         SR.lastKnownUnitType = ""
@@ -792,9 +865,9 @@ function SR.getRadioVolume(_deviceId, _arg, _minMax, _invert)
     return 1.0
 end
 
+
 function SR.getKnobPosition(_deviceId, _arg, _minMax, _mapMinMax)
     local _device = GetDevice(_deviceId)
-
     if _device then
         local _val = tonumber(_device:get_argument_value(_arg))
         local _reRanged = SR.rerange(_val, _minMax, _mapMinMax)
@@ -807,7 +880,6 @@ end
 function SR.getSelectorPosition(_args, _step)
     local _value = GetDevice(0):get_argument_value(_args)
     local _num = math.abs(tonumber(string.format("%.0f", _value / _step)))
-
     return _num
 end
 
@@ -862,7 +934,6 @@ function SR.getRadioFrequency(_deviceId, _roundTo, _ignoreIsOn)
     if not _roundTo then
         _roundTo = 5000
     end
-
     if _device then
         if _device:is_on() or _ignoreIsOn then
             -- round as the numbers arent exact
@@ -923,7 +994,6 @@ end
 function SR.getListIndicatorValue(IndicatorID)
     local ListIindicator = list_indication(IndicatorID)
     local TmpReturn = {}
-
     if ListIindicator == "" then
         return nil
     end
@@ -982,7 +1052,6 @@ function SR.tableShow(tbl, loc, indent, tableshow_tbls) --based on serialize_slm
     indent = indent or ""
     if type(tbl) == "table" then --function only works for tables!
         tableshow_tbls[tbl] = loc
-
         local tbl_str = {}
 
         tbl_str[#tbl_str + 1] = indent .. "{\n"
@@ -1129,4 +1198,4 @@ end
 -- Load mods' SRS plugins
 SR.LoadModsPlugins()
 
-SR.log("Loaded SimpleRadio Standalone Export version: 2.2.0.5")
+SR.log("Loaded SimpleRadio Standalone Export version: 2.3.0.3")

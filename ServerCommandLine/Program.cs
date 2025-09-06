@@ -177,6 +177,9 @@ internal class Program : IHandle<SRSClientStatus>
         if (options.ServerPresetChannelsEnabled != null && options.ServerPresetChannelsEnabled.HasValue)
             ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SERVER_PRESETS_ENABLED,
                 options.ServerPresetChannelsEnabled.Value);
+        if (options.ServerEAMRadioPresetEnabled != null && options.ServerEAMRadioPresetEnabled.HasValue)
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SERVER_EAM_RADIO_PRESET_ENABLED,
+                options.ServerEAMRadioPresetEnabled.Value);
         if (options.HttpServerEnabled != null && options.HttpServerEnabled.HasValue)
             ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.HTTP_SERVER_ENABLED,
                 options.HttpServerEnabled.Value);
@@ -389,6 +392,12 @@ public class Options
             "Enables Server Channel Presets to be used by clients - put the *.txt files in a folder called Presets alongside your server.cfg file",
         Required = false)]
     public bool? ServerPresetChannelsEnabled { get; set; }
+    
+    [Option("serverEAMRadioPresetEnabled",
+        HelpText =
+            $"Enables Server EAM Presets to be used by clients - put the awacs-radios-custom.json file in a folder called Presets alongside your server.cfg file",
+        Required = false)]
+    public bool? ServerEAMRadioPresetEnabled { get; set; }
 
     public override string ToString()
     {
@@ -418,6 +427,7 @@ public class Options
             $"{nameof(TransmissionLogEnabled)}: {TransmissionLogEnabled}, \n" +
             $"{nameof(RadioEffectOverride)}: {RadioEffectOverride}, \n" +
             $"{nameof(ServerPresetChannelsEnabled)}: {ServerPresetChannelsEnabled}, \n" +
+            $"{nameof(ServerEAMRadioPresetEnabled)}: {ServerEAMRadioPresetEnabled}, \n" +
             $"{nameof(HttpServerEnabled)}: {HttpServerEnabled}, \n" +
             $"{nameof(HttpServerPort)}: {HttpServerPort}, \n" +
             $"{nameof(ServerBindIP)}: {ServerBindIP}";

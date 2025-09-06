@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -29,8 +30,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
 {
     public static readonly string AWACS_RADIOS_FILE = "awacs-radios.json";
     public static readonly string AWACS_RADIOS_CUSTOM_FILE = "awacs-radios-custom.json";
-
-
+    
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     private static readonly int RADIO_UPDATE_PING_INTERVAL = 60; //send update regardless of change every X seconds
@@ -82,6 +82,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
     public void Start()
     {
         EventBus.Instance.SubscribeOnUIThread(this);
+        
         //reset last sent
         _clientStateSingleton.LastSent = 0;
 
@@ -400,6 +401,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                 if (updateRadio.simul) simul = true;
 
                 clientRadio.name = updateRadio.name;
+                clientRadio.model = updateRadio.model;
 
                 clientRadio.modulation = updateRadio.modulation;
 
@@ -616,66 +618,23 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
 
         DCSRadio[] awacsRadios = null;
 
-        try
+        if (_globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys
+                .AllowServerEAMRadioPreset))
         {
-            string radioJson;
-            var awacsRadiosFile = Path.Combine(PresetsFolder, AWACS_RADIOS_FILE);
-            var customAwacsRadiosFile = Path.Combine(PresetsFolder, AWACS_RADIOS_CUSTOM_FILE);
-            if (File.Exists(customAwacsRadiosFile))
-                try
-                {
-                    radioJson = File.ReadAllText(customAwacsRadiosFile);
-                    awacsRadios = JsonSerializer.Deserialize<DCSRadio[]>(radioJson, new JsonSerializerOptions()
-                    {
-                        PropertyNameCaseInsensitive = true,
-                        IncludeFields = true,
-                    });
-
-                    foreach (var radio in awacsRadios)
-                        if (radio.modulation == Modulation.MIDS)
-                        {
-                            radio.freq = 1030100000.0;
-                            radio.freqMin = 1030000000;
-                            radio.freqMax = 1060000000;
-                            radio.encMode = DCSRadio.EncryptionMode.NO_ENCRYPTION;
-                            radio.guardFreqMode = DCSRadio.FreqMode.COCKPIT;
-                            radio.volMode = DCSRadio.VolumeMode.OVERLAY;
-                            radio.freqMode = DCSRadio.FreqMode.OVERLAY;
-                        }
-                }
-                catch (Exception ex)
-                {
-                    Logger.Warn(ex,
-                        $"Failed to load custom {customAwacsRadiosFile} radio file - loading standard file");
-                }
-            else
-                Logger.Info($"No Custom {customAwacsRadiosFile} present - Loading {awacsRadiosFile}");
-
-            if (awacsRadios == null)
-            {
-                radioJson = File.ReadAllText(awacsRadiosFile);
-                awacsRadios = JsonSerializer.Deserialize<DCSRadio[]>(radioJson, new JsonSerializerOptions()
-                {
-                    PropertyNameCaseInsensitive = true,
-                    IncludeFields = true,
-                });
-
-                foreach (var radio in awacsRadios)
-                    if (radio.modulation == Modulation.MIDS)
-                    {
-                        radio.freq = 1030100000.0;
-                        radio.freqMin = 1030000000;
-                        radio.freqMax = 1060000000;
-                        radio.encMode = DCSRadio.EncryptionMode.NO_ENCRYPTION;
-                        radio.guardFreqMode = DCSRadio.FreqMode.COCKPIT;
-                        radio.volMode = DCSRadio.VolumeMode.OVERLAY;
-                        radio.freqMode = DCSRadio.FreqMode.OVERLAY;
-                    }
-            }
+            awacsRadios = processServerCustomEAMRadio(_serverSettings.CustomEAMRadios);
         }
-        catch (Exception ex)
+        
+        if (awacsRadios == null)
+            awacsRadios = processClientCustomEAMRadio(AWACS_RADIOS_CUSTOM_FILE);
+
+        if (awacsRadios == null)
         {
-            Logger.Warn(ex, "Failed to load AWACS radio file");
+            awacsRadios = processClientCustomEAMRadio(AWACS_RADIOS_FILE);
+        }
+
+        if (awacsRadios == null)
+        {
+            Logger.Warn("Failed to load AWACS radio file from server, default or custom one");
 
             awacsRadios = new DCSRadio[Constants.MAX_RADIOS];
             for (var i = 0; i < Constants.MAX_RADIOS; i++)
@@ -742,5 +701,129 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
     {
         _clientStateSingleton.ExternalAWACSModelSelected = false;
         _stopExternalAWACSMode = true;
+    }
+
+
+
+    private DCSRadio[] processClientCustomEAMRadio(string radioFile)
+    {
+        var awacsRadios = Array.Empty<DCSRadio>();
+        
+        string radioJson;
+        var awacsRadiosFile = Path.Combine(PresetsFolder, radioFile);
+   
+        if (File.Exists(awacsRadiosFile))
+            try
+            {
+                radioJson = File.ReadAllText(awacsRadiosFile);
+                awacsRadios = JsonSerializer.Deserialize<DCSRadio[]>(radioJson, new JsonSerializerOptions()
+                {
+                    AllowTrailingCommas = true,
+                    PropertyNameCaseInsensitive = true,
+                    ReadCommentHandling = JsonCommentHandling.Skip,
+                    IncludeFields = true,
+                });
+
+                foreach (var radio in awacsRadios)
+                    if (radio.modulation == Modulation.MIDS)
+                    {
+                        radio.freq = 1030100000.0;
+                        radio.freqMin = 1030000000;
+                        radio.freqMax = 1060000000;
+                        radio.encMode = DCSRadio.EncryptionMode.NO_ENCRYPTION;
+                        radio.guardFreqMode = DCSRadio.FreqMode.COCKPIT;
+                        radio.volMode = DCSRadio.VolumeMode.OVERLAY;
+                        radio.freqMode = DCSRadio.FreqMode.OVERLAY;
+                    }
+
+                return awacsRadios;
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex,
+                    $"Failed to load {awacsRadiosFile} radio file ");
+            }
+       
+        return null;
+    }
+
+    private DCSRadio[] processServerCustomEAMRadio(List<DCSRadioCustom> customRadios)
+    {
+
+        try
+        {
+            if (customRadios == null || customRadios.Count != Constants.MAX_RADIOS)
+            {
+                return null;
+            }
+                    
+            var dcsRadios = new DCSRadio[Constants.MAX_RADIOS];
+            
+            //initialise as empty
+            for (var i = 0; i < Constants.MAX_RADIOS; i++)
+            {
+                dcsRadios[i] = new DCSRadio
+                {
+                    freq = 1,
+                    freqMin = 1,
+                    freqMax = 1,
+                    secFreq = 0,
+                    modulation = Modulation.DISABLED,
+                    name = "No Radio",
+                    freqMode = DCSRadio.FreqMode.COCKPIT,
+                    encMode = DCSRadio.EncryptionMode.NO_ENCRYPTION,
+                    volMode = DCSRadio.VolumeMode.COCKPIT
+                };
+            }
+            
+            int radioIndex = 0;
+            foreach (var customRadio in customRadios)
+            {
+                var radio = dcsRadios[radioIndex];
+                
+                radio.freq = customRadio.freq;
+                radio.freqMin = customRadio.freqMin;
+                radio.freqMax = customRadio.freqMax;
+                radio.secFreq = customRadio.secFreq;
+                radio.modulation = customRadio.modulation;
+                radio.name = radio.name;
+                radio.freqMode = (DCSRadio.FreqMode) customRadio.freqMode;
+                radio.encMode = (DCSRadio.EncryptionMode) customRadio.encMode;
+                radio.volMode = (DCSRadio.VolumeMode) customRadio.volMode;
+                radio.freqMode = (DCSRadio.FreqMode) customRadio.freqMode;
+                radio.expansion = customRadio.expansion;
+                radio.channel  = customRadio.channel;
+                radio.enc = customRadio.enc;
+                radio.guardFreqMode  = (DCSRadio.FreqMode)  customRadio.guardFreqMode;
+                radio.model = customRadio.model;
+                radio.name = customRadio.name;
+                radio.volume = 1.0f;
+                radio.rtMode = (DCSRadio.RetransmitMode) customRadio.rtMode;
+                radio.rxOnly = customRadio.rxOnly;
+                radio.simul =  customRadio.simul;
+                radio.encKey = customRadio.encKey;
+                
+                //override if MIDS
+                if (radio.modulation == Modulation.MIDS)
+                {
+                    radio.freq = 1030100000.0;
+                    radio.freqMin = 1030000000;
+                    radio.freqMax = 1060000000;
+                    radio.encMode = DCSRadio.EncryptionMode.NO_ENCRYPTION;
+                    radio.guardFreqMode = DCSRadio.FreqMode.COCKPIT;
+                    radio.volMode = DCSRadio.VolumeMode.OVERLAY;
+                    radio.freqMode = DCSRadio.FreqMode.OVERLAY;
+                }
+
+                radioIndex++;
+            }
+            
+            return dcsRadios;
+        }
+        catch (Exception ex)
+        {
+            Logger.Log(LogLevel.Error, $"Unable to process Server Custom Radio {ex.Message}");   
+        }
+        return null;
     }
 }

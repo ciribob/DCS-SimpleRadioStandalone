@@ -40,6 +40,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
     IHandle<VOIPStatusMessage>, IHandle<ProfileChangedMessage>, IHandle<EAMConnectedMessage>,
     IHandle<EAMDisconnectMessage>, IHandle<ServerSettingsUpdatedMessage>, IHandle<AutoConnectMessage>, IHandle<ToogleAwacsRadioOverlayMessage>, IHandle<ToggleSingleStackRadioOverlayMessage>
 {
+    private static readonly long OVERLAY_DEBOUNCE = 500;
     private readonly AudioManager _audioManager;
 
     private readonly GlobalSettingsStore _globalSettings = GlobalSettingsStore.Instance;
@@ -832,17 +833,30 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         _serverSettingsWindow = null;
     }
 
+    private long lastAwacsToggleTime;
+    private long lastRadioToggleTime;
     public Task HandleAsync(ToogleAwacsRadioOverlayMessage message, CancellationToken cancellationToken)
     {
-        // Even though it should be the UI thread - it wasnt working so this forces the UI / STA thread
-        Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(MultiRadioOverlay));
+        if (TimeSpan.FromTicks(DateTime.Now.Ticks - lastAwacsToggleTime).TotalMilliseconds > OVERLAY_DEBOUNCE)
+        {
+            lastAwacsToggleTime = DateTime.Now.Ticks;
+            //Debounce
+            // Even though it should be the UI thread - it wasnt working so this forces the UI / STA thread
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(MultiRadioOverlay));
+        }
+     
         return Task.CompletedTask;
     }
 
     public Task HandleAsync(ToggleSingleStackRadioOverlayMessage message, CancellationToken cancellationToken)
     {
-        // Even though it should be the UI thread - it wasnt working so this forces the UI / STA thread
-        Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(ToggleSingleRadioStack));
+        if (TimeSpan.FromTicks(DateTime.Now.Ticks - lastRadioToggleTime).TotalMilliseconds > OVERLAY_DEBOUNCE)
+        {
+            lastRadioToggleTime = DateTime.Now.Ticks;
+            // Even though it should be the UI thread - it wasnt working so this forces the UI / STA thread
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(ToggleSingleRadioStack));
+        }
+
         return Task.CompletedTask;
     }
 }

@@ -14,6 +14,26 @@ public partial class RadioBase
     //should the radio restransmit?
     public bool retransmit = false;
     public double secFreq = 1;
+    
+    private string _model = "";
+
+    // Radio model, lowercase alphanumeric only (arc123, r456, etc).
+    public string Model
+    {
+        get => _model;
+        set { 
+            value ??= "";
+
+            value = value.ToLowerInvariant().Trim();
+
+            value = NormaliseRadioRegex().Replace(value, "");
+            if (value.Length > 32)
+            {
+                value = value.Substring(0, 32);
+            }
+            _model = value;
+        }
+    }
 
     public string Name
     {
@@ -25,8 +45,11 @@ public partial class RadioBase
             value = value.ToLowerInvariant().Trim();
 
             value = NormaliseRadioRegex().Replace(value, "");
-
-            if (value.Length > 32) value = value.Substring(0, 32);
+            
+            if (value.Length > 32)
+            {
+                value = value.Substring(0, 32);
+            }
             _name = value;
         }
     }
@@ -50,7 +73,7 @@ public partial class RadioBase
         if (encKey != compare.encKey) return false;
         if (retransmit != compare.retransmit) return false;
         if (!FreqCloseEnough(secFreq, compare.secFreq)) return false;
-        if (Name != compare?.Name) return false;
+        if (Model != compare?.Model) return false;
 
         return true;
     }
@@ -75,7 +98,7 @@ public partial class RadioBase
             secFreq = secFreq,
             encKey = encKey,
             freq = freq,
-            Name = Name
+            Model = Model
         };
     }
 

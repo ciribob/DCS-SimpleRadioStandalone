@@ -36,6 +36,7 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Caliburn.Micro.Core" Version="4.0.212"/>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
         <PackageReference Include="MathNet.Filtering" Version="0.7.0"/>
         <PackageReference Include="Microsoft.CSharp" Version="4.7.0"/>
         <PackageReference Include="Microsoft.NETCore.Platforms" Version="6.0.5"/>

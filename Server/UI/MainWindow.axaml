@@ -29,7 +29,7 @@
 			<StackPanel DockPanel.Dock="Left" 
 			            Orientation="Horizontal">
 				<Label>Status:</Label>
-				<Label>Offline</Label>
+				<Label Content="{Binding ServerRunning}" Width="80" />
 			</StackPanel>
 			<StackPanel DockPanel.Dock="Right" 
 			            Orientation="Horizontal"
@@ -37,7 +37,7 @@
 				<Label Content="{x:Static p:Resources.LabelClients}" /> 
 				<Label x:Name="ClientsCount" Content="0"/>
 				<Label Content="{x:Static p:Resources.LabelPort}" />
-				<Label x:Name="LabelPort" Content="5002" />
+				<Label x:Name="LabelPort" Content="{Binding ServerSettings.ServerPort, Mode=OneWay}" />
 			</StackPanel>
 		</DockPanel>
 		
@@ -165,17 +165,17 @@
 												</StackPanel>
 												
 												<StackPanel Orientation="Horizontal">
-													<ToggleSwitch/>
+													<ToggleSwitch IsChecked="{Binding ServerSettings.IsRadioExpansionAllowed}" />
 													<Label Content="{x:Static p:Resources.LabelRadioExpansion}"/>
 												</StackPanel>
 												
 												<StackPanel Orientation="Horizontal">
-													<ToggleSwitch/>
+													<ToggleSwitch IsChecked="{Binding ServerSettings.IsShowTransmitterNameEnabled}" />
 													<Label Content="{x:Static p:Resources.LabelShowTransmitterName}"/>
 												</StackPanel>
 												
 												<StackPanel Orientation="Horizontal">
-													<ToggleSwitch/>
+													<ToggleSwitch IsChecked="{Binding ServerSettings.IsShowTunedCountEnabled}" />
 													<Label Content="{x:Static p:Resources.LabelTunedCount}"/>
 												</StackPanel>
 												
@@ -209,15 +209,15 @@
 										<DockPanel>
 											<StackPanel Theme="{StaticResource SettingsStackPanel}" >
 												<StackPanel Orientation="Horizontal">
-													<ToggleSwitch/>
+													<ToggleSwitch  IsChecked="{Binding ServerSettings.IsExternalModeEnabled}" />
 													<Label Content="Enable"/>
 												</StackPanel>
 												<StackPanel Orientation="Horizontal">
-													<TextBox />
+													<TextBox  Text="{Binding ServerSettings.ExternalModePassBlue}" />
 													<Label Content="{x:Static p:Resources.LabelExternalAWACSBluePass}"/>
 												</StackPanel>
 												<StackPanel Orientation="Horizontal">
-													<TextBox />
+													<TextBox Text="{Binding ServerSettings.ExternalModePassRed}" />
 													<Label Content="{x:Static p:Resources.LabelExternalAWACSRedPass}"/>
 												</StackPanel>
 											</StackPanel>
@@ -240,20 +240,23 @@
 										<DockPanel>
 											<StackPanel Theme="{StaticResource SettingsStackPanel}" >
 												<StackPanel Orientation="Horizontal">
-													<ToggleSwitch/>
+													<ToggleSwitch IsChecked="{Binding ServerSettings.IsCheckForBetaUpdatesEnabled}" />
 													<Label Content="{x:Static p:Resources.LabelCheckBetaUpdates}"/>
 												</StackPanel>
 												<StackPanel Orientation="Horizontal">
-													<ToggleSwitch/>
+													<ToggleSwitch IsChecked="{Binding ServerSettings.IsTransmissionLogEnabled}" />
 													<Label Content="{x:Static p:Resources.LabelTransmissionLog}"/>
 												</StackPanel>
 												<StackPanel Orientation="Horizontal">
-													<ToggleSwitch/>
+													<ToggleSwitch IsChecked="{Binding ServerSettings.IsServerPresetsEnabled}" />
 													<Label Content="{x:Static p:Resources.ServerPresetsEnabled}"/>
 												</StackPanel>
 												<StackPanel Orientation="Horizontal">
-													<Button Content="PATH" />
-													<Label Content="Client Export Filepath"/>
+													<Button Content="PATH" 
+													        x:Name="ServerPresetsPathButton" 
+													        Click="ServerPresetsPathButton_OnClick" 
+													        ToolTip.Tip="{Binding ServerSettings.ServerPresetsPath}" />
+													<Label Content="Server Presets Filepath"/>
 												</StackPanel>
 												<StackPanel Orientation="Horizontal">
 													<NumericUpDown Minimum="0" Maximum="7" Value="2" />
@@ -262,6 +265,13 @@
 												<StackPanel Orientation="Horizontal">
 													<ToggleSwitch/>
 													<Label Content="{x:Static p:Resources.LabelExportList}"/>
+												</StackPanel>
+												<StackPanel Orientation="Horizontal">
+													<Button Content="PATH" 
+													        x:Name="ClientPathButton" 
+													        Click="ClientExportPathButton_OnClick" 
+													        ToolTip.Tip="{Binding ServerSettings.ClientExportFilePath}" />
+													<Label Content="Client Export Filepath"/>
 												</StackPanel>
 											</StackPanel>
 											<TextBlock DockPanel.Dock="Right" 
@@ -274,7 +284,7 @@
 										<DockPanel>
 											<StackPanel Theme="{StaticResource SettingsStackPanel}" >
 												<StackPanel Orientation="Horizontal">
-													<TextBox />
+													<TextBox Text="{Binding ServerSettings.ServerPort}" />
 													<Label Content="Port"/>
 												</StackPanel>
 									

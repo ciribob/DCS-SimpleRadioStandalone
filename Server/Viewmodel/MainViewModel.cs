@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -8,24 +11,27 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.viewmodel;
 
 public partial class MainViewModel : ObservableObject
 {
-	enum RunningState
+	public enum RunningState
 	{
 		Stopped,
 		Starting,
 		Running,
 		Stopping,
 	}
-	RunningState ServerRunning {get; set;}
+	
+	[ObservableProperty] private RunningState _serverRunning = RunningState.Stopped;
+	
 	[ObservableProperty] private ServerSettingsModel _serverSettings;
 
-	private ProcessStartInfo _processInfo = new ProcessStartInfo()
+	private CancellationTokenSource _serverCliCancelTokenSource = new();
+	
+	private Process _serverCLIProcess = new()
 	{
-		CreateNoWindow = true, 
+		StartInfo = new() {
+		CreateNoWindow = false, 
 		UseShellExecute = true, 
-		RedirectStandardOutput = true, 
-		RedirectStandardError = true, 
-		RedirectStandardInput = true, 
-		FileName = ""
+		FileName = "C:\\Program Files\\DCS-SimpleRadio-Standalone\\ServerCommandLine-Windows\\SRS-Server-Commandline.exe" 
+		}
 	};
 	
 	public MainViewModel()
@@ -35,23 +41,41 @@ public partial class MainViewModel : ObservableObject
 	}
 
 	public ICommand StartStopCommand { get; }
+
 	public void StartStopServer()
 	{
+		CancellationToken ct = _serverCliCancelTokenSource.Token;
+		
 		switch (ServerRunning)
 		{
 			case RunningState.Stopped:
 				ServerRunning = RunningState.Starting;
-				//Process.Start
+				
+				Console.WriteLine("Starting server...");
+				Task.Run( ()=>
+				{
+					ct.ThrowIfCancellationRequested();
+					_serverCLIProcess.Start();
+					_serverCLIProcess.WaitForExitAsync(ct);
+				}, ct);
+				
 				ServerRunning = RunningState.Running;
+				Console.WriteLine("Server started");
 				break;
 			case RunningState.Running:
 				ServerRunning = RunningState.Stopping;
-				// Process. Stop?
+				
+				Console.WriteLine("Stopping server...");
+				_serverCliCancelTokenSource.Cancel();
+				
 				ServerRunning = RunningState.Stopped;
+				Console.WriteLine("Server stopped");
 				break;
-			
+
 			default:
 				break;
 		}
+
+		return;
 	}
 }

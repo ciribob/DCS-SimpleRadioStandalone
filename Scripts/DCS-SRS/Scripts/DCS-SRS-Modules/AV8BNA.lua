@@ -170,7 +170,7 @@ function exportRadioAV8BNA(_data, SR)
 
     _data.selected = 1
     _data.control = 0 -- partial radio, allows hotkeys
-
+    
     if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 

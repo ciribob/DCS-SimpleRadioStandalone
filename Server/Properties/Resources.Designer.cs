@@ -69,15 +69,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Client Admin.
-        /// </summary>
-        public static string BtnClientAdmin {
-            get {
-                return ResourceManager.GetString("BtnClientAdmin", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to DISABLED.
         /// </summary>
         public static string BtnDisabled {
@@ -168,6 +159,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Client List Export File Path.
+        /// </summary>
+        public static string LabelClientExportFilePath {
+            get {
+                return ResourceManager.GetString("LabelClientExportFilePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clients:.
         /// </summary>
         public static string LabelClients {
@@ -195,15 +195,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to External AWACS Mode (EAM).
-        /// </summary>
-        public static string LabelExternalAWACS {
-            get {
-                return ResourceManager.GetString("LabelExternalAWACS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Blue Password.
         /// </summary>
         public static string LabelExternalAWACSBluePass {
@@ -222,11 +213,38 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to PATH.
+        /// </summary>
+        public static string LabelFilePath {
+            get {
+                return ResourceManager.GetString("LabelFilePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Global Lobby Freq. AM (MHz).
         /// </summary>
         public static string LabelGlobalLobbyFreq {
             get {
                 return ResourceManager.GetString("LabelGlobalLobbyFreq", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable.
+        /// </summary>
+        public static string LabelHttpApiEnable {
+            get {
+                return ResourceManager.GetString("LabelHttpApiEnable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Port.
+        /// </summary>
+        public static string LabelHttpApiPort {
+            get {
+                return ResourceManager.GetString("LabelHttpApiPort", resourceCulture);
             }
         }
         
@@ -249,20 +267,20 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to LotATC Transponder.
+        /// </summary>
+        public static string LabelLotATCTransponder {
+            get {
+                return ResourceManager.GetString("LabelLotATCTransponder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ignore Radio Effect on Global Freq.
         /// </summary>
         public static string LabelOverrideEffectsOnGlobal {
             get {
                 return ResourceManager.GetString("LabelOverrideEffectsOnGlobal", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Port:.
-        /// </summary>
-        public static string LabelPort {
-            get {
-                return ResourceManager.GetString("LabelPort", resourceCulture);
             }
         }
         
@@ -321,6 +339,51 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to IP.
+        /// </summary>
+        public static string LabelServerIP {
+            get {
+                return ResourceManager.GetString("LabelServerIP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Port.
+        /// </summary>
+        public static string LabelServerPort {
+            get {
+                return ResourceManager.GetString("LabelServerPort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server Channel Presets.
+        /// </summary>
+        public static string LabelServerPresetsEnabled {
+            get {
+                return ResourceManager.GetString("LabelServerPresetsEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server Presets Path.
+        /// </summary>
+        public static string LabelServerPresetsPath {
+            get {
+                return ResourceManager.GetString("LabelServerPresetsPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Universal Plug And Play (UPNP).
+        /// </summary>
+        public static string LabelServerUPNP {
+            get {
+                return ResourceManager.GetString("LabelServerUPNP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Transmitter Name.
         /// </summary>
         public static string LabelShowTransmitterName {
@@ -344,6 +407,24 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         public static string LabelStrictEncryption {
             get {
                 return ResourceManager.GetString("LabelStrictEncryption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Client Admin.
+        /// </summary>
+        public static string LabelTabHeaderClientAdmin {
+            get {
+                return ResourceManager.GetString("LabelTabHeaderClientAdmin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string LabelTabHeaderSettings {
+            get {
+                return ResourceManager.GetString("LabelTabHeaderSettings", resourceCulture);
             }
         }
         
@@ -445,11 +526,38 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Port:.
+        /// </summary>
+        public static string PresenterLabelPort {
+            get {
+                return ResourceManager.GetString("PresenterLabelPort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Status:.
+        /// </summary>
+        public static string PresenterLabelStatus {
+            get {
+                return ResourceManager.GetString("PresenterLabelStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Settings that only impact the radio simulation. Does not impact how the server program interacts with other programs..
         /// </summary>
         public static string SectionDescriptionRadioSimulation {
             get {
                 return ResourceManager.GetString("SectionDescriptionRadioSimulation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Program Settings.
+        /// </summary>
+        public static string SectionLabelProgram {
+            get {
+                return ResourceManager.GetString("SectionLabelProgram", resourceCulture);
             }
         }
         
@@ -463,11 +571,56 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Server Channel Presets.
+        ///   Looks up a localized string similar to External Awacs Mode allows for users not inside of the DCS Game Server to connect and use radios like those in-game..
         /// </summary>
-        public static string ServerPresetsEnabled {
+        public static string SubSectionDescriptionExternalAWACS {
             get {
-                return ResourceManager.GetString("ServerPresetsEnabled", resourceCulture);
+                return ResourceManager.GetString("SubSectionDescriptionExternalAWACS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lorum.
+        /// </summary>
+        public static string SubSectionDescriptionExternalProgramIntegrations {
+            get {
+                return ResourceManager.GetString("SubSectionDescriptionExternalProgramIntegrations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lorum.
+        /// </summary>
+        public static string SubSectionDescriptionGeneral {
+            get {
+                return ResourceManager.GetString("SubSectionDescriptionGeneral", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lorum.
+        /// </summary>
+        public static string SubSectionDescriptionHttpApi {
+            get {
+                return ResourceManager.GetString("SubSectionDescriptionHttpApi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lorum.
+        /// </summary>
+        public static string SubSectionDescriptionNetwork {
+            get {
+                return ResourceManager.GetString("SubSectionDescriptionNetwork", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lorum.
+        /// </summary>
+        public static string SubSectionDescriptionProgram {
+            get {
+                return ResourceManager.GetString("SubSectionDescriptionProgram", resourceCulture);
             }
         }
         
@@ -481,11 +634,56 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Settings that limit or enhance the simulated security of radios.
         /// </summary>
         public static string SubSectionDescriptionRadioSecurity {
             get {
                 return ResourceManager.GetString("SubSectionDescriptionRadioSecurity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to External AWACS Mode (EAM).
+        /// </summary>
+        public static string SubSectionLabelExternalAWACS {
+            get {
+                return ResourceManager.GetString("SubSectionLabelExternalAWACS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to External Program Integrations.
+        /// </summary>
+        public static string SubSectionLabelExternalProgramIntegrations {
+            get {
+                return ResourceManager.GetString("SubSectionLabelExternalProgramIntegrations", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to General Settings.
+        /// </summary>
+        public static string SubSectionLabelGeneral {
+            get {
+                return ResourceManager.GetString("SubSectionLabelGeneral", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HTTP API Settings.
+        /// </summary>
+        public static string SubSectionLabelHttpApi {
+            get {
+                return ResourceManager.GetString("SubSectionLabelHttpApi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Network Serttings.
+        /// </summary>
+        public static string SubSectionLabelNetwork {
+            get {
+                return ResourceManager.GetString("SubSectionLabelNetwork", resourceCulture);
             }
         }
         
@@ -519,6 +717,33 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        public static string ToolTipArchiveTime {
+            get {
+                return ResourceManager.GetString("ToolTipArchiveTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipCheckForBetaUpdates {
+            get {
+                return ResourceManager.GetString("ToolTipCheckForBetaUpdates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipClientExportFilePath {
+            get {
+                return ResourceManager.GetString("ToolTipClientExportFilePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         public static string ToolTipCoalitionSecurity {
             get {
                 return ResourceManager.GetString("ToolTipCoalitionSecurity", resourceCulture);
@@ -537,9 +762,81 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        public static string ToolTipExportList {
+            get {
+                return ResourceManager.GetString("ToolTipExportList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipExternalModeEnabled {
+            get {
+                return ResourceManager.GetString("ToolTipExternalModeEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipExternalModePassBlue {
+            get {
+                return ResourceManager.GetString("ToolTipExternalModePassBlue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipExternalModePassRed {
+            get {
+                return ResourceManager.GetString("ToolTipExternalModePassRed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipGlobalLobbyFrequencies {
+            get {
+                return ResourceManager.GetString("ToolTipGlobalLobbyFrequencies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipHttpApiEnable {
+            get {
+                return ResourceManager.GetString("ToolTipHttpApiEnable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipHttpApiPort {
+            get {
+                return ResourceManager.GetString("ToolTipHttpApiPort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         public static string ToolTipLOS {
             get {
                 return ResourceManager.GetString("ToolTipLOS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipLotATCTransponder {
+            get {
+                return ResourceManager.GetString("ToolTipLotATCTransponder", resourceCulture);
             }
         }
         
@@ -591,6 +888,69 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        public static string ToolTipServerIP {
+            get {
+                return ResourceManager.GetString("ToolTipServerIP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipServerPort {
+            get {
+                return ResourceManager.GetString("ToolTipServerPort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipServerPresetsEnabled {
+            get {
+                return ResourceManager.GetString("ToolTipServerPresetsEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipServerPresetsPath {
+            get {
+                return ResourceManager.GetString("ToolTipServerPresetsPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipServerUPNP {
+            get {
+                return ResourceManager.GetString("ToolTipServerUPNP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipShowTransmitterName {
+            get {
+                return ResourceManager.GetString("ToolTipShowTransmitterName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipShowTunedCount {
+            get {
+                return ResourceManager.GetString("ToolTipShowTunedCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         public static string ToolTipSpectatorAudio {
             get {
                 return ResourceManager.GetString("ToolTipSpectatorAudio", resourceCulture);
@@ -612,6 +972,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         public static string ToolTipTestFreq {
             get {
                 return ResourceManager.GetString("ToolTipTestFreq", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipTransmissionLog {
+            get {
+                return ResourceManager.GetString("ToolTipTransmissionLog", resourceCulture);
             }
         }
     }

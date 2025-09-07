@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Globalization;
 using System.IO;
-using System.Text.Json.Serialization.Metadata;
+using System.Reflection;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
@@ -13,11 +13,23 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.UI;
 
 public partial class MainWindow : Window
 {
-	private MainViewModel ViewModel { get; }
+	private NumberFormatInfo _freqencyFormat = new NumberFormatInfo()
+	{
+		NumberDecimalSeparator = ".",
+		NumberGroupSeparator = ",",
+		NumberDecimalDigits = 3,
+	};
+	
+	private MainViewModel ViewModel { 
+		get => (MainViewModel)this.DataContext!; 
+		set => DataContext = value;
+	}
 
 	public MainWindow()
 	{
-		ViewModel = DataContext as MainViewModel ?? new();
+		Title = string.Concat("SRS Server - ", Assembly.GetExecutingAssembly().GetName().Version.ToString() );
+		
+		// Set Start stop button to: {Properties.Resources.BtnStopServer}" : $"{Properties.Resources.BtnStartServer}
 		
 		InitializeComponent();
 	}
@@ -25,13 +37,16 @@ public partial class MainWindow : Window
 	private void TestFrequenciesAddButton_OnClick(object? sender, RoutedEventArgs e)
 	{
 		if (TestFrequencyTextBox.Text == null) return;
-		ViewModel.ServerSettings.TestFrequencies.Add(TestFrequencyTextBox.Text);
+		if (double.TryParse(TestFrequencyTextBox.Text, out double value))
+		{
+			ViewModel.ServerSettings.TestFrequencies.Add(value);
+		}
 		TestFrequencyTextBox.Text = string.Empty;
 	}
 
 	private void TestFrequenciesRemoveButton_OnClick(object? sender, RoutedEventArgs e)
 	{
-		if ((sender as Button)?.Tag is string toRemove)
+		if ((sender as Button)?.Tag is double toRemove)
 		{
 			ViewModel.ServerSettings.TestFrequencies.Remove(toRemove);
 		}
@@ -39,14 +54,17 @@ public partial class MainWindow : Window
 
 	private void GlobalFrequenciesAddButton_OnClick(object? sender, RoutedEventArgs e)
 	{
-		if (GlobalFrequencyTextBox.Text == null) return;
-		ViewModel.ServerSettings.GlobalLobbyFrequencies.Add(GlobalFrequencyTextBox.Text);
+		if (GlobalFrequencyTextBox.Text == null) return;		
+		if (double.TryParse(GlobalFrequencyTextBox.Text, out double value))
+		{
+			ViewModel.ServerSettings.GlobalLobbyFrequencies.Add(value);
+		}
 		GlobalFrequencyTextBox.Text = string.Empty;
 	}
 	
 	private void GlobalFrequenciesRemoveButton_OnClick(object? sender, RoutedEventArgs e)
 	{
-		if ((sender as Button)?.Tag is string toRemove)
+		if ((sender as Button)?.Tag is double toRemove)
 		{
 			ViewModel.ServerSettings.GlobalLobbyFrequencies.Remove(toRemove);
 		}
@@ -70,18 +88,24 @@ public partial class MainWindow : Window
 		}
 	}
 	
-	private async Task<string> OpenFolderPicker(string title)
+	private async Task<string> OpenFolderPicker(string title, string? exitingFolder = null)
 	{
 		FolderPickerOpenOptions options = new()
 		{
 			Title = title, 
 			AllowMultiple = false
 		};
-		
-		IReadOnlyList<IStorageFolder> folder = await GetTopLevel(this)!.StorageProvider.OpenFolderPickerAsync(options);
-		if (folder == null) return string.Empty;
-		
-		return folder[0].Path.AbsolutePath;
+
+		try
+		{
+			IReadOnlyList<IStorageFolder> folder = await GetTopLevel(this)!.StorageProvider.OpenFolderPickerAsync(options);
+			return folder[0].Path.AbsolutePath;
+		}
+		catch (Exception e)
+		{
+			// If the picker gets cancelled, use existing or empty (but not null):
+			return exitingFolder ?? string.Empty;
+		}
 	}
 
 

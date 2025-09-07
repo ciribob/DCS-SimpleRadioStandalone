@@ -14,7 +14,7 @@
     <data name="BtnBan" xml:space="preserve">
         <value>封禁</value>
     </data>
-    <data name="BtnClientAdmin" xml:space="preserve">
+    <data name="LabelTabHeaderClientAdmin" xml:space="preserve">
         <value>客户端管理</value>
     </data>
     <data name="BtnDisabled" xml:space="preserve">
@@ -56,7 +56,7 @@
     <data name="LabelExportList" xml:space="preserve">
         <value>自动导出列表</value>
     </data>
-    <data name="LabelExternalAWACS" xml:space="preserve">
+    <data name="SubSectionLabelExternalAWACS" xml:space="preserve">
         <value>外部预警机模式 (EAM)</value>
     </data>
     <data name="LabelExternalAWACSBluePass" xml:space="preserve">
@@ -77,7 +77,7 @@
     <data name="LabelOverrideEffectsOnGlobal" xml:space="preserve">
         <value>大厅无视无线电效果</value>
     </data>
-    <data name="LabelPort" xml:space="preserve">
+    <data name="PresenterLabelPort" xml:space="preserve">
         <value>端口:</value>
     </data>
     <data name="LabelRadioEncryption" xml:space="preserve">
@@ -146,5 +146,8 @@ DCS结束运行后，SRS也会自动关闭进行以更新。
     </data>
     <data name="TitleClientList" xml:space="preserve">
         <value>SRS 客户端列表</value>
+    </data>
+    <data name="LabelServerPort" xml:space="preserve">
+        <value>端口</value>
     </data>
 </root>

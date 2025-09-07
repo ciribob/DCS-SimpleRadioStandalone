@@ -21,7 +21,7 @@
     <data name="BtnBan" xml:space="preserve">
         <value>Ban!</value>
     </data>
-    <data name="BtnClientAdmin" xml:space="preserve">
+    <data name="LabelTabHeaderClientAdmin" xml:space="preserve">
         <value>Client Admin</value>
     </data>
     <data name="BtnDisabled" xml:space="preserve">
@@ -63,7 +63,7 @@
     <data name="LabelExportList" xml:space="preserve">
         <value>Auto Export List</value>
     </data>
-    <data name="LabelExternalAWACS" xml:space="preserve">
+    <data name="SubSectionLabelExternalAWACS" xml:space="preserve">
         <value>External AWACS Mode (EAM)</value>
     </data>
     <data name="LabelExternalAWACSBluePass" xml:space="preserve">
@@ -84,7 +84,7 @@
     <data name="LabelOverrideEffectsOnGlobal" xml:space="preserve">
         <value>Ignore Radio Effect on Global Freq</value>
     </data>
-    <data name="LabelPort" xml:space="preserve">
+    <data name="PresenterLabelPort" xml:space="preserve">
         <value>Port:</value>
     </data>
     <data name="LabelRadioEncryption" xml:space="preserve">
@@ -151,7 +151,7 @@ Cancel - Ignore</value>
     <data name="MsgBoxUpdateTitle" xml:space="preserve">
         <value>Update available</value>
     </data>
-    <data name="ServerPresetsEnabled" xml:space="preserve">
+    <data name="LabelServerPresetsEnabled" xml:space="preserve">
         <value>Server Channel Presets</value>
     </data>
     <data name="TitleClientList" xml:space="preserve">
@@ -197,7 +197,7 @@ Cancel - Ignore</value>
         <value>Radio Security</value>
     </data>
     <data name="SubSectionDescriptionRadioSecurity" xml:space="preserve">
-        <value />
+        <value>Settings that limit or enhance the simulated security of radios</value>
     </data>
     <data name="ToolTipCoalitionSecurity" xml:space="preserve">
         <value />
@@ -207,5 +207,128 @@ Cancel - Ignore</value>
     </data>
     <data name="ToolTipTestFreq" xml:space="preserve">
         <value />
+    </data>
+    <data name="ToolTipShowTransmitterName" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipShowTunedCount" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipGlobalLobbyFrequencies" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipExternalModeEnabled" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipExternalModePassBlue" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipExternalModePassRed" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipCheckForBetaUpdates" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipTransmissionLog" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipServerPresetsEnabled" xml:space="preserve">
+        <value />
+    </data>
+    <data name="LabelServerPresetsPath" xml:space="preserve">
+        <value>Server Presets Path</value>
+    </data>
+    <data name="LabelFilePath" xml:space="preserve">
+        <value>PATH</value>
+    </data>
+    <data name="ToolTipServerPresetsPath" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipArchiveTime" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipExportList" xml:space="preserve">
+        <value />
+    </data>
+    <data name="LabelClientExportFilePath" xml:space="preserve">
+        <value>Client List Export File Path</value>
+    </data>
+    <data name="ToolTipClientExportFilePath" xml:space="preserve">
+        <value />
+    </data>
+    <data name="LabelServerPort" xml:space="preserve">
+        <value>Port</value>
+    </data>
+    <data name="ToolTipServerPort" xml:space="preserve">
+        <value />
+    </data>
+    <data name="LabelServerUPNP" xml:space="preserve">
+        <value>Universal Plug And Play (UPNP)</value>
+    </data>
+    <data name="ToolTipServerUPNP" xml:space="preserve">
+        <value />
+    </data>
+    <data name="ToolTipServerIP" xml:space="preserve">
+        <value />
+    </data>
+    <data name="LabelServerIP" xml:space="preserve">
+        <value>IP</value>
+    </data>
+    <data name="ToolTipLotATCTransponder" xml:space="preserve">
+        <value />
+    </data>
+    <data name="LabelLotATCTransponder" xml:space="preserve">
+        <value>LotATC Transponder</value>
+    </data>
+    <data name="ToolTipHttpApiEnable" xml:space="preserve">
+        <value />
+    </data>
+    <data name="LabelHttpApiEnable" xml:space="preserve">
+        <value>Enable</value>
+    </data>
+    <data name="ToolTipHttpApiPort" xml:space="preserve">
+        <value />
+    </data>
+    <data name="LabelHttpApiPort" xml:space="preserve">
+        <value>Port</value>
+    </data>
+    <data name="SubSectionDescriptionHttpApi" xml:space="preserve">
+        <value>Lorum</value>
+    </data>
+    <data name="SubSectionLabelHttpApi" xml:space="preserve">
+        <value>HTTP API Settings</value>
+    </data>
+    <data name="SubSectionDescriptionExternalProgramIntegrations" xml:space="preserve">
+        <value>Lorum</value>
+    </data>
+    <data name="SubSectionLabelExternalProgramIntegrations" xml:space="preserve">
+        <value>External Program Integrations</value>
+    </data>
+    <data name="SubSectionDescriptionNetwork" xml:space="preserve">
+        <value>Lorum</value>
+    </data>
+    <data name="SubSectionLabelNetwork" xml:space="preserve">
+        <value>Network Serttings</value>
+    </data>
+    <data name="SubSectionDescriptionGeneral" xml:space="preserve">
+        <value>Lorum</value>
+    </data>
+    <data name="SubSectionLabelGeneral" xml:space="preserve">
+        <value>General Settings</value>
+    </data>
+    <data name="SectionLabelProgram" xml:space="preserve">
+        <value>Program Settings</value>
+    </data>
+    <data name="SubSectionDescriptionProgram" xml:space="preserve">
+        <value>Lorum</value>
+    </data>
+    <data name="SubSectionDescriptionExternalAWACS" xml:space="preserve">
+        <value>External Awacs Mode allows for users not inside of the DCS Game Server to connect and use radios like those in-game.</value>
+    </data>
+    <data name="LabelTabHeaderSettings" xml:space="preserve">
+        <value>Settings</value>
+    </data>
+    <data name="PresenterLabelStatus" xml:space="preserve">
+        <value>Status:</value>
     </data>
 </root>

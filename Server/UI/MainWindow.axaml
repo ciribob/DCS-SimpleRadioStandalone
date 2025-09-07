@@ -4,17 +4,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.Properties"
         xmlns:viewmodel="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.viewmodel"
+        xmlns:ui="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.UI"
         MinHeight="250"
         Width="420" MinWidth="420"
         mc:Ignorable="d" d:DesignWidth="420" d:DesignHeight="600"
         x:Class="Ciribob.DCS.SimpleRadio.Standalone.Server.UI.MainWindow"
-        x:DataType="viewmodel:MainViewModel"
-        Title="Server">
-	
+        x:DataType="viewmodel:MainViewModel">
+
 	<Design.DataContext>
-		<viewmodel:MainViewModel/>
+		<viewmodel:MainViewModel />
 	</Design.DataContext>
-	
+
 	<DockPanel>
 		<!-- Status Bar comes first so it stays on top of the other content. -->
 		<DockPanel DockPanel.Dock="Bottom"
@@ -25,32 +25,32 @@
 					<Setter Property="Width" Value="55" />
 				</Style>
 			</Panel.Styles>
-			
-			<StackPanel DockPanel.Dock="Left" 
+
+			<StackPanel DockPanel.Dock="Left"
 			            Orientation="Horizontal">
-				<Label>Status:</Label>
+				<Label Content="{x:Static p:Resources.PresenterLabelStatus}" />
 				<Label Content="{Binding ServerRunning}" Width="80" />
 			</StackPanel>
-			<StackPanel DockPanel.Dock="Right" 
+			<StackPanel DockPanel.Dock="Right"
 			            Orientation="Horizontal"
-			            HorizontalAlignment="Right" >
-				<Label Content="{x:Static p:Resources.LabelClients}" /> 
-				<Label x:Name="ClientsCount" Content="0"/>
-				<Label Content="{x:Static p:Resources.LabelPort}" />
+			            HorizontalAlignment="Right">
+				<Label Content="{x:Static p:Resources.LabelClients}" />
+				<Label x:Name="ClientsCount" Content="0" />
+				<Label Content="{x:Static p:Resources.PresenterLabelPort}" />
 				<Label x:Name="LabelPort" Content="{Binding ServerSettings.ServerPort, Mode=OneWay}" />
 			</StackPanel>
 		</DockPanel>
-		
+
 		<Grid RowDefinitions="Auto,*">
-			<Button Grid.Row="0" 
+			<Button Grid.Row="0"
 			        x:Name="ServerStartStop"
 			        HorizontalAlignment="Stretch"
 			        Width="200"
 			        Content="To Bind"
-			        Command="{Binding StartStopCommand }"/>
+			        Command="{Binding StartStopServerCommand }" />
 			<TabControl Grid.Row="1">
-				<TabItem Header="Settings">
-					<ScrollViewer VerticalScrollBarVisibility="Visible" Margin="-10,0,-10,0" >
+				<TabItem Header="{x:Static p:Resources.LabelTabHeaderSettings}">
+					<ScrollViewer VerticalScrollBarVisibility="Visible" Margin="-10,0,-10,0">
 						<StackPanel Margin="5,0,5,0">
 							<StackPanel.Resources>
 								<ControlTheme x:Key="SettingsStackPanel" TargetType="StackPanel">
@@ -58,282 +58,302 @@
 									<Setter Property="HorizontalAlignment" Value="Left" />
 								</ControlTheme>
 							</StackPanel.Resources>
-				
-							<HeaderedContentControl Header="{x:Static p:Resources.SectionLabelRadioSimulation}">
+
+							<HeaderedContentControl Header="{x:Static p:Resources.SectionLabelProgram}">
 								<StackPanel>
-									<TextBlock Margin="5"
-									           Text="{x:Static p:Resources.SectionDescriptionRadioSimulation}" />
-						
-									<HeaderedContentControl Header="{x:Static p:Resources.SubSectionLabelRadioBehavior}">
-										<StackPanel>
-											<TextBlock Margin="5"
-											           Text="{x:Static p:Resources.SubSectionDescriptionRadioBehavior}" />
-											<StackPanel Theme="{StaticResource SettingsStackPanel}" >
-												
-												<StackPanel Orientation="Horizontal"
-												            ToolTip.Tip="{x:Static p:Resources.ToolTipLOS}">
-													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsLineOfSightEnabled}"/>
-													<Label Content="{x:Static p:Resources.LabelLOS}"/>
-												</StackPanel>
-												
-												<StackPanel Orientation="Horizontal"
-												            ToolTip.Tip="{x:Static p:Resources.ToolTipDistanceLimit}" >
-													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsDistanceLimitEnabled}"/>
-													<Label Content="{x:Static p:Resources.LabelDistanceLimit}"/>
-												</StackPanel>
-												
-												<StackPanel Orientation="Horizontal"
-												            ToolTip.Tip="{x:Static p:Resources.ToolTipRealTx}" >
-													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsIRLRadioTXEffectsEnabled}"/>
-													<Label Content="{x:Static p:Resources.LabelRealTx}"/>
-												</StackPanel>
-												
-												<StackPanel Orientation="Horizontal"
-												            ToolTip.Tip="{x:Static p:Resources.ToolTipRealRx}" >
-													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsIRLRadioRXEffectsEnabled}"/>
-													<Label Content="{x:Static p:Resources.LabelRealRx}"/>
-												</StackPanel>
-												
-												<StackPanel Orientation="Horizontal"
-												            ToolTip.Tip="{x:Static p:Resources.ToolTipRadioExpansion}" >
-													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsRadioExpansionAllowed}"/>
-													<Label Content="{x:Static p:Resources.LabelRadioExpansion}"/>
-												</StackPanel>
-												
-												<StackPanel Orientation="Horizontal"
-												            ToolTip.Tip="{x:Static p:Resources.ToolTipStrictEncryption}" >
-													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsRadioExpansionAllowed}"/>
-													<Label Content="{x:Static p:Resources.LabelStrictEncryption}"/>
-												</StackPanel>
-												
-												<StackPanel Orientation="Horizontal"
-												            ToolTip.Tip="{x:Static p:Resources.ToolTipOverrideEffectsOnGlobal}" >
-													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsRadioEffectOverrideOnGlobalEnabled}"/>
-													<Label Content="{x:Static p:Resources.LabelOverrideEffectsOnGlobal}"/>
-												</StackPanel>
-												
-												<StackPanel Orientation="Horizontal"
-												            ToolTip.Tip="{x:Static p:Resources.ToolTipRetransmitNodeLimit}" >
-													<NumericUpDown Minimum="0" Maximum="7" Value="{CompiledBinding ServerSettings.RetransmissionNodeLimit, UpdateSourceTrigger=LostFocus}" />
-													<Label Content="{x:Static p:Resources.LabelRetransmitNodeLimit}"/>
-												</StackPanel>
-												
-											</StackPanel>
-										</StackPanel>
-									</HeaderedContentControl>
-						
-									<HeaderedContentControl Header="{x:Static p:Resources.SubSectionLabelRadioSecurity}">
-										<StackPanel>
-											<TextBlock Margin="5"
-											           Text="{x:Static p:Resources.SubSectionDescriptionRadioSecurity}" />
-											<StackPanel Theme="{StaticResource SettingsStackPanel}" >
-												
-												<StackPanel Orientation="Horizontal"
-												            ToolTip.Tip="{x:Static p:Resources.ToolTipCoalitionSecurity}" >
-													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsCoalitionAudioSecurityEnabled}" />
-													<Label Content="{x:Static p:Resources.LabelSecurity}"/>
-												</StackPanel>
-												
-												<StackPanel Orientation="Horizontal"
-												            ToolTip.Tip="{x:Static p:Resources.ToolTipSpectatorAudio}" >
-													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsSpectatorAudioDisabled}"/>
-													<Label Content="{x:Static p:Resources.LabelSpectator}"/>
-												</StackPanel>
-												
-												<StackPanel Orientation="Horizontal"
-												            ToolTip.Tip="{x:Static p:Resources.ToolTipTestFreq}" >
-													<StackPanel Width="100" Margin="5" >
-														<ListBox ItemsSource="{Binding ServerSettings.TestFrequencies}">
-															<ListBox.ItemTemplate>
-																<DataTemplate>
-																	<StackPanel Orientation="Horizontal">
-																		<Button Width="25" Content="X" 
-																		        Tag="{ Binding}"
-																		        Click="TestFrequenciesRemoveButton_OnClick" />
-																		<Label Content="{Binding}"/>
-																	</StackPanel>
-																</DataTemplate>
-															</ListBox.ItemTemplate>
-														</ListBox>
-														<StackPanel Orientation="Horizontal">
-															<TextBox Width="75" Margin="0" x:Name="TestFrequencyTextBox"/>
-															<Button Width="25" Click="TestFrequenciesAddButton_OnClick" Content="+"/>
-														</StackPanel>
-													</StackPanel>
-													<Label VerticalAlignment="Top"
-													       Content="{x:Static p:Resources.LabelTestFreq}"/>
-												</StackPanel>
-												
-												<StackPanel Orientation="Horizontal">
-													<ToggleSwitch IsChecked="{Binding ServerSettings.IsRadioExpansionAllowed}" />
-													<Label Content="{x:Static p:Resources.LabelRadioExpansion}"/>
-												</StackPanel>
-												
-												<StackPanel Orientation="Horizontal">
-													<ToggleSwitch IsChecked="{Binding ServerSettings.IsShowTransmitterNameEnabled}" />
-													<Label Content="{x:Static p:Resources.LabelShowTransmitterName}"/>
-												</StackPanel>
-												
-												<StackPanel Orientation="Horizontal">
-													<ToggleSwitch IsChecked="{Binding ServerSettings.IsShowTunedCountEnabled}" />
-													<Label Content="{x:Static p:Resources.LabelTunedCount}"/>
-												</StackPanel>
-												
-												<StackPanel Orientation="Horizontal">
-													<StackPanel Width="100" Margin="5" >
-														<ListBox ItemsSource="{Binding ServerSettings.GlobalLobbyFrequencies}">
-															<ListBox.ItemTemplate>
-																<DataTemplate>
-																	<StackPanel Orientation="Horizontal">
-																		<Button Width="25" Content="X" 
-																		        Tag="{ Binding}"
-																		        Click="GlobalFrequenciesRemoveButton_OnClick" />
-																		<Label Content="{Binding}"/>
-																	</StackPanel>
-																</DataTemplate>
-															</ListBox.ItemTemplate>
-														</ListBox>
-														<StackPanel Orientation="Horizontal">
-															<TextBox Width="75" Margin="0" x:Name="GlobalFrequencyTextBox"/>
-															<Button Width="25" Click="GlobalFrequenciesAddButton_OnClick" Content="+"/>
-														</StackPanel>
-													</StackPanel>
-													<Label Content="{x:Static p:Resources.LabelGlobalLobbyFreq}"/>
-												</StackPanel>
-												
-											</StackPanel>
-										</StackPanel>
-									</HeaderedContentControl>
-						
-									<HeaderedContentControl Header="{x:Static p:Resources.LabelExternalAWACS}">
+									<TextBlock DockPanel.Dock="Top"
+									           Margin="20,5,5,5"
+									           Text="{x:Static p:Resources.SubSectionDescriptionProgram}" />
+
+									<HeaderedContentControl Header="{x:Static p:Resources.SubSectionLabelGeneral}">
 										<DockPanel>
-											<StackPanel Theme="{StaticResource SettingsStackPanel}" >
-												<StackPanel Orientation="Horizontal">
-													<ToggleSwitch  IsChecked="{Binding ServerSettings.IsExternalModeEnabled}" />
-													<Label Content="Enable"/>
+											<StackPanel Theme="{StaticResource SettingsStackPanel}">
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipCheckForBetaUpdates}">
+													<ToggleSwitch IsChecked="{Binding ServerSettings.IsCheckForBetaUpdatesEnabled}" />
+													<Label Content="{x:Static p:Resources.LabelCheckBetaUpdates}" />
+												</StackPanel>
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipTransmissionLog}">
+													<ToggleSwitch IsChecked="{Binding ServerSettings.IsTransmissionLogEnabled}" />
+													<Label Content="{x:Static p:Resources.LabelTransmissionLog}" />
+												</StackPanel>
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipServerPresetsEnabled}">
+													<ToggleSwitch IsChecked="{Binding ServerSettings.IsServerPresetsEnabled}" />
+													<Label Content="{x:Static p:Resources.LabelServerPresetsEnabled}" />
 												</StackPanel>
 												<StackPanel Orientation="Horizontal">
-													<TextBox  Text="{Binding ServerSettings.ExternalModePassBlue}" />
-													<Label Content="{x:Static p:Resources.LabelExternalAWACSBluePass}"/>
+													<Button Content="{x:Static p:Resources.LabelFilePath}"
+													        x:Name="ServerPresetsPathButton"
+													        Click="ServerPresetsPathButton_OnClick"
+													        ToolTip.Tip="{Binding ServerSettings.ServerPresetsPath}" />
+													<Label Content="{x:Static p:Resources.LabelServerPresetsPath}"
+													       ToolTip.Tip="{x:Static p:Resources.ToolTipServerPresetsPath}" />
+												</StackPanel>
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipArchiveTime}">
+													<NumericUpDown Minimum="0" Maximum="7" Value="2" />
+													<Label Content="{x:Static p:Resources.LabelArchiveTime}" />
+												</StackPanel>
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipExportList}">
+													<ToggleSwitch />
+													<Label Content="{x:Static p:Resources.LabelExportList}" />
 												</StackPanel>
 												<StackPanel Orientation="Horizontal">
-													<TextBox Text="{Binding ServerSettings.ExternalModePassRed}" />
-													<Label Content="{x:Static p:Resources.LabelExternalAWACSRedPass}"/>
+													<Button Content="{x:Static p:Resources.LabelFilePath}"
+													        x:Name="ClientPathButton"
+													        Click="ClientExportPathButton_OnClick"
+													        ToolTip.Tip="{Binding ServerSettings.ClientExportFilePath}" />
+													<Label Content="{x:Static p:Resources.LabelClientExportFilePath}"
+													       ToolTip.Tip="{x:Static p:Resources.ToolTipClientExportFilePath}" />
 												</StackPanel>
 											</StackPanel>
-											<TextBlock DockPanel.Dock="Right" 
+											<TextBlock DockPanel.Dock="Right"
 											           Margin="20,5,5,5"
-											           TextWrapping="Wrap"
-											           Text="External Awacs Mode allows for users not inside of the DCS Game Server to connect and use radios like those in-game." />
+											           Text="{x:Static p:Resources.SubSectionDescriptionGeneral}" />
+										</DockPanel>
+									</HeaderedContentControl>
+
+									<HeaderedContentControl Header="{x:Static p:Resources.SubSectionLabelNetwork}">
+										<DockPanel>
+											<StackPanel Theme="{StaticResource SettingsStackPanel}">
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipServerPort}">
+													<TextBox Text="{Binding ServerSettings.ServerPort}" />
+													<Label Content="{x:Static p:Resources.LabelServerPort}" />
+												</StackPanel>
+
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipServerUPNP}">
+													<ToggleSwitch />
+													<Label Content="{x:Static p:Resources.LabelServerUPNP}" />
+												</StackPanel>
+
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipServerIP}">
+													<TextBox />
+													<Label Content="{x:Static p:Resources.LabelServerIP}" />
+												</StackPanel>
+
+											</StackPanel>
+											<TextBlock DockPanel.Dock="Right"
+											           Margin="20,5,5,5"
+											           Text="{x:Static p:Resources.SubSectionDescriptionNetwork}" />
+										</DockPanel>
+									</HeaderedContentControl>
+
+									<HeaderedContentControl Header="{x:Static p:Resources.SubSectionLabelExternalProgramIntegrations}">
+										<DockPanel>
+											<StackPanel Theme="{StaticResource SettingsStackPanel}">
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipLotATCTransponder}">
+													<ToggleSwitch />
+													<Label Content="{x:Static p:Resources.LabelLotATCTransponder}" />
+												</StackPanel>
+											</StackPanel>
+											<TextBlock DockPanel.Dock="Right"
+											           Margin="20,5,5,5"
+											           Text="{x:Static p:Resources.SubSectionDescriptionExternalProgramIntegrations}" />
+										</DockPanel>
+									</HeaderedContentControl>
+
+									<HeaderedContentControl Header="{x:Static p:Resources.SubSectionLabelHttpApi}">
+										<DockPanel>
+											<StackPanel Theme="{StaticResource SettingsStackPanel}">
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipHttpApiEnable}">
+													<ToggleSwitch />
+													<Label Content="{x:Static p:Resources.LabelHttpApiEnable}" />
+												</StackPanel>
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipHttpApiPort}">
+													<TextBox />
+													<Label Content="{x:Static p:Resources.LabelHttpApiPort}" />
+												</StackPanel>
+											</StackPanel>
+											<TextBlock DockPanel.Dock="Right"
+											           Margin="20,5,5,5"
+											           Text="{x:Static p:Resources.SubSectionDescriptionHttpApi}" />
 										</DockPanel>
 									</HeaderedContentControl>
 								</StackPanel>
 							</HeaderedContentControl>
-				
-							<HeaderedContentControl Header="Program Settings">
+
+							<HeaderedContentControl Header="{x:Static p:Resources.SectionLabelRadioSimulation}">
 								<StackPanel>
-									<TextBlock DockPanel.Dock="Top" 
-									           Margin="20,5,5,5"
-									           Text="Description Text. Lorum Ipsum" />
-						
-									<HeaderedContentControl Header="General Settings">
-										<DockPanel>
-											<StackPanel Theme="{StaticResource SettingsStackPanel}" >
-												<StackPanel Orientation="Horizontal">
-													<ToggleSwitch IsChecked="{Binding ServerSettings.IsCheckForBetaUpdatesEnabled}" />
-													<Label Content="{x:Static p:Resources.LabelCheckBetaUpdates}"/>
+									<TextBlock Margin="5"
+									           Text="{x:Static p:Resources.SectionDescriptionRadioSimulation}" />
+
+									<HeaderedContentControl Header="{x:Static p:Resources.SubSectionLabelRadioBehavior}">
+										<StackPanel>
+											<TextBlock Margin="5"
+											           Text="{x:Static p:Resources.SubSectionDescriptionRadioBehavior}" />
+											<StackPanel Theme="{StaticResource SettingsStackPanel}">
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipLOS}">
+													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsLineOfSightEnabled}" />
+													<Label Content="{x:Static p:Resources.LabelLOS}" />
 												</StackPanel>
-												<StackPanel Orientation="Horizontal">
-													<ToggleSwitch IsChecked="{Binding ServerSettings.IsTransmissionLogEnabled}" />
-													<Label Content="{x:Static p:Resources.LabelTransmissionLog}"/>
+
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipDistanceLimit}">
+													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsDistanceLimitEnabled}" />
+													<Label Content="{x:Static p:Resources.LabelDistanceLimit}" />
 												</StackPanel>
-												<StackPanel Orientation="Horizontal">
-													<ToggleSwitch IsChecked="{Binding ServerSettings.IsServerPresetsEnabled}" />
-													<Label Content="{x:Static p:Resources.ServerPresetsEnabled}"/>
+
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipRealTx}">
+													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsIRLRadioTXEffectsEnabled}" />
+													<Label Content="{x:Static p:Resources.LabelRealTx}" />
 												</StackPanel>
-												<StackPanel Orientation="Horizontal">
-													<Button Content="PATH" 
-													        x:Name="ServerPresetsPathButton" 
-													        Click="ServerPresetsPathButton_OnClick" 
-													        ToolTip.Tip="{Binding ServerSettings.ServerPresetsPath}" />
-													<Label Content="Server Presets Filepath"/>
+
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipRealRx}">
+													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsIRLRadioRXEffectsEnabled}" />
+													<Label Content="{x:Static p:Resources.LabelRealRx}" />
 												</StackPanel>
-												<StackPanel Orientation="Horizontal">
-													<NumericUpDown Minimum="0" Maximum="7" Value="2" />
-													<Label Content="{x:Static p:Resources.LabelArchiveTime}"/>
+
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipRadioExpansion}">
+													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsRadioExpansionAllowed}" />
+													<Label Content="{x:Static p:Resources.LabelRadioExpansion}" />
 												</StackPanel>
-												<StackPanel Orientation="Horizontal">
-													<ToggleSwitch/>
-													<Label Content="{x:Static p:Resources.LabelExportList}"/>
+
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipStrictEncryption}">
+													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsRadioExpansionAllowed}" />
+													<Label Content="{x:Static p:Resources.LabelStrictEncryption}" />
 												</StackPanel>
-												<StackPanel Orientation="Horizontal">
-													<Button Content="PATH" 
-													        x:Name="ClientPathButton" 
-													        Click="ClientExportPathButton_OnClick" 
-													        ToolTip.Tip="{Binding ServerSettings.ClientExportFilePath}" />
-													<Label Content="Client Export Filepath"/>
+
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipOverrideEffectsOnGlobal}">
+													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsRadioEffectOverrideOnGlobalEnabled}" />
+													<Label Content="{x:Static p:Resources.LabelOverrideEffectsOnGlobal}" />
 												</StackPanel>
+
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipRetransmitNodeLimit}">
+													<NumericUpDown Minimum="0" Maximum="7"
+													               Value="{CompiledBinding ServerSettings.RetransmissionNodeLimit, UpdateSourceTrigger=LostFocus}" />
+													<Label Content="{x:Static p:Resources.LabelRetransmitNodeLimit}" />
+												</StackPanel>
+
 											</StackPanel>
-											<TextBlock DockPanel.Dock="Right" 
-											           Margin="20,5,5,5"
-											           Text="Description Text. Lorum Ipsum" />
-										</DockPanel>
+										</StackPanel>
 									</HeaderedContentControl>
-						
-									<HeaderedContentControl Header="Network Settings">
-										<DockPanel>
-											<StackPanel Theme="{StaticResource SettingsStackPanel}" >
-												<StackPanel Orientation="Horizontal">
-													<TextBox Text="{Binding ServerSettings.ServerPort}" />
-													<Label Content="Port"/>
+
+									<HeaderedContentControl Header="{x:Static p:Resources.SubSectionLabelRadioSecurity}">
+										<StackPanel>
+											<TextBlock Margin="5"
+											           Text="{x:Static p:Resources.SubSectionDescriptionRadioSecurity}" />
+											<StackPanel Theme="{StaticResource SettingsStackPanel}">
+
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipCoalitionSecurity}">
+													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsCoalitionAudioSecurityEnabled}" />
+													<Label Content="{x:Static p:Resources.LabelSecurity}" />
 												</StackPanel>
-									
-												<StackPanel Orientation="Horizontal">
-													<ToggleSwitch/>
-													<Label Content="UPNP"/>
+
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipSpectatorAudio}">
+													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsSpectatorAudioDisabled}" />
+													<Label Content="{x:Static p:Resources.LabelSpectator}" />
 												</StackPanel>
-									
-												<StackPanel Orientation="Horizontal">
-													<TextBox />
-													<Label Content="Server IP"/>
+
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipTestFreq}">
+													<StackPanel Width="100" Margin="5">
+														<ListBox ItemsSource="{Binding ServerSettings.TestFrequencies}">
+															<ListBox.ItemTemplate>
+																<DataTemplate>
+																	<StackPanel Orientation="Horizontal">
+																		<Button Width="25" Content="X"
+																		        Tag="{ Binding}"
+																		        Click="TestFrequenciesRemoveButton_OnClick" />
+																		<Label Content="{Binding}" />
+																	</StackPanel>
+																</DataTemplate>
+															</ListBox.ItemTemplate>
+														</ListBox>
+														<StackPanel Orientation="Horizontal">
+															<TextBox Width="75" Margin="0" x:Name="TestFrequencyTextBox" />
+															<Button Width="25" Click="TestFrequenciesAddButton_OnClick" Content="+" />
+														</StackPanel>
+													</StackPanel>
+													<Label VerticalAlignment="Top"
+													       Content="{x:Static p:Resources.LabelTestFreq}" />
 												</StackPanel>
-									
+
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipRadioExpansion}">
+													<ToggleSwitch IsChecked="{Binding ServerSettings.IsRadioExpansionAllowed}" />
+													<Label Content="{x:Static p:Resources.LabelRadioExpansion}" />
+												</StackPanel>
+
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipShowTransmitterName}">
+													<ToggleSwitch IsChecked="{Binding ServerSettings.IsShowTransmitterNameEnabled}" />
+													<Label Content="{x:Static p:Resources.LabelShowTransmitterName}" />
+												</StackPanel>
+
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipShowTunedCount}">
+													<ToggleSwitch IsChecked="{Binding ServerSettings.IsShowTunedCountEnabled}" />
+													<Label Content="{x:Static p:Resources.LabelTunedCount}" />
+												</StackPanel>
+
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipGlobalLobbyFrequencies}">
+													<StackPanel Width="100" Margin="5">
+														<ListBox ItemsSource="{Binding ServerSettings.GlobalLobbyFrequencies}">
+															<ListBox.ItemTemplate>
+																<DataTemplate>
+																	<StackPanel Orientation="Horizontal">
+																		<Button Width="25" Content="X"
+																		        Tag="{ Binding}"
+																		        Click="GlobalFrequenciesRemoveButton_OnClick" />
+																		<Label Content="{Binding}" />
+																	</StackPanel>
+																</DataTemplate>
+															</ListBox.ItemTemplate>
+														</ListBox>
+														<StackPanel Orientation="Horizontal">
+															<TextBox Width="75" Margin="0" x:Name="GlobalFrequencyTextBox" />
+															<Button Width="25" Click="GlobalFrequenciesAddButton_OnClick" Content="+" />
+														</StackPanel>
+													</StackPanel>
+													<Label Content="{x:Static p:Resources.LabelGlobalLobbyFreq}" />
+												</StackPanel>
+
 											</StackPanel>
-											<TextBlock DockPanel.Dock="Right" 
-											           Margin="20,5,5,5"
-											           Text="Description Text. Lorum Ipsum" />
-										</DockPanel>
+										</StackPanel>
 									</HeaderedContentControl>
-						
-									<HeaderedContentControl Header="External Program Integrations">
+
+									<HeaderedContentControl Header="{x:Static p:Resources.SubSectionLabelExternalAWACS}">
 										<DockPanel>
-											<StackPanel Theme="{StaticResource SettingsStackPanel}" >
-												<StackPanel Orientation="Horizontal">
-													<ToggleSwitch/>
-													<Label Content="LotATC Transponder"/>
+											<StackPanel Theme="{StaticResource SettingsStackPanel}">
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipExternalModeEnabled}">
+													<ToggleSwitch IsChecked="{Binding ServerSettings.IsExternalModeEnabled}" />
+													<Label Content="Enable" />
+												</StackPanel>
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipExternalModePassBlue}">
+													<TextBox Text="{Binding ServerSettings.ExternalModePassBlue}" />
+													<Label Content="{x:Static p:Resources.LabelExternalAWACSBluePass}" />
+												</StackPanel>
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipExternalModePassRed}">
+													<TextBox Text="{Binding ServerSettings.ExternalModePassRed}" />
+													<Label Content="{x:Static p:Resources.LabelExternalAWACSRedPass}" />
 												</StackPanel>
 											</StackPanel>
-											<TextBlock DockPanel.Dock="Right" 
+											<TextBlock DockPanel.Dock="Right"
 											           Margin="20,5,5,5"
-											           Text="Description Text. Lorum Ipsum" />
-										</DockPanel>
-									</HeaderedContentControl>
-						
-									<HeaderedContentControl Header="HTTP API Settings">
-										<DockPanel>
-											<StackPanel Theme="{StaticResource SettingsStackPanel}" >
-												<StackPanel Orientation="Horizontal">
-													<ToggleSwitch/>
-													<Label Content="Enable"/>
-												</StackPanel>
-												<StackPanel Orientation="Horizontal">
-													<TextBox />
-													<Label Content="Port"/>
-												</StackPanel>
-											</StackPanel>
-											<TextBlock DockPanel.Dock="Right" 
-											           Margin="20,5,5,5"
-											           Text="Description Text. Lorum Ipsum" />
+											           TextWrapping="Wrap"
+											           Text="{x:Static p:Resources.SubSectionDescriptionExternalAWACS}" />
 										</DockPanel>
 									</HeaderedContentControl>
 								</StackPanel>
@@ -342,9 +362,9 @@
 						</StackPanel>
 					</ScrollViewer>
 				</TabItem>
-				
-				<TabItem Header="{x:Static p:Resources.BtnClientAdmin}">
-				
+
+				<TabItem Header="{x:Static p:Resources.LabelTabHeaderClientAdmin}">
+					<ui:ClientPanel />
 				</TabItem>
 			</TabControl>
 

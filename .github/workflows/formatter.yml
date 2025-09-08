@@ -1,13 +1,10 @@
 ﻿name: Formatter
 
-on:
-  pull_request:
-  push:
-    branches:
-      - master
+on: [ push ]
 
 jobs:
   format-code:
+    name: Formatter
     runs-on: ubuntu-latest
     
     permissions:
@@ -20,6 +17,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           ref: ${{ github.head_ref }}
+          fetch-depth: 0
           sparse-checkout: Scripts
       
       - name: Lua Formatter

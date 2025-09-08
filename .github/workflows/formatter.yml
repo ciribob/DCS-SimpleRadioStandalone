@@ -24,3 +24,10 @@ jobs:
           args: .
           
       # todo: add C# & XAML formatter
+      
+      - name: Commit Changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_author: '${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>'
+          commit_message: 'Apply automatic formatting changes'
+          branch: '${{ github.head_ref }}'

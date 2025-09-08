@@ -1,4 +1,4 @@
-﻿Name: "StyLua"
+﻿name: "StyLua"
 
 on:
   pull_request: 

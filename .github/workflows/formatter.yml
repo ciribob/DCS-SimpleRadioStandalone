@@ -13,6 +13,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with: 
+          ref: ${{ github.head_ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Lua Formatter
@@ -22,7 +23,7 @@ jobs:
           version: 2.1.0 # NOTE: we recommend pinning to a specific version in case of formatting changes
           # CLI arguments
           args: .
-          
+      
       # todo: add C# & XAML formatter
       
       - name: Commit Changes
@@ -30,4 +31,4 @@ jobs:
         with:
           commit_author: '${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>'
           commit_message: 'Apply automatic formatting changes'
-          branch: '${{ github.head_ref }}'
+          branch: ${{ github.head_ref }}

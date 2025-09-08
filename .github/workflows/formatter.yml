@@ -1,16 +1,14 @@
 ﻿name: Formatter
 
-on: [ push ]
+on:
+  pull_request: 
+    types: [ closed ]
 
 jobs:
   format-code:
+    if: github.event.pull_request.merged == true
     name: Formatter
     runs-on: ubuntu-latest
-    
-    permissions:
-      # Give the default GITHUB_TOKEN write permission to commit and push the
-      # added or changed files to the repository.
-      contents: write
     
     steps:
       - name: Checkout Repository

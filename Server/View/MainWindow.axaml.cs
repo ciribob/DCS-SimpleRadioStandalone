@@ -27,7 +27,7 @@ public partial class MainWindow : Window
 
 	public MainWindow()
 	{
-		Title = string.Concat("SRS Server - ", Assembly.GetExecutingAssembly().GetName().Version.ToString() );
+		Title = string.Concat("SRS Server - ", Assembly.GetExecutingAssembly().GetName().Version!.ToString() );
 		
 		// Set Start stop button to: {Properties.Resources.BtnStopServer}" : $"{Properties.Resources.BtnStartServer}
 		

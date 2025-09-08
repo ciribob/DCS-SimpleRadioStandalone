@@ -12,8 +12,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with: 
-          ref: ${{ github.head_ref }}
       
       - name: Lua Formatter
         uses: JohnnyMorganz/stylua-action@v4

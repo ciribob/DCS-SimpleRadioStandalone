@@ -11,6 +11,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server;
 
 public partial class App : Application
 {
+
+
+
 	public override void Initialize()
 	{
 		AvaloniaXamlLoader.Load(this);
@@ -21,11 +24,11 @@ public partial class App : Application
 		// If you use CommunityToolkit, line below is needed to remove Avalonia data validation.
 		// Without this line you will get duplicate validations from both Avalonia and CT
 		BindingPlugins.DataValidators.RemoveAt(0);
-		IServiceProvider services = ConfigureServices();
+		Services = ConfigureServices();
 		
 		Properties.Resources.Culture = CultureInfo.CurrentUICulture;
 		
-		var vm = services.GetRequiredService<MainViewModel>();
+		var vm = Services.GetRequiredService<MainViewModel>();
 		if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
 		{
 			//var args = desktop.Args;
@@ -39,10 +42,17 @@ public partial class App : Application
 		base.OnFrameworkInitializationCompleted();
 	}
 
-	private static IServiceProvider ConfigureServices()
+
+	public IServiceProvider Services { get; }
+	private static ServiceProvider ConfigureServices()
 	{
 		var services = new ServiceCollection();
 		
+		services.AddSingleton<IEventAggregator, EventAggregator>();
+		services.AddSingleton<ServerState>();
+		services.AddSingleton<ServerSettingsStore>();
+		
+
 		// View Models
 		services.AddTransient<MainViewModel>();
 		

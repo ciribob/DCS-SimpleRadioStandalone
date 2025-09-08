@@ -24,9 +24,7 @@ public partial class MainViewModel : ObservableObject
 	}
 
 	public MainViewModel()
-	{
-		_serverSettings = new ServerSettingsModel();
-	}
+	{ }
 	
 	[RelayCommand]
 	public void StartStopServer()

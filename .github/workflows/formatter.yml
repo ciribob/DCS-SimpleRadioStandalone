@@ -9,9 +9,18 @@ on:
 jobs:
   format-code:
     runs-on: ubuntu-latest
+    
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+    
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.head_ref }}
+          sparse-checkout: Scripts
       
       - name: Lua Formatter
         uses: JohnnyMorganz/stylua-action@v4
@@ -24,8 +33,16 @@ jobs:
       # todo: add C# & XAML formatter
       
       - name: Commit Changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v6
+        id: auto-commit-action
         with:
           commit_author: '${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>'
           commit_message: 'Apply automatic formatting changes'
-          branch: ${{ github.head_ref }}
+
+      - name: "Run if changes have been detected"
+        if: steps.auto-commit-action.outputs.changes_detected == 'true'
+        run: echo "Changes!"
+
+      - name: "Run if no changes have been detected"
+        if: steps.auto-commit-action.outputs.changes_detected == 'false'
+        run: echo "No Changes!"

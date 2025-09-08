@@ -7,10 +7,11 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Server.viewmodel;
 
-public partial class MainViewModel(IEventAggregator  eventAggregator) : ObservableObject
+public partial class MainViewModel(IEventAggregator eventAggregator, ServerSettingsModel serverSettingsModel) : ObservableObject
 {
 	private IEventAggregator EventAggregator { get; } = eventAggregator;
-
+	public ServerSettingsModel ServerSettings { get; } = serverSettingsModel;
+	
 	public enum RunningState
 	{
 		Stopped,
@@ -21,8 +22,7 @@ public partial class MainViewModel(IEventAggregator  eventAggregator) : Observab
 	
 	[ObservableProperty] private RunningState _serverRunning = RunningState.Stopped;
 	
-	[ObservableProperty] private ServerSettingsModel _serverSettings;
-	
+
 	[RelayCommand]
 	public void StartStopServer()
 	{

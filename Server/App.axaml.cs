@@ -1,4 +1,3 @@
-using System;
 using System.Globalization;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
@@ -6,6 +5,7 @@ using Avalonia.Markup.Xaml;
 using Caliburn.Micro;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Server;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
+using Ciribob.DCS.SimpleRadio.Standalone.Server.Model;
 using Ciribob.DCS.SimpleRadio.Standalone.Server.viewmodel;
 using Microsoft.Extensions.DependencyInjection;
 using Application = Avalonia.Application;
@@ -57,6 +57,7 @@ public static class ServiceCollectionExtensions
 		
 		// View Models
 		collection.AddTransient<MainViewModel>();
-		
+
+		collection.AddTransient<ServerSettingsModel>();
 	}
 }

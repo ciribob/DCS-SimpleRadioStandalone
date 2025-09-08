@@ -93,12 +93,12 @@
 												</StackPanel>
 												<StackPanel Orientation="Horizontal"
 												            ToolTip.Tip="{x:Static p:Resources.ToolTipArchiveTime}">
-													<NumericUpDown Minimum="0" Maximum="7" Value="2" />
+													<NumericUpDown Minimum="0" Maximum="7" Value="{Binding ServerSettings.TransmissionLogRetentionLimit}" />
 													<Label Content="{x:Static p:Resources.LabelArchiveTime}" />
 												</StackPanel>
 												<StackPanel Orientation="Horizontal"
 												            ToolTip.Tip="{x:Static p:Resources.ToolTipExportList}">
-													<ToggleSwitch />
+													<ToggleSwitch IsChecked="{Binding ServerSettings.IsClientExportEnabled}" />
 													<Label Content="{x:Static p:Resources.LabelExportList}" />
 												</StackPanel>
 												<StackPanel Orientation="Horizontal">
@@ -121,19 +121,19 @@
 											<StackPanel Theme="{StaticResource SettingsStackPanel}">
 												<StackPanel Orientation="Horizontal"
 												            ToolTip.Tip="{x:Static p:Resources.ToolTipServerPort}">
-													<TextBox Text="{Binding ServerSettings.ServerPort}" />
+													<TextBox Text="{Binding ServerSettings.ServerPort, UpdateSourceTrigger=LostFocus}" />
 													<Label Content="{x:Static p:Resources.LabelServerPort}" />
 												</StackPanel>
 
 												<StackPanel Orientation="Horizontal"
 												            ToolTip.Tip="{x:Static p:Resources.ToolTipServerUPNP}">
-													<ToggleSwitch />
+													<ToggleSwitch IsChecked="{Binding ServerSettings.IsUPNPEnabled}" />
 													<Label Content="{x:Static p:Resources.LabelServerUPNP}" />
 												</StackPanel>
 
 												<StackPanel Orientation="Horizontal"
 												            ToolTip.Tip="{x:Static p:Resources.ToolTipServerIP}">
-													<TextBox />
+													<TextBox Text="{Binding ServerSettings.ServerIP, UpdateSourceTrigger=LostFocus}" />
 													<Label Content="{x:Static p:Resources.LabelServerIP}" />
 												</StackPanel>
 
@@ -149,7 +149,7 @@
 											<StackPanel Theme="{StaticResource SettingsStackPanel}">
 												<StackPanel Orientation="Horizontal"
 												            ToolTip.Tip="{x:Static p:Resources.ToolTipLotATCTransponder}">
-													<ToggleSwitch />
+													<ToggleSwitch IsChecked="{Binding ServerSettings.IsLotAtcExportEnabled}" />
 													<Label Content="{x:Static p:Resources.LabelLotATCTransponder}" />
 												</StackPanel>
 											</StackPanel>
@@ -164,12 +164,12 @@
 											<StackPanel Theme="{StaticResource SettingsStackPanel}">
 												<StackPanel Orientation="Horizontal"
 												            ToolTip.Tip="{x:Static p:Resources.ToolTipHttpApiEnable}">
-													<ToggleSwitch />
+													<ToggleSwitch IsChecked="{Binding ServerSettings.IsHTTPServerEnabled}" />
 													<Label Content="{x:Static p:Resources.LabelHttpApiEnable}" />
 												</StackPanel>
 												<StackPanel Orientation="Horizontal"
 												            ToolTip.Tip="{x:Static p:Resources.ToolTipHttpApiPort}">
-													<TextBox />
+													<TextBox Text="{Binding ServerSettings.HttpServerPort, UpdateSourceTrigger=LostFocus}" />
 													<Label Content="{x:Static p:Resources.LabelHttpApiPort}" />
 												</StackPanel>
 											</StackPanel>

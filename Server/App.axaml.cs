@@ -37,7 +37,7 @@ public partial class App : Application
 		{
 			//var args = desktop.Args;
 			
-			desktop.MainWindow = new UI.MainWindow()
+			desktop.MainWindow = new View.MainWindow()
 			{
 				DataContext = vm
 			};

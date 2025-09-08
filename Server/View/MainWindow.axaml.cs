@@ -9,7 +9,7 @@ using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Ciribob.DCS.SimpleRadio.Standalone.Server.viewmodel;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Server.UI;
+namespace Ciribob.DCS.SimpleRadio.Standalone.Server.View;
 
 public partial class MainWindow : Window
 {

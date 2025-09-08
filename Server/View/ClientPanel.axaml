@@ -7,7 +7,7 @@
         MinHeight="250"
         Width="420" MinWidth="420"
         mc:Ignorable="d" d:DesignWidth="420" d:DesignHeight="600"
-        x:Class="Ciribob.DCS.SimpleRadio.Standalone.Server.UI.ClientPanel"
+        x:Class="Ciribob.DCS.SimpleRadio.Standalone.Server.View.ClientPanel"
         x:DataType="viewmodel:MainViewModel">
 	
 	<Design.DataContext>

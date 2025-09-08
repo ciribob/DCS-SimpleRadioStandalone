@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Models;
+namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Model;
 
 public partial class ServerSettingsModel : ObservableObject
 {

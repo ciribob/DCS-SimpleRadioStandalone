@@ -12,7 +12,7 @@
         x:DataType="viewmodel:MainViewModel" Focusable="True">
 
 	<Design.DataContext>
-		<viewmodel:MainViewModel />
+		<viewmodel:DesignMainViewModel />
 	</Design.DataContext>
 
 	<DockPanel>

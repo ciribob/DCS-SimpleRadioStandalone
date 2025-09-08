@@ -3,6 +3,9 @@ using System.Globalization;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Caliburn.Micro;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Server;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Server.viewmodel;
 using Microsoft.Extensions.DependencyInjection;
 using Application = Avalonia.Application;
@@ -11,9 +14,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server;
 
 public partial class App : Application
 {
-
-
-
 	public override void Initialize()
 	{
 		AvaloniaXamlLoader.Load(this);
@@ -24,11 +24,15 @@ public partial class App : Application
 		// If you use CommunityToolkit, line below is needed to remove Avalonia data validation.
 		// Without this line you will get duplicate validations from both Avalonia and CT
 		BindingPlugins.DataValidators.RemoveAt(0);
-		Services = ConfigureServices();
+		
+		var collection = new ServiceCollection();
+		collection.AddCommonServices();
+		
+		var services = collection.BuildServiceProvider();
 		
 		Properties.Resources.Culture = CultureInfo.CurrentUICulture;
 		
-		var vm = Services.GetRequiredService<MainViewModel>();
+		var vm = services.GetRequiredService<MainViewModel>();
 		if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
 		{
 			//var args = desktop.Args;
@@ -41,21 +45,18 @@ public partial class App : Application
 
 		base.OnFrameworkInitializationCompleted();
 	}
+}
 
-
-	public IServiceProvider Services { get; }
-	private static ServiceProvider ConfigureServices()
+public static class ServiceCollectionExtensions
+{
+	public static void AddCommonServices(this IServiceCollection collection)
 	{
-		var services = new ServiceCollection();
+		collection.AddSingleton<IEventAggregator, EventAggregator>();
+		collection.AddSingleton<ServerState>();
+		collection.AddSingleton<ServerSettingsStore>();
 		
-		services.AddSingleton<IEventAggregator, EventAggregator>();
-		services.AddSingleton<ServerState>();
-		services.AddSingleton<ServerSettingsStore>();
-		
-
 		// View Models
-		services.AddTransient<MainViewModel>();
+		collection.AddTransient<MainViewModel>();
 		
-		return services.BuildServiceProvider();
 	}
 }

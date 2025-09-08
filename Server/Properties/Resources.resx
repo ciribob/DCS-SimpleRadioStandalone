@@ -331,4 +331,10 @@ Cancel - Ignore</value>
     <data name="PresenterLabelStatus" xml:space="preserve">
         <value>Status:</value>
     </data>
+    <data name="ToolTipRadioEncryption" xml:space="preserve">
+        <value />
+    </data>
+    <data name="LabelShowRadioEncryption" xml:space="preserve">
+        <value>Radio Encryption</value>
+    </data>
 </root>

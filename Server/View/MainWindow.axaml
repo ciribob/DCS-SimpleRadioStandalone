@@ -9,7 +9,7 @@
         Width="420" MinWidth="420"
         mc:Ignorable="d" d:DesignWidth="420" d:DesignHeight="600"
         x:Class="Ciribob.DCS.SimpleRadio.Standalone.Server.View.MainWindow"
-        x:DataType="viewmodel:MainViewModel">
+        x:DataType="viewmodel:MainViewModel" Focusable="True">
 
 	<Design.DataContext>
 		<viewmodel:MainViewModel />
@@ -223,7 +223,7 @@
 
 												<StackPanel Orientation="Horizontal"
 												            ToolTip.Tip="{x:Static p:Resources.ToolTipStrictEncryption}">
-													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsRadioExpansionAllowed}" />
+													<ToggleSwitch IsChecked="{CompiledBinding ServerSettings.IsStrictRadioEncryptionEnabled}" />
 													<Label Content="{x:Static p:Resources.LabelStrictEncryption}" />
 												</StackPanel>
 
@@ -287,9 +287,9 @@
 												</StackPanel>
 
 												<StackPanel Orientation="Horizontal"
-												            ToolTip.Tip="{x:Static p:Resources.ToolTipRadioExpansion}">
-													<ToggleSwitch IsChecked="{Binding ServerSettings.IsRadioExpansionAllowed}" />
-													<Label Content="{x:Static p:Resources.LabelRadioExpansion}" />
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipRadioEncryption}">
+													<ToggleSwitch IsChecked="{Binding ServerSettings.IsRadioEncryptionAllowed}" />
+													<Label Content="{x:Static p:Resources.LabelShowRadioEncryption}" />
 												</StackPanel>
 
 												<StackPanel Orientation="Horizontal"
@@ -341,12 +341,12 @@
 												</StackPanel>
 												<StackPanel Orientation="Horizontal"
 												            ToolTip.Tip="{x:Static p:Resources.ToolTipExternalModePassBlue}">
-													<TextBox Text="{Binding ServerSettings.ExternalModePassBlue}" />
+													<TextBox Text="{Binding ServerSettings.ExternalModePassBlue, UpdateSourceTrigger=LostFocus}" />
 													<Label Content="{x:Static p:Resources.LabelExternalAWACSBluePass}" />
 												</StackPanel>
 												<StackPanel Orientation="Horizontal"
 												            ToolTip.Tip="{x:Static p:Resources.ToolTipExternalModePassRed}">
-													<TextBox Text="{Binding ServerSettings.ExternalModePassRed}" />
+													<TextBox Text="{Binding ServerSettings.ExternalModePassRed, UpdateSourceTrigger=LostFocus}" />
 													<Label Content="{x:Static p:Resources.LabelExternalAWACSRedPass}" />
 												</StackPanel>
 											</StackPanel>

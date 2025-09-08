@@ -384,6 +384,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Radio Encryption.
+        /// </summary>
+        public static string LabelShowRadioEncryption {
+            get {
+                return ResourceManager.GetString("LabelShowRadioEncryption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show Transmitter Name.
         /// </summary>
         public static string LabelShowTransmitterName {
@@ -846,6 +855,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         public static string ToolTipOverrideEffectsOnGlobal {
             get {
                 return ResourceManager.GetString("ToolTipOverrideEffectsOnGlobal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string ToolTipRadioEncryption {
+            get {
+                return ResourceManager.GetString("ToolTipRadioEncryption", resourceCulture);
             }
         }
         

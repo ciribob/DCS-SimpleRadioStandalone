@@ -1,16 +1,15 @@
 ﻿using System;
 using Avalonia;
 using Caliburn.Micro;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Models;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
+using Ciribob.DCS.SimpleRadio.Standalone.Server.Model;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Server.viewmodel;
 
-public partial class MainViewModel : ObservableObject
+public partial class MainViewModel(IEventAggregator  eventAggregator) : ObservableObject
 {
-	private IEventAggregator EventAggregator { get; }
+	private IEventAggregator EventAggregator { get; } = eventAggregator;
 
 	public enum RunningState
 	{
@@ -23,15 +22,6 @@ public partial class MainViewModel : ObservableObject
 	[ObservableProperty] private RunningState _serverRunning = RunningState.Stopped;
 	
 	[ObservableProperty] private ServerSettingsModel _serverSettings;
-	partial void OnServerSettingsChanged(ServerSettingsModel? oldValue, ServerSettingsModel newValue)
-	{
-		EventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
-	}
-
-	public MainViewModel(IEventAggregator  eventAggregator)
-	{
-		EventAggregator = eventAggregator;
-	}
 	
 	[RelayCommand]
 	public void StartStopServer()

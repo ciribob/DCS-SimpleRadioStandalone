@@ -18,7 +18,6 @@ public partial class ServerSettingsModel(IEventAggregator eventAggregator, Serve
 		
 		// Any time a property changes here, send this signal.
 		eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
-		Console.WriteLine("onPropertyChanged");
 	}
 	
 	[ObservableProperty] private bool _isCheckForBetaUpdatesEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).BoolValue;

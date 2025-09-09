@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Globalization;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 using Avalonia.Interactivity;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Server.viewmodel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -26,6 +28,36 @@ public partial class ClientPanel : Panel
 		if ((sender as Button)?.Tag is double toRemove)
 		{
 			ViewModel.ServerSettings.GlobalLobbyFrequencies.Remove(toRemove);
+		}
+	}
+
+	private void BanBtn_OnClick(object? sender, RoutedEventArgs e)
+	{
+		if ((sender as ToggleButton)?.IsChecked == true)
+		{
+			if ((sender as ToggleButton)?.Tag is SRClientBase targetClient)
+			{
+				ViewModel.Server.BanClientCommand.Execute(targetClient);
+			}
+		}
+	}
+
+	private void KickBtn_OnClick(object? sender, RoutedEventArgs e)
+	{
+		if ((sender as ToggleButton)?.IsChecked == true)
+		{
+			if ((sender as ToggleButton)?.Tag is SRClientBase targetClient)
+			{
+				ViewModel.Server.KickClientCommand.Execute(targetClient);
+			}
+		}
+	}
+
+	private void BanOrKickBtn_OnLostFocus(object? sender, RoutedEventArgs e)
+	{
+		if ((sender as ToggleButton)?.IsChecked == true)
+		{
+			((sender as ToggleButton)!).IsChecked = false;
 		}
 	}
 }

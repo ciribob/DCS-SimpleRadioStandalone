@@ -15,7 +15,7 @@
 		<viewmodel:DesignMainViewModel />
 	</Design.DataContext>
 
-	<ListBox x:Name="ListBoxTemp" ItemsSource="{Binding Server.ConnectedClients }">
+	<ListBox x:Name="ListBoxTemp" ItemsSource="{Binding Server.ConnectedClientsTemp }">
 		<ListBox.ItemTemplate>
 			<DataTemplate>
 				<Border 
@@ -26,40 +26,42 @@
 					<DockPanel>
 
 						<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-							<Button Name="Confirm" 
-								    Content="{x:Static p:Resources.BtnConfirm}" 
-								    Width="75" 
-								    Click="Confirm_OnClick"
-								    IsVisible="{Binding #Confirm.IsEnabled}"
-								    BorderBrush="{DynamicResource SystemControlBackgroundAltHighBrush}"
-								    BorderThickness="3">
-								<Button.Tag>
-									<MultiBinding>
-										<Binding></Binding>
-									</MultiBinding>
-								</Button.Tag>
-								<Button.Styles>
-									<Style>
-										<Style.Resources>
-											<SolidColorBrush x:Key="ButtonBackground">IndianRed</SolidColorBrush>
-											<SolidColorBrush x:Key="ButtonBackgroundPointerOver">DarkRed</SolidColorBrush>
-											<SolidColorBrush x:Key="ButtonBackgroundPressed">Red</SolidColorBrush>
-										</Style.Resources>
+							<ToggleButton Name="BanBtn"
+							              Tag="{Binding}"
+							              Click="BanBtn_OnClick"
+							              LostFocus="BanOrKickBtn_OnLostFocus"
+							              IsEnabled="{Binding #KickBtn.IsChecked, Converter={x:Static BoolConverters.Not}}">
+								<ToggleButton.Styles>
+									<Style Selector="ToggleButton[IsChecked=False]">
+										<Setter Property="Content" Value="{x:Static p:Resources.BtnBan}" />
+										<Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
+										<Setter Property="Width" Value="50" />
 									</Style>
-								</Button.Styles>
-								<Button.IsEnabled>
-									<MultiBinding Converter="{x:Static BoolConverters.Or}">
-										<Binding Path="#KickBtn.IsChecked"/>
-										<Binding Path="#BanBtn.IsChecked"/>
-									</MultiBinding>
-								</Button.IsEnabled>
-							</Button>
-							<ToggleButton Name="BanBtn" Width="50"
-							              Content="{x:Static p:Resources.BtnBan}" 
-							              IsEnabled="{Binding #KickBtn.IsChecked, Converter={x:Static BoolConverters.Not}}"/>
-							<ToggleButton Name="KickBtn" Width="50" 
-							              Content="{x:Static p:Resources.BtnKick}" 
-							              IsEnabled="{Binding #BanBtn.IsChecked, Converter={x:Static BoolConverters.Not}}"/> 
+									<Style Selector="ToggleButton[IsChecked=True]">
+										<Setter Property="Content" Value="{x:Static p:Resources.BtnConfirm}" />
+										<Setter Property="Background" Value="Red" />
+										<Setter Property="Width" Value="75" />
+									</Style>
+								</ToggleButton.Styles>
+							</ToggleButton>
+							<ToggleButton Name="KickBtn" 
+							              Tag="{Binding}"
+							              Click="KickBtn_OnClick"
+							              LostFocus="BanOrKickBtn_OnLostFocus"
+							              IsEnabled="{Binding #BanBtn.IsChecked, Converter={x:Static BoolConverters.Not}}">
+								<ToggleButton.Styles>
+									<Style Selector="ToggleButton[IsChecked=False]">
+										<Setter Property="Content" Value="{x:Static p:Resources.BtnKick}" />
+										<Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
+										<Setter Property="Width" Value="50" />
+									</Style>
+									<Style Selector="ToggleButton[IsChecked=True]">
+										<Setter Property="Content" Value="{x:Static p:Resources.BtnConfirm}" />
+										<Setter Property="Background" Value="Red" />
+										<Setter Property="Width" Value="75" />
+									</Style>
+								</ToggleButton.Styles>
+							</ToggleButton> 
 							
 							<!-- todo Verify that Muting works -->
 							<ToggleButton Name="MuteBtn" Width="50"

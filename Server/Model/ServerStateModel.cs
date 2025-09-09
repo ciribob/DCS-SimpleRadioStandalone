@@ -49,13 +49,17 @@ public partial class ServerStateModel : ServerState, IHandle<ServerStateMessage>
 	[RelayCommand]
 	private new void KickClient(SRClientBase client)
 	{
-		base.KickClient(client);
+		Console.WriteLine($"Kicking {client.Name}");
+		
+		//base.KickClient(client);
 	}
 
 	[RelayCommand]
 	private void BanClient(SRClientBase client)
 	{
-		WriteBanIP(client);
+		Console.WriteLine($"Banning {client.Name}");
+		
+		//WriteBanIP(client);
 		KickClient(client);
 	}
 	

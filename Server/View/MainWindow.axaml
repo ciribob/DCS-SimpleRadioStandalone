@@ -42,45 +42,36 @@
 		</DockPanel>
 
 		<Grid RowDefinitions="Auto,*">
-			<Button Grid.Row="0"
-			        x:Name="ServerStartStop"
-			        HorizontalAlignment="Stretch"
-			        Width="200"
-			        Command="{Binding StartStopServerCommand }"
-			        Tag="{Binding Server.State}">
-				<Button.Styles>
-					<Style Selector="Button[Tag=Stopped]">
+			<ToggleButton Grid.Row="0"
+			              x:Name="ServerStartStop"
+			              HorizontalAlignment="Stretch"
+			              Width="200"
+			              Command="{Binding StartStopServerCommand }"
+			              Tag="{Binding Server.State}">
+				<ToggleButton.Styles>
+					<Style Selector="ToggleButton[Tag=Stopped]">
 						<Setter Property="Content" Value="{x:Static p:Resources.BtnStartServer}" />
-						<Style.Resources>
-							<SolidColorBrush x:Key="ButtonBackground">IndianRed</SolidColorBrush>
-							<SolidColorBrush x:Key="ButtonBackgroundPointerOver">DarkRed</SolidColorBrush>
-							<SolidColorBrush x:Key="ButtonBackgroundPressed">Red</SolidColorBrush>
-						</Style.Resources>
+						<Setter Property="IsEnabled" Value="True"/>
+						<Setter Property="IsChecked" Value="False"/>
 					</Style>
-					<Style Selector="Button[Tag=Running]">
+					<Style Selector="ToggleButton[Tag=Running]">
 						<Setter Property="Content" Value="{x:Static p:Resources.BtnStopServer}" />
-						<Style.Resources>
-							<SolidColorBrush x:Key="ButtonBackground">LawnGreen</SolidColorBrush>
-							<SolidColorBrush x:Key="ButtonBackgroundPointerOver">DarkGreen</SolidColorBrush>
-							<SolidColorBrush x:Key="ButtonBackgroundPressed">Green</SolidColorBrush>
-						</Style.Resources>
+						<Setter Property="IsEnabled" Value="True"/>
+						<Setter Property="IsChecked" Value="True"/>
 					</Style>
-					<Style Selector="Button[Tag=Starting]">
+					<Style Selector="ToggleButton[Tag=Starting]">
 						<Setter Property="Content" Value="{x:Static p:Resources.BtnStartingServer}" />
 						<Setter Property="IsEnabled" Value="False"/>
-						<Style.Resources>
-							<SolidColorBrush x:Key="ButtonBackground">Yellow</SolidColorBrush>
-						</Style.Resources>
+						<Setter Property="IsChecked" Value="False"/>
 					</Style>
-					<Style Selector="Button[Tag=Stopping]">
+					<Style Selector="ToggleButton[Tag=Stopping]">
 						<Setter Property="Content" Value="{x:Static p:Resources.BtnStoppingServer}" />
 						<Setter Property="IsEnabled" Value="False"/>
-						<Style.Resources>
-							<SolidColorBrush x:Key="ButtonBackground">Yellow</SolidColorBrush>
-						</Style.Resources>
+						<Setter Property="IsChecked" Value="False"/>
 					</Style>
-				</Button.Styles>
-			</Button>
+				</ToggleButton.Styles>
+			</ToggleButton>
+			
 			<TabControl Grid.Row="1">
 				<TabItem Header="{x:Static p:Resources.LabelTabHeaderSettings}">
 					<ui:SettingsPanel />

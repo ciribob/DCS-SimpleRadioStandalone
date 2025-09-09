@@ -19,7 +19,7 @@ public partial class MainViewModel(ServerSettingsModel serverSettingsModel, Serv
 				Server.StartServerCommand.Execute(null);
 				break;
 			case ServerStateModel.RunningState.Running:
-				Server.StartServerCommand.Execute(null);
+				Server.StopServerCommand.Execute(null);
 				break;
 
 			default:

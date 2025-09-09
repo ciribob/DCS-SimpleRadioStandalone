@@ -7,7 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Model;
 
 [ObservableObject]
-public partial class ServerStateModel(IEventAggregator eventAggregator) : ServerState(eventAggregator, false)
+public partial class ServerStateModel(IEventAggregator eventAggregator, bool autostart) : ServerState(eventAggregator, autostart)
 {
 	public ObservableCollection<SRClientBase> ConnectedClients => new ObservableCollection<SRClientBase>(_connectedClients.Values);
 }

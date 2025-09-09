@@ -11,7 +11,7 @@ public class DesignMainViewModel(IEventAggregator eventAggregator, ServerSetting
 	/// <summary>
 	/// Design time constructor.
 	/// </summary>
-	public DesignMainViewModel(EventAggregator agg) : this(agg, new ServerSettingsModel(agg, new ServerSettingsStore()), new ServerStateModel(agg))
+	public DesignMainViewModel(EventAggregator agg) : this(agg, new ServerSettingsModel(agg, new ServerSettingsStore()), new ServerStateModel(agg, false))
 	{
 	}
 }

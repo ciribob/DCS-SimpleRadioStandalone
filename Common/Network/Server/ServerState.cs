@@ -44,8 +44,8 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
         
         _eventAggregator = eventAggregator;
         _eventAggregator.SubscribeOnPublishedThread(this);
-        StartServer();
-        if (autostart) ;
+        
+        if (autostart) StartServer();
     }
 
 

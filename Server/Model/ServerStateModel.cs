@@ -45,13 +45,24 @@ public partial class ServerStateModel : ServerState, IHandle<ServerStateMessage>
 		Console.WriteLine("Server is Stopped");
 		State = RunningState.Stopped;
 	}
-	
+
+	[RelayCommand]
+	private new void KickClient(SRClientBase client)
+	{
+		base.KickClient(client);
+	}
+
+	[RelayCommand]
+	private void BanClient(SRClientBase client)
+	{
+		WriteBanIP(client);
+		KickClient(client);
+	}
 	
 	
 	public async Task HandleAsync(ServerStateMessage message, CancellationToken cancellationToken)
 	{
 		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConnectedClients)) );
-
 	}
 	
 	public enum RunningState
@@ -61,5 +72,4 @@ public partial class ServerStateModel : ServerState, IHandle<ServerStateMessage>
 		Running,
 		Stopping,
 	}
-
 }

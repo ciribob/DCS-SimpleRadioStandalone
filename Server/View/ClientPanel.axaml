@@ -26,15 +26,18 @@
 					<DockPanel>
 
 						<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-								<Button Name="Confirm" 
-								        Content="{x:Static p:Resources.BtnConfirm}" 
-								        Width="75" 
-								        Click="Confirm_OnClick" 
-								        CommandParameter=""
-								        Tag="{Binding}"
-								        IsVisible="{Binding #Confirm.IsEnabled}"
-								        BorderBrush="{DynamicResource SystemControlBackgroundAltHighBrush}"
-								        BorderThickness="3">
+							<Button Name="Confirm" 
+								    Content="{x:Static p:Resources.BtnConfirm}" 
+								    Width="75" 
+								    Click="Confirm_OnClick"
+								    IsVisible="{Binding #Confirm.IsEnabled}"
+								    BorderBrush="{DynamicResource SystemControlBackgroundAltHighBrush}"
+								    BorderThickness="3">
+								<Button.Tag>
+									<MultiBinding>
+										<Binding></Binding>
+									</MultiBinding>
+								</Button.Tag>
 								<Button.Styles>
 									<Style>
 										<Style.Resources>

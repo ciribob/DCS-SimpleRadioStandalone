@@ -1,7 +1,9 @@
-﻿using System.Linq;
-using Avalonia;
+﻿using System;
+using System.Globalization;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Avalonia.Data;
+using Avalonia.Data.Converters;
+using Avalonia.Interactivity;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Server.View;
 
@@ -10,11 +12,11 @@ public partial class ClientPanel : Panel
 	public ClientPanel()
 	{
 		InitializeComponent();
-		ListBoxTemp.ItemsSource = new string[]
-		{
-			"user 1",
-			"user 2",
-			"user 3"
-		}.OrderBy(x => x);
 	}
+
+	private void Confirm_OnClick(object? sender, RoutedEventArgs e)
+	{
+		Console.WriteLine("Confirm_OnClick");
+	}
+	
 }

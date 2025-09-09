@@ -101,7 +101,7 @@ public partial class MainWindow : Window
 			IReadOnlyList<IStorageFolder> folder = await GetTopLevel(this)!.StorageProvider.OpenFolderPickerAsync(options);
 			return folder[0].Path.AbsolutePath;
 		}
-		catch (Exception e)
+		catch (Exception)
 		{
 			// If the picker gets cancelled, use existing or empty (but not null):
 			return exitingFolder ?? string.Empty;

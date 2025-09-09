@@ -52,12 +52,12 @@ public static class ServiceCollectionExtensions
 	public static void AddCommonServices(this IServiceCollection collection)
 	{
 		collection.AddSingleton<IEventAggregator, EventAggregator>();
-		collection.AddSingleton<ServerState>();
 		collection.AddSingleton<ServerSettingsStore>();
+		collection.AddSingleton<ServerStateModel>();
+		
+		collection.AddTransient<ServerSettingsModel>();
 		
 		// View Models
 		collection.AddTransient<MainViewModel>();
-
-		collection.AddTransient<ServerSettingsModel>();
 	}
 }

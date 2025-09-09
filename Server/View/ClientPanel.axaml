@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.Properties"
         xmlns:viewmodel="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.viewmodel"
+        xmlns:local="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.View"
         MinHeight="250"
         Width="420" MinWidth="420"
         mc:Ignorable="d" d:DesignWidth="420" d:DesignHeight="600"
@@ -11,25 +12,72 @@
         x:DataType="viewmodel:MainViewModel">
 	
 	<Design.DataContext>
-		<viewmodel:MainViewModel />
+		<viewmodel:DesignMainViewModel />
 	</Design.DataContext>
-	
-	<ListBox x:Name="ListBoxTemp">
+
+	<ListBox x:Name="ListBoxTemp" ItemsSource="{Binding ServerState.ConnectedClients }">
 		<ListBox.ItemTemplate>
 			<DataTemplate>
 				<Border 
-					ZIndex="1" 
-					Background="{DynamicResource SystemControlBackgroundAltHighBrush}" CornerRadius="4">
+					ZIndex="1"
+					BorderThickness="1"
+					Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+					CornerRadius="4">
 					<DockPanel>
+
 						<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-							<Button Content="Kick" Width="50" Tag="{Binding}"/> 
-							<Button Content="Ban" Width="50" Tag="{Binding}"/>
+								<Button Name="Confirm" 
+								        Content="{x:Static p:Resources.BtnConfirm}" 
+								        Width="75" 
+								        Click="Confirm_OnClick"
+								        Tag="{Binding}"
+								        IsVisible="{Binding #Confirm.IsEnabled}"
+								        BorderBrush="{DynamicResource SystemControlBackgroundAltHighBrush}"
+								        BorderThickness="3">
+								<Button.Styles>
+									<Style>
+										<Style.Resources>
+											<SolidColorBrush x:Key="ButtonBackground">IndianRed</SolidColorBrush>
+											<SolidColorBrush x:Key="ButtonBackgroundPointerOver">DarkRed</SolidColorBrush>
+											<SolidColorBrush x:Key="ButtonBackgroundPressed">Red</SolidColorBrush>
+										</Style.Resources>
+									</Style>
+								</Button.Styles>
+								<Button.IsEnabled>
+									<MultiBinding Converter="{x:Static BoolConverters.Or}">
+										<Binding Path="#KickBtn.IsChecked"/>
+										<Binding Path="#BanBtn.IsChecked"/>
+									</MultiBinding>
+								</Button.IsEnabled>
+							</Button>
+							<ToggleButton Name="KickBtn" Width="50" 
+							              Content="{x:Static p:Resources.BtnKick}" 
+							              IsEnabled="{Binding #BanBtn.IsChecked, Converter={x:Static BoolConverters.Not}}"/> 
+							<ToggleButton Name="BanBtn" Width="50" 
+							              Content="{x:Static p:Resources.BtnBan}" 
+							              IsEnabled="{Binding #KickBtn.IsChecked, Converter={x:Static BoolConverters.Not}}"/>
 						</StackPanel>
 						
-						<Label Name="UserLabel" Content="{Binding}" />
+						<Label Name="UserLabel" 
+						       Content="{Binding Name }" 
+						       Tag="{Binding Coalition}"
+						       FontWeight="Bold">
+							<Label.Styles>
+								<Style Selector="Label[Tag=1]">
+									<Setter Property="Foreground" Value="Red" />
+								</Style>
+								<Style Selector="Label[Tag=2]">
+									<Setter Property="Foreground" Value="Blue" />
+								</Style>
+							</Label.Styles>
+						</Label>
 					</DockPanel>
 					</Border>
 			</DataTemplate>
 		</ListBox.ItemTemplate>
 	</ListBox>
+	
+	<TextBlock IsVisible="{Binding !#ListBoxTemp.ItemCount}"
+	           Text="No Connected Clients" 
+	           HorizontalAlignment="Center" />
 </Panel>

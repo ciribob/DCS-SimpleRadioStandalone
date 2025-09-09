@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Caliburn.Micro;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
@@ -9,7 +10,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Model;
 
-public partial class ServerSettingsModel(IEventAggregator eventAggregator, ServerSettingsStore serverSettings) : ObservableObject
+public partial class ServerSettingsModel(IEventAggregator eventAggregator, ServerSettingsStore serverSettings) : ObservableValidator
 {
 	protected override void OnPropertyChanged(PropertyChangedEventArgs e)
 	{
@@ -20,37 +21,39 @@ public partial class ServerSettingsModel(IEventAggregator eventAggregator, Serve
 		Console.WriteLine("onPropertyChanged");
 	}
 	
-	[ObservableProperty] private bool _isCheckForBetaUpdatesEnabled = false;
-	[ObservableProperty] private bool _isClientExportEnabled = false;
-	[ObservableProperty] private bool _isCoalitionAudioSecurityEnabled = false;
-	[ObservableProperty] private bool _isDistanceLimitEnabled = false;
-	[ObservableProperty] private bool _isExternalModeEnabled = false;
-	[ObservableProperty] private bool _isHTTPServerEnabled = false;
-	[ObservableProperty] private bool _isIRLRadioRXEffectsEnabled = false;
-	[ObservableProperty] private bool _isIRLRadioTXEffectsEnabled = false;
-	[ObservableProperty] private bool _isLineOfSightEnabled = false;
-	[ObservableProperty] private bool _isLotAtcExportEnabled = false;
-	[ObservableProperty] private bool _isRadioEffectOverrideOnGlobalEnabled = false;
-	[ObservableProperty] private bool _isRadioEncryptionAllowed = true;
-	[ObservableProperty] private bool _isRadioExpansionAllowed = false;
-	[ObservableProperty] private bool _isServerPresetsEnabled = false;
-	[ObservableProperty] private bool _isShowTransmitterNameEnabled = false;
-	[ObservableProperty] private bool _isShowTunedCountEnabled = true;
-	[ObservableProperty] private bool _isSpectatorAudioDisabled = false;
-	[ObservableProperty] private bool _isStrictRadioEncryptionEnabled = false;
-	[ObservableProperty] private bool _isTransmissionLogEnabled = false;
-	[ObservableProperty] private bool _isUPNPEnabled = true;
-	[ObservableProperty] private int _httpServerPort = 8080;
-	[ObservableProperty] private int _lotAtcExportPort = 10712;
-	[ObservableProperty] private int _retransmissionNodeLimit = 0;
-	[ObservableProperty] private int _serverPort = 5002;
-	[ObservableProperty] private int _transmissionLogRetentionLimit = 2;
-	[ObservableProperty] private string _clientExportFilePath = string.Empty;
-	[ObservableProperty] private string _externalModePassBlue = string.Empty;
-	[ObservableProperty] private string _externalModePassRed = string.Empty;
-	[ObservableProperty] private string _lotAtcExportIP = "127.0.0.1";
-	[ObservableProperty] private string _serverIP = "0.0.0.0";
-	[ObservableProperty] private string _serverPresetsPath = string.Empty;
+	[ObservableProperty] private bool _isCheckForBetaUpdatesEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).BoolValue;
+	[ObservableProperty] private bool _isClientExportEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.CLIENT_EXPORT_ENABLED).BoolValue;
+	[ObservableProperty] private bool _isCoalitionAudioSecurityEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.COALITION_AUDIO_SECURITY).BoolValue;
+	[ObservableProperty] private bool _isDistanceLimitEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.DISTANCE_ENABLED).BoolValue;
+	[ObservableProperty] private bool _isExternalModeEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE).BoolValue;
+	[ObservableProperty] private bool _isHTTPServerEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.HTTP_SERVER_ENABLED).BoolValue;
+	[ObservableProperty] private bool _isIRLRadioRXEffectsEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.IRL_RADIO_TX).BoolValue;
+	[ObservableProperty] private bool _isIRLRadioTXEffectsEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE).BoolValue;
+	[ObservableProperty] private bool _isLineOfSightEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.LOS_ENABLED).BoolValue;
+	[ObservableProperty] private bool _isLotAtcExportEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.LOTATC_EXPORT_ENABLED).BoolValue;
+	[ObservableProperty] private bool _isRadioEffectOverrideOnGlobalEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.RADIO_EFFECT_OVERRIDE).BoolValue;
+	[ObservableProperty] private bool _isRadioEncryptionAllowed = serverSettings.GetServerSetting(ServerSettingsKeys.ALLOW_RADIO_ENCRYPTION).BoolValue;
+	[ObservableProperty] private bool _isRadioExpansionAllowed = serverSettings.GetServerSetting(ServerSettingsKeys.RADIO_EXPANSION).BoolValue;
+	[ObservableProperty] private bool _isServerPresetsEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.SERVER_PRESETS).BoolValue;
+	[ObservableProperty] private bool _isShowTransmitterNameEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.SHOW_TRANSMITTER_NAME).BoolValue;
+	[ObservableProperty] private bool _isShowTunedCountEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.SHOW_TUNED_COUNT).BoolValue;
+	[ObservableProperty] private bool _isSpectatorAudioDisabled = serverSettings.GetServerSetting(ServerSettingsKeys.SPECTATORS_AUDIO_DISABLED).BoolValue;
+	[ObservableProperty] private bool _isStrictRadioEncryptionEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.STRICT_RADIO_ENCRYPTION).BoolValue;
+	[ObservableProperty] private bool _isTransmissionLogEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED).BoolValue;
+	[ObservableProperty] private bool _isUPNPEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.UPNP_ENABLED).BoolValue;
+	[ObservableProperty] [Range(0,65535)] private int _httpServerPort = serverSettings.GetServerSetting(ServerSettingsKeys.HTTP_SERVER_PORT).IntValue;
+	
+	[ObservableProperty] [Range(0,65535)] private int _lotAtcExportPort = serverSettings.GetServerSetting(ServerSettingsKeys.LOTATC_EXPORT_PORT).IntValue;
+	
+	[ObservableProperty] [Range(0,7)] private int _retransmissionNodeLimit = serverSettings.GetServerSetting(ServerSettingsKeys.RETRANSMISSION_NODE_LIMIT).IntValue;
+	[ObservableProperty] [Range(0,65535)] private int _serverPort = serverSettings.GetServerSetting(ServerSettingsKeys.SERVER_PORT).IntValue;
+	[ObservableProperty] [Range(0,7)] private int _transmissionLogRetentionLimit = serverSettings.GetServerSetting(ServerSettingsKeys.TRANSMISSION_LOG_RETENTION).IntValue;
+	[ObservableProperty] [MaxLength(32767)] private string _clientExportFilePath = serverSettings.GetServerSetting(ServerSettingsKeys.CLIENT_EXPORT_FILE_PATH).StringValue;
+	[ObservableProperty] [MaxLength(64)] private string _externalModePassBlue = serverSettings.GetExternalAWACSModeSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE_BLUE_PASSWORD).StringValue;
+	[ObservableProperty] [MaxLength(64)] private string _externalModePassRed = serverSettings.GetExternalAWACSModeSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE_RED_PASSWORD).StringValue;
+	[ObservableProperty] [MaxLength(256)] private string _lotAtcExportIP = serverSettings.GetServerSetting(ServerSettingsKeys.LOTATC_EXPORT_IP).StringValue;
+	[ObservableProperty] [MaxLength(256)] private string _serverIP = serverSettings.GetServerSetting(ServerSettingsKeys.SERVER_IP).StringValue;
+	[ObservableProperty] [MaxLength(32767)] private string _serverPresetsPath = serverSettings.GetServerSetting(ServerSettingsKeys.SERVER_PRESETS).StringValue;
 	[ObservableProperty] private ObservableCollection<double> _testFrequencies = new() { 125.2, 142.5 };
 	[ObservableProperty] private ObservableCollection<double> _globalLobbyFrequencies = new() { 248.22 };
 	
@@ -87,5 +90,4 @@ public partial class ServerSettingsModel(IEventAggregator eventAggregator, Serve
 	partial void OnTransmissionLogRetentionLimitChanged(int value) => serverSettings.SetServerSetting(ServerSettingsKeys.TRANSMISSION_LOG_RETENTION, value.ToString());
 	partial void OnTestFrequenciesChanged(ObservableCollection<double> value) => serverSettings.SetServerSetting(ServerSettingsKeys.TEST_FREQUENCIES, value.ToString());
 	partial void OnGlobalLobbyFrequenciesChanged(ObservableCollection<double> value) => serverSettings.SetServerSetting(ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES, value.ToString());
-
 }

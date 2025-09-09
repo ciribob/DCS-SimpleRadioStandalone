@@ -337,4 +337,7 @@ Cancel - Ignore</value>
     <data name="LabelShowRadioEncryption" xml:space="preserve">
         <value>Radio Encryption</value>
     </data>
+    <data name="BtnConfirm" xml:space="preserve">
+        <value>Confirm</value>
+    </data>
 </root>

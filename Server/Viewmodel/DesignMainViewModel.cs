@@ -4,14 +4,14 @@ using Ciribob.DCS.SimpleRadio.Standalone.Server.Model;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Server.viewmodel;
 
-public class DesignMainViewModel(IEventAggregator eventAggregator, ServerSettingsModel serverSettingsModel)
-	: MainViewModel(eventAggregator, serverSettingsModel)
+public class DesignMainViewModel(IEventAggregator eventAggregator, ServerSettingsModel serverSettingsModel, ServerStateModel serverState)
+	: MainViewModel(eventAggregator, serverSettingsModel, serverState)
 {
 	
 	/// <summary>
 	/// Design time constructor.
 	/// </summary>
-	public DesignMainViewModel() : this(new EventAggregator(), new ServerSettingsModel(new EventAggregator(), new ServerSettingsStore()))
+	public DesignMainViewModel(EventAggregator agg) : this(agg, new ServerSettingsModel(agg, new ServerSettingsStore()), new ServerStateModel(agg))
 	{
 	}
 }

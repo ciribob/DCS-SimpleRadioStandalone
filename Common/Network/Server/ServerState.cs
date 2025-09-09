@@ -29,7 +29,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
 
     private readonly HashSet<IPAddress> _bannedIps = new();
 
-    private readonly ConcurrentDictionary<string, SRClientBase> _connectedClients =
+    protected readonly ConcurrentDictionary<string, SRClientBase> _connectedClients =
         new();
 
     private readonly IEventAggregator _eventAggregator;
@@ -38,12 +38,14 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
     private volatile bool _stop = true;
     private HttpServer _httpServer;
 
-    public ServerState(IEventAggregator eventAggregator)
+    public ServerState(IEventAggregator eventAggregator, bool autostart = true)
     {
+        Console.WriteLine("ServerState");
+        
         _eventAggregator = eventAggregator;
         _eventAggregator.SubscribeOnPublishedThread(this);
-
         StartServer();
+        if (autostart) ;
     }
 
 
@@ -90,6 +92,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
 
     private void StartServer()
     {
+        Console.WriteLine("Server State: Starting server...");
         if (_serverListener == null)
         {
             PopulateBanList();

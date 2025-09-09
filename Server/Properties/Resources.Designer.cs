@@ -69,6 +69,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Confirm.
+        /// </summary>
+        public static string BtnConfirm {
+            get {
+                return ResourceManager.GetString("BtnConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DISABLED.
         /// </summary>
         public static string BtnDisabled {

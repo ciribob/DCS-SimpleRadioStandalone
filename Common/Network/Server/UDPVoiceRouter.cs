@@ -150,6 +150,8 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
             try
             {
                 var groupEP = new IPEndPoint(_serverSettings.GetServerIP(), port);
+                // If Debug breaks at `_listener.Receive` when a server stop is requested, its normal.
+                // The Try/Catch will catch in production. It is safe to continue run.
                 var rawBytes = _listener.Receive(ref groupEP);
 
                 if (rawBytes?.Length == 22)

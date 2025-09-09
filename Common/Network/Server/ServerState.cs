@@ -40,8 +40,6 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
 
     public ServerState(IEventAggregator eventAggregator, bool autostart = true)
     {
-        Console.WriteLine("ServerState");
-        
         _eventAggregator = eventAggregator;
         _eventAggregator.SubscribeOnPublishedThread(this);
         
@@ -89,10 +87,9 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
 
         return currentDirectory;
     }
-
-    private void StartServer()
+    
+    protected void StartServer()
     {
-        Console.WriteLine("Server State: Starting server...");
         if (_serverListener == null)
         {
             PopulateBanList();
@@ -116,7 +113,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
         _httpServer = new HttpServer(_connectedClients, this);
         _httpServer.Start();
     }
-
+    
     public void StopServer()
     {
         if (_serverListener != null)

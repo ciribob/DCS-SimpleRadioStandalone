@@ -15,7 +15,7 @@
 		<viewmodel:DesignMainViewModel />
 	</Design.DataContext>
 
-	<ListBox x:Name="ListBoxTemp" ItemsSource="{Binding ServerState.ConnectedClients }">
+	<ListBox x:Name="ListBoxTemp" ItemsSource="{Binding Server.ConnectedClients }">
 		<ListBox.ItemTemplate>
 			<DataTemplate>
 				<Border 
@@ -29,7 +29,8 @@
 								<Button Name="Confirm" 
 								        Content="{x:Static p:Resources.BtnConfirm}" 
 								        Width="75" 
-								        Click="Confirm_OnClick"
+								        Click="Confirm_OnClick" 
+								        CommandParameter=""
 								        Tag="{Binding}"
 								        IsVisible="{Binding #Confirm.IsEnabled}"
 								        BorderBrush="{DynamicResource SystemControlBackgroundAltHighBrush}"
@@ -50,12 +51,17 @@
 									</MultiBinding>
 								</Button.IsEnabled>
 							</Button>
+							<ToggleButton Name="BanBtn" Width="50"
+							              Content="{x:Static p:Resources.BtnBan}" 
+							              IsEnabled="{Binding #KickBtn.IsChecked, Converter={x:Static BoolConverters.Not}}"/>
 							<ToggleButton Name="KickBtn" Width="50" 
 							              Content="{x:Static p:Resources.BtnKick}" 
 							              IsEnabled="{Binding #BanBtn.IsChecked, Converter={x:Static BoolConverters.Not}}"/> 
-							<ToggleButton Name="BanBtn" Width="50" 
-							              Content="{x:Static p:Resources.BtnBan}" 
-							              IsEnabled="{Binding #KickBtn.IsChecked, Converter={x:Static BoolConverters.Not}}"/>
+							
+							<!-- todo Verify that Muting works -->
+							<ToggleButton Name="MuteBtn" Width="50"
+							              IsChecked="{Binding Muted}"  
+							              Content="{x:Static p:Resources.BtnMute}" />
 						</StackPanel>
 						
 						<Label Name="UserLabel" 

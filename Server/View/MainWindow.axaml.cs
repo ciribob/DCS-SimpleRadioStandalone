@@ -108,5 +108,10 @@ public partial class MainWindow : Window
 		}
 	}
 
-
+	protected override void OnClosed(EventArgs e)
+	{
+		ViewModel.StopServerCommand.Execute(null);
+		
+		base.OnClosed(e);
+	}
 }

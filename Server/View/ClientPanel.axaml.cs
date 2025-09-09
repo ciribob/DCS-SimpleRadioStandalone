@@ -18,5 +18,4 @@ public partial class ClientPanel : Panel
 	{
 		Console.WriteLine("Confirm_OnClick");
 	}
-	
 }

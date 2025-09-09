@@ -87,6 +87,16 @@ public partial class ServerSettingsModel(IEventAggregator eventAggregator, Serve
 	partial void OnServerPortChanged(int value) => serverSettings.SetServerSetting(ServerSettingsKeys.SERVER_PORT, value.ToString());
 	partial void OnServerPresetsPathChanged(string value) => serverSettings.SetServerSetting(ServerSettingsKeys.SERVER_PRESETS, value.ToString());
 	partial void OnTransmissionLogRetentionLimitChanged(int value) => serverSettings.SetServerSetting(ServerSettingsKeys.TRANSMISSION_LOG_RETENTION, value.ToString());
-	partial void OnTestFrequenciesChanged(ObservableCollection<double> value) => serverSettings.SetServerSetting(ServerSettingsKeys.TEST_FREQUENCIES, value.ToString());
-	partial void OnGlobalLobbyFrequenciesChanged(ObservableCollection<double> value) => serverSettings.SetServerSetting(ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES, value.ToString());
+
+	partial void OnTestFrequenciesChanged(ObservableCollection<double> value)
+	{
+		serverSettings.SetServerSetting(ServerSettingsKeys.TEST_FREQUENCIES, value.ToString());
+		eventAggregator.PublishOnBackgroundThreadAsync(new ServerFrequenciesChanged());
+	}
+
+	partial void OnGlobalLobbyFrequenciesChanged(ObservableCollection<double> value)
+	{
+		serverSettings.SetServerSetting(ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES, value.ToString());
+		eventAggregator.PublishOnBackgroundThreadAsync(new ServerFrequenciesChanged());
+	}
 }

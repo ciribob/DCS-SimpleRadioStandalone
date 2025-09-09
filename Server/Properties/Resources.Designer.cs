@@ -132,6 +132,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Starting....
+        /// </summary>
+        public static string BtnStartingServer {
+            get {
+                return ResourceManager.GetString("BtnStartingServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Start Server.
         /// </summary>
         public static string BtnStartServer {
@@ -141,11 +150,29 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Stopping....
+        /// </summary>
+        public static string BtnStoppingServer {
+            get {
+                return ResourceManager.GetString("BtnStoppingServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Stop Server.
         /// </summary>
         public static string BtnStopServer {
             get {
                 return ResourceManager.GetString("BtnStopServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Advanced Server IP.
+        /// </summary>
+        public static string LabelAdvancedServerIP {
+            get {
+                return ResourceManager.GetString("LabelAdvancedServerIP", resourceCulture);
             }
         }
         

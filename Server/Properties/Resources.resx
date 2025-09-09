@@ -340,4 +340,13 @@ Cancel - Ignore</value>
     <data name="BtnConfirm" xml:space="preserve">
         <value>Confirm</value>
     </data>
+    <data name="LabelAdvancedServerIP" xml:space="preserve">
+        <value>Advanced Server IP</value>
+    </data>
+    <data name="BtnStartingServer" xml:space="preserve">
+        <value>Starting...</value>
+    </data>
+    <data name="BtnStoppingServer" xml:space="preserve">
+        <value>Stopping...</value>
+    </data>
 </root>

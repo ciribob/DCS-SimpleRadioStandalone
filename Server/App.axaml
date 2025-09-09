@@ -14,6 +14,12 @@
 				</FluentTheme.Palettes>
 			</FluentTheme>
 			
+			<Style Selector="ToolTip">
+				<Setter Property="Placement" Value="AnchorAndGravity" />
+				<Setter Property="ShowDelay" Value="600" />
+				<Setter Property="BetweenShowDelay" Value="-1" />
+			</Style>
+			
 			<Style Selector="Button">
 				<Setter Property="Margin" Value="5"/>
 			</Style>

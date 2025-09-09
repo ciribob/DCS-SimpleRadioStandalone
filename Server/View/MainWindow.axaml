@@ -29,13 +29,13 @@
 			<StackPanel DockPanel.Dock="Left"
 			            Orientation="Horizontal">
 				<Label Content="{x:Static p:Resources.PresenterLabelStatus}" />
-				<Label Content="{Binding ServerRunning}" Width="80" />
+				<Label Content="{Binding Server.State}" Width="80" />
 			</StackPanel>
 			<StackPanel DockPanel.Dock="Right"
 			            Orientation="Horizontal"
 			            HorizontalAlignment="Right">
 				<Label Content="{x:Static p:Resources.LabelClients}" />
-				<Label x:Name="ClientsCount" Content="0" />
+				<Label x:Name="ClientsCount" Content="{Binding Server.ConnectedClients.Count}" />
 				<Label Content="{x:Static p:Resources.PresenterLabelPort}" />
 				<Label x:Name="LabelPort" Content="{Binding ServerSettings.ServerPort, Mode=OneWay}" />
 			</StackPanel>
@@ -46,8 +46,41 @@
 			        x:Name="ServerStartStop"
 			        HorizontalAlignment="Stretch"
 			        Width="200"
-			        Content="To Bind"
-			        Command="{Binding StartStopServerCommand }" />
+			        Command="{Binding StartStopServerCommand }"
+			        Tag="{Binding Server.State}">
+				<Button.Styles>
+					<Style Selector="Button[Tag=Stopped]">
+						<Setter Property="Content" Value="{x:Static p:Resources.BtnStartServer}" />
+						<Style.Resources>
+							<SolidColorBrush x:Key="ButtonBackground">IndianRed</SolidColorBrush>
+							<SolidColorBrush x:Key="ButtonBackgroundPointerOver">DarkRed</SolidColorBrush>
+							<SolidColorBrush x:Key="ButtonBackgroundPressed">Red</SolidColorBrush>
+						</Style.Resources>
+					</Style>
+					<Style Selector="Button[Tag=Running]">
+						<Setter Property="Content" Value="{x:Static p:Resources.BtnStopServer}" />
+						<Style.Resources>
+							<SolidColorBrush x:Key="ButtonBackground">LawnGreen</SolidColorBrush>
+							<SolidColorBrush x:Key="ButtonBackgroundPointerOver">DarkGreen</SolidColorBrush>
+							<SolidColorBrush x:Key="ButtonBackgroundPressed">Green</SolidColorBrush>
+						</Style.Resources>
+					</Style>
+					<Style Selector="Button[Tag=Starting]">
+						<Setter Property="Content" Value="{x:Static p:Resources.BtnStartingServer}" />
+						<Setter Property="IsEnabled" Value="False"/>
+						<Style.Resources>
+							<SolidColorBrush x:Key="ButtonBackground">Yellow</SolidColorBrush>
+						</Style.Resources>
+					</Style>
+					<Style Selector="Button[Tag=Stopping]">
+						<Setter Property="Content" Value="{x:Static p:Resources.BtnStoppingServer}" />
+						<Setter Property="IsEnabled" Value="False"/>
+						<Style.Resources>
+							<SolidColorBrush x:Key="ButtonBackground">Yellow</SolidColorBrush>
+						</Style.Resources>
+					</Style>
+				</Button.Styles>
+			</Button>
 			<TabControl Grid.Row="1">
 				<TabItem Header="{x:Static p:Resources.LabelTabHeaderSettings}">
 					<ScrollViewer VerticalScrollBarVisibility="Visible" Margin="-10,0,-10,0">
@@ -133,7 +166,15 @@
 
 												<StackPanel Orientation="Horizontal"
 												            ToolTip.Tip="{x:Static p:Resources.ToolTipServerIP}">
-													<TextBox Text="{Binding ServerSettings.ServerIP, UpdateSourceTrigger=LostFocus}" />
+													<ToggleSwitch Name="AdvancedIpToggle" />
+													<Label Content="{x:Static p:Resources.LabelAdvancedServerIP}" />
+												</StackPanel>
+												
+												
+												<StackPanel Orientation="Horizontal"
+												            ToolTip.Tip="{x:Static p:Resources.ToolTipServerIP}">
+													<TextBox Text="{Binding ServerSettings.ServerIP, UpdateSourceTrigger=LostFocus}"
+													         IsEnabled="{Binding #AdvancedIpToggle.IsChecked}"/>
 													<Label Content="{x:Static p:Resources.LabelServerIP}" />
 												</StackPanel>
 

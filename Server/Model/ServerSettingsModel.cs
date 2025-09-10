@@ -40,10 +40,9 @@ public partial class ServerSettingsModel(IEventAggregator eventAggregator, Serve
 	[ObservableProperty] private bool _isStrictRadioEncryptionEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.STRICT_RADIO_ENCRYPTION).BoolValue;
 	[ObservableProperty] private bool _isTransmissionLogEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED).BoolValue;
 	[ObservableProperty] private bool _isUPNPEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.UPNP_ENABLED).BoolValue;
+	
 	[ObservableProperty] [Range(0,65535)] private int _httpServerPort = serverSettings.GetServerSetting(ServerSettingsKeys.HTTP_SERVER_PORT).IntValue;
-	
 	[ObservableProperty] [Range(0,65535)] private int _lotAtcExportPort = serverSettings.GetServerSetting(ServerSettingsKeys.LOTATC_EXPORT_PORT).IntValue;
-	
 	[ObservableProperty] [Range(0,7)] private int _retransmissionNodeLimit = serverSettings.GetServerSetting(ServerSettingsKeys.RETRANSMISSION_NODE_LIMIT).IntValue;
 	[ObservableProperty] [Range(0,65535)] private int _serverPort = serverSettings.GetServerSetting(ServerSettingsKeys.SERVER_PORT).IntValue;
 	[ObservableProperty] [Range(0,7)] private int _transmissionLogRetentionLimit = serverSettings.GetServerSetting(ServerSettingsKeys.TRANSMISSION_LOG_RETENTION).IntValue;

@@ -52,6 +52,8 @@ public partial class ServerSettingsModel(IEventAggregator eventAggregator, Serve
 	[ObservableProperty] [MaxLength(256)] private string _lotAtcExportIP = serverSettings.GetServerSetting(ServerSettingsKeys.LOTATC_EXPORT_IP).StringValue;
 	[ObservableProperty] [MaxLength(256)] private string _serverIP = serverSettings.GetServerSetting(ServerSettingsKeys.SERVER_IP).StringValue;
 	[ObservableProperty] [MaxLength(32767)] private string _serverPresetsPath = serverSettings.GetServerSetting(ServerSettingsKeys.SERVER_PRESETS).StringValue;
+	
+	//todo frequency list, create initialization and validation system
 	[ObservableProperty] private ObservableCollection<double> _testFrequencies = new() { 125.2, 142.5 };
 	[ObservableProperty] private ObservableCollection<double> _globalLobbyFrequencies = new() { 248.22 };
 	

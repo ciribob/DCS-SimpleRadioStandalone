@@ -10,6 +10,8 @@ public partial class MainViewModel(ServerSettingsModel serverSettingsModel, Serv
 	public ServerSettingsModel ServerSettings { get; } = serverSettingsModel;
 	public ServerStateModel Server { get; } = serverState;
 	
+	[ObservableProperty] private bool _isRestartRequired = false; //todo make the settings that require the server to restart causes that to happen or make it say so.
+	
 	[RelayCommand]
 	private void StartStopServer()
 	{

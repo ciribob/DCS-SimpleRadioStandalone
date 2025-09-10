@@ -33,7 +33,7 @@ public partial class ClientPanel : Panel
 
 	private void BanBtn_OnClick(object? sender, RoutedEventArgs e)
 	{
-		if ((sender as ToggleButton)?.IsChecked == true)
+		if ((sender as ToggleButton)?.IsChecked == false)
 		{
 			if ((sender as ToggleButton)?.Tag is SRClientBase targetClient)
 			{
@@ -44,7 +44,7 @@ public partial class ClientPanel : Panel
 
 	private void KickBtn_OnClick(object? sender, RoutedEventArgs e)
 	{
-		if ((sender as ToggleButton)?.IsChecked == true)
+		if ((sender as ToggleButton)?.IsChecked == false)
 		{
 			if ((sender as ToggleButton)?.Tag is SRClientBase targetClient)
 			{

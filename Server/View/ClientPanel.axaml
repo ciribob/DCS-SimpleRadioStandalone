@@ -32,15 +32,20 @@
 							              LostFocus="BanOrKickBtn_OnLostFocus"
 							              IsEnabled="{Binding #KickBtn.IsChecked, Converter={x:Static BoolConverters.Not}}">
 								<ToggleButton.Styles>
-									<Style Selector="ToggleButton[IsChecked=False]">
-										<Setter Property="Content" Value="{x:Static p:Resources.BtnBan}" />
-										<Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
-										<Setter Property="Width" Value="50" />
-									</Style>
-									<Style Selector="ToggleButton[IsChecked=True]">
-										<Setter Property="Content" Value="{x:Static p:Resources.BtnConfirm}" />
-										<Setter Property="Background" Value="Red" />
-										<Setter Property="Width" Value="75" />
+									<Style Selector="ToggleButton">
+										<Style Selector="^:unchecked">
+											<Setter Property="Content" Value="{x:Static p:Resources.BtnBan}" />
+											<Setter Property="Width" Value="50" />
+										</Style>
+										<Style Selector="^:checked">
+											<Setter Property="Content" Value="{x:Static p:Resources.BtnConfirm}" />
+											<Setter Property="Width" Value="75" />
+										</Style>
+										<Style.Resources>
+											<SolidColorBrush x:Key="ToggleButtonBackgroundChecked" Color="#CF4825" />
+											<SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPointerOver" Color="#D75E3F" />
+											<SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPressed" Color="#BC3A1E" />
+										</Style.Resources>
 									</Style>
 								</ToggleButton.Styles>
 							</ToggleButton>
@@ -48,17 +53,22 @@
 							              Tag="{Binding}"
 							              Click="KickBtn_OnClick"
 							              LostFocus="BanOrKickBtn_OnLostFocus"
-							              IsEnabled="{Binding #BanBtn.IsChecked, Converter={x:Static BoolConverters.Not}}">
+							              IsEnabled="{Binding #BanBtn.IsChecked, Converter={x:Static BoolConverters.Not}}" >
 								<ToggleButton.Styles>
-									<Style Selector="ToggleButton[IsChecked=False]">
-										<Setter Property="Content" Value="{x:Static p:Resources.BtnKick}" />
-										<Setter Property="Background" Value="{DynamicResource ButtonBackground}" />
-										<Setter Property="Width" Value="50" />
-									</Style>
-									<Style Selector="ToggleButton[IsChecked=True]">
-										<Setter Property="Content" Value="{x:Static p:Resources.BtnConfirm}" />
-										<Setter Property="Background" Value="Red" />
-										<Setter Property="Width" Value="75" />
+									<Style Selector="ToggleButton">
+										<Style Selector="^:unchecked">
+											<Setter Property="Content" Value="{x:Static p:Resources.BtnKick}" />
+											<Setter Property="Width" Value="50" />
+										</Style>
+										<Style Selector="^:checked">
+											<Setter Property="Content" Value="{x:Static p:Resources.BtnConfirm}" />
+											<Setter Property="Width" Value="75" />
+										</Style>
+										<Style.Resources>
+											<SolidColorBrush x:Key="ToggleButtonBackgroundChecked" Color="#CF4825" />
+											<SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPointerOver" Color="#D75E3F" />
+											<SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPressed" Color="#BC3A1E" />
+										</Style.Resources>
 									</Style>
 								</ToggleButton.Styles>
 							</ToggleButton> 

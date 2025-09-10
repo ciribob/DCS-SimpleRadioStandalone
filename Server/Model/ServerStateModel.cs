@@ -51,7 +51,7 @@ public partial class ServerStateModel : ServerState, IHandle<ServerStateMessage>
 	{
 		Console.WriteLine($"Kicking {client.Name}");
 		
-		//base.KickClient(client);
+		base.KickClient(client);
 	}
 
 	[RelayCommand]
@@ -59,7 +59,7 @@ public partial class ServerStateModel : ServerState, IHandle<ServerStateMessage>
 	{
 		Console.WriteLine($"Banning {client.Name}");
 		
-		//WriteBanIP(client);
+		WriteBanIP(client);
 		KickClient(client);
 	}
 	

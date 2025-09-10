@@ -2,11 +2,13 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Caliburn.Micro;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Model;
 
@@ -53,9 +55,14 @@ public partial class ServerSettingsModel(IEventAggregator eventAggregator, Serve
 	[ObservableProperty] [MaxLength(256)] private string _serverIP = serverSettings.GetServerSetting(ServerSettingsKeys.SERVER_IP).StringValue;
 	[ObservableProperty] [MaxLength(32767)] private string _serverPresetsPath = serverSettings.GetServerSetting(ServerSettingsKeys.SERVER_PRESETS).StringValue;
 	
-	//todo frequency list, create initialization and validation system
-	[ObservableProperty] private ObservableCollection<double> _testFrequencies = new() { 125.2, 142.5 };
-	[ObservableProperty] private ObservableCollection<double> _globalLobbyFrequencies = new() { 248.22 };
+	[ObservableProperty] private ObservableCollection<double> _testFrequencies = new(
+		serverSettings.GetServerSetting(ServerSettingsKeys.TEST_FREQUENCIES)
+			.StringValue.Split(',').Select(Convert.ToDouble).ToList()
+		);
+	[ObservableProperty] private ObservableCollection<double> _globalLobbyFrequencies = new(
+		serverSettings.GetServerSetting(ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES).StringValue
+			.Split(',').Select(Convert.ToDouble).ToList()
+		);
 	
 	partial void OnClientExportFilePathChanged(string value) => serverSettings.SetServerSetting(ServerSettingsKeys.CLIENT_EXPORT_FILE_PATH, value.ToString());
 	partial void OnExternalModePassBlueChanged(string value) => serverSettings.SetExternalAWACSModeSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE_BLUE_PASSWORD, value.ToString());
@@ -91,13 +98,50 @@ public partial class ServerSettingsModel(IEventAggregator eventAggregator, Serve
 
 	partial void OnTestFrequenciesChanged(ObservableCollection<double> value)
 	{
-		serverSettings.SetServerSetting(ServerSettingsKeys.TEST_FREQUENCIES, value.ToString());
+		serverSettings.SetServerSetting(ServerSettingsKeys.TEST_FREQUENCIES, String.Join(",", value));
 		eventAggregator.PublishOnBackgroundThreadAsync(new ServerFrequenciesChanged());
 	}
 
 	partial void OnGlobalLobbyFrequenciesChanged(ObservableCollection<double> value)
 	{
-		serverSettings.SetServerSetting(ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES, value.ToString());
+		serverSettings.SetServerSetting(ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES, String.Join(",", value));
 		eventAggregator.PublishOnBackgroundThreadAsync(new ServerFrequenciesChanged());
+	}
+
+	[RelayCommand]
+	private void TestFrequencyAdd(double value)
+	{
+		TestFrequencies.Add(value);
+		SaveAndPublish(ServerSettingsKeys.TEST_FREQUENCIES, TestFrequencies);
+	}
+	[RelayCommand]
+	private void TestFrequencyRemove(double value)
+	{
+		TestFrequencies.Remove(value);
+		SaveAndPublish(ServerSettingsKeys.TEST_FREQUENCIES, TestFrequencies);
+	}
+	[RelayCommand]
+	private void GlobalFrequencyAdd(double value)
+	{
+		GlobalLobbyFrequencies.Add(value);
+		SaveAndPublish(ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES, GlobalLobbyFrequencies);
+	}
+	[RelayCommand]
+	private void GlobalFrequencyRemove(double value)
+	{
+		GlobalLobbyFrequencies.Remove(value);
+		SaveAndPublish(ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES, GlobalLobbyFrequencies);
+	}
+
+	private void SaveAndPublish(ServerSettingsKeys key, ObservableCollection<double> collection)
+	{
+		serverSettings.SetServerSetting(key, String.Join(",", collection));
+		eventAggregator.PublishOnBackgroundThreadAsync(
+			new ServerFrequenciesChanged()
+			{
+				TestFrequencies = string.Join(",", TestFrequencies), 
+				GlobalLobbyFrequencies = string.Join(",", GlobalLobbyFrequencies)
+			} 
+		);
 	}
 }

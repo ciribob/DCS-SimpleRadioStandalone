@@ -4,6 +4,8 @@ using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Data;
+using Avalonia.Data.Converters;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Ciribob.DCS.SimpleRadio.Standalone.Server.viewmodel;
@@ -27,7 +29,7 @@ public partial class SettingsPanel : Panel
 		if (TestFrequencyTextBox.Text == null) return;
 		if (double.TryParse(TestFrequencyTextBox.Text, out double value))
 		{
-			ViewModel.ServerSettings.TestFrequencies.Add(value);
+			ViewModel.ServerSettings.TestFrequencyAddCommand.Execute(value);
 		}
 		TestFrequencyTextBox.Text = string.Empty;
 	}
@@ -36,7 +38,7 @@ public partial class SettingsPanel : Panel
 	{
 		if ((sender as Button)?.Tag is double toRemove)
 		{
-			ViewModel.ServerSettings.TestFrequencies.Remove(toRemove);
+			ViewModel.ServerSettings.TestFrequencyRemoveCommand.Execute(toRemove);
 		}
 	}
 
@@ -45,7 +47,7 @@ public partial class SettingsPanel : Panel
 		if (GlobalFrequencyTextBox.Text == null) return;		
 		if (double.TryParse(GlobalFrequencyTextBox.Text, out double value))
 		{
-			ViewModel.ServerSettings.GlobalLobbyFrequencies.Add(value);
+			ViewModel.ServerSettings.GlobalFrequencyAddCommand.Execute(value);
 		}
 		GlobalFrequencyTextBox.Text = string.Empty;
 	}
@@ -54,7 +56,7 @@ public partial class SettingsPanel : Panel
 	{
 		if ((sender as Button)?.Tag is double toRemove)
 		{
-			ViewModel.ServerSettings.GlobalLobbyFrequencies.Remove(toRemove);
+			ViewModel.ServerSettings.GlobalFrequencyRemoveCommand.Execute(toRemove);
 		}
 	}
 
@@ -75,18 +77,19 @@ public partial class SettingsPanel : Panel
 			ViewModel.ServerSettings.ServerPresetsPath = task.Result;
 		}
 	}
-	
+
 	private async Task<string> OpenFolderPicker(string title, string? exitingFolder = null)
 	{
 		FolderPickerOpenOptions options = new()
 		{
-			Title = title, 
+			Title = title,
 			AllowMultiple = false
 		};
 
 		try
 		{
-			IReadOnlyList<IStorageFolder> folder = await TopLevel.GetTopLevel(this)!.StorageProvider.OpenFolderPickerAsync(options);
+			IReadOnlyList<IStorageFolder> folder =
+				await TopLevel.GetTopLevel(this)!.StorageProvider.OpenFolderPickerAsync(options);
 			return folder[0].Path.AbsolutePath;
 		}
 		catch (Exception)
@@ -95,11 +98,4 @@ public partial class SettingsPanel : Panel
 			return exitingFolder ?? string.Empty;
 		}
 	}
-	
-	private NumberFormatInfo _freqencyFormat = new NumberFormatInfo()
-	{
-		NumberDecimalSeparator = ".",
-		NumberGroupSeparator = ",",
-		NumberDecimalDigits = 3,
-	};
 }

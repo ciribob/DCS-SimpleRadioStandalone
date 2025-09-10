@@ -5,8 +5,7 @@
         xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.Properties"
         xmlns:viewmodel="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.viewmodel"
         xmlns:local="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.View"
-        MinHeight="250"
-        Width="420" MinWidth="420"
+        MinHeight="250" MinWidth="420"
         mc:Ignorable="d" d:DesignWidth="420" d:DesignHeight="600"
         x:Class="Ciribob.DCS.SimpleRadio.Standalone.Server.View.ClientPanel"
         x:DataType="viewmodel:MainViewModel">

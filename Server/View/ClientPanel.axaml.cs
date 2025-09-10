@@ -22,15 +22,7 @@ public partial class ClientPanel : Panel
 	{
 		InitializeComponent();
 	}
-
-	private void Confirm_OnClick(object? sender, RoutedEventArgs e)
-	{
-		if ((sender as Button)?.Tag is double toRemove)
-		{
-			ViewModel.ServerSettings.GlobalLobbyFrequencies.Remove(toRemove);
-		}
-	}
-
+	
 	private void BanBtn_OnClick(object? sender, RoutedEventArgs e)
 	{
 		if ((sender as ToggleButton)?.IsChecked == false)

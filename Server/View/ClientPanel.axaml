@@ -14,7 +14,7 @@
 		<viewmodel:DesignMainViewModel />
 	</Design.DataContext>
 
-	<ListBox x:Name="ListBoxTemp" ItemsSource="{Binding Server.ConnectedClientsTemp }">
+	<ListBox x:Name="ListBoxTemp" ItemsSource="{Binding Server.ConnectedClients }">
 		<ListBox.ItemTemplate>
 			<DataTemplate>
 				<Border 

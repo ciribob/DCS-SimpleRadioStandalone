@@ -250,13 +250,16 @@
                                                         <Button Width="25" Content="X"
                                                                 Tag="{ Binding}"
                                                                 Click="TestFrequenciesRemoveButton_OnClick" />
-                                                        <Label Content="{Binding}" />
+                                                        <Label Margin="0" Content="{Binding  StringFormat=F3}" />
                                                     </StackPanel>
                                                 </DataTemplate>
                                             </ListBox.ItemTemplate>
                                         </ListBox>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBox Width="75" Margin="0" x:Name="TestFrequencyTextBox" />
+                                            <NumericUpDown Width="75" Margin="1" x:Name="TestFrequencyTextBox" 
+                                                           ShowButtonSpinner="False" 
+                                                           FormatString="F3"
+                                                           ParsingNumberStyle="AllowDecimalPoint, AllowThousands, AllowLeadingWhite, AllowTrailingWhite" />
                                             <Button Width="25" Click="TestFrequenciesAddButton_OnClick" Content="+" />
                                         </StackPanel>
                                     </StackPanel>
@@ -292,13 +295,16 @@
                                                         <Button Width="25" Content="X"
                                                                 Tag="{ Binding}"
                                                                 Click="GlobalFrequenciesRemoveButton_OnClick" />
-                                                        <Label Content="{Binding}" />
+                                                        <Label Margin="0" Content="{Binding StringFormat=F3}" />
                                                     </StackPanel>
                                                 </DataTemplate>
                                             </ListBox.ItemTemplate>
                                         </ListBox>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBox Width="75" Margin="0" x:Name="GlobalFrequencyTextBox" />
+                                            <NumericUpDown Width="75" Margin="0" x:Name="GlobalFrequencyTextBox"  
+                                                     ShowButtonSpinner="False" 
+                                                     FormatString="F3"
+                                                     ParsingNumberStyle="AllowDecimalPoint, AllowThousands, AllowLeadingWhite, AllowTrailingWhite" />
                                             <Button Width="25" Click="GlobalFrequenciesAddButton_OnClick" Content="+" />
                                         </StackPanel>
                                     </StackPanel>

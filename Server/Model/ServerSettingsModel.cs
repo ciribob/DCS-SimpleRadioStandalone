@@ -8,6 +8,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Model;
 
@@ -97,13 +98,50 @@ public partial class ServerSettingsModel(IEventAggregator eventAggregator, Serve
 
 	partial void OnTestFrequenciesChanged(ObservableCollection<double> value)
 	{
-		serverSettings.SetServerSetting(ServerSettingsKeys.TEST_FREQUENCIES, value.ToString());
+		serverSettings.SetServerSetting(ServerSettingsKeys.TEST_FREQUENCIES, String.Join(",", value));
 		eventAggregator.PublishOnBackgroundThreadAsync(new ServerFrequenciesChanged());
 	}
 
 	partial void OnGlobalLobbyFrequenciesChanged(ObservableCollection<double> value)
 	{
-		serverSettings.SetServerSetting(ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES, value.ToString());
+		serverSettings.SetServerSetting(ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES, String.Join(",", value));
 		eventAggregator.PublishOnBackgroundThreadAsync(new ServerFrequenciesChanged());
+	}
+
+	[RelayCommand]
+	private void TestFrequencyAdd(double value)
+	{
+		TestFrequencies.Add(value);
+		SaveAndPublish(ServerSettingsKeys.TEST_FREQUENCIES, TestFrequencies);
+	}
+	[RelayCommand]
+	private void TestFrequencyRemove(double value)
+	{
+		TestFrequencies.Remove(value);
+		SaveAndPublish(ServerSettingsKeys.TEST_FREQUENCIES, TestFrequencies);
+	}
+	[RelayCommand]
+	private void GlobalFrequencyAdd(double value)
+	{
+		GlobalLobbyFrequencies.Add(value);
+		SaveAndPublish(ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES, GlobalLobbyFrequencies);
+	}
+	[RelayCommand]
+	private void GlobalFrequencyRemove(double value)
+	{
+		GlobalLobbyFrequencies.Remove(value);
+		SaveAndPublish(ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES, GlobalLobbyFrequencies);
+	}
+
+	private void SaveAndPublish(ServerSettingsKeys key, ObservableCollection<double> collection)
+	{
+		serverSettings.SetServerSetting(key, String.Join(",", collection));
+		eventAggregator.PublishOnBackgroundThreadAsync(
+			new ServerFrequenciesChanged()
+			{
+				TestFrequencies = string.Join(",", TestFrequencies), 
+				GlobalLobbyFrequencies = string.Join(",", GlobalLobbyFrequencies)
+			} 
+		);
 	}
 }

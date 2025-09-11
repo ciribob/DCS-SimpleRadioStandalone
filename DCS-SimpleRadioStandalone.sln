@@ -39,6 +39,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Scripts\DCS-SRS\Scripts\DCS-Plugin-Example\Readme.txt = Scripts\DCS-SRS\Scripts\DCS-Plugin-Example\Readme.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerAvalonia", "Server-Avalonia\ServerAvalonia.csproj", "{EE716C58-EDAC-47DB-B325-728F70613E2A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -85,6 +87,10 @@ Global
 		{E1FF871E-F37A-4CB3-996C-91D9C6F6D7A4}.Debug|x64.Build.0 = Debug|x64
 		{E1FF871E-F37A-4CB3-996C-91D9C6F6D7A4}.Release|x64.ActiveCfg = Release|x64
 		{E1FF871E-F37A-4CB3-996C-91D9C6F6D7A4}.Release|x64.Build.0 = Release|x64
+		{EE716C58-EDAC-47DB-B325-728F70613E2A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EE716C58-EDAC-47DB-B325-728F70613E2A}.Debug|x64.Build.0 = Debug|Any CPU
+		{EE716C58-EDAC-47DB-B325-728F70613E2A}.Release|x64.ActiveCfg = Release|Any CPU
+		{EE716C58-EDAC-47DB-B325-728F70613E2A}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

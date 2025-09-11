@@ -1,0 +1,88 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.Properties"
+        xmlns:viewmodel="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.viewmodel"
+        xmlns:ui="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.View"
+        MinHeight="250"
+        Width="420" MinWidth="420"
+        mc:Ignorable="d" d:DesignWidth="420" d:DesignHeight="600"
+        x:Class="Ciribob.DCS.SimpleRadio.Standalone.Server.View.MainWindow"
+        x:DataType="viewmodel:MainViewModel" Focusable="True">
+
+	<Design.DataContext>
+		<viewmodel:DesignMainViewModel />
+	</Design.DataContext>
+
+	<DockPanel>
+		<!-- Status Bar comes first so it stays on top of the other content. -->
+		<DockPanel DockPanel.Dock="Bottom"
+		           VerticalAlignment="Bottom"
+		           Background="{DynamicResource SystemAccentColor}">
+			<Panel.Styles>
+				<Style Selector="Label">
+					<Setter Property="Width" Value="55" />
+				</Style>
+			</Panel.Styles>
+
+			<StackPanel DockPanel.Dock="Left"
+			            Orientation="Horizontal">
+				<Label Content="{x:Static p:Resources.PresenterLabelStatus}" />
+				<Label Content="{Binding Server.State}" Width="80" />
+			</StackPanel>
+			<StackPanel DockPanel.Dock="Right"
+			            Orientation="Horizontal"
+			            HorizontalAlignment="Right">
+				<Label Content="{x:Static p:Resources.LabelClients}" />
+				<Label x:Name="ClientsCount" Content="{Binding Server.ConnectedClients.Count}" />
+				<Label Content="{x:Static p:Resources.PresenterLabelPort}" />
+				<Label x:Name="LabelPort" Content="{Binding ServerSettings.ServerPort, Mode=OneWay}" />
+			</StackPanel>
+		</DockPanel>
+
+		<Grid RowDefinitions="Auto,*">
+			<ToggleButton Grid.Row="0"
+			              x:Name="ServerStartStop"
+			              HorizontalAlignment="Stretch"
+			              Width="200"
+			              Command="{Binding StartStopServerCommand }"
+			              Tag="{Binding Server.State}">
+				<ToggleButton.Styles>
+					<Style Selector="ToggleButton[Tag=Stopped]">
+						<Setter Property="Content" Value="{x:Static p:Resources.BtnStartServer}" />
+						<Setter Property="IsEnabled" Value="True"/>
+						<Setter Property="IsChecked" Value="False"/>
+					</Style>
+					<Style Selector="ToggleButton[Tag=Running]">
+						<Setter Property="Content" Value="{x:Static p:Resources.BtnStopServer}" />
+						<Setter Property="IsEnabled" Value="True"/>
+						<Setter Property="IsChecked" Value="True"/>
+					</Style>
+					<Style Selector="ToggleButton[Tag=Starting]">
+						<Setter Property="Content" Value="{x:Static p:Resources.BtnStartingServer}" />
+						<Setter Property="IsEnabled" Value="False"/>
+						<Setter Property="IsChecked" Value="False"/>
+					</Style>
+					<Style Selector="ToggleButton[Tag=Stopping]">
+						<Setter Property="Content" Value="{x:Static p:Resources.BtnStoppingServer}" />
+						<Setter Property="IsEnabled" Value="False"/>
+						<Setter Property="IsChecked" Value="False"/>
+					</Style>
+				</ToggleButton.Styles>
+			</ToggleButton>
+			
+			<TabControl Grid.Row="1">
+				<TabItem Header="{x:Static p:Resources.LabelTabHeaderSettings}">
+					<ui:SettingsPanel />
+				</TabItem>
+
+				<TabItem Header="{x:Static p:Resources.LabelTabHeaderClientAdmin}">
+					<ui:ClientPanel />
+				</TabItem>
+			</TabControl>
+
+		</Grid>
+
+	</DockPanel>
+</Window>

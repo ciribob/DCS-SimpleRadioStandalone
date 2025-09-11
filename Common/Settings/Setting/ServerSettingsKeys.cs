@@ -7,47 +7,115 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
 
 public enum ServerSettingsKeys
 {
-    [SrIntegerSetting(ServerSettingsKeysExtensions.GeneralSettingSection, 5002, 0, 20000)]
+    [SrIntegerSetting(ServerSettingsKeysExtensions.GeneralSettingSection, 5002, 0, 65535)]
     SERVER_PORT = 0,
     
     [SrBooleanSetting(ServerSettingsKeysExtensions.GeneralSettingSection, false)]
     COALITION_AUDIO_SECURITY = 1,
     
-    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.GeneralSettingSection, false)]
     SPECTATORS_AUDIO_DISABLED = 2,
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.GeneralSettingSection, false)]
     CLIENT_EXPORT_ENABLED = 3,
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.GeneralSettingSection, false)]
     LOS_ENABLED = 4,
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.GeneralSettingSection, false)]
     DISTANCE_ENABLED = 5,
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.GeneralSettingSection, false)]
     IRL_RADIO_TX = 6,
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.GeneralSettingSection, false)]
     IRL_RADIO_RX_INTERFERENCE = 7,
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.GeneralSettingSection, false)]
     IRL_RADIO_STATIC = 8, // Not used
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.GeneralSettingSection, false)]
     RADIO_EXPANSION = 9,
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.GeneralSettingSection, false)]
     EXTERNAL_AWACS_MODE = 10,
+    
+    [SrStringSetting(ServerSettingsKeysExtensions.ExternalSettingsSection, "", 0, 256)]
     EXTERNAL_AWACS_MODE_BLUE_PASSWORD = 11,
+    
+    [SrStringSetting(ServerSettingsKeysExtensions.ExternalSettingsSection, "", 0, 256)]
     EXTERNAL_AWACS_MODE_RED_PASSWORD = 12,
+    
+    [SrStringSetting(ServerSettingsKeysExtensions.ServerSettingsSection, "", 0, 256)]
     CLIENT_EXPORT_FILE_PATH = 13,
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.ServerSettingsSection, false)]
     CHECK_FOR_BETA_UPDATES = 14,
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.GeneralSettingSection, true)]
     ALLOW_RADIO_ENCRYPTION = 15,
+    
+    [SrStringSetting(ServerSettingsKeysExtensions.GeneralSettingSection, "247.2,120.3", 0, 256)]
     TEST_FREQUENCIES = 16,
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.GeneralSettingSection, true)]
     SHOW_TUNED_COUNT = 17,
+    
+    [SrStringSetting(ServerSettingsKeysExtensions.GeneralSettingSection, "248.22", 0, 256)]
     GLOBAL_LOBBY_FREQUENCIES = 18,
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.ServerSettingsSection, false)]
     SHOW_TRANSMITTER_NAME = 19,
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.ServerSettingsSection, false)]
     LOTATC_EXPORT_ENABLED = 20,
+    
+    [SrIntegerSetting(ServerSettingsKeysExtensions.ServerSettingsSection, 10712, 0, 65535)]
     LOTATC_EXPORT_PORT = 21,
+    
+    [SrStringSetting(ServerSettingsKeysExtensions.ServerSettingsSection, "127.0.0.1", 0, 256)]
     LOTATC_EXPORT_IP = 22,
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.ServerSettingsSection, true)]
     UPNP_ENABLED = 23,
+    
+    [SrIntegerSetting(ServerSettingsKeysExtensions.GeneralSettingSection, 0, 0, 7)]
     RETRANSMISSION_NODE_LIMIT = 24,
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.ServerSettingsSection, false)]
     STRICT_RADIO_ENCRYPTION = 25,
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.ServerSettingsSection, false)]
     TRANSMISSION_LOG_ENABLED = 26,
+    
+    [SrIntegerSetting(ServerSettingsKeysExtensions.GeneralSettingSection, 2, 0, 7)]
     TRANSMISSION_LOG_RETENTION = 27,
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.ServerSettingsSection, false)]
     RADIO_EFFECT_OVERRIDE = 28,
+    
+    [SrStringSetting(ServerSettingsKeysExtensions.ServerSettingsSection, "0.0.0.0", 0, 256)]
     SERVER_IP = 29,
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.ServerSettingsSection, false)]
     SERVER_PRESETS_ENABLED = 30,
+    
+    [SrStringSetting(ServerSettingsKeysExtensions.ServerSettingsSection, "", 0, 65535)]
     SERVER_PRESETS = 31,
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.ServerSettingsSection, false)]
     HTTP_SERVER_ENABLED = 32,
+    
+    [SrIntegerSetting(ServerSettingsKeysExtensions.ServerSettingsSection, 10712, 0, 65535)]
     HTTP_SERVER_PORT = 33,
+    
+    [SrStringSetting(ServerSettingsKeysExtensions.GeneralSettingSection, "0.0.0.0", 0, 256)]
     HTTP_SERVER_API_KEY = 34,
+    
+    [SrBooleanSetting(ServerSettingsKeysExtensions.ServerSettingsSection, false)]
     SERVER_EAM_RADIO_PRESET_ENABLED = 35,
+    
+    [SrStringSetting(ServerSettingsKeysExtensions.GeneralSettingSection, "", 0, 65535)]
     SERVER_EAM_RADIO_PRESET = 36,
 }
 
@@ -100,97 +168,9 @@ public class SrBooleanSettingAttribute : Attribute
 
 public static class ServerSettingsKeysExtensions
 {
-    public static string ToSection(this ServerSettingsKeys key)
-    {
-        return Section[key];
-    }
-    public static string ToDefaultValue(this ServerSettingsKeys key)
-    {
-        return DefaultValue[key];
-    }
-    
     public const string GeneralSettingSection = "General Settings";
     public const string ServerSettingsSection = "Server Settings";
     public const string ExternalSettingsSection = "External AWACS Mode Settings";
-    
-    public static readonly Dictionary<ServerSettingsKeys, string> Section = new(){
-        { ServerSettingsKeys.CLIENT_EXPORT_ENABLED, GeneralSettingSection },
-        { ServerSettingsKeys.COALITION_AUDIO_SECURITY , GeneralSettingSection },
-        { ServerSettingsKeys.DISTANCE_ENABLED, GeneralSettingSection},
-        { ServerSettingsKeys.EXTERNAL_AWACS_MODE , GeneralSettingSection},
-        { ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES , GeneralSettingSection},
-        { ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE , GeneralSettingSection},
-        { ServerSettingsKeys.IRL_RADIO_TX , GeneralSettingSection},
-        { ServerSettingsKeys.IRL_RADIO_STATIC , GeneralSettingSection},
-        { ServerSettingsKeys.LOS_ENABLED , GeneralSettingSection },
-        { ServerSettingsKeys.LOTATC_EXPORT_ENABLED , GeneralSettingSection},
-        { ServerSettingsKeys.RADIO_EFFECT_OVERRIDE , GeneralSettingSection},
-        { ServerSettingsKeys.ALLOW_RADIO_ENCRYPTION, GeneralSettingSection },
-        { ServerSettingsKeys.RADIO_EXPANSION , GeneralSettingSection},
-        { ServerSettingsKeys.RETRANSMISSION_NODE_LIMIT , GeneralSettingSection},
-        { ServerSettingsKeys.SERVER_PRESETS_ENABLED , GeneralSettingSection},
-        { ServerSettingsKeys.SHOW_TRANSMITTER_NAME , GeneralSettingSection},
-        { ServerSettingsKeys.SHOW_TUNED_COUNT , GeneralSettingSection},
-        { ServerSettingsKeys.SPECTATORS_AUDIO_DISABLED , GeneralSettingSection},
-        { ServerSettingsKeys.STRICT_RADIO_ENCRYPTION , GeneralSettingSection},
-        { ServerSettingsKeys.TEST_FREQUENCIES , GeneralSettingSection},
-        { ServerSettingsKeys.TRANSMISSION_LOG_ENABLED , GeneralSettingSection},
-        { ServerSettingsKeys.TRANSMISSION_LOG_RETENTION , GeneralSettingSection},
-
-        { ServerSettingsKeys.CHECK_FOR_BETA_UPDATES , ServerSettingsSection},
-        { ServerSettingsKeys.UPNP_ENABLED , ServerSettingsSection},
-        { ServerSettingsKeys.SERVER_PORT , ServerSettingsSection},
-        { ServerSettingsKeys.SERVER_IP , ServerSettingsSection},
-        { ServerSettingsKeys.HTTP_SERVER_ENABLED , ServerSettingsSection},
-        { ServerSettingsKeys.HTTP_SERVER_PORT , ServerSettingsSection},
-        { ServerSettingsKeys.HTTP_SERVER_API_KEY , ServerSettingsSection},
-        { ServerSettingsKeys.LOTATC_EXPORT_PORT , ServerSettingsSection},
-        { ServerSettingsKeys.LOTATC_EXPORT_IP , ServerSettingsSection},
-        { ServerSettingsKeys.CLIENT_EXPORT_FILE_PATH , ServerSettingsSection },
-        { ServerSettingsKeys.SERVER_PRESETS , ServerSettingsSection},
-
-        { ServerSettingsKeys.EXTERNAL_AWACS_MODE_BLUE_PASSWORD , ExternalSettingsSection},
-        { ServerSettingsKeys.EXTERNAL_AWACS_MODE_RED_PASSWORD , ExternalSettingsSection },
-    };
-    
-    public static readonly Dictionary<ServerSettingsKeys, string> DefaultValue = new()
-    {
-        { ServerSettingsKeys.CLIENT_EXPORT_ENABLED, "false" },
-        { ServerSettingsKeys.COALITION_AUDIO_SECURITY, "false" },
-        { ServerSettingsKeys.DISTANCE_ENABLED, "false" },
-        { ServerSettingsKeys.EXTERNAL_AWACS_MODE, "false" },
-        { ServerSettingsKeys.EXTERNAL_AWACS_MODE_BLUE_PASSWORD, "" },
-        { ServerSettingsKeys.EXTERNAL_AWACS_MODE_RED_PASSWORD, "" },
-        { ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE, "false" },
-        { ServerSettingsKeys.IRL_RADIO_STATIC, "false" },
-        { ServerSettingsKeys.IRL_RADIO_TX, "false" },
-        { ServerSettingsKeys.LOS_ENABLED, "false" },
-        { ServerSettingsKeys.RADIO_EXPANSION, "false" },
-        { ServerSettingsKeys.SERVER_PORT, "5002" },
-        { ServerSettingsKeys.SPECTATORS_AUDIO_DISABLED, "false" },
-        { ServerSettingsKeys.CLIENT_EXPORT_FILE_PATH, "clients-list.json" },
-        { ServerSettingsKeys.CHECK_FOR_BETA_UPDATES, "false" },
-        { ServerSettingsKeys.ALLOW_RADIO_ENCRYPTION, "true" },
-        { ServerSettingsKeys.TEST_FREQUENCIES, "247.2,120.3" },
-        { ServerSettingsKeys.SHOW_TUNED_COUNT, "true" },
-        { ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES, "248.22" },
-        { ServerSettingsKeys.LOTATC_EXPORT_ENABLED, "false" },
-        { ServerSettingsKeys.LOTATC_EXPORT_PORT, "10712" },
-        { ServerSettingsKeys.LOTATC_EXPORT_IP, "127.0.0.1" },
-        { ServerSettingsKeys.UPNP_ENABLED, "true" },
-        { ServerSettingsKeys.SHOW_TRANSMITTER_NAME, "false" },
-        { ServerSettingsKeys.RETRANSMISSION_NODE_LIMIT, "0" },
-        { ServerSettingsKeys.STRICT_RADIO_ENCRYPTION, "false" },
-        { ServerSettingsKeys.TRANSMISSION_LOG_ENABLED, "false" },
-        { ServerSettingsKeys.TRANSMISSION_LOG_RETENTION, "2" },
-        { ServerSettingsKeys.RADIO_EFFECT_OVERRIDE, "false" },
-        { ServerSettingsKeys.SERVER_IP, "0.0.0.0" },
-        { ServerSettingsKeys.SERVER_PRESETS_ENABLED, "false" },
-        { ServerSettingsKeys.HTTP_SERVER_ENABLED, "false" },
-        { ServerSettingsKeys.HTTP_SERVER_PORT, "8080" },
-        { ServerSettingsKeys.HTTP_SERVER_API_KEY, ShortGuid.NewGuid() },
-        { ServerSettingsKeys.SERVER_EAM_RADIO_PRESET_ENABLED, "false" },
-    };
 }
 
 public class DefaultServerSettings

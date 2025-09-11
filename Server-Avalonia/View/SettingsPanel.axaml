@@ -104,7 +104,7 @@
 
                                 <StackPanel Orientation="Horizontal"
                                             ToolTip.Tip="{x:Static p:Resources.ToolTipServerIP}">
-                                    <TextBox Text="{Binding ServerSettings.ServerIp, UpdateSourceTrigger=LostFocus}"
+                                    <TextBox Text="{Binding ServerSettings.ServerBindIp, UpdateSourceTrigger=LostFocus}"
                                              IsEnabled="{Binding #AdvancedIpToggle.IsChecked}" />
                                     <Label Content="{x:Static p:Resources.LabelServerIP}" />
                                 </StackPanel>

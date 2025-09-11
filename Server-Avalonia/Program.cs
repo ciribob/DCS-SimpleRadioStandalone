@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using System;
+using Sentry;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Server;
 
@@ -11,6 +12,8 @@ class Program
 	[STAThread]
 	public static void Main(string[] args)
 	{
+		SentrySdk.Init("https://0935ffeb7f9c46e28a420775a7f598f4@o414743.ingest.sentry.io/5315043");
+		
 		BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 	}
 

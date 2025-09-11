@@ -349,4 +349,7 @@ Cancel - Ignore</value>
     <data name="BtnStoppingServer" xml:space="preserve">
         <value>Stopping...</value>
     </data>
+    <data name="LabelEnable" xml:space="preserve">
+        <value>Enable</value>
+    </data>
 </root>

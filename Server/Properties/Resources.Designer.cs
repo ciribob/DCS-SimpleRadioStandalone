@@ -222,6 +222,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable.
+        /// </summary>
+        public static string LabelEnable {
+            get {
+                return ResourceManager.GetString("LabelEnable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Auto Export List.
         /// </summary>
         public static string LabelExportList {

@@ -321,7 +321,7 @@
                                 <StackPanel Orientation="Horizontal"
                                             ToolTip.Tip="{x:Static p:Resources.ToolTipExternalModeEnabled}">
                                     <ToggleSwitch IsChecked="{Binding ServerSettings.IsExternalModeEnabled}" />
-                                    <Label Content="Enable" />
+                                    <Label Content="{x:Static p:Resources.LabelEnable}" />
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal"
                                             ToolTip.Tip="{x:Static p:Resources.ToolTipExternalModePassBlue}">

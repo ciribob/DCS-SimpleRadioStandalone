@@ -3,16 +3,17 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Caliburn.Micro;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Server;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Server.Model;
 using Ciribob.DCS.SimpleRadio.Standalone.Server.viewmodel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Application = Avalonia.Application;
+using IServiceProvider = System.IServiceProvider;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Server;
 
-public partial class App : Application
+public class App : Application
 {
 	public override void Initialize()
 	{
@@ -28,11 +29,11 @@ public partial class App : Application
 		var collection = new ServiceCollection();
 		collection.AddCommonServices();
 		
-		var services = collection.BuildServiceProvider();
+		Ioc.Default.ConfigureServices(collection.BuildServiceProvider());
 		
 		Properties.Resources.Culture = CultureInfo.CurrentUICulture;
 		
-		var vm = services.GetRequiredService<MainViewModel>();
+		var vm =  Ioc.Default.GetRequiredService<MainViewModel>();
 		if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
 		{
 			//var args = desktop.Args;
@@ -51,8 +52,10 @@ public static class ServiceCollectionExtensions
 {
 	public static void AddCommonServices(this IServiceCollection collection)
 	{
+		var _temp = ServerSettingsStore.Instance.GetServerPort();
+		
+		collection.AddSingleton<ServerSettingsStore>(ServerSettingsStore.Instance);
 		collection.AddSingleton<IEventAggregator, EventAggregator>();
-		collection.AddSingleton<ServerSettingsStore>();
 		collection.AddSingleton<ServerStateModel>();
 		
 		collection.AddTransient<ServerSettingsModel>();

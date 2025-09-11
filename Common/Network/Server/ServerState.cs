@@ -39,12 +39,12 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
     private volatile bool _stop = true;
     private HttpServer _httpServer;
 
-    public ServerState(IEventAggregator eventAggregator)
+    public ServerState(IEventAggregator eventAggregator, bool autostart = true)
     {
         _eventAggregator = eventAggregator;
         _eventAggregator.SubscribeOnPublishedThread(this);
-
-        StartServer();
+        
+        if (autostart) StartServer();
     }
 
 

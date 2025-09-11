@@ -1,12 +1,14 @@
 ﻿using Avalonia;
 using System;
 using System.Runtime;
+using System.Threading;
 using Caliburn.Micro;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
 using Ciribob.DCS.SimpleRadio.Standalone.Server.Model;
 using Ciribob.DCS.SimpleRadio.Standalone.Server.viewmodel;
+using CommandLine;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Sentry;
@@ -27,17 +29,64 @@ class Program
 	public static void Main(string[] args)
 	{
 		GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
+		SentrySdk.Init("https://0935ffeb7f9c46e28a420775a7f598f4@o414743.ingest.sentry.io/5315043");
+		
 		var collection = new ServiceCollection();
 		collection.AddCommonServices();
 		Ioc.Default.ConfigureServices(collection.BuildServiceProvider());
 		
-		
-		
-		SentrySdk.Init("https://0935ffeb7f9c46e28a420775a7f598f4@o414743.ingest.sentry.io/5315043");
+		Parser.Default.ParseArguments<ServerCommandLineArgs>(args)
+			.WithParsed(ProcessArgs);
 		
 		BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 	}
+	
+	private static void ProcessArgs(ServerCommandLineArgs options)
+	{
+		if (options.OptionConfigFile != null && options.OptionConfigFile.Trim().Length > 0)
+			ServerSettingsStore.CFG_FILE_NAME = options.OptionConfigFile.Trim();
 
+		UpdaterChecker.Instance.CheckForUpdate(
+			ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).BoolValue,
+			result =>
+			{
+				if (result.UpdateAvailable)
+					Console.WriteLine($@"Update Available! Version {result.Version}-{result.Branch} @ {result.Url}");
+			});
+		Console.WriteLine($@"Settings From Command Line: {options}");
+
+		if (options.OptionHeadless)
+		{
+			var p = Ioc.Default.GetRequiredService<ServerStateModel>();
+			p.StartServerCommand.Execute(null);
+			
+			var waitForProcessShutdownStart = new ManualResetEventSlim();
+			var waitForMainExit = new ManualResetEventSlim();
+
+			AppDomain.CurrentDomain.ProcessExit += (sender, e) =>
+			{
+				// We got a SIGTERM, signal that graceful shutdown has started
+				waitForProcessShutdownStart.Set();
+
+				Console.WriteLine(@"Shutting down gracefully...");
+				// Don't unwind until main exists
+				waitForMainExit.Wait();
+			};
+
+			Console.WriteLine(@"Waiting for shutdown SIGTERM");
+			// Wait for shutdown to start
+			waitForProcessShutdownStart.Wait();
+
+			// This is where the application performs graceful shutdown
+			p.StopServerCommand.Execute(null);
+
+			Console.WriteLine(@"Shutdown complete");
+			// Now we're done with main, tell the shutdown handler
+			waitForMainExit.Set();
+		}
+
+	}
+	
 	// Avalonia configuration, don't remove; also used by visual designer.
 	public static AppBuilder BuildAvaloniaApp()
 		=> AppBuilder.Configure<App>()

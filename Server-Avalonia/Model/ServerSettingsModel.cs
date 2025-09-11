@@ -21,14 +21,14 @@ public partial class ServerSettingsModel(IEventAggregator eventAggregator, Serve
 		// Any time a property changes here, send this signal.
 		eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
 	}
-
+	
 	#region General Settings
 	[ObservableProperty] private bool _isClientExportEnabled = serverSettings.GetGeneralSetting(ServerSettingsKeys.CLIENT_EXPORT_ENABLED).BoolValue;
 	[ObservableProperty] private bool _isCoalitionAudioSecurityEnabled = serverSettings.GetGeneralSetting(ServerSettingsKeys.COALITION_AUDIO_SECURITY).BoolValue;
 	[ObservableProperty] private bool _isDistanceLimitEnabled = serverSettings.GetGeneralSetting(ServerSettingsKeys.DISTANCE_ENABLED).BoolValue;
 	[ObservableProperty] private bool _isExternalModeEnabled = serverSettings.GetGeneralSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE).BoolValue;
-	[ObservableProperty] private bool _isIRLRadioRXEffectsEnabled = serverSettings.GetGeneralSetting(ServerSettingsKeys.IRL_RADIO_TX).BoolValue;
-	[ObservableProperty] private bool _isIRLRadioTXEffectsEnabled = serverSettings.GetGeneralSetting(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE).BoolValue;
+	[ObservableProperty] private bool _isIrlRadioRxEffectsEnabled = serverSettings.GetGeneralSetting(ServerSettingsKeys.IRL_RADIO_TX).BoolValue;
+	[ObservableProperty] private bool _isIrlRadioTxEffectsEnabled = serverSettings.GetGeneralSetting(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE).BoolValue;
 	[ObservableProperty] private bool _isLineOfSightEnabled = serverSettings.GetGeneralSetting(ServerSettingsKeys.LOS_ENABLED).BoolValue;
 	[ObservableProperty] private bool _isLotAtcExportEnabled = serverSettings.GetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_ENABLED).BoolValue;
 	[ObservableProperty] private bool _isRadioEffectOverrideOnGlobalEnabled = serverSettings.GetGeneralSetting(ServerSettingsKeys.RADIO_EFFECT_OVERRIDE).BoolValue;
@@ -58,8 +58,8 @@ public partial class ServerSettingsModel(IEventAggregator eventAggregator, Serve
 	partial void OnIsCoalitionAudioSecurityEnabledChanged(bool value) => serverSettings.SetGeneralSetting(ServerSettingsKeys.COALITION_AUDIO_SECURITY, value.ToString());
 	partial void OnIsDistanceLimitEnabledChanged(bool value) => serverSettings.SetGeneralSetting(ServerSettingsKeys.DISTANCE_ENABLED, value.ToString());
 	partial void OnIsExternalModeEnabledChanged(bool value) => serverSettings.SetGeneralSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE, value.ToString());
-	partial void OnIsIRLRadioRXEffectsEnabledChanged(bool value) => serverSettings.SetGeneralSetting(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE, value.ToString());
-	partial void OnIsIRLRadioTXEffectsEnabledChanged(bool value) => serverSettings.SetGeneralSetting(ServerSettingsKeys.IRL_RADIO_TX, value.ToString());
+	partial void OnIsIrlRadioRxEffectsEnabledChanged(bool value) => serverSettings.SetGeneralSetting(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE, value.ToString());
+	partial void OnIsIrlRadioTxEffectsEnabledChanged(bool value) => serverSettings.SetGeneralSetting(ServerSettingsKeys.IRL_RADIO_TX, value.ToString());
 	partial void OnIsLineOfSightEnabledChanged(bool value) => serverSettings.SetGeneralSetting(ServerSettingsKeys.LOS_ENABLED, value.ToString());
 	partial void OnIsLotAtcExportEnabledChanged(bool value) => serverSettings.SetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_ENABLED, value.ToString());
 	partial void OnIsRadioEffectOverrideOnGlobalEnabledChanged(bool value) => serverSettings.SetGeneralSetting(ServerSettingsKeys.RADIO_EFFECT_OVERRIDE, value.ToString());
@@ -90,16 +90,16 @@ public partial class ServerSettingsModel(IEventAggregator eventAggregator, Serve
 	#region Server Settings
 	[ObservableProperty] private bool _isCheckForBetaUpdatesEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).BoolValue;
 
-	[ObservableProperty] private bool _isUPNPEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.UPNP_ENABLED).BoolValue;
+	[ObservableProperty] private bool _isUpnpEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.UPNP_ENABLED).BoolValue;
 	[ObservableProperty] [Range(0,65535)] private int _serverPort = serverSettings.GetServerSetting(ServerSettingsKeys.SERVER_PORT).IntValue;
-	[ObservableProperty] [MaxLength(256)] private string _serverIP = serverSettings.GetServerSetting(ServerSettingsKeys.SERVER_IP).StringValue;
+	[ObservableProperty] [MaxLength(256)] private string _serverIp = serverSettings.GetServerSetting(ServerSettingsKeys.SERVER_IP).StringValue;
 
-	[ObservableProperty] private bool _isHTTPServerEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.HTTP_SERVER_ENABLED).BoolValue;
+	[ObservableProperty] private bool _isHttpServerEnabled = serverSettings.GetServerSetting(ServerSettingsKeys.HTTP_SERVER_ENABLED).BoolValue;
 	[ObservableProperty] [Range(0,65535)] private int _httpServerPort = serverSettings.GetServerSetting(ServerSettingsKeys.HTTP_SERVER_PORT).IntValue;
 	
 	
 	[ObservableProperty] [Range(0,65535)] private int _lotAtcExportPort = serverSettings.GetServerSetting(ServerSettingsKeys.LOTATC_EXPORT_PORT).IntValue;
-	[ObservableProperty] [MaxLength(256)] private string _lotAtcExportIP = serverSettings.GetServerSetting(ServerSettingsKeys.LOTATC_EXPORT_IP).StringValue;
+	[ObservableProperty] [MaxLength(256)] private string _lotAtcExportIp = serverSettings.GetServerSetting(ServerSettingsKeys.LOTATC_EXPORT_IP).StringValue;
 
 	[ObservableProperty] [MaxLength(32767)] private string _clientExportFilePath = serverSettings.GetServerSetting(ServerSettingsKeys.CLIENT_EXPORT_FILE_PATH).StringValue;
 	[ObservableProperty] [MaxLength(32767)] private string _serverPresetsPath = serverSettings.GetServerSetting(ServerSettingsKeys.SERVER_PRESETS).StringValue;
@@ -109,11 +109,11 @@ public partial class ServerSettingsModel(IEventAggregator eventAggregator, Serve
 	partial void OnClientExportFilePathChanged(string value) => serverSettings.SetServerSetting(ServerSettingsKeys.CLIENT_EXPORT_FILE_PATH, value.ToString());
 	partial void OnHttpServerPortChanged(int value) => serverSettings.SetServerSetting(ServerSettingsKeys.HTTP_SERVER_PORT, value.ToString());
 	partial void OnIsCheckForBetaUpdatesEnabledChanged(bool value) => serverSettings.SetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES, value.ToString());
-	partial void OnIsHTTPServerEnabledChanged(bool value) => serverSettings.SetServerSetting(ServerSettingsKeys.HTTP_SERVER_ENABLED, value.ToString());
-	partial void OnIsUPNPEnabledChanged(bool value) => serverSettings.SetGeneralSetting(ServerSettingsKeys.UPNP_ENABLED, value.ToString());
-	partial void OnLotAtcExportIPChanged(string value) => serverSettings.SetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_IP, value.ToString());
+	partial void OnIsHttpServerEnabledChanged(bool value) => serverSettings.SetServerSetting(ServerSettingsKeys.HTTP_SERVER_ENABLED, value.ToString());
+	partial void OnIsUpnpEnabledChanged(bool value) => serverSettings.SetGeneralSetting(ServerSettingsKeys.UPNP_ENABLED, value.ToString());
+	partial void OnLotAtcExportIpChanged(string value) => serverSettings.SetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_IP, value.ToString());
 	partial void OnLotAtcExportPortChanged(int value) => serverSettings.SetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_PORT, value.ToString());
-	partial void OnServerIPChanged(string value) => serverSettings.SetGeneralSetting(ServerSettingsKeys.SERVER_IP, value.ToString());
+	partial void OnServerIpChanged(string value) => serverSettings.SetGeneralSetting(ServerSettingsKeys.SERVER_IP, value.ToString());
 	partial void OnServerPortChanged(int value) => serverSettings.SetGeneralSetting(ServerSettingsKeys.SERVER_PORT, value.ToString());
 	partial void OnServerPresetsPathChanged(string value) => serverSettings.SetGeneralSetting(ServerSettingsKeys.SERVER_PRESETS, value.ToString());
 	

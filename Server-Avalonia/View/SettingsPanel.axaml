@@ -91,7 +91,7 @@
 
                                 <StackPanel Orientation="Horizontal"
                                             ToolTip.Tip="{x:Static p:Resources.ToolTipServerUPNP}">
-                                    <ToggleSwitch IsChecked="{Binding ServerSettings.IsUPNPEnabled}" />
+                                    <ToggleSwitch IsChecked="{Binding ServerSettings.IsUpnpEnabled}" />
                                     <Label Content="{x:Static p:Resources.LabelServerUPNP}" />
                                 </StackPanel>
 
@@ -104,7 +104,7 @@
 
                                 <StackPanel Orientation="Horizontal"
                                             ToolTip.Tip="{x:Static p:Resources.ToolTipServerIP}">
-                                    <TextBox Text="{Binding ServerSettings.ServerIP, UpdateSourceTrigger=LostFocus}"
+                                    <TextBox Text="{Binding ServerSettings.ServerIp, UpdateSourceTrigger=LostFocus}"
                                              IsEnabled="{Binding #AdvancedIpToggle.IsChecked}" />
                                     <Label Content="{x:Static p:Resources.LabelServerIP}" />
                                 </StackPanel>
@@ -136,7 +136,7 @@
                             <StackPanel Theme="{StaticResource SettingsStackPanel}">
                                 <StackPanel Orientation="Horizontal"
                                             ToolTip.Tip="{x:Static p:Resources.ToolTipHttpApiEnable}">
-                                    <ToggleSwitch IsChecked="{Binding ServerSettings.IsHTTPServerEnabled}" />
+                                    <ToggleSwitch IsChecked="{Binding ServerSettings.IsHttpServerEnabled}" />
                                     <Label Content="{x:Static p:Resources.LabelHttpApiEnable}" />
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal"
@@ -179,14 +179,14 @@
                                 <StackPanel Orientation="Horizontal"
                                             ToolTip.Tip="{x:Static p:Resources.ToolTipRealTx}">
                                     <ToggleSwitch
-                                        IsChecked="{CompiledBinding ServerSettings.IsIRLRadioTXEffectsEnabled}" />
+                                        IsChecked="{CompiledBinding ServerSettings.IsIrlRadioTxEffectsEnabled}" />
                                     <Label Content="{x:Static p:Resources.LabelRealTx}" />
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal"
                                             ToolTip.Tip="{x:Static p:Resources.ToolTipRealRx}">
                                     <ToggleSwitch
-                                        IsChecked="{CompiledBinding ServerSettings.IsIRLRadioRXEffectsEnabled}" />
+                                        IsChecked="{CompiledBinding ServerSettings.IsIrlRadioRxEffectsEnabled}" />
                                     <Label Content="{x:Static p:Resources.LabelRealRx}" />
                                 </StackPanel>
 

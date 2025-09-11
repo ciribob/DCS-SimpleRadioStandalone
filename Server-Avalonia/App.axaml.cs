@@ -17,7 +17,7 @@ public class App : Application
 
 	public override void OnFrameworkInitializationCompleted()
 	{
-		// If you use CommunityToolkit, line below is needed to remove Avalonia data validation.
+		// line below is needed to remove Avalonia data validation, due to MVVM toolkit being in use.
 		// Without this line you will get duplicate validations from both Avalonia and CT
 		BindingPlugins.DataValidators.RemoveAt(0);
 

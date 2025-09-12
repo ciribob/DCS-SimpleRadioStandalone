@@ -1,0 +1,82 @@
+name: Fetch Binary, Build Container Image and Push to DockerHub
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      srs_tag:
+        description: 'SRS Version tag'
+        required: true
+        default: '0.0.0.0'
+      image_tag:
+        description: 'Docker image tag'
+        required: true
+        default: '0.0.0.0'
+      tag_latest:
+        description: 'Also tag as latest on DockerHub?'
+        required: true
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set SRS and Image Tag (for release trigger)
+        if: github.event_name == 'release'
+        run: |
+          echo "SRS_TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          echo "IMAGE_TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      - name: Set SRS and Image Tag (for manual trigger)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "SRS_TAG=${{ github.event.inputs.srs_tag }}" >> $GITHUB_ENV
+          echo "IMAGE_TAG=${{ github.event.inputs.image_tag }}" >> $GITHUB_ENV
+
+      - name: Download SRS Release Zip
+        run: |
+          curl -L -o DCS-SimpleRadioStandalone.zip https://github.com/${{ github.repository }}/releases/download/${{ env.SRS_TAG }}/DCS-SimpleRadioStandalone-${{ env.SRS_TAG }}.zip
+
+      - name: Extract SRS-Server-Commandline
+        run: |
+            mkdir -p install-build/ServerCommandLine-Linux
+            unzip -j DCS-SimpleRadioStandalone.zip 'ServerCommandLine-Linux/SRS-Server-Commandline' -d install-build/ServerCommandLine-Linux/SRS-Server-Commandline
+
+      - name: Set Docker tags
+        id: set_tags
+        run: |
+          TAGS="${{ secrets.DOCKERHUB_USERNAME }}/dcs-srs-server:${{ env.IMAGE_TAG }}"
+          # Only add 'latest' if not a pre-release (for release event)
+          if [[ "${{ github.event.release.prerelease }}" != "true" && "${{ github.event_name }}" == "release" ]]; then
+            TAGS="$TAGS,${{ secrets.DOCKERHUB_USERNAME }}/dcs-srs-server:latest"
+          fi
+          # For manual dispatch, only add 'latest' if requested
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ github.event.inputs.tag_latest }}" == "true" ]]; then
+            TAGS="$TAGS,${{ secrets.DOCKERHUB_USERNAME }}/dcs-srs-server:latest"
+          fi
+          echo "tags=$TAGS" >> $GITHUB_OUTPUT
+
+      - name: Build and Push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./DCS-SRS-DockerServer/Dockerfile
+          push: true
+          tags: ${{ steps.set_tags.outputs.tags }}

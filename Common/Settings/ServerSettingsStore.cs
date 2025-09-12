@@ -225,7 +225,7 @@ public class ServerSettingsStore
             }
 
             //I apologise to the programming gods - but this keeps it backwards compatible :/
-            settings[nameof(ServerSettingsKeys.SERVER_PRESETS)] =
+            settings[nameof(ServerSettingsKeys.SERVER_PRESETS_PATH)] =
                 JsonSerializer.Serialize(_serverChannelPresetHelper.Presets, new JsonSerializerOptions()
                 {
                     AllowTrailingCommas = true,
@@ -236,7 +236,7 @@ public class ServerSettingsStore
         }
         else
         {
-            settings[nameof(ServerSettingsKeys.SERVER_PRESETS)] =
+            settings[nameof(ServerSettingsKeys.SERVER_PRESETS_PATH)] =
                 JsonSerializer.Serialize(new Dictionary<string, List<ServerPresetChannel>>());
         }
         

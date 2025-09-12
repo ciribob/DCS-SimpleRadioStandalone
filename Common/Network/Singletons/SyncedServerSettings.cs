@@ -108,7 +108,7 @@ public class SyncedServerSettings
                 else
                     RetransmitNodeLimit = nodeLimit;
             }
-            else if (kvp.Key.Equals(ServerSettingsKeys.SERVER_PRESETS.ToString()))
+            else if (kvp.Key.Equals(ServerSettingsKeys.SERVER_PRESETS_PATH.ToString()))
             {
                 try
                 {

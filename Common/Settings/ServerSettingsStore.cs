@@ -312,14 +312,14 @@ public class ServerSettingsStore
         return IPAddress.Any;
     }
     
-    private dynamic GetSetting(ServerSettingsKeys key)
+    public dynamic GetSetting(ServerSettingsKeys key)
     {
         if (key.GetSettingType() == typeof(int)) return (int)GetSetting(key.GetSettingSection(), key.ToString()).IntValue;
         if (key.GetSettingType() == typeof(bool)) return (bool)GetSetting(key.GetSettingSection(), key.ToString()).BoolValue;
         if (key.GetSettingType() == typeof(string)) return (string)GetSetting(key.GetSettingSection(), key.ToString()).StringValue;
         return null;
     }
-    private void SetSetting(ServerSettingsKeys key, object value, [CallerMemberName] string? propertyName = null)
+    public void SetSetting(ServerSettingsKeys key, object value)
     {
         if (value != null)
         {

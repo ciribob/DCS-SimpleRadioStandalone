@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
@@ -14,8 +11,7 @@ using SharpConfig;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 
-
-public class ServerSettingsStore : INotifyPropertyChanged
+public class ServerSettingsStore
 {
     public static readonly string AWACS_RADIOS_CUSTOM_FILE = "awacs-radios-custom.json";
     public static readonly string CFG_BACKUP_FILE_NAME = "server.cfg.bak";
@@ -134,7 +130,6 @@ public class ServerSettingsStore : INotifyPropertyChanged
     public void SetExternalAWACSModeSetting(ServerSettingsKeys key, string value)
     {
         SetSetting("External AWACS Mode Settings", key.ToString(), value);
-        SetSetting(ServerSettingsKeysExtensions.ExternalSection, key.ToString(), value);
     }
 
     private SharpConfig.Setting GetSetting(string section, string setting)
@@ -314,252 +309,5 @@ public class ServerSettingsStore : INotifyPropertyChanged
         if (IPAddress.TryParse(str, out var address)) return address;
 
         return IPAddress.Any;
-    }
-
-    
-    // Settings as Properties
-    #region Properties
-    
-    private dynamic GetSetting(ServerSettingsKeys key)
-    {
-        if (key.GetSettingType() == typeof(int)) return (int)GetSetting(key.GetSettingSection(), key.ToString()).IntValue;
-        if (key.GetSettingType() == typeof(bool)) return (bool)GetSetting(key.GetSettingSection(), key.ToString()).BoolValue;
-        if (key.GetSettingType() == typeof(string)) return (string)GetSetting(key.GetSettingSection(), key.ToString()).StringValue;
-        return null;
-    }
-    private void SetSetting(ServerSettingsKeys key, object value, [CallerMemberName] string? propertyName = null)
-    {
-        if (value != null)
-        {
-            if (key.GetSettingType() == typeof(bool))
-            {
-                SetSetting(key.GetSettingSection(), key.ToString(), value.ToString()!.ToLowerInvariant());
-            }
-            else
-            {
-                SetSetting(key.GetSettingSection(), key.ToString(), value.ToString());
-            }
-            
-            OnPropertyChanged(propertyName);
-        }
-        
-    }
-    
-        #region General Settings
-        public bool IsClientExportEnabled
-        {
-            get => GetSetting(ServerSettingsKeys.CLIENT_EXPORT_ENABLED);
-            set => SetSetting(ServerSettingsKeys.CLIENT_EXPORT_ENABLED, value);
-        }
-
-        public bool IsCoalitionAudioSecurityEnabled
-        {
-            get => GetSetting(ServerSettingsKeys.COALITION_AUDIO_SECURITY);
-            set => SetSetting(ServerSettingsKeys.COALITION_AUDIO_SECURITY, value);
-        }
-        public bool IsDistanceLimitEnabled
-        {
-            get => GetSetting(ServerSettingsKeys.COALITION_AUDIO_SECURITY);
-            set => SetSetting(ServerSettingsKeys.COALITION_AUDIO_SECURITY, value);
-        }
-        public bool IsExternalModeEnabled
-        {
-            get => GetSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE);
-            set => SetSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE, value);
-        }
-
-        public List<double> GlobalLobbyFrequencies
-        {
-            get
-            {
-                string temp = GetSetting(ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES);
-                if (string.IsNullOrEmpty(temp)) return new List<double>();
-                return temp.Split(',').Select(double.Parse).ToList();
-            }
-            set => SetSetting(ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES, value);
-        }
-
-        public bool IsIrlRadioRxEffectsEnabled
-        {
-            get => GetSetting(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE);
-            set => SetSetting(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE, value);
-        }
-        public bool IsIrlRadioTxEffectsEnabled
-        {
-            get => GetSetting(ServerSettingsKeys.IRL_RADIO_TX);
-            set => SetSetting(ServerSettingsKeys.IRL_RADIO_TX, value);
-        }
-        public bool IsLineOfSightEnabled
-        {
-            get => GetSetting(ServerSettingsKeys.LOS_ENABLED);
-            set => SetSetting(ServerSettingsKeys.LOS_ENABLED, value);
-        }
-        public bool IsLotAtcExportEnabled
-        {
-            get => GetSetting(ServerSettingsKeys.LOTATC_EXPORT_ENABLED);
-            set => SetSetting(ServerSettingsKeys.LOTATC_EXPORT_ENABLED, value);
-        }
-        public bool IsRadioEffectOverrideOnGlobalEnabled
-        {
-            get => GetSetting(ServerSettingsKeys.RADIO_EFFECT_OVERRIDE);
-            set => SetSetting(ServerSettingsKeys.RADIO_EFFECT_OVERRIDE, value);
-        }
-        public bool IsRadioEncryptionAllowed
-        {
-            get => GetSetting(ServerSettingsKeys.ALLOW_RADIO_ENCRYPTION);
-            set => SetSetting(ServerSettingsKeys.ALLOW_RADIO_ENCRYPTION, value);
-        }
-        public bool IsRadioExpansionAllowed
-        {
-            get => GetSetting(ServerSettingsKeys.RADIO_EXPANSION);
-            set => SetSetting(ServerSettingsKeys.RADIO_EXPANSION, value);
-        }
-        public int RetransmissionNodeLimit
-        {
-            get => GetSetting(ServerSettingsKeys.RETRANSMISSION_NODE_LIMIT);
-            set => SetSetting(ServerSettingsKeys.RETRANSMISSION_NODE_LIMIT, value);
-        }
-        public bool IsServerPresetsEnabled
-        {
-            get => GetSetting(ServerSettingsKeys.SERVER_PRESETS_ENABLED);
-            set => SetSetting(ServerSettingsKeys.SERVER_PRESETS_ENABLED, value);
-        }
-        public bool IsShowTransmitterNameEnabled
-        {
-            get => GetSetting(ServerSettingsKeys.SHOW_TRANSMITTER_NAME);
-            set => SetSetting(ServerSettingsKeys.SHOW_TRANSMITTER_NAME, value);
-        }
-        public bool IsShowTunedCountEnabled
-        {
-            get => GetSetting(ServerSettingsKeys.SHOW_TUNED_COUNT);
-            set => SetSetting(ServerSettingsKeys.SHOW_TUNED_COUNT, value);
-        }
-        public bool IsSpectatorAudioDisabled
-        {
-            get => GetSetting(ServerSettingsKeys.SPECTATORS_AUDIO_DISABLED);
-            set => SetSetting(ServerSettingsKeys.SPECTATORS_AUDIO_DISABLED, value);
-        }
-        public bool IsStrictRadioEncryptionEnabled
-        {
-            get => GetSetting(ServerSettingsKeys.STRICT_RADIO_ENCRYPTION);
-            set => SetSetting(ServerSettingsKeys.STRICT_RADIO_ENCRYPTION, value);
-        }
-        public bool IsTransmissionLogEnabled
-        {
-            get => GetSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED);
-            set => SetSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED, value);
-        }
-        public int TransmissionLogRetentionLimit
-        {
-            get => GetSetting(ServerSettingsKeys.TRANSMISSION_LOG_RETENTION);
-            set => SetSetting(ServerSettingsKeys.TRANSMISSION_LOG_RETENTION, value);
-        }
-
-        public List<double> TestFrequencies
-        {
-            get
-            {
-                string temp = GetSetting(ServerSettingsKeys.TEST_FREQUENCIES);
-                if (string.IsNullOrEmpty(temp)) return new List<double>();
-                return temp.Split(',').Select(double.Parse).ToList();
-            }
-            set => SetSetting(ServerSettingsKeys.TEST_FREQUENCIES, value);
-        }
-
-        #endregion
-
-        #region Server Settings
-        
-        public string ClientExportFilePath
-        {
-            get => GetSetting(ServerSettingsKeys.CLIENT_EXPORT_FILE_PATH);
-            set => SetSetting(ServerSettingsKeys.CLIENT_EXPORT_FILE_PATH, value);
-        }
-
-        public string ServerPresetsPath
-        {
-            get => GetSetting(ServerSettingsKeys.SERVER_PRESETS);
-            set => SetSetting(ServerSettingsKeys.SERVER_PRESETS, value);
-        }
-
-        public bool IsCheckForBetaUpdatesEnabled
-        {
-            get => GetSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES);
-            set => SetSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES, value);
-        }
-
-        public bool IsHttpServerEnabled
-        {
-            get => GetSetting(ServerSettingsKeys.HTTP_SERVER_ENABLED);
-            set => SetSetting(ServerSettingsKeys.HTTP_SERVER_ENABLED, value);
-        }
-
-        public bool IsUpnpEnabled
-        {
-            get => GetSetting(ServerSettingsKeys.UPNP_ENABLED);
-            set => SetSetting(ServerSettingsKeys.UPNP_ENABLED, value);
-        }
-
-        public int HttpServerPort
-        {
-            get => GetSetting(ServerSettingsKeys.HTTP_SERVER_PORT);
-            set => SetSetting(ServerSettingsKeys.HTTP_SERVER_PORT, value);
-        }
-
-        public string LotAtcExportIp
-        {
-            get => GetSetting(ServerSettingsKeys.LOTATC_EXPORT_IP);
-            set => SetSetting(ServerSettingsKeys.LOTATC_EXPORT_IP, value);
-        }
-
-        public int LotAtcExportPort
-        {
-            get => GetSetting(ServerSettingsKeys.LOTATC_EXPORT_PORT);
-            set => SetSetting(ServerSettingsKeys.LOTATC_EXPORT_PORT, value);
-        }
-
-        public string ServerBindIp
-        {
-            get => GetSetting(ServerSettingsKeys.SERVER_IP);
-            set => SetSetting(ServerSettingsKeys.SERVER_IP, value);
-        }
-
-        public int ServerPort
-        {
-            get => GetSetting(ServerSettingsKeys.SERVER_PORT);
-            set => SetSetting(ServerSettingsKeys.SERVER_PORT, value);
-        }
-
-        #endregion
-
-        #region External AWACS Mode Settings
-        public string ExternalModePassBlue
-        {
-            get => GetSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE_BLUE_PASSWORD);
-            set => SetSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE_BLUE_PASSWORD, value);
-        }
-
-        public string ExternalModePassRed
-        {
-            get => GetSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE_RED_PASSWORD);
-            set => SetSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE_RED_PASSWORD, value);
-        }
-
-        #endregion
-    #endregion
-    
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
-    {
-        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
-        field = value;
-        OnPropertyChanged(propertyName);
-        return true;
     }
 }

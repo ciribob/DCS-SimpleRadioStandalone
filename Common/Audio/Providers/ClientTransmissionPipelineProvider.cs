@@ -4,6 +4,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.NetCoreServer;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
+using NAudio.Codecs;
 using NAudio.Utils;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
@@ -25,10 +26,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
     {
         public ClientTransmissionPipelineProvider()
         {
-            LoadRadioModels();
             LoadTones();
             RefreshSettings();
-            
         }
 
         public void Process(DeJitteredTransmission transmission, Span<float> audioOut)
@@ -54,11 +53,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
             {
                 if (IsIntercomLike(transmission.Modulation))
                 {
-                    transmissionProvider = BuildRadioPipeline(transmissionProvider, RadioModels.GetValueOrDefault("intercom", Intercom), transmission);
+                    if (!TxRadioModels.TryGetValue("intercom", out var intercomModel))
+                    {
+                        intercomModel = RadioModelFactory.Instance.LoadTxOrDefaultIntercom("intercom");
+                        TxRadioModels.Add("intercom", intercomModel);
+                    }
+                    transmissionProvider = BuildRadioPipeline(transmissionProvider, intercomModel, transmission);
                 }
                 else
                 {
-                    var preset = GetRadioModel(transmission, Arc210);
+                    var preset = GetRadioModel(transmission);
                     transmissionProvider = BuildRadioEffectsChain(transmissionProvider, preset, transmission);
                 }
             }
@@ -79,7 +83,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private ISampleProvider BuildRadioEffectsChain(ISampleProvider voiceProvider, RadioModel radioModel, DeJitteredTransmission transmission)
+        private ISampleProvider BuildRadioEffectsChain(ISampleProvider voiceProvider, TxRadioModel radioModel, DeJitteredTransmission transmission)
         {
             if (ClippingEnabled)
             {
@@ -101,7 +105,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
             return voiceProvider;
         }
 
-        private ISampleProvider BuildBackgroundNoiseEffect(ISampleProvider voiceProvider, RadioModel radioModel, DeJitteredTransmission transmission)
+        private ISampleProvider BuildBackgroundNoiseEffect(ISampleProvider voiceProvider, TxRadioModel radioModel, DeJitteredTransmission transmission)
         {
             // Frequency at which we switch between HF noise (very grainy/rain sounding) vs white noise.
             var hfNoiseFrequencyCutoff = 25e6;
@@ -150,11 +154,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
 
             if (transmission.Frequency <= hfNoiseFrequencyCutoff)
             {
-                RadioModel hfNoise = null;
-                if (RadioModels.TryGetValue("hfnoise", out hfNoise))
+                TxRadioModel hfNoise = null;
+                if(!TxRadioModels.TryGetValue("hfnoise", out hfNoise))
+                {
+                    hfNoise = RadioModelFactory.Instance.LoadTxRadio("hfnoise");
+                    TxRadioModels.Add("hfnoise", hfNoise);
+                }
+
+                if (hfNoise != null)
                 {
                     var noiseTransmission = 
-                    noiseProvider = BuildRadioPipeline(noiseProvider, RadioModels["hfnoise"], new DeJitteredTransmission
+                    noiseProvider = BuildRadioPipeline(noiseProvider, hfNoise, new DeJitteredTransmission
                     {
                         Frequency = transmission.Frequency,
                         Modulation = transmission.Modulation,
@@ -190,7 +200,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
             return backgroundEffectsProvider;
         }
 
-        private ISampleProvider BuildRadioPipeline(ISampleProvider voiceProvider, RadioModel radioModel, DeJitteredTransmission details)
+        private ISampleProvider BuildRadioPipeline(ISampleProvider voiceProvider, TxRadioModel radioModel, DeJitteredTransmission details)
         {
             radioModel.TxSource.Source = voiceProvider;
             var encryptionEffects = RadioEncryptionEffect && (details.Modulation == Modulation.MIDS || details.Encryption > 0);
@@ -221,7 +231,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
             return null;
         }
 
-        private RadioModel GetRadioModel(DeJitteredTransmission transmission, RadioModel selectedModel)
+        private TxRadioModel GetRadioModel(DeJitteredTransmission transmission)
         {
 
             SRClientBase sender = null;
@@ -230,6 +240,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
             {
                 guid = transmission.OriginalClientGuid;
             }
+
+            var candidateModel = string.Empty;
             if (PerRadioModelEffect && guid != null && ConnectedClientsSingleton.Instance.Clients.TryGetValue(guid, out sender))
             {
                 if (sender != null && sender.RadioInfo != null && sender.RadioInfo.radios != null)
@@ -241,12 +253,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
 
                     if (candidate != null)
                     {
-                        return RadioModels.GetValueOrDefault(candidate.Model, selectedModel);
+                        candidateModel = candidate.Model;
                     }
                 }
             }
 
-            return selectedModel;
+            if (!TxRadioModels.TryGetValue(candidateModel, out var radioModel))
+            {
+                radioModel = RadioModelFactory.Instance.LoadTxOrDefaultRadio(candidateModel);
+                TxRadioModels.Add(candidateModel, radioModel);
+            }
+
+            return radioModel;
         }
 
         private void RefreshSettings()
@@ -289,68 +307,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
         private float NoiseGainOffsetDB { get; set; } = 0f;
         private float HFNoiseGainOffsetDB { get; set; } = 0f;
 
-        private IReadOnlyDictionary<string, RadioModel> RadioModels{ get; set; }
+        private IDictionary<string, TxRadioModel> TxRadioModels { get; } = new Dictionary<string, TxRadioModel>();
         private IReadOnlyDictionary<CachedAudioEffect.AudioEffectTypes, VolumeCachedEffectProvider> ToneProviders { get; set; }
 
-        private string ModelsFolder
-        {
-            get
-            {
-                return Path.Combine(Directory.GetCurrentDirectory(), "RadioModels");
-            }
-        }
-
-        private string ModelsCustomFolder
-        {
-            get
-            {
-                return Path.Combine(Directory.GetCurrentDirectory(), "RadioModelsCustom");
-            }
-        }
-
-        private void LoadRadioModels()
-        {
-            var modelsFolders = new List<string> { ModelsFolder, ModelsCustomFolder };
-            var loadedModels = new Dictionary<string, RadioModel>();
-
-            var deserializerOptions = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase, // "propertyName" (starts lowercase)
-                AllowTrailingCommas = true, // 
-                ReadCommentHandling = JsonCommentHandling.Skip, // Allow comments but ignore them.
-            };
-
-
-            foreach (var modelsFolder in modelsFolders)
-            {
-                try
-                {
-                    var models = Directory.EnumerateFiles(modelsFolder, "*.json");
-                    foreach (var modelFile in models)
-                    {
-                        var modelName = Path.GetFileNameWithoutExtension(modelFile).ToLowerInvariant();
-                        using (var jsonFile = File.OpenRead(modelFile))
-                        {
-                            try
-                            {
-                                var loadedModel = JsonSerializer.Deserialize<Models.Dto.RadioModel>(jsonFile, deserializerOptions);
-                                loadedModels[modelName] = new RadioModel(loadedModel);
-                            }
-                            catch (Exception ex)
-                            {
-                                Logger.Error($"Unable to parse radio preset file {modelFile}", ex);
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error($"Unable to parse radio preset files {modelsFolder}", ex);
-                }
-            }
-
-            RadioModels = loadedModels.ToFrozenDictionary();
-        }
+        
 
         private void LoadTones()
         {
@@ -362,33 +322,5 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
 
             ToneProviders = loadedTones.ToFrozenDictionary();
         }
-
-        private RadioModel Arc210 { get; } = new RadioModel(DefaultRadioModels.BuildArc210());
-
-        private RadioModel Intercom { get; } = new RadioModel(DefaultRadioModels.BuildIntercom());
-        private class RadioModel
-        {
-            public DeferredSourceProvider TxSource { get; } = new DeferredSourceProvider();
-
-            public ISampleProvider TxEffectProvider { get; set; }
-
-            public ISampleProvider EncryptionProvider { get; set; }
-
-            public float NoiseGain { get; set; }
-
-            public RadioModel(Models.Dto.RadioModel dtoPreset)
-            {
-                TxEffectProvider = dtoPreset.TxEffect.ToSampleProvider(TxSource);
-
-                if (dtoPreset.EncryptionEffect != null)
-                {
-                    EncryptionProvider = dtoPreset.EncryptionEffect.ToSampleProvider(TxEffectProvider);
-                }
-
-                NoiseGain = dtoPreset.NoiseGain;
-            }
-        }
-
-
     }
 }

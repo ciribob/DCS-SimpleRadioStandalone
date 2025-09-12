@@ -33,11 +33,11 @@
 								<ToggleButton.Styles>
 									<Style Selector="ToggleButton">
 										<Style Selector="^:unchecked">
-											<Setter Property="Content" Value="{x:Static p:Resources.BtnBan}" />
+											<Setter Property="Content" Value="{x:Static p:Resources.ButtonBan}" />
 											<Setter Property="Width" Value="50" />
 										</Style>
 										<Style Selector="^:checked">
-											<Setter Property="Content" Value="{x:Static p:Resources.BtnConfirm}" />
+											<Setter Property="Content" Value="{x:Static p:Resources.ButtonConfirm}" />
 											<Setter Property="Width" Value="75" />
 										</Style>
 										<Style.Resources>
@@ -56,11 +56,11 @@
 								<ToggleButton.Styles>
 									<Style Selector="ToggleButton">
 										<Style Selector="^:unchecked">
-											<Setter Property="Content" Value="{x:Static p:Resources.BtnKick}" />
+											<Setter Property="Content" Value="{x:Static p:Resources.ButtonKick}" />
 											<Setter Property="Width" Value="50" />
 										</Style>
 										<Style Selector="^:checked">
-											<Setter Property="Content" Value="{x:Static p:Resources.BtnConfirm}" />
+											<Setter Property="Content" Value="{x:Static p:Resources.ButtonConfirm}" />
 											<Setter Property="Width" Value="75" />
 										</Style>
 										<Style.Resources>
@@ -75,7 +75,7 @@
 							<!-- todo Verify that Muting works -->
 							<ToggleButton Name="MuteBtn" Width="50"
 							              IsChecked="{Binding Muted}"  
-							              Content="{x:Static p:Resources.BtnMute}" />
+							              Content="{x:Static p:Resources.ButtonMute}" />
 						</StackPanel>
 						
 						<Label Name="UserLabel" 

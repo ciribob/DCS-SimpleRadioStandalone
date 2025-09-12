@@ -18,34 +18,34 @@
     <resheader name="writer">
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
-    <data name="BtnBan" xml:space="preserve">
+    <data name="ButtonBan" xml:space="preserve">
         <value>Ban!</value>
     </data>
     <data name="LabelTabHeaderClientAdmin" xml:space="preserve">
         <value>Client Admin</value>
     </data>
-    <data name="BtnDisabled" xml:space="preserve">
+    <data name="ButtonDisabled" xml:space="preserve">
         <value>DISABLED</value>
     </data>
-    <data name="BtnEnabled" xml:space="preserve">
+    <data name="ButtonEnabled" xml:space="preserve">
         <value>ENABLED</value>
     </data>
-    <data name="BtnKick" xml:space="preserve">
+    <data name="ButtonKick" xml:space="preserve">
         <value>Kick</value>
     </data>
-    <data name="BtnMute" xml:space="preserve">
+    <data name="ButtonMute" xml:space="preserve">
         <value>Mute</value>
     </data>
-    <data name="BtnOff" xml:space="preserve">
+    <data name="ButtonOff" xml:space="preserve">
         <value>OFF</value>
     </data>
-    <data name="BtnOn" xml:space="preserve">
+    <data name="ButtonOn" xml:space="preserve">
         <value>ON</value>
     </data>
-    <data name="BtnStartServer" xml:space="preserve">
+    <data name="ButtonStartServer" xml:space="preserve">
         <value>Start Server</value>
     </data>
-    <data name="BtnStopServer" xml:space="preserve">
+    <data name="ButtonStopServer" xml:space="preserve">
         <value>Stop Server</value>
     </data>
     <data name="LabelArchiveTime" xml:space="preserve">
@@ -337,16 +337,16 @@ Cancel - Ignore</value>
     <data name="LabelShowRadioEncryption" xml:space="preserve">
         <value>Radio Encryption</value>
     </data>
-    <data name="BtnConfirm" xml:space="preserve">
+    <data name="ButtonConfirm" xml:space="preserve">
         <value>Confirm</value>
     </data>
     <data name="LabelAdvancedServerIP" xml:space="preserve">
         <value>Advanced Server IP</value>
     </data>
-    <data name="BtnStartingServer" xml:space="preserve">
+    <data name="ButtonStartingServer" xml:space="preserve">
         <value>Starting...</value>
     </data>
-    <data name="BtnStoppingServer" xml:space="preserve">
+    <data name="ButtonStoppingServer" xml:space="preserve">
         <value>Stopping...</value>
     </data>
     <data name="LabelEnable" xml:space="preserve">

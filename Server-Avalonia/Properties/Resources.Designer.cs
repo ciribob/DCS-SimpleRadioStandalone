@@ -62,108 +62,108 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Ban!.
         /// </summary>
-        public static string BtnBan {
+        public static string ButtonBan {
             get {
-                return ResourceManager.GetString("BtnBan", resourceCulture);
+                return ResourceManager.GetString("ButtonBan", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Confirm.
         /// </summary>
-        public static string BtnConfirm {
+        public static string ButtonConfirm {
             get {
-                return ResourceManager.GetString("BtnConfirm", resourceCulture);
+                return ResourceManager.GetString("ButtonConfirm", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to DISABLED.
         /// </summary>
-        public static string BtnDisabled {
+        public static string ButtonDisabled {
             get {
-                return ResourceManager.GetString("BtnDisabled", resourceCulture);
+                return ResourceManager.GetString("ButtonDisabled", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to ENABLED.
         /// </summary>
-        public static string BtnEnabled {
+        public static string ButtonEnabled {
             get {
-                return ResourceManager.GetString("BtnEnabled", resourceCulture);
+                return ResourceManager.GetString("ButtonEnabled", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Kick.
         /// </summary>
-        public static string BtnKick {
+        public static string ButtonKick {
             get {
-                return ResourceManager.GetString("BtnKick", resourceCulture);
+                return ResourceManager.GetString("ButtonKick", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Mute.
         /// </summary>
-        public static string BtnMute {
+        public static string ButtonMute {
             get {
-                return ResourceManager.GetString("BtnMute", resourceCulture);
+                return ResourceManager.GetString("ButtonMute", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to OFF.
         /// </summary>
-        public static string BtnOff {
+        public static string ButtonOff {
             get {
-                return ResourceManager.GetString("BtnOff", resourceCulture);
+                return ResourceManager.GetString("ButtonOff", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to ON.
         /// </summary>
-        public static string BtnOn {
+        public static string ButtonOn {
             get {
-                return ResourceManager.GetString("BtnOn", resourceCulture);
+                return ResourceManager.GetString("ButtonOn", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Starting....
         /// </summary>
-        public static string BtnStartingServer {
+        public static string ButtonStartingServer {
             get {
-                return ResourceManager.GetString("BtnStartingServer", resourceCulture);
+                return ResourceManager.GetString("ButtonStartingServer", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Start Server.
         /// </summary>
-        public static string BtnStartServer {
+        public static string ButtonStartServer {
             get {
-                return ResourceManager.GetString("BtnStartServer", resourceCulture);
+                return ResourceManager.GetString("ButtonStartServer", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Stopping....
         /// </summary>
-        public static string BtnStoppingServer {
+        public static string ButtonStoppingServer {
             get {
-                return ResourceManager.GetString("BtnStoppingServer", resourceCulture);
+                return ResourceManager.GetString("ButtonStoppingServer", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Stop Server.
         /// </summary>
-        public static string BtnStopServer {
+        public static string ButtonStopServer {
             get {
-                return ResourceManager.GetString("BtnStopServer", resourceCulture);
+                return ResourceManager.GetString("ButtonStopServer", resourceCulture);
             }
         }
         

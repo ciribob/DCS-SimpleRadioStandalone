@@ -25,6 +25,15 @@ public partial class ClientPanel : Panel
 	
 	private void BanBtn_OnClick(object? sender, RoutedEventArgs e)
 	{
+		// We want a button with a 2-stage behavior.
+		// Click to select, click again to confirm.
+		// The button behavior follows:
+		// 1. Click sets IsChecked True
+		// 2. Text and Style show a "Confirm"
+		// 3. Click sets IsChecked False
+		// 4. Fire action.
+		// Thus we only fire when IsCheck becomes equal to false.
+		// ( This was varified with testing. )
 		if ((sender as ToggleButton)?.IsChecked == false)
 		{
 			if ((sender as ToggleButton)?.Tag is SRClientBase targetClient)
@@ -36,6 +45,15 @@ public partial class ClientPanel : Panel
 
 	private void KickBtn_OnClick(object? sender, RoutedEventArgs e)
 	{
+		// We want a button with a 2-stage behavior.
+		// Click to select, click again to confirm.
+		// The button behavior follows:
+		// 1. Click sets IsChecked True
+		// 2. Text and Style show a "Confirm"
+		// 3. Click sets IsChecked False
+		// 4. Fire action.
+		// Thus we only fire when IsCheck becomes equal to false.
+		// ( This was varified with testing. )
 		if ((sender as ToggleButton)?.IsChecked == false)
 		{
 			if ((sender as ToggleButton)?.Tag is SRClientBase targetClient)

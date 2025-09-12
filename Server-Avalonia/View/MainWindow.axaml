@@ -50,22 +50,22 @@
 			              Tag="{Binding Server.State}">
 				<ToggleButton.Styles>
 					<Style Selector="ToggleButton[Tag=Stopped]">
-						<Setter Property="Content" Value="{x:Static p:Resources.BtnStartServer}" />
+						<Setter Property="Content" Value="{x:Static p:Resources.ButtonStartServer}" />
 						<Setter Property="IsEnabled" Value="True"/>
 						<Setter Property="IsChecked" Value="False"/>
 					</Style>
 					<Style Selector="ToggleButton[Tag=Running]">
-						<Setter Property="Content" Value="{x:Static p:Resources.BtnStopServer}" />
+						<Setter Property="Content" Value="{x:Static p:Resources.ButtonStopServer}" />
 						<Setter Property="IsEnabled" Value="True"/>
 						<Setter Property="IsChecked" Value="True"/>
 					</Style>
 					<Style Selector="ToggleButton[Tag=Starting]">
-						<Setter Property="Content" Value="{x:Static p:Resources.BtnStartingServer}" />
+						<Setter Property="Content" Value="{x:Static p:Resources.ButtonStartingServer}" />
 						<Setter Property="IsEnabled" Value="False"/>
 						<Setter Property="IsChecked" Value="False"/>
 					</Style>
 					<Style Selector="ToggleButton[Tag=Stopping]">
-						<Setter Property="Content" Value="{x:Static p:Resources.BtnStoppingServer}" />
+						<Setter Property="Content" Value="{x:Static p:Resources.ButtonStoppingServer}" />
 						<Setter Property="IsEnabled" Value="False"/>
 						<Setter Property="IsChecked" Value="False"/>
 					</Style>

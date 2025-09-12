@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
 using CommandLine;
@@ -15,7 +16,7 @@ public class ServerCommandLineArgs
     // This section is for stuff that only exists for this run of the program.
     // Stuff like "Headless" mode, etc. It its meant to be saved to file or
     // touch the Server Setting Store Singleton, use the "Saved Server Settings" region.
-    #region Ephimeral Server Settings
+    #region Ephemeral Server Settings
     [Option("consoleLogs",
         HelpText = "Show basic console logs. Default is true",
         Default = false,
@@ -60,7 +61,7 @@ public class ServerCommandLineArgs
         HelpText = "Stops radio transmissions between coalitions. Default is false.",
         Required = false)]
     public bool? OptionCoalitionAudioSecurityEnabled { set => ServerSettings.SetGeneralSetting(ServerSettingsKeys.COALITION_AUDIO_SECURITY, value.ToString()); }
-    [Option("DistanceLimit",
+    [Option("distanceLimit",
         HelpText = "Enables distance limit behavior. Default is false.",
         Required = false)]
     public bool? OptionDistanceLimitEnabled { set => ServerSettings.SetGeneralSetting(ServerSettingsKeys.DISTANCE_ENABLED, value.ToString()); }
@@ -78,7 +79,7 @@ public class ServerCommandLineArgs
             "Forces radios to be half duplex (can only send or receive - not both at the same time). Default is false",
         Required = false)]
     public bool? OptionIrlRadioTxEffectsEnabled { set => ServerSettings.SetGeneralSetting(ServerSettingsKeys.IRL_RADIO_TX, value.ToString()); }
-    [Option("LineOfSight",
+    [Option("lineOfSight",
         HelpText = "Enables Line Of Sight behavior. Default is false.",
         Required = false)]
     public bool? OptionLineOfSightEnabled { set => ServerSettings.SetGeneralSetting(ServerSettingsKeys.LOS_ENABLED, value.ToString()); }
@@ -227,7 +228,7 @@ public class ServerCommandLineArgs
         string result = "";
         foreach(PropertyDescriptor descriptor in TypeDescriptor.GetProperties(this))
         {
-            result = string.Concat(result, $@"{descriptor.Name}={descriptor.GetValue(this)}, ");
+            result = string.Concat(result, $@"{descriptor.Name}={descriptor.GetValue(this)},",  Environment.NewLine);
         }
         return result;
     }

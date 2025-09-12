@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
@@ -309,5 +310,22 @@ public class ServerSettingsStore
         if (IPAddress.TryParse(str, out var address)) return address;
 
         return IPAddress.Any;
+    }
+    
+    private dynamic GetSetting(ServerSettingsKeys key)
+    {
+        if (key.GetSettingType() == typeof(int)) return (int)GetSetting(key.GetSettingSection(), key.ToString()).IntValue;
+        if (key.GetSettingType() == typeof(bool)) return (bool)GetSetting(key.GetSettingSection(), key.ToString()).BoolValue;
+        if (key.GetSettingType() == typeof(string)) return (string)GetSetting(key.GetSettingSection(), key.ToString()).StringValue;
+        return null;
+    }
+    private void SetSetting(ServerSettingsKeys key, object value, [CallerMemberName] string? propertyName = null)
+    {
+        if (value != null)
+        {
+            if (key.GetSettingType() == typeof(bool))
+                SetSetting(key.GetSettingSection(), key.ToString(), value.ToString()!.ToLowerInvariant());
+            else SetSetting(key.GetSettingSection(), key.ToString(), value.ToString());
+        }
     }
 }

@@ -186,29 +186,6 @@ public class ServerSettingsStore
 
     public int GetServerPort()
     {
-        if (!_configuration.Contains("Server Settings"))
-            return GetServerSetting(ServerSettingsKeys.SERVER_PORT).IntValue;
-
-        // Migrate from old "port" setting value to new "SERVER_PORT" one
-        if (_configuration["Server Settings"].Contains("port"))
-        {
-            var oldSetting = _configuration["Server Settings"]["port"];
-            if (!string.IsNullOrWhiteSpace(oldSetting.StringValue))
-            {
-                _logger.Info(
-                    $"Migrating old port value {oldSetting.StringValue} to current SERVER_PORT server setting");
-
-                _configuration["Server Settings"][ServerSettingsKeys.SERVER_PORT.ToString()].StringValue =
-                    oldSetting.StringValue;
-            }
-
-            _logger.Info("Removing old port value from server settings");
-
-            _configuration["Server Settings"].Remove(oldSetting);
-
-            Save();
-        }
-
         return GetServerSetting(ServerSettingsKeys.SERVER_PORT).IntValue;
     }
 
@@ -332,6 +309,16 @@ public class ServerSettingsStore
             switch (loadedVersion)
             {
                 case 0:
+                    #region Rename "port" to "SERVER_PORT"
+                    if (configuration["Server Settings"].Contains("port"))
+                    {
+                        _logger.Info("changing SERVER_PRESETS to SERVER_PRESETS_PATH");
+                        string value = configuration["Server Settings"]["port"].StringValue;
+                        configuration["Server Settings"].Remove("port");
+                        configuration["Server Settings"].Add("SERVER_PORT", value);
+                    }
+                    #endregion
+                    
                     #region Rename "SERVER_PRESETS" to "SERVER_PRESETS_PATH"
                         if (configuration["Server Settings"].Contains("SERVER_PRESETS"))
                         {

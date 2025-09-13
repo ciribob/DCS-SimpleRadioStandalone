@@ -38,6 +38,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
     private ServerSync _serverSync;
     private volatile bool _stop = true;
     private HttpServer _httpServer;
+    private WebSocketVoiceServer _wsVoiceServer = null;
 
     public ServerState(IEventAggregator eventAggregator)
     {
@@ -105,6 +106,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
         if (_serverListener == null)
         {
             PopulateBanList();
+
             _stop = false;
             _serverListener = new UDPVoiceRouter(_connectedClients, _eventAggregator);
             var listenerThread = new Thread(_serverListener.Listen);
@@ -115,15 +117,14 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
             serverSyncThread.Start();
 
             StartExport();
-
             StartHttpServer();
         }
     }
 
     private void StartHttpServer()
     {
-        _httpServer = new HttpServer(_connectedClients, this);
-        _httpServer.Start();
+        _httpServer = new HttpServer(_connectedClients, this, _eventAggregator);
+        _httpServer.Start(); // Get the instance here
     }
 
     public void StopServer()
@@ -136,6 +137,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
             _serverListener.RequestStop();
             _serverListener = null;
             _httpServer?.Stop();
+            _wsVoiceServer?.Stop();
         }
     }
 

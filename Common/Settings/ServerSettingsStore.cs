@@ -312,7 +312,7 @@ public class ServerSettingsStore
                     #region Rename "port" to "SERVER_PORT"
                     if (configuration["Server Settings"].Contains("port"))
                     {
-                        _logger.Info("changing SERVER_PRESETS to SERVER_PRESETS_PATH");
+                        _logger.Info("changing port to SERVER_PORT");
                         string value = configuration["Server Settings"]["port"].StringValue;
                         configuration["Server Settings"].Remove("port");
                         configuration["Server Settings"].Add("SERVER_PORT", value);
@@ -322,6 +322,7 @@ public class ServerSettingsStore
                     #region Rename "SERVER_PRESETS" to "SERVER_PRESETS_PATH"
                         if (configuration["Server Settings"].Contains("SERVER_PRESETS"))
                         {
+                            _logger.Info("changing SERVER_PRESETS to SERVER_PRESETS_PATH");
                             string value = configuration["Server Settings"]["SERVER_PRESETS"].StringValue;
                             configuration["Server Settings"].Remove("SERVER_PRESETS");
                             configuration["Server Settings"].Add("SERVER_PRESETS_PATH", value);

@@ -371,8 +371,14 @@ public class ServerSettingsStore
             }
 
             _configuration["Server Settings"]["SETTINGS_VERSION"].IntValue = loadedVersion;
-            Console.WriteLine($@"Updated setting version: {loadedVersion}");
+            _logger.Info($@"Updated setting version: {loadedVersion}");
         }
+
+        if (loadedVersion > CurrentSettingsVersion)
+        {
+            _logger.Warn($@"Loaded setting version {loadedVersion} is higher than current setting version {CurrentSettingsVersion}");
+        }
+        
         return configuration;
     }
 }

@@ -2467,7 +2467,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable Radio Voice Effect.
+        ///   Looks up a localized string similar to Wet/Dry Radio Voice Effect Slider.
         /// </summary>
         public static string RadioSoundEffects {
             get {
@@ -2476,7 +2476,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable Clipping Effect (Requires Radio effects on!).
+        ///   Looks up a localized string similar to Enable Clipping Effect (Requires Radio Effect &gt; 0%).
         /// </summary>
         public static string RadioSoundEffectsClipping {
             get {

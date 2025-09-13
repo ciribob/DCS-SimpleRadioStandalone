@@ -754,7 +754,7 @@ By keeping this enabled I can judge the usage of SRS, and which versions are sti
   <data name="OverlayIntercomHotMic" xml:space="preserve">
     <value>Intercom Hot Mic</value>
   </data>
-    <data name="OverlayMIDS" xml:space="preserve">
+  <data name="OverlayMIDS" xml:space="preserve">
     <value>DL</value>
   </data>
   <data name="OverlayNoIntercom" xml:space="preserve">
@@ -898,10 +898,10 @@ Requires Tx or Rx Effects On</value>
     <value>Start</value>
   </data>
   <data name="RadioSoundEffects" xml:space="preserve">
-    <value>Enable Radio Voice Effect</value>
+    <value>Wet/Dry Radio Voice Effect Slider</value>
   </data>
   <data name="RadioSoundEffectsClipping" xml:space="preserve">
-    <value>Enable Clipping Effect (Requires Radio effects on!)</value>
+    <value>Enable Clipping Effect (Requires Radio Effect &gt; 0%)</value>
   </data>
   <data name="RadioStartTransmitEffect" xml:space="preserve">
     <value>Radio Transmit Start Effect</value>
@@ -1034,9 +1034,6 @@ Requires Tx or Rx Effects On</value>
   </data>
   <data name="SrvPresetsEnabled" xml:space="preserve">
     <value>Server Presets Enabled</value>
-  </data>
-  <data name="SrvEAMRadioPresetEnabled" xml:space="preserve">
-    <value>Server EAM Radio Preset Enabled</value>
   </data>
   <data name="SrvSpectatorAudio" xml:space="preserve">
     <value>Spectator Audio</value>
@@ -1228,26 +1225,29 @@ Requires Tx or Rx Effects On</value>
   <data name="ServerPresetsConfiguration" xml:space="preserve">
     <value>Channel Presets Configuration</value>
   </data>
-    <data name="OverlayAM" xml:space="preserve">
-      <value>AM</value>
-    </data>
-    <data name="OverlayFM" xml:space="preserve">
-      <value>FM</value>
-    </data>
-    <data name="OverlaySG" xml:space="preserve">
-      <value>SG</value>
-    </data>
-    <data name="OverlayHQ" xml:space="preserve">
-      <value>HQ</value>
-    </data>
-  <data name="AllowServerEAMRadioPreset" xml:space="preserve">
-    <value>Allow the Server to configure EAM radios if set</value>
-  </data>
   <data name="HFNoiseGainDB" xml:space="preserve">
     <value>HF Noise Gain (dB)</value>
   </data>
   <data name="PerRadioModelEffects" xml:space="preserve">
     <value>Enable Per Radio Model Effects</value>
+  </data>
+  <data name="SrvEAMRadioPresetEnabled" xml:space="preserve">
+    <value>Server EAM Radio Preset Enabled</value>
+  </data>
+  <data name="AllowServerEAMRadioPreset" xml:space="preserve">
+    <value>Allow the Server to configure EAM radios if set</value>
+  </data>
+  <data name="OverlayAM" xml:space="preserve">
+    <value>AM</value>
+  </data>
+  <data name="OverlayFM" xml:space="preserve">
+    <value>FM</value>
+  </data>
+  <data name="OverlaySG" xml:space="preserve">
+    <value>SG</value>
+  </data>
+  <data name="OverlayHQ" xml:space="preserve">
+    <value>HQ</value>
   </data>
   <data name="MicAGCMaxDB" xml:space="preserve">
     <value>Max Gain (dB)</value>

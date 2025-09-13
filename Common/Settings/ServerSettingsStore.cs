@@ -29,11 +29,15 @@ public class ServerSettingsStore
     private ServerChannelPresetHelper _serverChannelPresetHelper;
     private List<DCSRadioCustom> _customRadios = null;
 
+    private static readonly int CurrentSettingsVersion = 1;
+
     public ServerSettingsStore()
     {
         try
         {
             _configuration = Configuration.LoadFromFile(CFG_FILE_NAME);
+            _configuration = UpdateSettings(_configuration);
+            Save(); // Save any updates
         }
         catch (FileNotFoundException ex)
         {
@@ -43,6 +47,7 @@ public class ServerSettingsStore
             _configuration.Add(new Section("General Settings"));
             _configuration.Add(new Section("Server Settings"));
             _configuration.Add(new Section("External AWACS Mode Settings"));
+            SetServerSetting(ServerSettingsKeys.SETTINGS_VERSION, $@"{CurrentSettingsVersion}");
 
             Save();
         }
@@ -64,6 +69,7 @@ public class ServerSettingsStore
             _configuration.Add(new Section("General Settings"));
             _configuration.Add(new Section("Server Settings"));
             _configuration.Add(new Section("External AWACS Mode Settings"));
+            SetServerSetting(ServerSettingsKeys.SETTINGS_VERSION, $@"{CurrentSettingsVersion}");
 
             Save();
         }
@@ -239,7 +245,7 @@ public class ServerSettingsStore
             settings[nameof(ServerSettingsKeys.SERVER_PRESETS_PATH)] =
                 JsonSerializer.Serialize(new Dictionary<string, List<ServerPresetChannel>>());
         }
-        
+
         if (GetGeneralSetting(ServerSettingsKeys.SERVER_EAM_RADIO_PRESET_ENABLED).BoolValue)
         {
             //lazy init
@@ -249,13 +255,14 @@ public class ServerSettingsStore
 
                 try
                 {
-                    var path = Path.Combine(Path.Combine(Path.GetDirectoryName(CFG_FILE_NAME), "Presets", AWACS_RADIOS_CUSTOM_FILE));
+                    var path = Path.Combine(Path.Combine(Path.GetDirectoryName(CFG_FILE_NAME), "Presets",
+                        AWACS_RADIOS_CUSTOM_FILE));
 
                     if (File.Exists(path))
                     {
                         var customRadioText = File.ReadAllText(path);
-               
-                        _customRadios  = JsonSerializer.Deserialize<List<DCSRadioCustom>>(customRadioText,
+
+                        _customRadios = JsonSerializer.Deserialize<List<DCSRadioCustom>>(customRadioText,
                             new JsonSerializerOptions()
                             {
                                 AllowTrailingCommas = true,
@@ -266,8 +273,9 @@ public class ServerSettingsStore
 
                         if (_customRadios.Count != Constants.MAX_RADIOS)
                         {
-                            _customRadios =  new List<DCSRadioCustom>();
-                            _logger.Error($"Custom Radios has {_customRadios.Count} custom radios and needs exactly {Constants.MAX_RADIOS}");
+                            _customRadios = new List<DCSRadioCustom>();
+                            _logger.Error(
+                                $"Custom Radios has {_customRadios.Count} custom radios and needs exactly {Constants.MAX_RADIOS}");
                         }
                     }
                     else
@@ -280,9 +288,9 @@ public class ServerSettingsStore
                     _customRadios = new List<DCSRadioCustom>();
                     _logger.Error($"Unable to parse custom radio file. Error: {ex.Message}");
                 }
-               
+
             }
-            
+
             //I apologise to the programming gods - but this keeps it backwards compatible :/
             settings[nameof(ServerSettingsKeys.SERVER_EAM_RADIO_PRESET)] =
                 JsonSerializer.Serialize(_customRadios, new JsonSerializerOptions()
@@ -309,5 +317,62 @@ public class ServerSettingsStore
         if (IPAddress.TryParse(str, out var address)) return address;
 
         return IPAddress.Any;
+    }
+
+    private Configuration UpdateSettings(Configuration configuration)
+    {
+        int loadedVersion = 0;
+        if (!configuration["Server Settings"]["SETTINGS_VERSION"].IsEmpty)
+        {
+            loadedVersion = configuration["Server Settings"]["SETTINGS_VERSION"].IntValue;
+        }
+        
+        while (loadedVersion < CurrentSettingsVersion)
+        {
+            switch (loadedVersion)
+            {
+                case 0:
+                    #region Rename "SERVER_PRESETS" to "SERVER_PRESETS_PATH"
+                        if (configuration["Server Settings"].Contains("SERVER_PRESETS"))
+                        {
+                            string value = configuration["Server Settings"]["SERVER_PRESETS"].StringValue;
+                            configuration["Server Settings"].Remove("SERVER_PRESETS");
+                            configuration["Server Settings"].Add("SERVER_PRESETS_PATH", value);
+                        }
+                    #endregion
+
+                    loadedVersion++;
+                break;
+
+                Default:
+                    // Should trigger if loaded version is not an int.
+                    // Should never get here.
+
+                    _logger.Error(
+                        $"Failed to parse server config version number: {loadedVersion} \n Current SETTINGS_VERSION is {CurrentSettingsVersion} \n Creating backing and re-initialising with default config");
+
+                    try
+                    {
+                        File.Copy(CFG_FILE_NAME, CFG_BACKUP_FILE_NAME, true);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Error(e, "Failed to create backup of corrupted config file, ignoring");
+                    }
+
+                    configuration = new Configuration();
+                    configuration.Add(new Section("General Settings"));
+                    configuration.Add(new Section("Server Settings"));
+                    configuration.Add(new Section("External AWACS Mode Settings"));
+                    SetServerSetting(ServerSettingsKeys.SETTINGS_VERSION, $@"{CurrentSettingsVersion}");
+
+                    Save();
+                break;
+            }
+
+            _configuration["Server Settings"]["SETTINGS_VERSION"].IntValue = loadedVersion;
+            Console.WriteLine($@"Updated setting version: {loadedVersion}");
+        }
+        return configuration;
     }
 }

@@ -43,12 +43,14 @@ public enum ServerSettingsKeys
     HTTP_SERVER_API_KEY = 34,
     SERVER_EAM_RADIO_PRESET_ENABLED = 35,
     SERVER_EAM_RADIO_PRESET = 36,
+    SETTINGS_VERSION = 37,
 }
 
 public class DefaultServerSettings
 {
     public static readonly Dictionary<string, string> Defaults = new()
     {
+        { ServerSettingsKeys.SETTINGS_VERSION.ToString(), "1" },
         { ServerSettingsKeys.CLIENT_EXPORT_ENABLED.ToString(), "false" },
         { ServerSettingsKeys.COALITION_AUDIO_SECURITY.ToString(), "false" },
         { ServerSettingsKeys.DISTANCE_ENABLED.ToString(), "false" },

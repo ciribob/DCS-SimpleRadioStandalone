@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Text.Json;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Models;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
 using NLog;
@@ -29,6 +30,10 @@ public class ServerSettingsStore
     private ServerChannelPresetHelper _serverChannelPresetHelper;
     private List<DCSRadioCustom> _customRadios = null;
 
+    public SynchronizedSettings SynchronizedSettings;
+    public ExternalModeSettings ExternalModeSettings;
+    public ServerSettings ServerSettings;
+    
     public ServerSettingsStore()
     {
         try
@@ -67,6 +72,10 @@ public class ServerSettingsStore
 
             Save();
         }
+
+        SynchronizedSettings = new SynchronizedSettings(this);
+        ExternalModeSettings = new ExternalModeSettings(this);
+        ServerSettings = new ServerSettings(this);
     }
 
     public static ServerSettingsStore Instance
@@ -102,6 +111,11 @@ public class ServerSettingsStore
         SetSetting("General Settings", key.ToString(), value.ToString(CultureInfo.InvariantCulture));
     }
 
+    public void SetGeneralSetting(ServerSettingsKeys key, int value)
+    {
+        SetSetting("General Settings", key.ToString(), value.ToString(CultureInfo.InvariantCulture));
+    }
+    
     public void SetGeneralSetting(ServerSettingsKeys key, string value)
     {
         SetSetting("General Settings", key.ToString(), value.Trim());
@@ -116,7 +130,12 @@ public class ServerSettingsStore
     {
         SetSetting("Server Settings", key.ToString(), value.ToString(CultureInfo.InvariantCulture));
     }
-
+    
+    public void SetServerSetting(ServerSettingsKeys key, int value)
+    {
+        SetSetting("Server Settings", key.ToString(), value.ToString(CultureInfo.InvariantCulture));
+    }
+    
     public void SetServerSetting(ServerSettingsKeys key, string value)
     {
         SetSetting("Server Settings", key.ToString(), value.Trim());

@@ -16,7 +16,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v5
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ github.head_ref }}
           fetch-depth: 0
           sparse-checkout: Scripts
       
@@ -34,5 +34,6 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v6
         id: auto-commit-action
         with:
+          branch: '${{ github.head_ref }}'
           commit_author: '${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>'
           commit_message: 'Apply automatic formatting changes'

@@ -332,7 +332,7 @@ public class ServerSettingsStore
                     loadedVersion++;
                 break;
 
-                Default:
+                default:
                     // Should trigger if loaded version is not an int.
                     // Should never get here.
 

@@ -221,29 +221,29 @@ public struct ServerSettings
 	
 	public int LotAtcExportPort
 	{
-		get => Store.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).IntValue;
-		set => Store.SetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES, value);
+		get => Store.GetServerSetting(ServerSettingsKeys.LOTATC_EXPORT_PORT).IntValue;
+		set => Store.SetServerSetting(ServerSettingsKeys.LOTATC_EXPORT_PORT, value);
 	}
 	public IPAddress LotAtcExportIp
 	{
 		get
 		{
-			var str = Store.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).RawValue;
+			var str = Store.GetServerSetting(ServerSettingsKeys.LOTATC_EXPORT_IP).RawValue;
 			if (IPAddress.TryParse(str, out var address)) return address;
 			return IPAddress.Any;
 		}
-		set => Store.SetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES, value.ToString());
+		set => Store.SetServerSetting(ServerSettingsKeys.LOTATC_EXPORT_IP, value.ToString());
 	}
 
 	public string ClientExportFilePath
 	{
-		get => Store.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).StringValue;
-		set => Store.SetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES, value);
+		get => Store.GetServerSetting(ServerSettingsKeys.CLIENT_EXPORT_FILE_PATH).StringValue;
+		set => Store.SetServerSetting(ServerSettingsKeys.CLIENT_EXPORT_FILE_PATH, value);
 	}
 	
 	public string ServerPresetsPath
 	{
-		get => Store.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).StringValue;
-		set => Store.SetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES, value);
+		get => Store.GetServerSetting(ServerSettingsKeys.SERVER_PRESETS).StringValue;
+		set => Store.SetServerSetting(ServerSettingsKeys.SERVER_PRESETS, value);
 	}
 }

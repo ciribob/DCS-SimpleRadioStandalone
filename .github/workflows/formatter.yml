@@ -9,15 +9,12 @@ jobs:
     name: Formatter
     runs-on: ubuntu-latest
     
-    permissions:
-      # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
-      contents: write
-    
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.head_ref }}
+          fetch-depth: 0
           sparse-checkout: Scripts
       
       - name: Lua Formatter

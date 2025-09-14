@@ -320,13 +320,4 @@ public class ServerSettingsStore
 
         return settings;
     }
-
-    public IPAddress GetServerIP()
-    {
-        var str = GetServerSetting(ServerSettingsKeys.SERVER_IP).RawValue;
-
-        if (IPAddress.TryParse(str, out var address)) return address;
-
-        return IPAddress.Any;
-    }
 }

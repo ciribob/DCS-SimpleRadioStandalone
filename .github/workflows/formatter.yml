@@ -31,5 +31,6 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v6
         id: auto-commit-action
         with:
+          branch: '${{ github.head_ref }}'
           commit_author: '${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>'
           commit_message: 'Apply automatic formatting changes'

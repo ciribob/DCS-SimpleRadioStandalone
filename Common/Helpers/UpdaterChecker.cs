@@ -10,21 +10,13 @@ using Octokit;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 
-//Quick and dirty update checker based on GitHub Published Versions
-//TODO make this a singleton
-public class UpdaterChecker
+// UpdaterChecker now inherits from GitHubUpdaterBase for GitHub API and rate limit management
+public class UpdaterChecker : GitHubUpdaterBase
 {
     public delegate void UpdateCallback(UpdateCallbackResult result);
 
     private static UpdaterChecker _instance;
     private static readonly object _lock = new();
-
-    public static readonly string GITHUB_USERNAME = "ciribob";
-
-    public static readonly string GITHUB_REPOSITORY = "DCS-SimpleRadioStandalone";
-
-    // Required for all requests against the GitHub API, as per https://developer.github.com/v3/#user-agent-required
-    public static readonly string GITHUB_USER_AGENT = $"{GITHUB_USERNAME}_{GITHUB_REPOSITORY}";
 
     public static readonly string MINIMUM_PROTOCOL_VERSION = "1.9.0.0";
 
@@ -40,7 +32,6 @@ public class UpdaterChecker
             {
                 if (_instance == null) _instance = new UpdaterChecker();
             }
-
             return _instance;
         }
     }
@@ -50,13 +41,10 @@ public class UpdaterChecker
 #if !DEBUG
         var currentVersion = Version.Parse(VERSION);
 
-
         try
         {
-            var githubClient = new GitHubClient(new ProductHeaderValue(GITHUB_USER_AGENT, VERSION));
-
-
-            var releases = await githubClient.Repository.Release.GetAll(GITHUB_USERNAME, GITHUB_REPOSITORY);
+            var releases = await ExecuteGitHubRequestWithRateLimitAsync(() =>
+                GitHubClient.Repository.Release.GetAll(GitHubUsername, GitHubRepository));
 
             var latestStableVersion = new Version();
             Release latestStableRelease = null;

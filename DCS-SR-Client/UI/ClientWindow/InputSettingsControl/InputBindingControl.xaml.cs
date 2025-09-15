@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -6,6 +8,7 @@ using Caliburn.Micro;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Input;
 using SharpDX.DirectInput;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.InputSettingsControl;
@@ -26,15 +29,26 @@ public partial class InputBindingControl : UserControl, IHandle<ProfileChangedMe
         );
 
 
+    private List<InputBindState> _currentBindStates = new();
+
     public InputBindingControl()
     {
         InitializeComponent();
 
-        Loaded += (sender, args) => LoadInputSettings();
+        Loaded += (sender, args) =>
+        {
+            LoadInputSettings();
+            // Subscribe to PTT state updates
+            InputDeviceManager.Instance.StartPTTListening(OnPTTStatesUpdated);
+        };
+
+        Unloaded += (sender, args) =>
+        {
+            InputDeviceManager.Instance.StopListening();
+        };
 
         EventBus.Instance.SubscribeOnUIThread(this);
     }
-
 
     public InputBinding ControlInputBinding
     {
@@ -171,5 +185,32 @@ public partial class InputBindingControl : UserControl, IHandle<ProfileChangedMe
         GlobalSettingsStore.Instance.ProfileSettingsStore.RemoveControlSetting(ModifierBinding);
         ModifierDevice.Text = "None";
         ModifierText.Text = "None";
+    }
+
+    // Callback for PTT state updates
+    private void OnPTTStatesUpdated(List<InputBindState> bindStates)
+    {
+        _currentBindStates = bindStates;
+        if (!Dispatcher.CheckAccess())
+            Dispatcher.Invoke(() => UpdateActiveIndicator());
+        else
+            UpdateActiveIndicator();
+    }
+
+    private void UpdateActiveIndicator()
+    {
+        var mainBind = _currentBindStates.FirstOrDefault(
+            b => b.MainDevice != null && b.MainDevice.InputBind == ControlInputBinding);
+
+        var modifierBind = _currentBindStates.FirstOrDefault(
+            b => b.ModifierDevice != null && b.ModifierDevice.InputBind == ModifierBinding);
+
+        DeviceLabel.Background = (mainBind != null && mainBind.MainDeviceState)
+            ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.LightGreen)
+            : new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Transparent);
+
+        ModifierLabel.Background = (modifierBind != null && modifierBind.ModifierState)
+            ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.LightGreen)
+            : new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Transparent);
     }
 }

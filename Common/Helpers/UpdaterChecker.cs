@@ -15,8 +15,7 @@ public class UpdaterChecker : GitHubUpdaterBase
 {
     public delegate void UpdateCallback(UpdateCallbackResult result);
 
-    private static UpdaterChecker _instance;
-    private static readonly object _lock = new();
+    private static readonly UpdaterChecker _instance = new UpdaterChecker();
 
     public static readonly string MINIMUM_PROTOCOL_VERSION = "1.9.0.0";
 
@@ -24,17 +23,7 @@ public class UpdaterChecker : GitHubUpdaterBase
 
     private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
-    public static UpdaterChecker Instance
-    {
-        get
-        {
-            lock (_lock)
-            {
-                if (_instance == null) _instance = new UpdaterChecker();
-            }
-            return _instance;
-        }
-    }
+    public static UpdaterChecker Instance => _instance;
 
     public async Task CheckForUpdateAsync(bool checkForBetaUpdates, UpdateCallback updateCallback)
     {

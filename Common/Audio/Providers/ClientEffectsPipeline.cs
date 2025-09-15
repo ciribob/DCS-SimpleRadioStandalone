@@ -49,69 +49,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
         public ClientEffectsPipeline()
         {
             RefreshSettings();
-            LoadRadioModels();
         }
 
-        private class RadioModel
-        {
-            public DeferredSourceProvider RxSource { get; } = new DeferredSourceProvider();
-
-            public ISampleProvider RxEffectProvider { get; set; }
-
-            public RadioModel(Models.Dto.RadioModel dtoPreset)
-            {
-                RxEffectProvider = dtoPreset.RxEffect.ToSampleProvider(RxSource);
-            }
-        }
-
-        private IReadOnlyDictionary<string, RadioModel> RadioModels;
-
-        private readonly RadioModel Arc210 = new RadioModel(DefaultRadioModels.BuildArc210());
-        private readonly RadioModel Intercom = new RadioModel(DefaultRadioModels.BuildIntercom());
-        private void LoadRadioModels()
-        {
-            var modelsFolders = new List<string> { ModelsFolder, ModelsCustomFolder };
-            var loadedModels = new Dictionary<string, RadioModel>();
-
-            var deserializerOptions = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase, // "propertyName" (starts lowercase)
-                AllowTrailingCommas = true, // 
-                ReadCommentHandling = JsonCommentHandling.Skip, // Allow comments but ignore them.
-            };
-
-
-            foreach (var modelsFolder in modelsFolders)
-            {
-                try
-                {
-                    var models = Directory.EnumerateFiles(modelsFolder, "*.json");
-                    foreach (var modelFile in models)
-                    {
-                        var modelName = Path.GetFileNameWithoutExtension(modelFile).ToLowerInvariant();
-                        using (var jsonFile = File.OpenRead(modelFile))
-                        {
-                            try
-                            {
-                                var loadedModel = JsonSerializer.Deserialize<Models.Dto.RadioModel>(jsonFile, deserializerOptions);
-                                loadedModels[modelName] = new RadioModel(loadedModel);
-                            }
-                            catch (Exception ex)
-                            {
-                                Logger.Error($"Unable to parse radio preset file {modelFile}", ex);
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error($"Unable to parse radio preset files {modelsFolder}", ex);
-                }
-            }
-                
-            RadioModels = loadedModels.ToFrozenDictionary();
-        }
-
+        private IDictionary<string, RxRadioModel> RxRadioModels { get; } = new Dictionary<string, RxRadioModel>();
         private void RefreshSettings()
         {
             //only get settings every 3 seconds - and cache them - issues with performance
@@ -133,7 +73,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
             }
         }
 
-        private ISampleProvider BuildRXPipeline(ISampleProvider voiceProvider, RadioModel radioModel)
+        private ISampleProvider BuildRXPipeline(ISampleProvider voiceProvider, RxRadioModel radioModel)
         {
             radioModel.RxSource.Source = voiceProvider;
             voiceProvider = radioModel.RxEffectProvider;
@@ -176,8 +116,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
             ISampleProvider provider = new TransmissionProvider(workingBuffer, 0, count);
             if (radioEffectsEnabled)
             {
-                var model = perRadioModelEffect && modelName != null? RadioModels.GetValueOrDefault(modelName, Intercom) : Intercom;
-                provider = BuildRXPipeline(provider, model);
+                var desiredName = perRadioModelEffect && modelName != null ? modelName: string.Empty;
+                if (!RxRadioModels.TryGetValue(desiredName, out var radioModel))
+                {
+                    radioModel = RadioModelFactory.Instance.LoadRxOrDefaultIntercom(desiredName);
+                    RxRadioModels.Add(desiredName, radioModel);
+                }
+
+                provider = BuildRXPipeline(provider, radioModel);
 
                 if (clippingEnabled)
                 {

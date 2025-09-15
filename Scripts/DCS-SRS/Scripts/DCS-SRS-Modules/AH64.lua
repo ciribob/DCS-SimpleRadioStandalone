@@ -214,7 +214,10 @@ function exportRadioAH64D(_data, SR)
 
         if _iffEmergency == 1 then
             _iffSettings.mode3 = 7700
-            _iffSettings.status = 1 -- XPNDR btn would actually turn on the XPNDR if it were in STBY (in real life)
+
+            -- XPNDR btn would actually turn on the XPNDR if it were in STBY (in real life)
+            -- Allow IDENT to still apply.
+            _iffSettings.status = (_iffIdentBtn > 0) and 2 or 1 
         end
 
         _data.radios[3].enc = _eufdDevice["Cipher_UHF"] ~= nil

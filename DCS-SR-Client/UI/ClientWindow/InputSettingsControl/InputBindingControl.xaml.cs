@@ -205,12 +205,22 @@ public partial class InputBindingControl : UserControl, IHandle<ProfileChangedMe
         var modifierBind = _currentBindStates.FirstOrDefault(
             b => b.ModifierDevice != null && b.ModifierDevice.InputBind == ModifierBinding);
 
+        bool MainActive = mainBind != null && mainBind != null && mainBind.MainDeviceState;
         DeviceLabel.Background = (mainBind != null && mainBind.MainDeviceState)
             ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.LightGreen)
             : new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Transparent);
 
-        ModifierLabel.Background = (modifierBind != null && modifierBind.ModifierState)
+        bool ModifierActive = modifierBind != null && modifierBind.ModifierState;
+        ModifierLabel.Background = ModifierActive
             ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.LightGreen)
             : new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Transparent);
+
+        // Scroll to main label if it just became active
+        if (MainActive)
+            DeviceLabel.BringIntoView();
+
+        // Scroll to modifier label if it just became active
+        if (ModifierActive)
+            ModifierLabel.BringIntoView();
     }
 }

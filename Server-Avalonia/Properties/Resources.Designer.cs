@@ -60,11 +60,29 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Automatic.
+        /// </summary>
+        public static string ButtonAutomatic {
+            get {
+                return ResourceManager.GetString("ButtonAutomatic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ban!.
         /// </summary>
         public static string ButtonBan {
             get {
                 return ResourceManager.GetString("ButtonBan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string ButtonCancel {
+            get {
+                return ResourceManager.GetString("ButtonCancel", resourceCulture);
             }
         }
         
@@ -96,11 +114,29 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ignore.
+        /// </summary>
+        public static string ButtonIgnore {
+            get {
+                return ResourceManager.GetString("ButtonIgnore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Kick.
         /// </summary>
         public static string ButtonKick {
             get {
                 return ResourceManager.GetString("ButtonKick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Manual.
+        /// </summary>
+        public static string ButtonManual {
+            get {
+                return ResourceManager.GetString("ButtonManual", resourceCulture);
             }
         }
         
@@ -510,76 +546,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New.
-        /// </summary>
-        public static string MsgBoxUpdate1 {
-            get {
-                return ResourceManager.GetString("MsgBoxUpdate1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to version.
-        /// </summary>
-        public static string MsgBoxUpdate2 {
-            get {
-                return ResourceManager.GetString("MsgBoxUpdate2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to available!.
-        /// </summary>
-        public static string MsgBoxUpdate3 {
-            get {
-                return ResourceManager.GetString("MsgBoxUpdate3", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do you want to Auto update?
-        ///    
-        ///If DCS is running this will wait until DCS has stopped running and automatically update after as the SRS installer requires DCS to be stopped. 
-        ///It will also close SRS automatically if DCS is no longer running.
-        ///
-        ///Yes - Auto Update (and wait for DCS to Close automatically)
-        ///No - Manual Update
-        ///Cancel - Ignore.
-        /// </summary>
-        public static string MsgBoxUpdate4 {
-            get {
-                return ResourceManager.GetString("MsgBoxUpdate4", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unable to Auto Update - please download latest version manually.
-        /// </summary>
-        public static string MsgBoxUpdateFailed {
-            get {
-                return ResourceManager.GetString("MsgBoxUpdateFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Auto Update Error.
-        /// </summary>
-        public static string MsgBoxUpdateFailedTitle {
-            get {
-                return ResourceManager.GetString("MsgBoxUpdateFailedTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Update available.
-        /// </summary>
-        public static string MsgBoxUpdateTitle {
-            get {
-                return ResourceManager.GetString("MsgBoxUpdateTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Port:.
         /// </summary>
         public static string PresenterLabelPort {
@@ -756,6 +722,43 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         public static string SubSectionLabelRadioSecurity {
             get {
                 return ResourceManager.GetString("SubSectionLabelRadioSecurity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If DCS is running this will wait until DCS has stopped running and automatically update after as the SRS installer requires DCS to be stopped. 
+        ///It will also close SRS automatically if DCS is no longer running..
+        /// </summary>
+        public static string TextUpdateBodyText {
+            get {
+                return ResourceManager.GetString("TextUpdateBodyText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to Auto Update - please download latest version manually.
+        /// </summary>
+        public static string TextUpdateFailed {
+            get {
+                return ResourceManager.GetString("TextUpdateFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New Version Available!.
+        /// </summary>
+        public static string TextUpdateNewVersionAvailable {
+            get {
+                return ResourceManager.GetString("TextUpdateNewVersionAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to update?.
+        /// </summary>
+        public static string TextUpdateNowQuestion {
+            get {
+                return ResourceManager.GetString("TextUpdateNowQuestion", resourceCulture);
             }
         }
         

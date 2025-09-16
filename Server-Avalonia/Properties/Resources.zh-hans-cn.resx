@@ -116,38 +116,32 @@
     <data name="LabelTunedCount" xml:space="preserve">
         <value>显示同频人数</value>
     </data>
-    <data name="MsgBoxUpdate1" xml:space="preserve">
-        <value>新</value>
+    <data name="TextUpdateNewVersionAvailable" xml:space="preserve">
+        <value>新版本已发布！</value>
     </data>
-    <data name="MsgBoxUpdate2" xml:space="preserve">
-        <value>版本</value>
-    </data>
-    <data name="MsgBoxUpdate3" xml:space="preserve">
-        <value>已发布！</value>
-    </data>
-    <data name="MsgBoxUpdate4" xml:space="preserve">
-        <value>你想进行自动更新吗？
-
-安装程序需要关闭DCS。如果DCS正在运行，更新会等待直到DCS退出。
-DCS结束运行后，SRS也会自动关闭进行以更新。
-
-是 - 自动更新 （等待DCS退出）
-否 - 手动更新
-取消 - 忽略提示</value>
-    </data>
-    <data name="MsgBoxUpdateFailed" xml:space="preserve">
+    <data name="TextUpdateFailed" xml:space="preserve">
         <value>无法自动更新 - 请手动下载最新版</value>
-    </data>
-    <data name="MsgBoxUpdateFailedTitle" xml:space="preserve">
-        <value>自动更新错误</value>
-    </data>
-    <data name="MsgBoxUpdateTitle" xml:space="preserve">
-        <value>更新可用</value>
     </data>
     <data name="TitleClientList" xml:space="preserve">
         <value>SRS 客户端列表</value>
     </data>
     <data name="LabelServerPort" xml:space="preserve">
         <value>端口</value>
+    </data>
+    <data name="ButtonAutomatic" xml:space="preserve">
+        <value>自动</value>
+    </data>
+    <data name="ButtonManual" xml:space="preserve">
+        <value>手动</value>
+    </data>
+    <data name="ButtonIgnore" xml:space="preserve">
+        <value>忽略</value>
+    </data>
+    <data name="TextUpdateNowQuestion" xml:space="preserve">
+        <value>你想进行自动更新吗？</value>
+    </data>
+    <data name="TextUpdateBodyText" xml:space="preserve">
+        <value>安装程序需要关闭DCS。如果DCS正在运行，更新会等待直到DCS退出。
+DCS结束运行后，SRS也会自动关闭进行以更新。</value>
     </data>
 </root>

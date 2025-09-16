@@ -123,33 +123,11 @@
     <data name="LabelTunedCount" xml:space="preserve">
         <value>Show Tuned/Client Count</value>
     </data>
-    <data name="MsgBoxUpdate1" xml:space="preserve">
-        <value>New</value>
+    <data name="TextUpdateNewVersionAvailable" xml:space="preserve">
+        <value>New Version Available!</value>
     </data>
-    <data name="MsgBoxUpdate2" xml:space="preserve">
-        <value>version</value>
-    </data>
-    <data name="MsgBoxUpdate3" xml:space="preserve">
-        <value>available!</value>
-    </data>
-    <data name="MsgBoxUpdate4" xml:space="preserve">
-        <value>Do you want to Auto update?
-    
-If DCS is running this will wait until DCS has stopped running and automatically update after as the SRS installer requires DCS to be stopped. 
-It will also close SRS automatically if DCS is no longer running.
-
-Yes - Auto Update (and wait for DCS to Close automatically)
-No - Manual Update
-Cancel - Ignore</value>
-    </data>
-    <data name="MsgBoxUpdateFailed" xml:space="preserve">
+    <data name="TextUpdateFailed" xml:space="preserve">
         <value>Unable to Auto Update - please download latest version manually</value>
-    </data>
-    <data name="MsgBoxUpdateFailedTitle" xml:space="preserve">
-        <value>Auto Update Error</value>
-    </data>
-    <data name="MsgBoxUpdateTitle" xml:space="preserve">
-        <value>Update available</value>
     </data>
     <data name="LabelServerPresetsEnabled" xml:space="preserve">
         <value>Server Channel Presets</value>
@@ -351,5 +329,24 @@ Cancel - Ignore</value>
     </data>
     <data name="LabelEnable" xml:space="preserve">
         <value>Enable</value>
+    </data>
+    <data name="ButtonAutomatic" xml:space="preserve">
+        <value>Automatic</value>
+    </data>
+    <data name="ButtonCancel" xml:space="preserve">
+        <value>Cancel</value>
+    </data>
+    <data name="ButtonManual" xml:space="preserve">
+        <value>Manual</value>
+    </data>
+    <data name="ButtonIgnore" xml:space="preserve">
+        <value>Ignore</value>
+    </data>
+    <data name="TextUpdateNowQuestion" xml:space="preserve">
+        <value>Do you want to update?</value>
+    </data>
+    <data name="TextUpdateBodyText" xml:space="preserve">
+        <value>If DCS is running this will wait until DCS has stopped running and automatically update after as the SRS installer requires DCS to be stopped. 
+It will also close SRS automatically if DCS is no longer running.</value>
     </data>
 </root>

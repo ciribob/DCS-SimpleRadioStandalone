@@ -1,10 +1,12 @@
 <Application xmlns="https://github.com/avaloniaui"
 						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+						 xmlns:dialogHostAvalonia="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
 						 x:Class="Ciribob.DCS.SimpleRadio.Standalone.Server.App"
 						 RequestedThemeVariant="Default">
 						 <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
 		<Application.Styles>
+			<dialogHostAvalonia:DialogHostStyles />
 			<FluentTheme DensityStyle="Compact">
 				<FluentTheme.Palettes>
 					<!-- Palette for Light theme variant -->

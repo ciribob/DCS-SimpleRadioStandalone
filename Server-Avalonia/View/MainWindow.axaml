@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dialogHost="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
         xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.Properties"
         xmlns:viewmodel="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.viewmodel"
         xmlns:ui="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.View"
@@ -14,7 +15,7 @@
 	<Design.DataContext>
 		<viewmodel:DesignMainViewModel />
 	</Design.DataContext>
-
+	
 	<DockPanel>
 		<!-- Status Bar comes first so it stays on top of the other content. -->
 		<DockPanel DockPanel.Dock="Bottom"
@@ -40,7 +41,42 @@
 				<Label x:Name="LabelPort" Content="{Binding ServerSettings.ServerPort, Mode=OneWay}" />
 			</StackPanel>
 		</DockPanel>
-
+	
+		<dialogHost:DialogHost CloseOnClickAway="True" Name="OverlayDialog" IsOpen="{Binding UpdateCallback.UpdateAvailable}">
+			<dialogHost:DialogHost.DialogContent>
+				<Panel>
+					<DockPanel Name="UpdateFailed" IsVisible="False">
+						<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center">
+							<Button Name="UpdateFailedButton"
+							        Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=dialogHost:DialogHost}, Path=CloseDialogCommand}"
+							        Content="{x:Static p:Resources.ButtonConfirm}"/>
+						</StackPanel>
+						<TextBlock Name="Errortext" HorizontalAlignment="Center" TextAlignment="Center" Text="{x:Static p:Resources.TextUpdateFailed}" />
+					</DockPanel>
+					
+					<DockPanel Name="UpdateAvailable" IsVisible="True">
+						<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"  HorizontalAlignment="Center">
+							<Button Name="LeftButton" Classes="accent" 
+							        Command="{Binding AutomaticUpdateServerCommand}"
+							        Content="{x:Static p:Resources.ButtonAutomatic}"/>
+							<Button Name="MiddleButton" 
+							        Command="{Binding ManualUpdateServerCommand}"
+							        Content="{x:Static p:Resources.ButtonManual}"/>
+							<Button Name="RightButton" 
+							        Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=dialogHost:DialogHost}, Path=CloseDialogCommand}"
+							        Content="{x:Static p:Resources.ButtonIgnore}" />
+						</StackPanel>
+						<TextBlock Name="DialogText" HorizontalAlignment="Center" TextAlignment="Center" Width="350" >
+							<Run FontWeight="Bold" FontSize="20" Text="{x:Static p:Resources.TextUpdateNewVersionAvailable}" />
+							<LineBreak /><LineBreak />
+							<Run Text="{Binding UpdateCallback.Version}"/> <Run>-</Run> <Run Text="{Binding UpdateCallback.Branch}" />
+							<LineBreak /><LineBreak />
+							<Run Text="{x:Static p:Resources.TextUpdateBodyText}" /><LineBreak/>
+							<Run FontWeight="Bold" Text="{x:Static p:Resources.TextUpdateNowQuestion}"/>
+						</TextBlock>
+					</DockPanel>
+				</Panel>
+			</dialogHost:DialogHost.DialogContent>
 		<Grid RowDefinitions="Auto,*">
 			<ToggleButton Grid.Row="0"
 			              x:Name="ServerStartStop"
@@ -83,6 +119,6 @@
 			</TabControl>
 
 		</Grid>
-
+		</dialogHost:DialogHost>
 	</DockPanel>
 </Window>

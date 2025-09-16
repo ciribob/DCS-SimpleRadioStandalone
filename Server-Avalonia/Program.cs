@@ -22,6 +22,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server;
 
 class Program
 {
+	private static UpdateCallbackResult _updateCallback;
+	
 	// Initialization code. Don't use any Avalonia, third-party APIs or any
 	// SynchronizationContext-reliant code before AppMain is called: things aren't initialized
 	// yet and stuff might break.
@@ -37,7 +39,9 @@ class Program
 		
 		Parser.Default.ParseArguments<ServerCommandLineArgs>(args)
 			.WithParsed(ProcessArgs);
-		
+
+		// Not headless.
+		Ioc.Default.GetRequiredService<MainViewModel>().UpdateCallback = _updateCallback;
 		BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 	}
 	
@@ -52,6 +56,8 @@ class Program
 			{
 				if (result.UpdateAvailable)
 					Console.WriteLine($@"Update Available! Version {result.Version}-{result.Branch} @ {result.Url}");
+				
+				_updateCallback = result;
 			});
 		Console.WriteLine($@"Settings From Command Line: {options}");
 

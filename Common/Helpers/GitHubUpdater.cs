@@ -15,25 +15,23 @@ public static class GitHubUpdater
     private static readonly string GitHubRepository = "DCS-SimpleRadioStandalone";
     private static readonly string GitHubUserAgent = $"{GitHubUsername}_{GitHubRepository}";
 
+    private static readonly string DefaultVersion = "1.0.0.0";
+
     // Semaphore to serialize all update checks
     private static readonly SemaphoreSlim UpdateSemaphore = new(1, 1);
 
-    private static GitHubClient CreateGitHubClient(string version = "1.0.0.0")
-    {
-        return new GitHubClient(new ProductHeaderValue(GitHubUserAgent, version));
-    }
-
     public static async Task<T> ExecuteGitHubRequestWithRateLimitAsync<T>(
         Func<GitHubClient, Task<T>> githubCall,
-        string version = "1.0.0.0",
+        string version = "",
         int maxRetries = 3)
     {
         int attempt = 0;
+        version = (string.IsNullOrWhiteSpace(version)) ? DefaultVersion : version; //if version is empty use default
         await UpdateSemaphore.WaitAsync();
         Logger.Debug("Update semaphore acquired for GitHubUpdater.");
         try
         {
-            var client = CreateGitHubClient(version);
+            var client = new GitHubClient(new ProductHeaderValue(GitHubUserAgent, version));
             while (attempt < maxRetries)
             {
                 try
@@ -64,7 +62,7 @@ public static class GitHubUpdater
         }
     }
 
-    public static async Task<IReadOnlyList<Release>> GetAllReleasesAsync(string version = "1.0.0.0")
+    public static async Task<IReadOnlyList<Release>> GetAllReleasesAsync(string version = "")
     {
         return await ExecuteGitHubRequestWithRateLimitAsync(
             client => client.Repository.Release.GetAll(GitHubUsername, GitHubRepository),

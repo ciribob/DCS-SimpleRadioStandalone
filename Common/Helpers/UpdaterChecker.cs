@@ -37,7 +37,7 @@ public class UpdaterChecker
 //#endif
 
             // Get all releases using the new static helper
-            var releases = await GitHubUpdater.GetAllReleasesAsync(VERSION);
+            var releases = await GitHubUpdater.GetAllReleasesAsync(null, VERSION);
 
             var latestStableVersion = new Version();
             Release latestStableRelease = null;

@@ -23,9 +23,10 @@ public static class GitHubUpdater
 
     public static async Task<T> ExecuteGitHubRequestWithRateLimitAsync<T>(
         Func<GitHubClient, Task<T>> githubCall,
-        Action<TimeSpan, int, int>? onRateLimitWait = null, // New optional callback
+        Action<TimeSpan, int, int>? onRateLimitWait = null,
         string version = "",
-        int maxRetries = 0
+        int maxRetries = 0,
+        CancellationToken cancellationToken = default
     )
     {
         int attempt = 0;
@@ -38,6 +39,7 @@ public static class GitHubUpdater
             var client = new GitHubClient(new ProductHeaderValue(GitHubUserAgent, version));
             while (attempt < maxRetries)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 try
                 {
                     return await githubCall(client);
@@ -51,13 +53,13 @@ public static class GitHubUpdater
 
                     Logger.Warn($"GitHub API rate limit exceeded. Waiting {waitFor.TotalSeconds:N0} seconds before retrying (attempt {attempt}/{maxRetries})");
 
-                    // Notify the caller about the wait
-                    onRateLimitWait?.Invoke(waitFor, attempt, maxRetries);
-
                     if (attempt >= maxRetries)
                         throw;
 
-                    await Task.Delay(waitFor);
+                    // Notify the caller about the wait
+                    onRateLimitWait?.Invoke(waitFor, attempt, maxRetries);
+
+                    await Task.Delay(waitFor, cancellationToken);
                 }
             }
             throw new Exception($"Maximum retry attempts ({maxRetries}) reached for GitHub API call.");
@@ -72,14 +74,16 @@ public static class GitHubUpdater
     public static async Task<IReadOnlyList<Release>> GetAllReleasesAsync(
         Action<TimeSpan, int, int>? onRateLimitWait = null,
         string version = "",
-        int maxRetries = 0
+        int maxRetries = 0,
+        CancellationToken cancellationToken = default
     )
     {
         return await ExecuteGitHubRequestWithRateLimitAsync(
             client => client.Repository.Release.GetAll(GitHubUsername, GitHubRepository),
             onRateLimitWait,
             version,
-            maxRetries
+            maxRetries,
+            cancellationToken
         );
     }
 }

@@ -169,7 +169,8 @@ public partial class MainWindow : Window
                         //Status.Content = $"Rate limit hit. Waiting {waitFor.TotalSeconds:N0} seconds (attempt {attempt}/{maxRetries})...";
                         ShowRateLimitCountdown(waitFor, _rateLimitCts);
                     });
-                }
+                },
+                cancellationToken: _rateLimitCts.Token
             );
         }
         catch (OperationCanceledException)
@@ -445,12 +446,14 @@ public partial class MainWindow : Window
     private void CancelButtonClick(object sender, RoutedEventArgs e)
     {
         _cancel = true;
+        _rateLimitCts?.Cancel(); // Cancel any ongoing rate limit wait
         Close();
     }
 
     private void OnClosing(object sender, CancelEventArgs e)
     {
         _cancel = true;
+        HideRateLimitCountdown();
         _progressCheckTimer?.Stop();
     }
 }

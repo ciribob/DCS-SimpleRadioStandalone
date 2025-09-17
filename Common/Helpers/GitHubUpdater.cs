@@ -71,14 +71,15 @@ public static class GitHubUpdater
 
     public static async Task<IReadOnlyList<Release>> GetAllReleasesAsync(
         Action<TimeSpan, int, int>? onRateLimitWait = null,
-        string version = ""
+        string version = "",
+        int maxRetries = 0
     )
     {
         return await ExecuteGitHubRequestWithRateLimitAsync(
             client => client.Repository.Release.GetAll(GitHubUsername, GitHubRepository),
             onRateLimitWait,
             version,
-            DefaultMaxRetries
+            maxRetries
         );
     }
 }

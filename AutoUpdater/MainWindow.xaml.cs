@@ -14,6 +14,7 @@ using System.Windows.Threading;
 using Octokit;
 using MessageBox = System.Windows.MessageBox;
 using Path = System.IO.Path;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers; // Add this for GitHubUpdater
 
 namespace AutoUpdater;
 
@@ -22,12 +23,6 @@ namespace AutoUpdater;
 /// </summary>
 public partial class MainWindow : Window
 {
-    public static readonly string GITHUB_USERNAME = "ciribob";
-
-    public static readonly string GITHUB_REPOSITORY = "DCS-SimpleRadioStandalone";
-
-    // Required for all requests against the GitHub API, as per https://developer.github.com/v3/#user-agent-required
-    public static readonly string GITHUB_USER_AGENT = $"{GITHUB_USERNAME}_{GITHUB_REPOSITORY}";
     private bool _cancel;
     private string _directory;
     private string _file;
@@ -156,9 +151,8 @@ public partial class MainWindow : Window
     private async Task<Uri> GetPathToLatestVersion()
     {
         Status.Content = "Finding Latest SRS Version";
-        var githubClient = new GitHubClient(new ProductHeaderValue(GITHUB_USER_AGENT, "1.0.0.0"));
-
-        var releases = await githubClient.Repository.Release.GetAll(GITHUB_USERNAME, GITHUB_REPOSITORY);
+        // Use the static GitHubUpdater instead of direct GitHubClient usage
+        var releases = await GitHubUpdater.GetAllReleasesAsync();
 
         var release = FindRightRelease(releases);
         var releaseAsset = release.Assets.First();

@@ -25,6 +25,9 @@ public class UpdaterChecker : GitHubUpdaterBase
 
     public static UpdaterChecker Instance => _instance;
 
+    // Constructor passes version to base for GitHubClient initialization
+    public UpdaterChecker() : base(VERSION) { }
+
     public async Task CheckForUpdateAsync(bool checkForBetaUpdates, UpdateCallback updateCallback)
     {
 #if !DEBUG
@@ -32,8 +35,11 @@ public class UpdaterChecker : GitHubUpdaterBase
 
         try
         {
-            var releases = await ExecuteGitHubRequestWithRateLimitAsync(() =>
-                GitHubClient.Repository.Release.GetAll(GitHubUsername, GitHubRepository));
+#if DEBUG
+            return;
+#endif
+            // Get all releases using the new static helper
+            var releases = await GitHubUpdater.GetAllReleasesAsync(VERSION);
 
             var latestStableVersion = new Version();
             Release latestStableRelease = null;

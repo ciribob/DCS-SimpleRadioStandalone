@@ -16,16 +16,20 @@ public static class GitHubUpdater
     private static readonly string GitHubUserAgent = $"{GitHubUsername}_{GitHubRepository}";
 
     private static readonly string DefaultVersion = "1.0.0.0";
+    private static readonly int DefaultMaxRetries = 3;
 
     // Semaphore to serialize all update checks
     private static readonly SemaphoreSlim UpdateSemaphore = new(1, 1);
 
     public static async Task<T> ExecuteGitHubRequestWithRateLimitAsync<T>(
         Func<GitHubClient, Task<T>> githubCall,
+        Action<TimeSpan, int, int>? onRateLimitWait = null, // New optional callback
         string version = "",
-        int maxRetries = 3)
+        int maxRetries = 0
+    )
     {
         int attempt = 0;
+        maxRetries = (maxRetries <= 0) ? DefaultMaxRetries : maxRetries; //if maxRetries is 0 or less use default
         version = (string.IsNullOrWhiteSpace(version)) ? DefaultVersion : version; //if version is empty use default
         await UpdateSemaphore.WaitAsync();
         Logger.Debug("Update semaphore acquired for GitHubUpdater.");
@@ -43,9 +47,12 @@ public static class GitHubUpdater
                     attempt++;
                     var waitFor = ex.Reset - DateTimeOffset.UtcNow + TimeSpan.FromSeconds(1);
                     if (waitFor < TimeSpan.Zero)
-                        waitFor = TimeSpan.FromSeconds(60);
+                        waitFor = TimeSpan.FromSeconds(60); //wait at least 60 seconds if the reset time is in the past
 
                     Logger.Warn($"GitHub API rate limit exceeded. Waiting {waitFor.TotalSeconds:N0} seconds before retrying (attempt {attempt}/{maxRetries})");
+
+                    // Notify the caller about the wait
+                    onRateLimitWait?.Invoke(waitFor, attempt, maxRetries);
 
                     if (attempt >= maxRetries)
                         throw;
@@ -53,7 +60,7 @@ public static class GitHubUpdater
                     await Task.Delay(waitFor);
                 }
             }
-            throw new Exception("Maximum retry attempts reached for GitHub API call.");
+            throw new Exception($"Maximum retry attempts ({maxRetries}) reached for GitHub API call.");
         }
         finally
         {
@@ -62,10 +69,16 @@ public static class GitHubUpdater
         }
     }
 
-    public static async Task<IReadOnlyList<Release>> GetAllReleasesAsync(string version = "")
+    public static async Task<IReadOnlyList<Release>> GetAllReleasesAsync(
+        Action<TimeSpan, int, int>? onRateLimitWait = null,
+        string version = ""
+    )
     {
         return await ExecuteGitHubRequestWithRateLimitAsync(
             client => client.Repository.Release.GetAll(GitHubUsername, GitHubRepository),
-            version);
+            onRateLimitWait,
+            version,
+            DefaultMaxRetries
+        );
     }
 }

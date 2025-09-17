@@ -7,36 +7,38 @@ using Octokit;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 
-public abstract class GitHubUpdaterBase
+public static class GitHubUpdater
 {
-    protected static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-    protected static readonly string GitHubUsername = "ciribob";
-    protected static readonly string GitHubRepository = "DCS-SimpleRadioStandalone";
-    protected static readonly string GitHubUserAgent = $"{GitHubUsername}_{GitHubRepository}";
+    private static readonly string GitHubUsername = "ciribob";
+    private static readonly string GitHubRepository = "DCS-SimpleRadioStandalone";
+    private static readonly string GitHubUserAgent = $"{GitHubUsername}_{GitHubRepository}";
 
-    // Semaphore to serialize all update checks across all inheritors
+    // Semaphore to serialize all update checks
     private static readonly SemaphoreSlim UpdateSemaphore = new(1, 1);
 
-    protected readonly GitHubClient GitHubClient;
-
-    protected GitHubUpdaterBase(string version = "1.0.0.0")
+    private static GitHubClient CreateGitHubClient(string version = "1.0.0.0")
     {
-        GitHubClient = new GitHubClient(new ProductHeaderValue(GitHubUserAgent, version));
+        return new GitHubClient(new ProductHeaderValue(GitHubUserAgent, version));
     }
 
-    protected async Task<T> ExecuteGitHubRequestWithRateLimitAsync<T>(Func<Task<T>> githubCall, int maxRetries = 3)
+    public static async Task<T> ExecuteGitHubRequestWithRateLimitAsync<T>(
+        Func<GitHubClient, Task<T>> githubCall,
+        string version = "1.0.0.0",
+        int maxRetries = 3)
     {
         int attempt = 0;
         await UpdateSemaphore.WaitAsync();
-        Logger.Debug("Update semaphore acquired for GitHubUpdaterBase.");
+        Logger.Debug("Update semaphore acquired for GitHubUpdater.");
         try
         {
+            var client = CreateGitHubClient(version);
             while (attempt < maxRetries)
             {
                 try
                 {
-                    return await githubCall();
+                    return await githubCall(client);
                 }
                 catch (RateLimitExceededException ex)
                 {
@@ -57,15 +59,15 @@ public abstract class GitHubUpdaterBase
         }
         finally
         {
-            Logger.Debug("Releasing update semaphore for GitHubUpdaterBase.");
+            Logger.Debug("Releasing update semaphore for GitHubUpdater.");
             UpdateSemaphore.Release();
         }
     }
 
-    protected async Task<IReadOnlyList<Release>> GetAllReleasesAsync()
+    public static async Task<IReadOnlyList<Release>> GetAllReleasesAsync(string version = "1.0.0.0")
     {
-        return await ExecuteGitHubRequestWithRateLimitAsync(() =>
-            GitHubClient.Repository.Release.GetAll(GitHubUsername, GitHubRepository));
+        return await ExecuteGitHubRequestWithRateLimitAsync(
+            client => client.Repository.Release.GetAll(GitHubUsername, GitHubRepository),
+            version);
     }
-
 }

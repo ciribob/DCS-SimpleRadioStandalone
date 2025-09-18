@@ -91,6 +91,6 @@ public class DefaultServerSettings
         { ServerSettingsKeys.WEBSOCKET_SERVER_MAX_CONNECTIONS.ToString(), "10" },
         { ServerSettingsKeys.HTTP_SERVER_API_KEY.ToString(), ShortGuid.NewGuid() },
         { ServerSettingsKeys.SERVER_EAM_RADIO_PRESET_ENABLED.ToString(), "false" },
-        { ServerSettingsKeys.HTTP_SERVER_PUBLIC_ENDPOINTS.ToString(), "/register/voice/stream/" },
+        { ServerSettingsKeys.HTTP_SERVER_PUBLIC_ENDPOINTS.ToString(), "/register/voice-stream/" },
     };
 }

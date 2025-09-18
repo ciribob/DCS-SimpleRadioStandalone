@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
+using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.NetCoreServer;
 
@@ -14,6 +16,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.NetCoreServer;
 /// <remarks>Thread-safe</remarks>
 public class TcpServer : IDisposable
 {
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
     /// <summary>
     ///     Initialize TCP server with a given IP address and port number
     /// </summary>
@@ -223,49 +227,66 @@ public class TcpServer : IDisposable
         if (IsStarted)
             return false;
 
-        // Setup acceptor event arg
-        _acceptorEventArg = new SocketAsyncEventArgs();
-        _acceptorEventArg.Completed += OnAsyncCompleted;
+        try
+        {
+            // Setup acceptor event arg
+            LoggingHelper.TryOrLog(Logger, () =>
+            {
+                _acceptorEventArg = new SocketAsyncEventArgs();
+                _acceptorEventArg.Completed += OnAsyncCompleted;
+            }, "creating SocketAsyncEventArgs", ex => OnError(SocketError.SocketError));
 
-        // Create a new acceptor socket
-        _acceptorSocket = new Socket(Endpoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            // Create a new acceptor socket
+            LoggingHelper.TryOrLog(Logger, () =>
+            {
+                _acceptorSocket = new Socket(Endpoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                IsSocketDisposed = false;
+            }, $"creating socket for endpoint {Endpoint}", ex => OnError(SocketError.SocketNotSupported));
 
-        // Update the acceptor socket disposed flag
-        IsSocketDisposed = false;
+            // Set socket options
+            LoggingHelper.TryOrLog(Logger, () =>
+            {
+                _acceptorSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, OptionReuseAddress);
+                _acceptorSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, OptionExclusiveAddressUse);
+                if (_acceptorSocket.AddressFamily == AddressFamily.InterNetworkV6)
+                    _acceptorSocket.DualMode = OptionDualMode;
+            }, $"setting socket options for endpoint {Endpoint}", ex => OnError(SocketError.SocketError));
 
-        // Apply the option: reuse address
-        _acceptorSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress,
-            OptionReuseAddress);
-        // Apply the option: exclusive address use
-        _acceptorSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse,
-            OptionExclusiveAddressUse);
-        // Apply the option: dual mode (this option must be applied before listening)
-        if (_acceptorSocket.AddressFamily == AddressFamily.InterNetworkV6)
-            _acceptorSocket.DualMode = OptionDualMode;
+            // Bind the acceptor socket to the IP endpoint
+            LoggingHelper.TryOrLog(Logger, () =>
+            {
+                _acceptorSocket.Bind(Endpoint);
+                Endpoint = (IPEndPoint)_acceptorSocket.LocalEndPoint;
+            }, $"binding socket to endpoint {Endpoint}", ex => OnError(SocketError.AddressAlreadyInUse));
 
-        // Bind the acceptor socket to the IP endpoint
-        _acceptorSocket.Bind(Endpoint);
-        // Refresh the endpoint property based on the actual endpoint created
-        Endpoint = (IPEndPoint)_acceptorSocket.LocalEndPoint;
-        // Start listen to the acceptor socket with the given accepting backlog size
-        _acceptorSocket.Listen(OptionAcceptorBacklog);
+            // Start listening
+            LoggingHelper.TryOrLog(Logger, () =>
+            {
+                _acceptorSocket.Listen(OptionAcceptorBacklog);
+            }, $"listening on endpoint {Endpoint}", ex => OnError(SocketError.SocketError));
 
-        // Reset statistic
-        _bytesPending = 0;
-        _bytesSent = 0;
-        _bytesReceived = 0;
+            // Reset statistics
+            _bytesPending = 0;
+            _bytesSent = 0;
+            _bytesReceived = 0;
 
-        // Update the started flag
-        IsStarted = true;
+            // Update the started flag
+            IsStarted = true;
 
-        // Call the server started handler
-        OnStarted();
+            // Call the server started handler
+            OnStarted();
 
-        // Perform the first server accept
-        IsAccepting = true;
-        StartAccept(_acceptorEventArg);
+            // Perform the first server accept
+            IsAccepting = true;
+            StartAccept(_acceptorEventArg);
 
-        return true;
+            return true;
+        }
+        catch (Exception)
+        {
+            // Error already logged and handled in TryOrLog
+            return false;
+        }
     }
 
     /// <summary>

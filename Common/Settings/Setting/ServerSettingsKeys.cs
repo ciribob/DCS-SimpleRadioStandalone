@@ -40,9 +40,13 @@ public enum ServerSettingsKeys
     SERVER_PRESETS = 31,
     HTTP_SERVER_ENABLED = 32,
     HTTP_SERVER_PORT = 33,
-    HTTP_SERVER_API_KEY = 34,
-    SERVER_EAM_RADIO_PRESET_ENABLED = 35,
-    SERVER_EAM_RADIO_PRESET = 36,
+    WEBSOCKET_SERVER_ENABLED = 34,
+    WEBSOCKET_SERVER_PORT = 35,
+    WEBSOCKET_SERVER_MAX_CONNECTIONS = 36,
+    HTTP_SERVER_API_KEY = 37,
+    SERVER_EAM_RADIO_PRESET_ENABLED = 38,
+    SERVER_EAM_RADIO_PRESET = 39,
+    HTTP_SERVER_PUBLIC_ENDPOINTS = 40,
 }
 
 public class DefaultServerSettings
@@ -82,7 +86,11 @@ public class DefaultServerSettings
         { ServerSettingsKeys.SERVER_PRESETS_ENABLED.ToString(), "false" },
         { ServerSettingsKeys.HTTP_SERVER_ENABLED.ToString(), "false" },
         { ServerSettingsKeys.HTTP_SERVER_PORT.ToString(), "8080" },
+        { ServerSettingsKeys.WEBSOCKET_SERVER_ENABLED.ToString(), "false" },
+        { ServerSettingsKeys.WEBSOCKET_SERVER_PORT.ToString(), "8081" },
+        { ServerSettingsKeys.WEBSOCKET_SERVER_MAX_CONNECTIONS.ToString(), "10" },
         { ServerSettingsKeys.HTTP_SERVER_API_KEY.ToString(), ShortGuid.NewGuid() },
         { ServerSettingsKeys.SERVER_EAM_RADIO_PRESET_ENABLED.ToString(), "false" },
+        { ServerSettingsKeys.HTTP_SERVER_PUBLIC_ENDPOINTS.ToString(), "/register/voice-stream/" },
     };
 }

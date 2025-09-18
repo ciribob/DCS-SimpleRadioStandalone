@@ -310,4 +310,15 @@ public class ServerSettingsStore
 
         return IPAddress.Any;
     }
+
+    public HashSet<string> GetPublicHttpEndpoints()
+    {
+        var raw = GetServerSetting(ServerSettingsKeys.HTTP_SERVER_PUBLIC_ENDPOINTS).RawValue;
+        if (string.IsNullOrWhiteSpace(raw))
+            return new HashSet<string>();
+
+        return new HashSet<string>(
+            raw.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+        );
+    }
 }

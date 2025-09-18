@@ -35,11 +35,13 @@ public class HttpServer
     private static readonly string CLIENT_KICK_GUID = "/client/kick/guid";
     private static readonly string CLIENT_KICK_NAME = "/client/kick/name";
     private static readonly string CLIENTS_LIST = "/clients";
-    private static readonly string REGISTER_VOICE_STRAM = "/register/voice/stream/";
+    private static readonly string REGISTER_VOICE_STRAM = "/register/voice-stream/";
 
     private static readonly ConcurrentDictionary<string, (DateTime, string)> _recordingClients = new();
     private WebSocketVoiceServer _wsVoiceServer = null;
     private static readonly string API_HEADER = "X-API-KEY";
+
+    private readonly HashSet<string> _publicEndpoints;
 
     public HttpServer(ConcurrentDictionary<string, SRClientBase> connectedClients, ServerState serverState, Caliburn.Micro.IEventAggregator eventAggregator)
     {
@@ -49,6 +51,9 @@ public class HttpServer
         _port = ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.HTTP_SERVER_PORT).IntValue;
         _enabled = ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.HTTP_SERVER_ENABLED).BoolValue;
         _authentication = ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.HTTP_SERVER_API_KEY).RawValue.Trim();
+
+        // Use the new parsing function
+        _publicEndpoints = ServerSettingsStore.Instance.GetPublicHttpEndpoints();
     }
 
     public void Start()
@@ -132,7 +137,8 @@ public class HttpServer
         if (context.Request.Url == null)
             return;
 
-        if (context.Request.Headers.Get(API_HEADER) != _authentication)
+        var path = context.Request.Url.AbsolutePath;
+        if (!_publicEndpoints.Contains(path) && context.Request.Headers.Get(API_HEADER) != _authentication)
         {
             context.Response.StatusCode = 401;
             context.Response.StatusDescription = $"Unauthorized - Verify you've sent the Header: {API_HEADER} YOU_API_KEY correctly. The API KEY will be printed in the logs on server startup";

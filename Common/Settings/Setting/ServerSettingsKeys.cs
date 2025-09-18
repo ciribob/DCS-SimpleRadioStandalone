@@ -46,6 +46,7 @@ public enum ServerSettingsKeys
     HTTP_SERVER_API_KEY = 37,
     SERVER_EAM_RADIO_PRESET_ENABLED = 38,
     SERVER_EAM_RADIO_PRESET = 39,
+    HTTP_SERVER_PUBLIC_ENDPOINTS = 40,
 }
 
 public class DefaultServerSettings
@@ -90,5 +91,6 @@ public class DefaultServerSettings
         { ServerSettingsKeys.WEBSOCKET_SERVER_MAX_CONNECTIONS.ToString(), "10" },
         { ServerSettingsKeys.HTTP_SERVER_API_KEY.ToString(), ShortGuid.NewGuid() },
         { ServerSettingsKeys.SERVER_EAM_RADIO_PRESET_ENABLED.ToString(), "false" },
+        { ServerSettingsKeys.HTTP_SERVER_PUBLIC_ENDPOINTS.ToString(), "/register/voice/stream/" },
     };
 }

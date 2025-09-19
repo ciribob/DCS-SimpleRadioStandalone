@@ -217,15 +217,11 @@ public class TcpServer : IDisposable
     /// </summary>
     public bool IsAccepting { get; private set; }
 
-    /// <summary>
-    ///     Start the server
-    /// </summary>
-    /// <returns>'true' if the server was successfully started, 'false' if the server failed to start</returns>
-    public virtual bool Start()
+    private Exception? TryStartServer()
     {
         Debug.Assert(!IsStarted, "TCP server is already started!");
         if (IsStarted)
-            return false;
+            throw new Exception("TCP server is already started!");
 
         try
         {
@@ -280,13 +276,28 @@ public class TcpServer : IDisposable
             IsAccepting = true;
             StartAccept(_acceptorEventArg);
 
-            return true;
+            return null;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             // Error already logged and handled in TryOrLog
-            return false;
+            return ex;
         }
+    }
+
+    /// <summary>
+    ///     Start the server
+    /// </summary>
+    /// <returns>'true' if the server was successfully started, 'false' if the server failed to start</returns>
+    public virtual bool Start()
+    {
+        return TryStartServer() == null;
+    }
+
+    public (bool Success, string? ErrorMessage) StartWithError()
+    {
+        var ex = TryStartServer();
+        return (ex == null, ex?.Message);
     }
 
     /// <summary>
@@ -335,13 +346,24 @@ public class TcpServer : IDisposable
     /// <returns>'true' if the server was successfully restarted, 'false' if the server failed to restart</returns>
     public virtual bool Restart()
     {
+        return RestartWithError().Success;
+    }
+
+    /// <summary>
+    ///     Restart the server, returning success and an error message if any.
+    /// </summary>
+    /// <returns>
+    ///     (Success, ErrorMessage): 'true' if restarted, 'false' and error message if failed.
+    /// </returns>
+    public virtual (bool Success, string? ErrorMessage) RestartWithError()
+    {
         if (!Stop())
-            return false;
+            return (false, "Failed to stop the server.");
 
         while (IsStarted)
             Thread.Yield();
 
-        return Start();
+        return StartWithError();
     }
 
     #endregion

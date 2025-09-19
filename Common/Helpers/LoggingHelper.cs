@@ -1,4 +1,5 @@
-﻿using NLog;
+﻿using System;
+using NLog;
 using NLog.Config;
 using NLog.Targets;
 using NLog.Targets.Wrappers;
@@ -36,5 +37,26 @@ public static class LoggingHelper
         config.LoggingRules.Add(transmissionRule);
 
         return config;
+    }
+
+    /// <summary>
+    /// Executes an action, logs any exception with context, and invokes an error handler.
+    /// </summary>
+    /// <param name="logger">The logger instance.</param>
+    /// <param name="action">The action to execute.</param>
+    /// <param name="context">Contextual message for logging.</param>
+    /// <param name="onError">Error handler delegate (optional).</param>
+    public static void TryOrLog(Logger logger, Action action, string context, Action<Exception>? onError = null)
+    {
+        try
+        {
+            action();
+        }
+        catch (Exception ex)
+        {
+            logger.Error(ex, $"Failed while {context}.");
+            onError?.Invoke(ex);
+            throw;
+        }
     }
 }

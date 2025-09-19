@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Caliburn.Micro;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
@@ -30,6 +31,9 @@ public partial class InputBindingControl : UserControl, IHandle<ProfileChangedMe
 
 
     private List<InputBindState> _currentBindStates = new();
+
+    private static readonly SolidColorBrush LightGreenBrush = new SolidColorBrush(Colors.LightGreen);
+    private static readonly SolidColorBrush TransparentBrush = new SolidColorBrush(Colors.Transparent);
 
     public InputBindingControl()
     {
@@ -205,15 +209,15 @@ public partial class InputBindingControl : UserControl, IHandle<ProfileChangedMe
         var modifierBind = _currentBindStates.FirstOrDefault(
             b => b.ModifierDevice != null && b.ModifierDevice.InputBind == ModifierBinding);
 
-        bool MainActive = mainBind != null && mainBind != null && mainBind.MainDeviceState;
-        DeviceLabel.Background = (mainBind != null && mainBind.MainDeviceState)
-            ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.LightGreen)
-            : new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Transparent);
+        bool MainActive = mainBind != null && mainBind.MainDeviceState;
+        DeviceLabel.Background = MainActive
+            ? LightGreenBrush
+            : TransparentBrush;
 
         bool ModifierActive = modifierBind != null && modifierBind.ModifierState;
         ModifierLabel.Background = ModifierActive
-            ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.LightGreen)
-            : new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Transparent);
+            ? LightGreenBrush
+            : TransparentBrush;
 
         // Scroll to main label if it just became active
         if (MainActive)

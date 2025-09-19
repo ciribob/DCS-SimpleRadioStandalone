@@ -61,18 +61,17 @@ internal class TransmissionLoggingQueue
         while (!_stop)
         {
             Thread.Sleep(500);
-            if (_log != _serverSettings.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED).BoolValue)
+            if (_log != _serverSettings.SynchronizedSettings.IsTransmissionLogEnabled)
             {
-                _log = _serverSettings.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED).BoolValue;
+                _log = _serverSettings.SynchronizedSettings.IsTransmissionLogEnabled;
                 var newSetting = _log ? "TRANSMISSION LOGGING ENABLED" : "TRANSMISSION LOGGING DISABLED";
 
-                if (_serverSettings.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED).BoolValue
-                    && _fileTarget == null) // require initialization of transmission logging filetarget and rule
+                if (_log && _fileTarget == null) // require initialization of transmission logging filetarget and rule
                 {
                     var config = LogManager.Configuration;
 
                     config = LoggingHelper.GenerateTransmissionLoggingConfig(config,
-                        _serverSettings.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_RETENTION).IntValue);
+                        _serverSettings.SynchronizedSettings.TransmissionLogRetentionLimit);
 
                     LogManager.Configuration = config;
 
@@ -83,12 +82,10 @@ internal class TransmissionLoggingQueue
                 Logger.Info($"EVENT, {newSetting}");
             }
 
-            if (_serverSettings.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED).BoolValue &&
-                _fileTarget.MaxArchiveFiles != _serverSettings
-                    .GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_RETENTION).IntValue)
+            if (_serverSettings.SynchronizedSettings.IsTransmissionLogEnabled &&
+                _fileTarget.MaxArchiveFiles != _serverSettings.SynchronizedSettings.TransmissionLogRetentionLimit)
             {
-                _fileTarget.MaxArchiveFiles = _serverSettings
-                    .GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_RETENTION).IntValue;
+                _fileTarget.MaxArchiveFiles = _serverSettings.SynchronizedSettings.TransmissionLogRetentionLimit;
                 LogManager.ReconfigExistingLoggers();
             }
 

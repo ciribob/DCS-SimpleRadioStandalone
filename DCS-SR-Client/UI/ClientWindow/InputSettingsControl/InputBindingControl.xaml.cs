@@ -46,10 +46,10 @@ public partial class InputBindingControl : UserControl, IHandle<ProfileChangedMe
             InputDeviceManager.Instance.StartPTTListening(OnPTTStatesUpdated);
         };
 
-        Unloaded += (sender, args) =>
-        {
-            InputDeviceManager.Instance.StopListening();
-        };
+        //Unloaded += (sender, args) =>
+        //{
+        //    InputDeviceManager.Instance.StopListening();
+        //};
 
         EventBus.Instance.SubscribeOnUIThread(this);
     }

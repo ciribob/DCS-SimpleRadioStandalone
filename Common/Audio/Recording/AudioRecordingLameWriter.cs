@@ -42,10 +42,13 @@ internal class AudioRecordingLameWriter : AudioRecordingWriterBase
 
     public override void Start()
     {
-        // streams are stored in Recordings directory, named "<date>-<time><tag>.mp3"
+        // Get User Setting for Recording Directory
+        string recordingDir = GetRecordingDirectory(); 
+
+        // streams are stored in User defined recordings directory, named "<date>-<time><tag>.mp3"
         var sanitisedDate = string.Join("-", DateTime.Now.ToShortDateString().Split(Path.GetInvalidFileNameChars()));
         var sanitisedTime = string.Join("-", DateTime.Now.ToLongTimeString().Split(Path.GetInvalidFileNameChars()));
-        var filePathBase = $"Recordings\\{sanitisedDate}-{sanitisedTime}";
+        var filePathBase = $"{recordingDir}\\{sanitisedDate}-{sanitisedTime}";
 
         var lamePreset = (LAMEPreset)Enum.Parse(typeof(LAMEPreset),
             GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.RecordingQuality).RawValue);

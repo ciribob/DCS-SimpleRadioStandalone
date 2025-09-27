@@ -143,8 +143,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
     {
         _stop = false;
 
-        var exportFilePath = ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.CLIENT_EXPORT_FILE_PATH)
-            .StringValue;
+        var exportFilePath = ServerSettingsStore.Instance.ServerSettings.ClientExportFilePath;
         if (string.IsNullOrWhiteSpace(exportFilePath) || exportFilePath == DEFAULT_CLIENT_EXPORT_FILE)
             // Make sure we're using a full file path in case we're falling back to default values
             exportFilePath = Path.Combine(GetCurrentDirectory(), DEFAULT_CLIENT_EXPORT_FILE);
@@ -176,7 +175,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
         {
             while (!_stop)
             {
-                if (ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.CLIENT_EXPORT_ENABLED).BoolValue)
+                if (ServerSettingsStore.Instance.SynchronizedSettings.IsClientExportEnabled)
                 {
                     var data = new ClientListExport
                         { Clients = _connectedClients.Values, ServerVersion = UpdaterChecker.VERSION };
@@ -213,14 +212,12 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
                 {
                     try
                     {
-                        if (ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_ENABLED)
-                            .BoolValue)
+                        if (ServerSettingsStore.Instance.SynchronizedSettings.IsLotAtcExportEnabled)
                         {
                             var host = new IPEndPoint(
-                                IPAddress.Parse(ServerSettingsStore.Instance
-                                    .GetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_IP).StringValue),
-                                ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_PORT)
-                                    .IntValue);
+                                ServerSettingsStore.Instance.ServerSettings.LotAtcExportIp,
+                                ServerSettingsStore.Instance.ServerSettings.LotAtcExportPort
+                                );
 
                             var data = new ClientListExport
                                 { ServerVersion = UpdaterChecker.VERSION, Clients = new List<SRClientBase>() };

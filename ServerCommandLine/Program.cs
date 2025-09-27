@@ -186,6 +186,16 @@ internal class Program : IHandle<SRSClientStatus>
         if (options.HttpServerPort != null && options.HttpServerPort.HasValue)
             ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.HTTP_SERVER_PORT,
                 options.HttpServerPort.Value.ToString());
+        if (options.WebSocketEnabled != null && options.WebSocketEnabled.HasValue)
+            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.WEBSOCKET_SERVER_ENABLED,
+                options.WebSocketEnabled.Value);
+        if (options.WebSocketPort != null && options.WebSocketPort.HasValue)
+            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.WEBSOCKET_SERVER_PORT,
+                options.WebSocketPort.Value.ToString());
+        if (options.WebSocketMaxConnections != null && options.WebSocketMaxConnections.HasValue)
+            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.WEBSOCKET_SERVER_MAX_CONNECTIONS,
+                options.WebSocketPort.Value.ToString());
+
 
         Console.WriteLine("Final Settings:");
         foreach (var setting in ServerSettingsStore.Instance.GetAllSettings()) Console.WriteLine(setting);
@@ -358,6 +368,21 @@ public class Options
         Required = false)]
     public int? HttpServerPort { get; set; }
 
+    [Option("WebSocketEnabled",
+    HelpText = "Enable the websocket server to push to clients requesting the information via the HttpServer. Default is false.",
+    Required = false)]
+    public bool? WebSocketEnabled { get; set; }
+
+    [Option("WebSocketPort",
+        HelpText = "Sets the websocket Server Port if Enabled. Default is 8081.",
+        Required = false)]
+    public int? WebSocketPort { get; set; }
+
+    [Option("WebSocketMaxConnections",
+    HelpText = "Sets the websocket Server max connections if Enabled. Default is 10.",
+    Required = false)]
+    public int? WebSocketMaxConnections { get; set; }
+
     [Option("radioEffectOverride",
         HelpText = "Disables Radio Effects on the global frequency (for Music etc). Default is false",
         Required = false)]
@@ -430,6 +455,9 @@ public class Options
             $"{nameof(ServerEAMRadioPresetEnabled)}: {ServerEAMRadioPresetEnabled}, \n" +
             $"{nameof(HttpServerEnabled)}: {HttpServerEnabled}, \n" +
             $"{nameof(HttpServerPort)}: {HttpServerPort}, \n" +
+            $"{nameof(WebSocketEnabled)}: {WebSocketEnabled}, \n" +
+            $"{nameof(WebSocketPort)}: {WebSocketPort}, \n" +
+            $"{nameof(WebSocketMaxConnections)}: {WebSocketMaxConnections}, \n" +
             $"{nameof(ServerBindIP)}: {ServerBindIP}";
     }
 }

@@ -37,18 +37,20 @@ public enum ServerSettingsKeys
     RADIO_EFFECT_OVERRIDE = 28,
     SERVER_IP = 29,
     SERVER_PRESETS_ENABLED = 30,
-    SERVER_PRESETS = 31,
+    SERVER_PRESETS_PATH = 31,
     HTTP_SERVER_ENABLED = 32,
     HTTP_SERVER_PORT = 33,
     HTTP_SERVER_API_KEY = 34,
     SERVER_EAM_RADIO_PRESET_ENABLED = 35,
     SERVER_EAM_RADIO_PRESET = 36,
+    SETTINGS_VERSION = 37,
 }
 
 public class DefaultServerSettings
 {
     public static readonly Dictionary<string, string> Defaults = new()
     {
+        { ServerSettingsKeys.SETTINGS_VERSION.ToString(), "1" },
         { ServerSettingsKeys.CLIENT_EXPORT_ENABLED.ToString(), "false" },
         { ServerSettingsKeys.COALITION_AUDIO_SECURITY.ToString(), "false" },
         { ServerSettingsKeys.DISTANCE_ENABLED.ToString(), "false" },

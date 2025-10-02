@@ -586,7 +586,7 @@ public class AudioManager : IHandle<SRClientUpdateMessage>
 
             AudioRecordingManager.Instance.Stop();
 
-            EventBus.Instance.Unsubcribe(this);
+            EventBus.Instance.Unsubscribe(this);
         }
     }
 

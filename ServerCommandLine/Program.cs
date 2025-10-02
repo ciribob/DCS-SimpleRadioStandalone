@@ -95,7 +95,7 @@ internal class Program : IHandle<SRSClientStatus>
     {
         _serverState.StopServer();
 
-        EventBus.Instance.Unsubcribe(this);
+        EventBus.Instance.Unsubscribe(this);
     }
 
 

@@ -425,7 +425,7 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
             }
         }
 
-        EventBus.Instance.Unsubcribe(this);
+        EventBus.Instance.Unsubscribe(this);
 
         //clear the clients list
         _clients.Clear();
@@ -496,7 +496,7 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
     [MethodImpl(MethodImplOptions.Synchronized)]
     public void Disconnect()
     {
-        EventBus.Instance.Unsubcribe(this);
+        EventBus.Instance.Unsubscribe(this);
 
         _stop = true;
 

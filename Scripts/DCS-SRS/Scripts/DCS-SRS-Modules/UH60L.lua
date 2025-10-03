@@ -174,6 +174,7 @@ end
 local result = {
     register = function(SR)
         SR.exporters["UH-60L"] = exportRadioUH60L
+        SR.exporters["UH-60L_DAP"] = exportRadioUH60L --ANDR0ID Added
         SR.exporters["MH-60R"] = exportRadioUH60L
     end,
 }

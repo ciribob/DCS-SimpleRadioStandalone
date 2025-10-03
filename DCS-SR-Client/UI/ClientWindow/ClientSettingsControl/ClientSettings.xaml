@@ -229,7 +229,83 @@
                                 ToggleValue="{Binding MicDenoise, Mode=TwoWay}" />
                         </Grid>
                     </GroupBox>
+                    <GroupBox Header="{x:Static p:Resources.IncomingAudioHeader}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
 
+                            </Grid.RowDefinitions>
+
+                            <Label Grid.Row="1"
+                                    Grid.Column="0"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Content="{x:Static p:Resources.IncomingAudioAGC}" /> 
+
+                            <clientSettingsControl:SettingsToggleControl
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                ToggleValue="{Binding IncomingAudioAGC, Mode=TwoWay}" />
+
+                            <Label Grid.Row="2"
+                                 Grid.Column="0"
+                                 HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 IsEnabled="{Binding IncomingAudioAGC}"
+                                 ToolTip="{x:Static p:Resources.IncomingAudioAGCMaxDBToolTip}"
+                                 Content="{x:Static p:Resources.IncomingAudioAGCMaxDB}" />
+                            <StackPanel Grid.Row="2"
+                                        Grid.Column="1"
+                                        IsEnabled="{Binding IncomingAudioAGC}">
+                                <Slider
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        SmallChange="1" LargeChange="5"
+                                        ToolTip="{Binding IncomingAudioAGCMaxDB }"
+                                        Minimum="0" Maximum="70" Value="{Binding IncomingAudioAGCMaxDB, Mode=TwoWay}" />
+                                <Label
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Content="{Binding IncomingAudioAGCMaxDB}" />
+                            </StackPanel>
+                            <Label Grid.Row="3"
+                                    Grid.Column="0"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    IsEnabled="{Binding IncomingAudioAGC}"
+                                    ToolTip="{x:Static p:Resources.IncomingAudioAGCTargetLevelToolTip}"
+                                    Content="{x:Static p:Resources.IncomingAudioAGCTargetLevel}" />
+                            <Slider Grid.Row="3"
+                                    Grid.Column="1"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    ToolTip="{Binding IncomingAudioAGCTarget }"
+                                    Minimum="1000" Maximum="30000"
+                                    SmallChange="100" LargeChange="1000"
+                                    Value="{Binding IncomingAudioAGCTarget, Mode=TwoWay}" />
+
+                            <Label Grid.Row="4"
+                                    Grid.Column="0"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Content="{x:Static p:Resources.IncomingAudioDenoise}" />
+
+                            <clientSettingsControl:SettingsToggleControl
+                                    Grid.Row="4"
+                                    Grid.Column="1"
+                                    ToggleValue="{Binding IncomingAudioDenoise, Mode=TwoWay}" />
+                        </Grid>
+                    </GroupBox>
                     <GroupBox Header="{x:Static p:Resources.VOXHeader}">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -1086,10 +1162,11 @@
                                    VerticalContentAlignment="Center"
                                    Content="{x:Static p:Resources.RadioSoundEffects}" />
 
-                            <clientSettingsControl:SettingsToggleControl
-                                Grid.Row="8"
-                                Grid.Column="1"
-                                ToggleValue="{Binding RadioSoundEffects, Mode=TwoWay}" />
+                            <clientSettingsControl:BackgroundEffectVolumeControl
+                                    Grid.Row="8"
+                                    Grid.Column="1"
+                                    MaximumPercentage="100"
+                                    VolumeValue="{Binding RadioSoundEffectsRatio, Mode=TwoWay}" />
 
                             <Label Grid.Row="9"
                                Grid.Column="0"

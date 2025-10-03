@@ -21,6 +21,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models
 
         [JsonDerivedType(typeof(SaturationEffect), typeDiscriminator: "saturation")]
         [JsonDerivedType(typeof(CompressorEffect), typeDiscriminator: "compressor")]
+        [JsonDerivedType(typeof(SidechainCompressorEffect), typeDiscriminator: "sidechainCompressor")]
         [JsonDerivedType(typeof(GainEffect), typeDiscriminator: "gain")]
 
         [JsonDerivedType(typeof(CVSDEffect), typeDiscriminator: "cvsd")]
@@ -99,6 +100,34 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models
                 };
             }
         };
+
+        internal class SidechainCompressorEffect : IEffect
+        {
+            public required float Attack { get; set; }
+            public required float MakeUp { get; set; }
+            public required float Release { get; set; }
+            public required float Threshold { get; set; }
+            public required float Ratio { get; set; }
+            public required IEffect SidechainEffect {  get; set; }
+
+            public override ISampleProvider ToSampleProvider(ISampleProvider source)
+            {
+                return new SidechainCompressorProvider
+                {
+                    Compressor = new Dsp.SidechainCompressor(Attack * 1000, Release * 1000, source.WaveFormat.SampleRate)
+                    {
+                        MakeUpGain = MakeUp,
+                        Threshold = Threshold,
+                        Ratio = Ratio,
+                    },
+                    SignalProvider = source,
+                    SidechainProvider = SidechainEffect.ToSampleProvider(new NoopSampleProvider()
+                    {
+                        WaveFormat = source.WaveFormat
+                    })
+                };
+            }
+        }
 
         internal class GainEffect : IEffect
         {
@@ -316,13 +345,20 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models
                         Threshold = -23,
                     },
 
-                    new CompressorEffect()
+                    new SidechainCompressorEffect()
                     {
                         Attack = 0.01f,
                         MakeUp = 6,
                         Release = 0.2f,
                         Threshold = -33,
-                        Ratio = 1.18f
+                        Ratio = 1.18f,
+                        SidechainEffect = new FiltersEffect
+                        {
+                            Filters = new[]
+                            {
+                                Dsp.FirstOrderFilter.HighPass(Constants.OUTPUT_SAMPLE_RATE, 709),
+                            }
+                        }
                     },
                     new FiltersEffect()
                     {
@@ -393,13 +429,20 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models
                         Threshold = -33,
                     },
 
-                    new CompressorEffect
+                    new SidechainCompressorEffect
                     {
                         Attack = 0.01f,
                         MakeUp = -1,
                         Release = 0.2f,
                         Threshold = -17,
-                        Ratio = 1.18f
+                        Ratio = 1.18f,
+                        SidechainEffect = new FiltersEffect
+                        {
+                            Filters = new[]
+                            {
+                                Dsp.FirstOrderFilter.HighPass(Constants.OUTPUT_SAMPLE_RATE, 709),
+                            }
+                        }
                     },
 
                     new FiltersEffect

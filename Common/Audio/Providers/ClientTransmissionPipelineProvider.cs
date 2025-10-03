@@ -38,18 +38,19 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
 
             // Copy to regular array for compatibility with ISampleProvider.
             var floatPool = ArrayPool<float>.Shared;
-            var scratchBuffer = floatPool.Rent(audioOut.Length);
-            var sourceBuffer = floatPool.Rent(audioOut.Length);
-            audioOut.CopyTo(sourceBuffer);
+            var drySourceBuffer = floatPool.Rent(audioOut.Length);
+            audioOut.CopyTo(drySourceBuffer);
 
+            // Dry/original provider
+            var dryProvider = new TransmissionProvider(drySourceBuffer, 0, audioOut.Length);
 
-            ISampleProvider transmissionProvider = new TransmissionProvider(sourceBuffer, 0, audioOut.Length);
-            transmissionProvider = new VolumeSampleProvider(transmissionProvider)
-            {
-                Volume = transmission.Volume
-            };
+            // Wet/effected provider: must use a separate buffer to avoid double-reading
+            var wetSourceBuffer = floatPool.Rent(audioOut.Length);
+            audioOut.CopyTo(wetSourceBuffer);
+            ISampleProvider wetProvider = new TransmissionProvider(wetSourceBuffer, 0, audioOut.Length);
+            wetProvider = new VolumeSampleProvider(wetProvider) { Volume = transmission.Volume };
 
-            if (RadioEffectsEnabled)
+            if (RadioEffectsRatio > 0f)
             {
                 if (IsIntercomLike(transmission.Modulation))
                 {
@@ -58,20 +59,35 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
                         intercomModel = RadioModelFactory.Instance.LoadTxOrDefaultIntercom("intercom");
                         TxRadioModels.Add("intercom", intercomModel);
                     }
-                    transmissionProvider = BuildRadioPipeline(transmissionProvider, intercomModel, transmission);
+                    wetProvider = BuildRadioPipeline(wetProvider, intercomModel, transmission);
                 }
                 else
                 {
                     var preset = GetRadioModel(transmission);
-                    transmissionProvider = BuildRadioEffectsChain(transmissionProvider, preset, transmission);
+                    wetProvider = BuildRadioEffectsChain(wetProvider, preset, transmission);
                 }
             }
 
-            transmissionProvider.Read(scratchBuffer, 0, audioOut.Length);
-            scratchBuffer.AsSpan(0, audioOut.Length).CopyTo(audioOut);
+            // Set up volume providers for wet/dry mix
+            var dryVolume = new VolumeSampleProvider(dryProvider) { Volume = Math.Max(1.0f - RadioEffectsRatio, 0.0f) };
+            var wetVolume = new VolumeSampleProvider(wetProvider) { Volume = RadioEffectsRatio };
 
-            floatPool.Return(sourceBuffer);
-            floatPool.Return(scratchBuffer);
+            // Mix dry and wet
+            var mixer = new MixingSampleProvider(new[] { dryVolume, wetVolume });
+
+            var mixerBuffer = floatPool.Rent(audioOut.Length);
+            try
+            {
+                int samplesRead = mixer.Read(mixerBuffer, 0, audioOut.Length);
+                mixerBuffer.AsSpan(0, samplesRead).CopyTo(audioOut);
+            }
+            finally
+            {
+                floatPool.Return(mixerBuffer);
+            }
+
+            floatPool.Return(drySourceBuffer);
+            floatPool.Return(wetSourceBuffer);
         }
 
         private static bool IsIntercomLike(Modulation modulation)
@@ -95,7 +111,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
                 voiceProvider = BuildBackgroundNoiseEffect(voiceProvider, radioModel, transmission);
             }
 
-            if (RadioEffectsEnabled)
+            // Only apply radio pipeline if effect amount > 0
+            if (RadioEffectsRatio > 0f)
             {
                 voiceProvider = BuildRadioPipeline(voiceProvider, radioModel, transmission);
             }
@@ -279,7 +296,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
 
             var profileSettings = GlobalSettingsStore.Instance.ProfileSettingsStore;
             PerRadioModelEffect = profileSettings.GetClientSettingBool(ProfileSettingsKeys.PerRadioModelEffects);
-            RadioEffectsEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEffects);
+
+            // Use RadioEffectsAmount as float (0..1), clamp for safety
+            RadioEffectsRatio = Math.Clamp(profileSettings.GetClientSettingFloat(ProfileSettingsKeys.RadioEffectsRatio), 0f, 1f);
+
             RadioEncryptionEffect = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEncryptionEffects);
             clippingEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEffectsClipping);
             BackgroundNoiseEffect = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioBackgroundNoiseEffect);
@@ -298,12 +318,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
         private long LastRefresh { get; set; }
 
         private bool PerRadioModelEffect { get; set; }
-        private bool RadioEffectsEnabled { get; set; }
+        private float RadioEffectsRatio { get; set; } = 1.0f;
         private bool RadioEncryptionEffect { get; set; }
         private bool BackgroundNoiseEffect { get; set; }
 
         private bool clippingEnabled = false;
-        private bool ClippingEnabled => RadioEffectsEnabled && clippingEnabled;
+        private bool ClippingEnabled => RadioEffectsRatio > 0f && clippingEnabled;
         private float NoiseGainOffsetDB { get; set; } = 0f;
         private float HFNoiseGainOffsetDB { get; set; } = 0f;
 

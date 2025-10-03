@@ -19,8 +19,8 @@
         <Nullable>disable</Nullable>
         <IsPackable>false</IsPackable>
         <Company>Ciribob - GitHub.com/Ciribob</Company>
-        <AssemblyVersion>2.3.0.3</AssemblyVersion>
-        <FileVersion>2.3.0.3</FileVersion>
+        <AssemblyVersion>2.3.2.0</AssemblyVersion>
+        <FileVersion>2.3.2.0</FileVersion>
         <Product>DCS-SimpleRadio Standalone</Product>
     </PropertyGroup>
     <PropertyGroup>
@@ -98,7 +98,7 @@
         <Generator>PublicResXFileCodeGenerator</Generator>
         <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       </EmbeddedResource>
-      <EmbeddedResource Update="Properties\Resources.zh-hans-cn.resx">
+      <EmbeddedResource Update="Properties\Resources.zh.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
       </EmbeddedResource>
     </ItemGroup>

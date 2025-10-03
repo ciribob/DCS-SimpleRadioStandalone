@@ -468,7 +468,7 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
             NotifyPropertyChanged();
         }
     }
-
+#region Automatic Gain Control (Microphone)
     public bool MicAGC
     {
         get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.AGC);
@@ -508,6 +508,48 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
             NotifyPropertyChanged();
         }
     }
+    #endregion Automatic Gain Control (Microphone)
+    #region Automatic Gain Control (Microphone)
+    public bool IncomingAudioAGC
+    {
+        get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.IncomingAudioAGC);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.IncomingAudioAGC, value);
+            NotifyPropertyChanged();
+        }
+    }
+
+    public int IncomingAudioAGCMaxDB
+    {
+        get => _globalSettings.GetClientSettingInt(GlobalSettingsKeys.IncomingAudioAGCLevelMax);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.IncomingAudioAGCLevelMax, value);
+            NotifyPropertyChanged();
+        }
+    }
+
+    public int IncomingAudioAGCTarget
+    {
+        get => _globalSettings.GetClientSettingInt(GlobalSettingsKeys.IncomingAudioAGCTarget);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.IncomingAudioAGCTarget, value);
+            NotifyPropertyChanged();
+        }
+    }
+
+    public bool IncomingAudioDenoise
+    {
+        get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.IncomingAudioDenoise);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.IncomingAudioDenoise, value);
+            NotifyPropertyChanged();
+        }
+    }
+#endregion Automatic Gain Control (IncomingAudio)
 
     public bool PlayConnectionSounds
     {
@@ -761,7 +803,6 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
             NotifyPropertyChanged();
         }
     }
-
 /***
  *
  */
@@ -826,15 +867,19 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         get => CachedAudioEffectProvider.Instance.SelectedIntercomTransmissionEndEffect;
     }
 
-/***
- *
- */
-    public bool RadioSoundEffects
+    // Add the new float property for the slider (0-100%)
+    public float RadioSoundEffectsRatio
     {
-        get => _globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.RadioEffects);
+        get
+        {
+            float value = _globalSettings.ProfileSettingsStore.GetClientSettingFloat(ProfileSettingsKeys.RadioEffectsRatio);
+            value = Math.Clamp(value, 0f, 1f);
+            return value * 100f; // 0.0–1.0 → 0–100%
+        }
         set
         {
-            _globalSettings.ProfileSettingsStore.SetClientSettingBool(ProfileSettingsKeys.RadioEffects, value);
+            float clamped = Math.Clamp(value, 0f, 100f) / 100f; // 0–100% → 0.0–1.0
+            _globalSettings.ProfileSettingsStore.SetClientSettingFloat(ProfileSettingsKeys.RadioEffectsRatio, clamped);
             NotifyPropertyChanged();
         }
     }
@@ -1162,7 +1207,7 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         NotifyPropertyChanged(nameof(SelectedIntercomEndTransmitEffect));
         NotifyPropertyChanged(nameof(RadioEncryptionEffectsToggle));
         NotifyPropertyChanged(nameof(RadioMIDSToggle));
-        NotifyPropertyChanged(nameof(RadioSoundEffects));
+        NotifyPropertyChanged(nameof(RadioSoundEffectsRatio));
         NotifyPropertyChanged(nameof(RadioSoundEffectsClipping));
         NotifyPropertyChanged(nameof(NATORadioToneToggle));
         NotifyPropertyChanged(nameof(NATORadioToneVolume));

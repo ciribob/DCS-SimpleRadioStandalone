@@ -359,7 +359,7 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
                                 break;
                             }
 
-                    if (global)
+                    if (global || client.Value.Gateway)
                     {
                         outgoingList.Add(ip);
                     }

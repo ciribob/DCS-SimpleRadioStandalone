@@ -767,7 +767,9 @@ namespace Installer
 
             foreach (var directory in Directory.EnumerateDirectories(path))
             {
-                if (directory.ToUpper().Contains("DCS.") || directory.ToUpper().EndsWith("DCS"))
+                if (directory.ToUpper().Contains("DCS.") || directory.ToUpper().EndsWith("DCS") 
+                                                         || directory.ToUpper().Contains("MCS.") 
+                                                         || directory.ToUpper().EndsWith("MCS"))
                 {
                     //check for config/network.vault and options.lua
                     var network = directory + "\\config\\network.vault";

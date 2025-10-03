@@ -245,7 +245,9 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
                                         Name = srClient.Name,
                                         LatLngPosition = srClient?.LatLngPosition,
                                         Seat = srClient.Seat,
-                                        AllowRecord = srClient.AllowRecord
+                                        AllowRecord = srClient.AllowRecord,
+                                        Gateway = srClient.Gateway,
+                                        DISEntityId = srClient.DISEntityId
                                     };
 
                                     //reset and hide anything if the IFF is off

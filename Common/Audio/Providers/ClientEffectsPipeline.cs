@@ -4,6 +4,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
 using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 using NLog;
 using System;
 using System.Buffers;
@@ -22,7 +23,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private bool radioEffectsEnabled;
+        private float radioEffectRatio = 1.0f; // Default to 1.0 (full effect)
         private bool perRadioModelEffect;
         private bool clippingEnabled;
 
@@ -63,13 +64,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
                 var serverSettings = SyncedServerSettings.Instance;
                 lastRefresh = now;
 
-                radioEffectsEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEffects);
-
                 perRadioModelEffect = profileSettings.GetClientSettingBool(ProfileSettingsKeys.PerRadioModelEffects);
-
                 irlRadioRXInterference = serverSettings.GetSettingAsBool(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE);
-
                 clippingEnabled = profileSettings.GetClientSettingBool(ProfileSettingsKeys.RadioEffectsClipping);
+                radioEffectRatio = Math.Clamp(profileSettings.GetClientSettingFloat(ProfileSettingsKeys.RadioEffectsRatio), 0f, 1f);
             }
         }
 
@@ -87,7 +85,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
             var workingBuffer = floatPool.Rent(count);
             var workingSpan = workingBuffer.AsSpan(0, count);
             workingSpan.Clear();
-            
+
             TransmissionSegment capturedFMSegment = null;
             foreach (var segment in segments)
             {
@@ -113,28 +111,33 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
                 Mix(workingSpan, capturedFMSegment.AudioSpan);
             }
 
-            ISampleProvider provider = new TransmissionProvider(workingBuffer, 0, count);
-            if (radioEffectsEnabled)
+            //Get desire RadioModel
+            var desiredName = perRadioModelEffect && modelName != null ? modelName : string.Empty;
+            if (!RxRadioModels.TryGetValue(desiredName, out var radioModel))
             {
-                var desiredName = perRadioModelEffect && modelName != null ? modelName: string.Empty;
-                if (!RxRadioModels.TryGetValue(desiredName, out var radioModel))
-                {
-                    radioModel = RadioModelFactory.Instance.LoadRxOrDefaultIntercom(desiredName);
-                    RxRadioModels.Add(desiredName, radioModel);
-                }
-
-                provider = BuildRXPipeline(provider, radioModel);
-
-                if (clippingEnabled)
-                {
-                    provider = new ClippingProvider(provider, -1f, 1f);
-                }
+                radioModel = RadioModelFactory.Instance.LoadRxOrDefaultIntercom(desiredName);
+                RxRadioModels.Add(desiredName, radioModel);
             }
+          
+            // Create dry and wet providers
+            var dryProvider = new TransmissionProvider(workingBuffer, 0, count);
+            var wetProvider = BuildRXPipeline(dryProvider, radioModel);
 
-            var samplesRead = provider.Read(mixBuffer, offset, count);
+            // Set up volume providers for wet/dry mix
+            var dryVolume = new VolumeSampleProvider(dryProvider) { Volume = 1.0f - radioEffectRatio };
+            var wetVolume = new VolumeSampleProvider(wetProvider) { Volume = radioEffectRatio };
+
+            // Mix dry and wet
+            var mixer = new MixingSampleProvider(new[] { dryVolume, wetVolume });
+
+            // Wrap with ClippingProvider if needed
+            ISampleProvider finalProvider = mixer;
+            if (clippingEnabled && radioEffectRatio > 0f)
+                finalProvider = new ClippingProvider(mixer, -1f, 1f);
+
+            int samplesRead = finalProvider.Read(mixBuffer, offset, count);
 
             floatPool.Return(workingBuffer);
-
             return samplesRead;
         }
 

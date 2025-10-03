@@ -62,6 +62,34 @@ gain and threshold expressed in dB.
 Translating from DCS' presets, ratio = 1 / slope, or maybe 1 / (1 - slope).
 attack and release time are expressed in seconds.
 
+### Sidechain Compressor
+```json
+{
+    "$type": "sidechainCompressor",
+    "attack": 0.01,
+    "makeUp": 6,
+    "release": 0.2,
+    "threshold": -33,
+    "ratio": 1.18,
+    "sidechainEffect": {
+      "$type": "filters",
+      "filters": [
+        {
+          "$type": "highpass",
+          "frequency": 709
+        }
+      ]
+    }
+}
+```
+
+gain and threshold expressed in dB.
+Translating from DCS' presets, ratio = 1 / slope, or maybe 1 / (1 - slope).
+attack and release time are expressed in seconds.
+
+sidechain is an effects chain applied on the same input signal that will go through the compressor.
+That signal is only used to drive the compressor logic.
+
 ### Saturation
 ```json
 {

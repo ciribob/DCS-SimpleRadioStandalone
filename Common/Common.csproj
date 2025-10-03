@@ -13,8 +13,8 @@
         <LangVersion>11</LangVersion>
         <Nullable>disable</Nullable>
         <Company>Ciribob - GitHub.com/Ciribob</Company>
-        <AssemblyVersion>2.3.0.3</AssemblyVersion>
-        <FileVersion>2.3.0.3</FileVersion>
+        <AssemblyVersion>2.3.2.0</AssemblyVersion>
+        <FileVersion>2.3.2.0</FileVersion>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
         <OutputPath>bin\x64\Debug\</OutputPath>
@@ -61,8 +61,9 @@
             <Generator>PublicResXFileCodeGenerator</Generator>
             <LastGenOutput>Resources.Designer.cs</LastGenOutput>
         </EmbeddedResource>
-        <EmbeddedResource Update="Properties\Resources.zh-hans-cn.resx">
+        <EmbeddedResource Update="Properties\Resources.zh.resx">
             <Generator>PublicResXFileCodeGenerator</Generator>
+            <DependentUpon>Resources.resx</DependentUpon>
         </EmbeddedResource>
     </ItemGroup>
 

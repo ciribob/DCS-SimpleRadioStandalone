@@ -27,6 +27,8 @@ public class ClientAudioProvider : AudioProvider
     private float ambientCockpitEffectVolume = 1.0f;
     private bool ambientCockpitIntercomEffectEnabled = true;
 
+    private readonly SpeexPreprocessorProvider preprocessProvider = new SpeexPreprocessorProvider();
+
     private double lastLoaded;
 
     //   private readonly WaveFileWriter waveWriter;
@@ -119,6 +121,27 @@ public class ClientAudioProvider : AudioProvider
                 settingsStore.GetClientSettingFloat(ProfileSettingsKeys.AmbientCockpitNoiseEffectVolume);
             ambientCockpitIntercomEffectEnabled =
                 settingsStore.GetClientSettingBool(ProfileSettingsKeys.AmbientCockpitIntercomNoiseEffect);
+
+            var globalStore = GlobalSettingsStore.Instance;
+
+            var agc = globalStore.GetClientSettingBool(GlobalSettingsKeys.IncomingAudioAGC);
+            var agcTarget = globalStore.GetClientSetting(GlobalSettingsKeys.IncomingAudioAGCTarget).IntValue;
+            var agcDecrement = globalStore.GetClientSetting(GlobalSettingsKeys.IncomingAudioAGCDecrement).IntValue;
+            var agcMaxGain = globalStore.GetClientSetting(GlobalSettingsKeys.IncomingAudioAGCLevelMax).IntValue;
+
+            var denoise = globalStore.GetClientSettingBool(GlobalSettingsKeys.IncomingAudioDenoise);
+            var denoiseAttenuation = globalStore.GetClientSetting(GlobalSettingsKeys.IncomingAudioDenoiseAttenuation).IntValue;
+
+            //From https://github.com/mumble-voip/mumble/blob/a189969521081565b8bda93d253670370778d471/src/mumble/Settings.cpp
+            //and  https://github.com/mumble-voip/mumble/blob/3ffd9ad3ed18176774d8e1c64a96dffe0de69655/src/mumble/AudioInput.cpp#L605
+
+            if (agc != preprocessProvider.Preprocessor.AutomaticGainControl) preprocessProvider.Preprocessor.AutomaticGainControl = agc;
+            if (agcTarget != preprocessProvider.Preprocessor.AutomaticGainControlTarget) preprocessProvider.Preprocessor.AutomaticGainControlTarget = agcTarget;
+            if (agcDecrement != preprocessProvider.Preprocessor.AutomaticGainControlDecrement) preprocessProvider.Preprocessor.AutomaticGainControlDecrement = agcDecrement;
+            if (agcMaxGain != preprocessProvider.Preprocessor.AutomaticGainControlMaxGain) preprocessProvider.Preprocessor.AutomaticGainControlMaxGain = agcMaxGain;
+
+            if (denoise != preprocessProvider.Preprocessor.Denoise) preprocessProvider.Preprocessor.Denoise = denoise;
+            if (denoiseAttenuation != preprocessProvider.Preprocessor.DenoiseAttenuation) preprocessProvider.Preprocessor.DenoiseAttenuation = denoiseAttenuation;
         }
     }
 
@@ -273,11 +296,13 @@ public class ClientAudioProvider : AudioProvider
         if (transmission.PCMAudioLength == 0)
             return null;
 
+        preprocessProvider.Read(transmission.PCMMonoAudio, 0, transmission.PCMAudioLength);
         var segment = new TransmissionSegment(transmission);
 
         var segmentAudio = segment.AudioSpan;
         if (transmission.Decryptable)
         {
+            
             //adjust for LOS + Distance + Volume
             AdjustVolumeForLoss(transmission.Modulation, transmission.ReceivingPower, transmission.LineOfSightLoss, segmentAudio);
             AddCockpitAmbientAudio(transmission.ReceivedRadio, transmission.Modulation, transmission.Ambient, segmentAudio);

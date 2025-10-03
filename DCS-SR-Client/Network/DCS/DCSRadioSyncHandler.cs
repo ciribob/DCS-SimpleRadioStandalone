@@ -122,17 +122,14 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                         _clientStateSingleton.LastSeenName = message.name;
 
                     _clientStateSingleton.DcsExportLastReceived = DateTime.Now.Ticks;
-
-                    if (!_stopExternalAWACSMode)
+                    
+                    //Ignore DCS if we're in EAM mode
+                    if (!_clientStateSingleton.ExternalAWACSModelSelected)
                     {
-                        EventBus.Instance.PublishOnUIThreadAsync(new EAMDisconnectMessage());
-                        StopExternalAWACSModeLoop();
+                        //sync with others
+                        //Radio info is marked as Stale for FC3 aircraft after every frequency change
+                        ProcessRadioInfo(message);
                     }
-
-
-                    //sync with others
-                    //Radio info is marked as Stale for FC3 aircraft after every frequency change
-                    ProcessRadioInfo(message);
                 }
                 catch (SocketException e)
                 {
@@ -681,6 +678,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                     simultaneousTransmissionControl = DCSPlayerRadioInfo.SimultaneousTransmissionControl
                         .ENABLED_INTERNAL_SRS_CONTROLS,
                     unit = "EAM",
+                    //TODO set this to the same for intercom
                     unitId = (uint)unitId,
                     inAircraft = false
                 });
@@ -786,6 +784,8 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                 radio.freqMax = customRadio.freqMax;
                 radio.secFreq = customRadio.secFreq;
                 radio.modulation = customRadio.modulation;
+                radio.name = customRadio.name;
+                radio.freqMode = (DCSRadio.FreqMode) customRadio.freqMode;
                 radio.encMode = (DCSRadio.EncryptionMode) customRadio.encMode;
                 radio.volMode = (DCSRadio.VolumeMode) customRadio.volMode;
                 radio.freqMode = (DCSRadio.FreqMode) customRadio.freqMode;

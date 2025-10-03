@@ -25,10 +25,10 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Company>Ciribob - GitHub.com/Ciribob</Company>
         <Product>DCS-SimpleRadio Standalone</Product>
-        <ApplicationVersion>2.3.0.3</ApplicationVersion>
-        <AssemblyVersion>2.3.0.3</AssemblyVersion>
-        <FileVersion>2.3.0.3</FileVersion>
-        <Version>2.3.0.3</Version>
+        <ApplicationVersion>2.3.2.0</ApplicationVersion>
+        <AssemblyVersion>2.3.2.0</AssemblyVersion>
+        <FileVersion>2.3.2.0</FileVersion>
+        <Version>2.3.2.0</Version>
         <ApplicationIcon>audio-headset.ico</ApplicationIcon>
     </PropertyGroup>
     <PropertyGroup>
@@ -548,8 +548,9 @@
         <Page Update="UI\ClientWindow\AwacsRadioOverlayWindow\AwacsRadioControlGroup.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>
-        <EmbeddedResource Update="Properties\Resources.zh-hans-cn.resx">
+        <EmbeddedResource Update="Properties\Resources.zh.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>
+          <DependentUpon>Resources.resx</DependentUpon>
         </EmbeddedResource>
         <EmbeddedResource Update="Properties\Resources.ru-RU.resx">
           <Generator>PublicResXFileCodeGenerator</Generator>

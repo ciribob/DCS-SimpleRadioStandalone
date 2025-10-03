@@ -90,7 +90,9 @@ public class SRClientBase : PropertyChangedBaseClass
     [JsonIgnore] public DateTime LastTransmissionReceived { get; set; }
 
     [JsonIgnore] public Guid ClientSession { get; set; }
+    public bool Gateway { get; set; } = false;
 
+    public int DISEntityId { get; set; } = 1;
 
     public override string ToString()
     {

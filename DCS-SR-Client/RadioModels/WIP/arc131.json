@@ -8,56 +8,69 @@
         "filters": [
           {
             "$type": "highpass",
-            "frequency": 1825,
-            "q": 0.68
+            "frequency": 954,
+            "q": 0.09
           },
           {
             "$type": "peak",
-            "frequency": 2053,
-            "q": 0.67,
-            "gain": 7
+            "frequency": 2302,
+            "q": 0.63,
+            "gain": 13
           },
           {
             "$type": "lowpass",
-            "frequency": 3919,
-            "q": 0.21
+            "frequency": 5165,
+            "q": 0.4
           }
         ]
       },
+
       {
         "$type": "saturation",
-        "gain": 9,
-        "threshold": -17
+        "gain": 11,
+        "threshold": -30
       },
+
       {
-        "$type": "compressor",
+        "$type": "sidechainCompressor",
         "attack": 0.01,
-        "makeUp": 8,
+        "makeUp": 5,
         "release": 0.2,
-        "threshold": -26,
-        "ratio": 1.18
+        "threshold": -35,
+        "ratio": 2.63,
+        "sidechainEffect": {
+          "$type": "filters",
+          "filters": [
+            {
+                "$type": "highpass",
+                "frequency": 252
+            }
+          ]
+        }
       },
+
       {
         "$type": "filters",
         "filters": [
           {
             "$type": "highpass",
-            "frequency": 456,
-            "q": 0.37
+            "frequency": 829
           },
           {
             "$type": "lowpass",
-            "frequency": 5498,
-            "q": 0.36
+            "frequency": 5435,
+            "q": 0.1
           }
         ]
       },
+
       {
         "$type": "gain",
-        "gain": 3
+        "gain": 12
       }
     ]
   },
+
   "rxEffect": {
     "$type": "filters",
     "filters": [
@@ -74,5 +87,5 @@
   "encryptionEffect": {
     "$type": "cvsd"
   },
-  "noiseGain": -23
+  "noiseGain": -17
 }

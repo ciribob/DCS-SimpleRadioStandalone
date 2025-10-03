@@ -84,7 +84,7 @@ function exportRadioM2000C(_data, SR)
 
 
     -- reset state on aircraft switch
-    if _lastUnitId ~= _data.unitId then
+    if SR.LastKnownUnitId ~= _data.unitId then
         _mirageEncStatus = false
         _previousEncState = 0
     end

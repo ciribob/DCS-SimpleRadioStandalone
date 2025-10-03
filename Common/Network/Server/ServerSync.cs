@@ -280,6 +280,8 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
                             LatLngPosition = client.LatLngPosition,
                             Seat = client.Seat,
                             AllowRecord = client.AllowRecord,
+                            Gateway = client.Gateway,
+                            DISEntityId = client.DISEntityId,
                             //remove radios
                             RadioInfo = null
                         }
@@ -359,6 +361,8 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
                 LatLngPosition = client.LatLngPosition,
                 RadioInfo = client.RadioInfo, //send radio info
                 Seat = client.Seat,
+                DISEntityId = client.DISEntityId,
+                Gateway = client.Gateway,
                 AllowRecord = client.AllowRecord
             }
         };
@@ -393,6 +397,8 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
                 Name = message.Client.Name,
                 Coalition = message.Client.Coalition,
                 Seat = message.Client.Seat,
+                DISEntityId = message.Client.DISEntityId,
+                Gateway = message.Client.Gateway,
                 LatLngPosition = message.Client.LatLngPosition,
                 AllowRecord = message.Client.AllowRecord
             }
@@ -445,7 +451,9 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
                 Name = client.Name,
                 LatLngPosition = client.LatLngPosition,
                 Seat = client.Seat,
-                AllowRecord = client.AllowRecord
+                AllowRecord = client.AllowRecord,
+                Gateway = client.Gateway,
+                DISEntityId = client.DISEntityId,
             }
         };
 
@@ -473,7 +481,9 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
                     RadioInfo = new PlayerRadioInfoBase(),
                     LatLngPosition = client.LatLngPosition,
                     Seat = client.Seat,
-                    AllowRecord = client.AllowRecord
+                    AllowRecord = client.AllowRecord,
+                    Gateway = client.Gateway,
+                    DISEntityId = client.DISEntityId,
                 }
             };
 

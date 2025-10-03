@@ -15,7 +15,7 @@
         <UpdateRequired>false</UpdateRequired>
         <MapFileExtensions>true</MapFileExtensions>
         <ApplicationRevision>0</ApplicationRevision>
-        <ApplicationVersion>2.3.0.3</ApplicationVersion>
+        <ApplicationVersion>2.3.2.0</ApplicationVersion>
         <UseApplicationTrust>false</UseApplicationTrust>
         <BootstrapperEnabled>true</BootstrapperEnabled>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -23,9 +23,9 @@
         <UseWPF>true</UseWPF>
         <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
         <PlatformTarget>x64</PlatformTarget>
-        <AssemblyVersion>2.3.0.3</AssemblyVersion>
-        <FileVersion>2.3.0.3</FileVersion>
-        <Version>2.3.0.3</Version>
+        <AssemblyVersion>2.3.2.0</AssemblyVersion>
+        <FileVersion>2.3.2.0</FileVersion>
+        <Version>2.3.2.0</Version>
         <Company>Ciribob - GitHub.com/Ciribob</Company>
         <Product>DCS-SRS-AutoUpdater</Product>
     </PropertyGroup>

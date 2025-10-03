@@ -30,12 +30,21 @@
         "threshold": -21
       },
       {
-        "$type": "compressor",
+        "$type": "sidechainCompressor",
         "attack": 0.01,
         "makeUp": 5,
         "release": 0.2,
         "threshold": -34,
-        "ratio": 2.63
+        "ratio": 2.63,
+        "sidechainEffect": {
+          "$type": "filters",
+          "filters": [
+            {
+                "$type": "highpass",
+                "frequency": 709
+            }
+          ]
+        }
       },
       {
         "$type": "filters",

@@ -214,7 +214,7 @@ public class DCSPlayerRadioInfo
         uint sendingUnitId,
         List<int> blockedRadios,
         out RadioReceivingState receivingState,
-        out bool decryptable)
+        out bool decryptable, bool instructorMode, List<uint> intercomUnitIds = null)
     {
         //    if (!IsCurrent())
         //     {
@@ -237,8 +237,12 @@ public class DCSPlayerRadioInfo
                 if (receivingRadio.modulation == Modulation.INTERCOM &&
                     modulation == Modulation.INTERCOM)
                 {
-                    if (unitId > 0 && sendingUnitId > 0
+                    //TODO change this if we're in instructor mode
+                    if ((unitId > 0 && sendingUnitId > 0
                                    && unitId == sendingUnitId)
+                            || (instructorMode 
+                                && intercomUnitIds!=null 
+                                && intercomUnitIds.Contains(sendingUnitId)))
                     {
                         receivingState = new RadioReceivingState
                         {

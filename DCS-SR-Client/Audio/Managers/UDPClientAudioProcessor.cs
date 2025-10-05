@@ -507,6 +507,16 @@ public class UDPClientAudioProcessor : IDisposable
 
                         if (myClient != null && _clientStateSingleton.DcsPlayerRadioInfo.IsCurrent())
                         {
+                           var instructorMode = _globalSettings.ProfileSettingsStore.GetClientSettingBool(
+                                ProfileSettingsKeys.InstructorMode);
+                           List<uint> instructorIntercomIds = null;
+
+                           //lazy init
+                           if (instructorMode)
+                           {
+                               instructorIntercomIds = _clientStateSingleton.InstructorIntercomUnits.Values.ToList();
+                           }
+                           
                             //Decode bytes
                             var udpVoicePacket = UDPVoicePacket.DecodeVoicePacket(encodedOpusAudio);
 
@@ -544,7 +554,7 @@ public class UDPClientAudioProcessor : IDisposable
                                         udpVoicePacket.UnitId,
                                         blockedRadios,
                                         out state,
-                                        out decryptable);
+                                        out decryptable, instructorMode, instructorIntercomIds);
 
                                     var losLoss = 0.0f;
                                     var receivPowerLossPercent = 0.0;

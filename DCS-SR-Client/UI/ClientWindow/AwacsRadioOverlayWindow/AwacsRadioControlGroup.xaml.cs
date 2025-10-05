@@ -85,7 +85,7 @@ public partial class RadioControlGroup : UserControl
         {
             //remove focus to somewhere else
             RadioVolume.Focus();
-            Keyboard.ClearFocus(); //then clear altogher
+            Keyboard.ClearFocus(); //then clear altogether
         }
     }
 

@@ -42,6 +42,27 @@
                 </Setter>
             </Style>
         </TabControl.Resources>
+        
+        <TabItem Name="InstructorTab" >
+            <TabItem.Header>
+                <TextBlock Margin="3,0,3,0"
+                           FontSize="10"
+                           Foreground="#E7E7E7"
+                           Padding="0"
+                           Text="{x:Static p:Resources.InstructorTab}" />
+            </TabItem.Header>
+            <StackPanel Orientation="Vertical">
+                <!--- TODO - Make this a listbox containing the current list - only reload with reload
+                Reload clears it from intercom and puts it back to normal
+                Selecting anything other than none puts the radio in instructor mode
+                Should this set a flag on the radio itself? That would be the easiest route
+                 -->
+                <ListBox></ListBox>
+                <Button Content="Reload"></Button>
+                
+            </StackPanel>
+           
+        </TabItem>
 
         <TabItem>
             <TabItem.Header>
@@ -307,5 +328,6 @@
                                                                      Mode=TwoWay}" />
 
         </TabItem>
+       
     </TabControl>
 </UserControl>

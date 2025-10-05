@@ -158,6 +158,14 @@ public partial class AwaRadioOverlayWindow : Window
         Close();
     }
 
+    protected override void OnClosed(EventArgs e)
+    {
+        base.OnClosed(e);
+        //TODO reset the state for the radios, remove intercom mode and clear the selected intercom radios
+        _clientStateSingleton.InstructorIntercomUnits.Clear();
+        //TODO force a radio resync so it goes back to normal radio if there were entries in the instructor intercom units list
+    }
+
     private void windowOpacitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
         Opacity = e.NewValue;

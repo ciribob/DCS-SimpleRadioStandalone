@@ -1286,4 +1286,7 @@ Recommended: 15000</value>
     <value>How much amplitude the incoming audio will occupy.
 Recommended: 20000</value>
   </data>
+  <data name="InstructorTab" xml:space="preserve">
+    <value>Instructor</value>
+  </data>
 </root>

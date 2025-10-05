@@ -1,4 +1,5 @@
-﻿using System.Runtime;
+﻿using System.Net;
+using System.Runtime;
 using Caliburn.Micro;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
@@ -53,9 +54,9 @@ internal class Program : IHandle<SRSClientStatus>
     {
         if (options.ConfigFile != null && options.ConfigFile.Trim().Length > 0)
             ServerSettingsStore.CFG_FILE_NAME = options.ConfigFile.Trim();
-
+        
         UpdaterChecker.Instance.CheckForUpdate(
-            ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).BoolValue,
+            ServerSettingsStore.Instance.ServerSettings.IsCheckForBetaUpdatesEnabled,
             result =>
             {
                 if (result.UpdateAvailable)
@@ -106,86 +107,62 @@ internal class Program : IHandle<SRSClientStatus>
         ConsoleLogs = options.ConsoleLogs;
 
         if (options.Port != null && options.Port.HasValue)
-            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.SERVER_PORT,
-                options.Port.Value.ToString());
+            ServerSettingsStore.Instance.ServerSettings.ServerPort = options.Port.Value;
         if (options.CoalitionSecurity != null && options.CoalitionSecurity.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.COALITION_AUDIO_SECURITY,
-                options.CoalitionSecurity.Value);
+            ServerSettingsStore.Instance.SynchronizedSettings.IsCoalitionAudioSecurityEnabled = options.CoalitionSecurity.Value;
         if (options.SpectatorAudioDisabled != null && options.SpectatorAudioDisabled.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SPECTATORS_AUDIO_DISABLED,
-                options.SpectatorAudioDisabled.Value);
+            ServerSettingsStore.Instance.SynchronizedSettings.IsSpectatorAudioDisabled = options.SpectatorAudioDisabled.Value;
         if (options.ClientExportEnabled != null && options.ClientExportEnabled.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.CLIENT_EXPORT_ENABLED,
-                options.ClientExportEnabled.Value);
+            ServerSettingsStore.Instance.SynchronizedSettings.IsClientExportEnabled = options.ClientExportEnabled.Value;
         if (options.RealRadioTX != null && options.RealRadioTX.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.IRL_RADIO_TX, options.RealRadioTX.Value);
+            ServerSettingsStore.Instance.SynchronizedSettings.IsIrlRadioTxEffectsEnabled = options.RealRadioTX.Value;
         if (options.RealRadioRX != null && options.RealRadioRX.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE,
-                options.RealRadioRX.Value);
+            ServerSettingsStore.Instance.SynchronizedSettings.IsIrlRadioRxEffectsEnabled = options.RealRadioRX.Value;
         if (options.RadioExpansion != null && options.RadioExpansion.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.RADIO_EXPANSION,
-                options.RadioExpansion.Value);
+            ServerSettingsStore.Instance.SynchronizedSettings.IsRadioExpansionAllowed = options.RadioExpansion.Value;
         if (options.EnableEAM != null && options.EnableEAM.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE,
-                options.EnableEAM.Value);
+            ServerSettingsStore.Instance.SynchronizedSettings.IsExternalModeEnabled = options.EnableEAM.Value;
         if (options.EAMRedPassword != null && options.EAMRedPassword.Trim().Length > 0)
-            ServerSettingsStore.Instance.SetExternalAWACSModeSetting(
-                ServerSettingsKeys.EXTERNAL_AWACS_MODE_RED_PASSWORD, options.EAMRedPassword);
+            ServerSettingsStore.Instance.ExternalModeSettings.ExternalModePassRed = options.EAMRedPassword;
         if (options.EAMBluePassword != null && options.EAMBluePassword.Trim().Length > 0)
-            ServerSettingsStore.Instance.SetExternalAWACSModeSetting(
-                ServerSettingsKeys.EXTERNAL_AWACS_MODE_BLUE_PASSWORD, options.EAMBluePassword);
+            ServerSettingsStore.Instance.ExternalModeSettings.ExternalModePassBlue = options.EAMBluePassword;
         if (options.CheckBETAUpdates != null && options.CheckBETAUpdates.HasValue)
-            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES,
-                options.CheckBETAUpdates.Value);
+            ServerSettingsStore.Instance.ServerSettings.IsCheckForBetaUpdatesEnabled = options.CheckBETAUpdates.Value;
         if (options.AllowRadioEncryption != null && options.AllowRadioEncryption.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.ALLOW_RADIO_ENCRYPTION,
-                options.AllowRadioEncryption.Value);
+            ServerSettingsStore.Instance.SynchronizedSettings.IsRadioEncryptionAllowed = options.AllowRadioEncryption.Value;
         if (options.ShowTunedCount != null && options.ShowTunedCount.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SHOW_TUNED_COUNT,
-                options.ShowTunedCount.Value);
+            ServerSettingsStore.Instance.SynchronizedSettings.IsShowTunedCountEnabled = options.ShowTunedCount.Value;
         if (options.ShowTransmitterName != null && options.ShowTransmitterName.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SHOW_TRANSMITTER_NAME,
-                options.ShowTransmitterName.Value);
+            ServerSettingsStore.Instance.SynchronizedSettings.IsShowTransmitterNameEnabled = options.ShowTransmitterName.Value;
         if (options.LOTATCExport != null && options.LOTATCExport.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_ENABLED,
-                options.LOTATCExport.Value);
+            ServerSettingsStore.Instance.SynchronizedSettings.IsLotAtcExportEnabled = options.LOTATCExport.Value;
         if (options.LotATCExportPort != null && options.LotATCExportPort.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_PORT,
-                options.LotATCExportPort.Value.ToString());
+            ServerSettingsStore.Instance.ServerSettings.LotAtcExportPort = options.LotATCExportPort.Value;
         if (options.LotATCExportIP != null && options.LotATCExportIP.Trim().Length > 0)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_IP, options.LotATCExportIP);
+            ServerSettingsStore.Instance.ServerSettings.LotAtcExportIp = IPAddress.Parse(options.LotATCExportIP);
         if (options.TestFrequencies != null && options.TestFrequencies.Trim().Length > 0)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.TEST_FREQUENCIES,
-                options.TestFrequencies);
+            ServerSettingsStore.Instance.SynchronizedSettings.TestFrequencies = 
+                new List<double>( (options.TestFrequencies).Split(',').Select(double.Parse).ToList() );
         if (options.RetransmissionNodeLimit != null && options.RetransmissionNodeLimit.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.RETRANSMISSION_NODE_LIMIT,
-                options.RetransmissionNodeLimit.Value.ToString());
+            ServerSettingsStore.Instance.SynchronizedSettings.RetransmissionNodeLimit = options.RetransmissionNodeLimit.Value;
         if (options.StrictRadioEncryption != null && options.StrictRadioEncryption.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.STRICT_RADIO_ENCRYPTION,
-                options.StrictRadioEncryption.Value);
+            ServerSettingsStore.Instance.SynchronizedSettings.IsStrictRadioEncryptionEnabled = options.StrictRadioEncryption.Value;
         if (options.TransmissionLogEnabled != null && options.TransmissionLogEnabled.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED,
-                options.TransmissionLogEnabled.Value);
+            ServerSettingsStore.Instance.SynchronizedSettings.IsTransmissionLogEnabled = options.TransmissionLogEnabled.Value;
         if (options.RadioEffectOverride != null && options.RadioEffectOverride.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.RADIO_EFFECT_OVERRIDE,
-                options.RadioEffectOverride.Value);
+            ServerSettingsStore.Instance.SynchronizedSettings.IsRadioEffectOverrideOnGlobalEnabled = options.RadioEffectOverride.Value;
         if (options.ServerBindIP != null && options.ServerBindIP.Trim().Length > 0)
-            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.SERVER_IP, options.ServerBindIP);
+            ServerSettingsStore.Instance.ServerSettings.ServerBindIp = IPAddress.Parse(options.ServerBindIP);
         if (options.ClientExportPath != null && options.ClientExportPath.Trim().Length > 0)
-            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.CLIENT_EXPORT_FILE_PATH,
-                options.ClientExportPath);
+            ServerSettingsStore.Instance.ServerSettings.ClientExportFilePath = options.ClientExportPath;
         if (options.ServerPresetChannelsEnabled != null && options.ServerPresetChannelsEnabled.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SERVER_PRESETS_ENABLED,
-                options.ServerPresetChannelsEnabled.Value);
+            ServerSettingsStore.Instance.SynchronizedSettings.IsServerPresetsEnabled = options.ServerPresetChannelsEnabled.Value;
         if (options.ServerEAMRadioPresetEnabled != null && options.ServerEAMRadioPresetEnabled.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SERVER_EAM_RADIO_PRESET_ENABLED,
-                options.ServerEAMRadioPresetEnabled.Value);
+            ServerSettingsStore.Instance.SynchronizedSettings.IsServerPresetsEnabled = options.ServerEAMRadioPresetEnabled.Value;
         if (options.HttpServerEnabled != null && options.HttpServerEnabled.HasValue)
-            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.HTTP_SERVER_ENABLED,
-                options.HttpServerEnabled.Value);
+            ServerSettingsStore.Instance.ServerSettings.IsHttpServerEnabled = options.HttpServerEnabled.Value;
         if (options.HttpServerPort != null && options.HttpServerPort.HasValue)
-            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.HTTP_SERVER_PORT,
-                options.HttpServerPort.Value.ToString());
+            ServerSettingsStore.Instance.ServerSettings.HttpServerPort = options.HttpServerPort.Value;
 
         Console.WriteLine("Final Settings:");
         foreach (var setting in ServerSettingsStore.Instance.GetAllSettings()) Console.WriteLine(setting);

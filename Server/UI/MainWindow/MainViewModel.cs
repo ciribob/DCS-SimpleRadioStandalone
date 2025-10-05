@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,6 +25,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
     private readonly IEventAggregator _eventAggregator;
     private readonly IWindowManager _windowManager;
     private readonly Logger Logger = LogManager.GetCurrentClassLogger();
+    private ServerSettingsStore _serverSettings => ServerSettingsStore.Instance;
     
         private DispatcherTimer _passwordDebounceTimer = null;
 
@@ -47,11 +49,10 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
 
         public int NodeLimit
         {
-            get => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.RETRANSMISSION_NODE_LIMIT).IntValue;
+            get => _serverSettings.SynchronizedSettings.RetransmissionNodeLimit;
             set
             {
-                ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.RETRANSMISSION_NODE_LIMIT,
-                    value.ToString());
+                _serverSettings.SynchronizedSettings.RetransmissionNodeLimit = value;
                 _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
             }
         }
@@ -60,60 +61,57 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
 
         public string RadioSecurityText
             =>
-                ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.COALITION_AUDIO_SECURITY).BoolValue
+                _serverSettings.SynchronizedSettings.IsCoalitionAudioSecurityEnabled
                     ? $"{Properties.Resources.BtnOn}"
                     : $"{Properties.Resources.BtnOff}";
 
         public string SpectatorAudioText
             =>
-                ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.SPECTATORS_AUDIO_DISABLED).BoolValue
+                _serverSettings.SynchronizedSettings.IsSpectatorAudioDisabled
                     ? $"{Properties.Resources.BtnDisabled}"
                     : $"{Properties.Resources.BtnEnabled}";
 
         public string ExportListText
             =>
-                ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.CLIENT_EXPORT_ENABLED).BoolValue
+                _serverSettings.SynchronizedSettings.IsClientExportEnabled
                     ? $"{Properties.Resources.BtnOn}"
                     : $"{Properties.Resources.BtnOff}";
 
         public string LOSText
-            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.LOS_ENABLED).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+            => _serverSettings.SynchronizedSettings.IsLineOfSightEnabled ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
         public string DistanceLimitText
-            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.DISTANCE_ENABLED).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+            => _serverSettings.SynchronizedSettings.IsDistanceLimitEnabled ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
     public string RealRadioText
-            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.IRL_RADIO_TX).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+            => _serverSettings.SynchronizedSettings.IsIrlRadioTxEffectsEnabled ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
         public string IRLRadioRxText
-            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+            => _serverSettings.SynchronizedSettings.IsIrlRadioRxEffectsEnabled ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
         public string RadioExpansion
-            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.RADIO_EXPANSION).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+            => _serverSettings.SynchronizedSettings.IsRadioExpansionAllowed ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
         public string CheckForBetaUpdates
-            => ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+            => _serverSettings.ServerSettings.IsCheckForBetaUpdatesEnabled ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
         public string ExternalAWACSMode
-            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+            => _serverSettings.SynchronizedSettings.IsExternalModeEnabled ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
         public string AllowRadioEncryption
-            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.ALLOW_RADIO_ENCRYPTION).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+            => _serverSettings.SynchronizedSettings.IsRadioEncryptionAllowed ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
         public string StrictRadioEncryption
-            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.STRICT_RADIO_ENCRYPTION).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+            => _serverSettings.SynchronizedSettings.IsStrictRadioEncryptionEnabled ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
-        public bool IsExternalAWACSModeEnabled { get; set; }
-            = ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE).BoolValue;
-
-        private string _externalAWACSModeBluePassword =
-            ServerSettingsStore.Instance.GetExternalAWACSModeSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE_BLUE_PASSWORD).StringValue;
+        public bool IsExternalAWACSModeEnabled => _serverSettings.SynchronizedSettings.IsExternalModeEnabled;
+        
         public string ExternalAWACSModeBluePassword
         {
-            get { return _externalAWACSModeBluePassword; }
+            get => _serverSettings.ExternalModeSettings.ExternalModePassBlue;
             set
             {
-                _externalAWACSModeBluePassword = value.Trim();
+                _serverSettings.ExternalModeSettings.ExternalModePassBlue = value.Trim();
                 if (_passwordDebounceTimer != null)
                 {
                     _passwordDebounceTimer.Stop();
@@ -129,15 +127,13 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
                 NotifyOfPropertyChange(() => ExternalAWACSModeBluePassword);
             }
         }
-
-        private string _externalAWACSModeRedPassword =
-            ServerSettingsStore.Instance.GetExternalAWACSModeSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE_RED_PASSWORD).StringValue;
+        
         public string ExternalAWACSModeRedPassword
         {
-            get { return _externalAWACSModeRedPassword; }
+            get => _serverSettings.ExternalModeSettings.ExternalModePassRed;
             set
             {
-                _externalAWACSModeRedPassword = value.Trim();
+                _serverSettings.ExternalModeSettings.ExternalModePassRed = value.Trim();
                 if (_passwordDebounceTimer != null)
                 {
                     _passwordDebounceTimer.Stop();
@@ -154,17 +150,15 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
             }
         }
 
-        private string _testFrequencies =
-            ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.TEST_FREQUENCIES).StringValue;
-
         private DispatcherTimer _testFrequenciesDebounceTimer;
 
     public string TestFrequencies
     {
-            get { return _testFrequencies; }
+        get => String.Join(",",_serverSettings.SynchronizedSettings.TestFrequencies);
         set
         {
-            _testFrequencies = value.Trim();
+            _serverSettings.SynchronizedSettings.TestFrequencies = 
+                new List<double>(value.Trim().Split(',').Select(double.Parse).ToList());
             if (_testFrequenciesDebounceTimer != null)
             {
                 _testFrequenciesDebounceTimer.Stop();
@@ -180,18 +174,16 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
             NotifyOfPropertyChange(() => TestFrequencies);
         }
     }
-
-        private string _globalLobbyFrequencies =
-            ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES).StringValue;
-
+    
         private DispatcherTimer _globalLobbyFrequenciesDebounceTimer;
 
         public string GlobalLobbyFrequencies
         {
-            get { return _globalLobbyFrequencies; }
+            get => String.Join(",",_serverSettings.SynchronizedSettings.GlobalLobbyFrequencies);
             set
             {
-                _globalLobbyFrequencies = value.Trim();
+                _serverSettings.SynchronizedSettings.GlobalLobbyFrequencies = 
+                    new List<double>(value.Trim().Split(',').Select(double.Parse).ToList());
                 if (_globalLobbyFrequenciesDebounceTimer != null)
                 {
                     _globalLobbyFrequenciesDebounceTimer.Stop();
@@ -209,28 +201,34 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         }
 
         public string OverrideEffectsOnGlobal 
-            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.RADIO_EFFECT_OVERRIDE).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+            => _serverSettings.SynchronizedSettings.IsRadioEffectOverrideOnGlobalEnabled ? 
+                $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
         public string TunedCountText
-            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.SHOW_TUNED_COUNT).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+            => _serverSettings.SynchronizedSettings.IsShowTunedCountEnabled ? 
+                $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
         public string LotATCExportText
-            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_ENABLED).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+            => _serverSettings.SynchronizedSettings.IsLotAtcExportEnabled ? 
+                $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
         public string ShowTransmitterNameText
-            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.SHOW_TRANSMITTER_NAME).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+            => _serverSettings.SynchronizedSettings.IsShowTransmitterNameEnabled ? 
+                $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
         public string TransmissionLogEnabledText
-            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+            => _serverSettings.SynchronizedSettings.IsTransmissionLogEnabled ? 
+                $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
         public string ServerPresetsEnabledText
-            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.SERVER_PRESETS_ENABLED).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+            => _serverSettings.SynchronizedSettings.IsServerPresetsEnabled ? 
+                $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
         
         public string ServerEAMRadioPresetEnabledText
-            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.SERVER_EAM_RADIO_PRESET_ENABLED).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+            => _serverSettings.SynchronizedSettings.IsExternalModeEnabled ? 
+                $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
         
-    public string ListeningPort
-        => ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.SERVER_PORT).StringValue;
+    public string ListeningPort => _serverSettings.ServerSettings.ServerPort.ToString();
 
     public Task HandleAsync(ServerStateMessage message, CancellationToken token)
     {
@@ -260,7 +258,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public void RadioSecurityToggle()
         {
             var newSetting = RadioSecurityText != $"{Properties.Resources.BtnOn}";
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.COALITION_AUDIO_SECURITY, newSetting);
+            _serverSettings.SynchronizedSettings.IsCoalitionAudioSecurityEnabled = newSetting;
             NotifyOfPropertyChange(() => RadioSecurityText);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
@@ -269,7 +267,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public void SpectatorAudioToggle()
         {
             var newSetting = SpectatorAudioText != $"{Properties.Resources.BtnDisabled}";
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SPECTATORS_AUDIO_DISABLED, newSetting);
+            _serverSettings.SynchronizedSettings.IsSpectatorAudioDisabled = newSetting;
             NotifyOfPropertyChange(() => SpectatorAudioText);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
@@ -278,7 +276,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public void ExportListToggle()
         {
             var newSetting = ExportListText != $"{Properties.Resources.BtnOn}";
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.CLIENT_EXPORT_ENABLED, newSetting);
+            _serverSettings.SynchronizedSettings.IsClientExportEnabled = newSetting;
             NotifyOfPropertyChange(() => ExportListText);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
@@ -287,7 +285,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public void LOSToggle()
         {
             var newSetting = LOSText != $"{Properties.Resources.BtnOn}";
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.LOS_ENABLED, newSetting);
+            _serverSettings.SynchronizedSettings.IsLineOfSightEnabled = newSetting;
             NotifyOfPropertyChange(() => LOSText);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
@@ -296,7 +294,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public void DistanceLimitToggle()
         {
             var newSetting = DistanceLimitText != $"{Properties.Resources.BtnOn}";
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.DISTANCE_ENABLED, newSetting);
+            _serverSettings.SynchronizedSettings.IsDistanceLimitEnabled = newSetting;
             NotifyOfPropertyChange(() => DistanceLimitText);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
@@ -305,7 +303,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
     public void RealRadioToggle()
     {
             var newSetting = RealRadioText != $"{Properties.Resources.BtnOn}";
-        ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.IRL_RADIO_TX, newSetting);
+        _serverSettings.SynchronizedSettings.IsIrlRadioTxEffectsEnabled = newSetting;
         NotifyOfPropertyChange(() => RealRadioText);
 
         _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
@@ -314,7 +312,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public void IRLRadioRxBehaviourToggle()
         {
             var newSetting = IRLRadioRxText != $"{Properties.Resources.BtnOn}";
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE, newSetting);
+            _serverSettings.SynchronizedSettings.IsIrlRadioRxEffectsEnabled = newSetting;
             NotifyOfPropertyChange(() => IRLRadioRxText);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
@@ -323,7 +321,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public void RadioExpansionToggle()
         {
             var newSetting = RadioExpansion != $"{Properties.Resources.BtnOn}";
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.RADIO_EXPANSION, newSetting);
+            _serverSettings.SynchronizedSettings.IsRadioExpansionAllowed = newSetting;
             NotifyOfPropertyChange(() => RadioExpansion);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
@@ -332,7 +330,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public void AllowRadioEncryptionToggle()
         {
             var newSetting = AllowRadioEncryption != $"{Properties.Resources.BtnOn}";
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.ALLOW_RADIO_ENCRYPTION, newSetting);
+            _serverSettings.SynchronizedSettings.IsRadioEncryptionAllowed = newSetting;
             NotifyOfPropertyChange(() => AllowRadioEncryption);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
@@ -341,7 +339,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public void StrictRadioEncryptionToggle()
         {
             var newSetting = StrictRadioEncryption != $"{Properties.Resources.BtnOn}";
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.STRICT_RADIO_ENCRYPTION, newSetting);
+            _serverSettings.SynchronizedSettings.IsStrictRadioEncryptionEnabled = newSetting;
             NotifyOfPropertyChange(() => StrictRadioEncryption);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
@@ -350,7 +348,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public void CheckForBetaUpdatesToggle()
         {
             var newSetting = CheckForBetaUpdates != $"{Properties.Resources.BtnOn}";
-            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES, newSetting);
+            _serverSettings.ServerSettings.IsCheckForBetaUpdatesEnabled = newSetting;
             NotifyOfPropertyChange(() => CheckForBetaUpdates);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
@@ -359,7 +357,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public void OverrideEffectsOnGlobalToggle()
         {
             var newSetting = OverrideEffectsOnGlobal != $"{Properties.Resources.BtnOn}";
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.RADIO_EFFECT_OVERRIDE, newSetting);
+            _serverSettings.SynchronizedSettings.IsRadioEffectOverrideOnGlobalEnabled = newSetting;
             NotifyOfPropertyChange(() => OverrideEffectsOnGlobal);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
@@ -368,9 +366,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public void ExternalAWACSModeToggle()
         {
             var newSetting = ExternalAWACSMode != $"{Properties.Resources.BtnOn}";
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE, newSetting);
-
-            IsExternalAWACSModeEnabled = newSetting;
+            _serverSettings.SynchronizedSettings.IsExternalModeEnabled = newSetting;
 
             NotifyOfPropertyChange(() => ExternalAWACSMode);
             NotifyOfPropertyChange(() => IsExternalAWACSModeEnabled);
@@ -380,9 +376,6 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
 
         private void PasswordDebounceTimerTick(object sender, EventArgs e)
         {
-             ServerSettingsStore.Instance.SetExternalAWACSModeSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE_BLUE_PASSWORD, _externalAWACSModeBluePassword);
-             ServerSettingsStore.Instance.SetExternalAWACSModeSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE_RED_PASSWORD, _externalAWACSModeRedPassword);
-
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
 
             _passwordDebounceTimer.Stop();
@@ -393,11 +386,9 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
 
     private void TestFrequenciesDebounceTimerTick(object sender, EventArgs e)
     {
-        ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.TEST_FREQUENCIES, _testFrequencies);
-
         _eventAggregator.PublishOnBackgroundThreadAsync(new ServerFrequenciesChanged
         {
-            TestFrequencies = _testFrequencies
+            TestFrequencies = String.Join(',', _serverSettings.SynchronizedSettings.TestFrequencies)
         });
 
         _testFrequenciesDebounceTimer.Stop();
@@ -407,11 +398,9 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
 
         private void GlobalLobbyFrequenciesDebounceTimerTick(object sender, EventArgs e)
         {
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES, _globalLobbyFrequencies);
-
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerFrequenciesChanged()
             {
-                GlobalLobbyFrequencies = _globalLobbyFrequencies
+                GlobalLobbyFrequencies = String.Join(',', _serverSettings.SynchronizedSettings.GlobalLobbyFrequencies)
             });
 
             _globalLobbyFrequenciesDebounceTimer.Stop();
@@ -422,7 +411,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public void TunedCountToggle()
         {
             var newSetting = TunedCountText != $"{Properties.Resources.BtnOn}";
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SHOW_TUNED_COUNT, newSetting);
+            _serverSettings.SynchronizedSettings.IsShowTunedCountEnabled = newSetting;
             NotifyOfPropertyChange(() => TunedCountText);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
@@ -431,7 +420,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public void LotATCExportToggle()
         {
             var newSetting = LotATCExportText != $"{Properties.Resources.BtnOn}";
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_ENABLED, newSetting);
+            _serverSettings.SynchronizedSettings.IsLotAtcExportEnabled = newSetting;
             NotifyOfPropertyChange(() => LotATCExportText);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
@@ -440,7 +429,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public void ShowTransmitterNameToggle()
         {
             var newSetting = ShowTransmitterNameText != $"{Properties.Resources.BtnOn}";
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SHOW_TRANSMITTER_NAME, newSetting);
+            _serverSettings.SynchronizedSettings.IsShowTransmitterNameEnabled = newSetting;
             NotifyOfPropertyChange(() => ShowTransmitterNameText);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
@@ -449,7 +438,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public void TransmissionLogEnabledToggle()
         {
             var newSetting = TransmissionLogEnabledText != $"{Properties.Resources.BtnOn}";
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED, newSetting);
+            _serverSettings.SynchronizedSettings.IsTransmissionLogEnabled = newSetting;
             NotifyOfPropertyChange(() => TransmissionLogEnabledText);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
@@ -457,12 +446,10 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
 
         public int ArchiveLimit
         {
-            get => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_RETENTION)
-                .IntValue;
+            get => _serverSettings.SynchronizedSettings.TransmissionLogRetentionLimit;
             set
             {
-                ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_RETENTION,
-                    value.ToString());
+                _serverSettings.SynchronizedSettings.TransmissionLogRetentionLimit = value;
 
                 _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
             }
@@ -471,7 +458,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public void ServerPresetsEnabledToggle()
         {
             var newSetting = ServerPresetsEnabledText != $"{Properties.Resources.BtnOn}";
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SERVER_PRESETS_ENABLED, newSetting);
+            _serverSettings.SynchronizedSettings.IsServerPresetsEnabled = newSetting;
             NotifyOfPropertyChange(() => ServerPresetsEnabledText);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
@@ -480,7 +467,7 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public void ServerEAMRadioPresetEnabledToggle()
         {
             var newSetting = ServerEAMRadioPresetEnabledText != $"{Properties.Resources.BtnOn}";
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SERVER_EAM_RADIO_PRESET_ENABLED, newSetting);
+            _serverSettings.SynchronizedSettings.IsServerPresetsEnabled = newSetting;
             NotifyOfPropertyChange(() => ServerEAMRadioPresetEnabledText);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());

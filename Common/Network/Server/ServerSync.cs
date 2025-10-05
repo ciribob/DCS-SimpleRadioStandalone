@@ -32,7 +32,7 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
 
     public ServerSync(ConcurrentDictionary<string, SRClientBase> connectedClients, HashSet<IPAddress> _bannedIps,
         IEventAggregator eventAggregator) : base(IPAddress.Any,
-        ServerSettingsStore.Instance.GetServerPort())
+        ServerSettingsStore.Instance.ServerSettings.ServerPort)
     {
         _clients = connectedClients;
         this._bannedIps = _bannedIps;
@@ -42,9 +42,9 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
 
         OptionKeepAlive = true;
 
-        if (_serverSettings.GetServerSetting(ServerSettingsKeys.UPNP_ENABLED).BoolValue)
+        if (_serverSettings.ServerSettings.IsUpnpEnabled)
         {
-            _natHandler = new NatHandler(_serverSettings.GetServerPort());
+            _natHandler = new NatHandler(_serverSettings.ServerSettings.ServerPort);
             _natHandler.OpenNAT();
         }
     }
@@ -411,14 +411,11 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
     {
         // Response of clientCoalition = 0 indicates authentication success (or external AWACS mode disabled)
         var clientCoalition = 0;
-        if (_serverSettings.GetGeneralSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE).BoolValue
-            && !string.IsNullOrWhiteSpace(password))
+        if (_serverSettings.SynchronizedSettings.IsExternalModeEnabled && !string.IsNullOrWhiteSpace(password))
         {
-            if (_serverSettings.GetExternalAWACSModeSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE_BLUE_PASSWORD)
-                    .StringValue == password)
+            if (_serverSettings.ExternalModeSettings.ExternalModePassBlue == password)
                 clientCoalition = 2;
-            else if (_serverSettings.GetExternalAWACSModeSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE_RED_PASSWORD)
-                         .StringValue == password) clientCoalition = 1;
+            else if (_serverSettings.ExternalModeSettings.ExternalModePassRed == password) clientCoalition = 1;
         }
 
         if (_clients.ContainsKey(client.ClientGuid))

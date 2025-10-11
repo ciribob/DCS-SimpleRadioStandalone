@@ -116,7 +116,13 @@ public class SRSClientSession : TcpSession
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, $"Unable to process JSON: \n {message}");
+                // Can be extremely noisy, use only for debugging!
+                // We conditionally check the trace to avoid building a string with a potentially really long message.
+                if (Logger.IsTraceEnabled)
+                {
+                    Logger.Trace(ex, $"Unable to process JSON: \n {message}");
+                }
+                
             }
 
 

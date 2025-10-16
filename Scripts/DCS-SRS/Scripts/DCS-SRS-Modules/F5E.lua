@@ -144,7 +144,7 @@ end
 
 local result = {
     register = function(SR)
-        SR.exporters["F-5E-3"] = SR.exportRadioF5E
+        SR.exporters["F-5E-3"] = exportRadioF5E
     end,
 }
 return result

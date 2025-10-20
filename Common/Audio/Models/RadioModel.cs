@@ -121,7 +121,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models
                         Ratio = Ratio,
                     },
                     SignalProvider = source,
-                    SidechainProvider = SidechainEffect.ToSampleProvider(source)
+                    SidechainProvider = SidechainEffect.ToSampleProvider(new NoopSampleProvider()
+                    {
+                        WaveFormat = source.WaveFormat
+                    })
                 };
             }
         }

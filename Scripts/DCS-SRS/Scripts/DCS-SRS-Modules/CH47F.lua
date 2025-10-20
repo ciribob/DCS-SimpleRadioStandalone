@@ -5,7 +5,7 @@ _ch47.radio3 = {guard=0,enc=false}
 function exportRadioCH47F(_data, SR)
 
     -- RESET
-    if _lastUnitId ~= _data.unitId then
+    if SR.LastKnownUnitId ~= _data.unitId then
         _ch47.radio1 = {enc=false}
         _ch47.radio2 = {guard=0,enc=false}
         _ch47.radio3 = {guard=0,enc=false}

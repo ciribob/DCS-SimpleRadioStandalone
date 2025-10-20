@@ -4,8 +4,8 @@ function exportRadioC130J30(_data, SR)
         - Implement IFF capability
         - Wait for ARC-210 implementation
     ]]
-    
-    _data.capabilities = { 
+
+    _data.capabilities = {
         dcsPtt = true,
         dcsIFF = true,
         dcsRadioSwitch = true,
@@ -19,7 +19,7 @@ function exportRadioC130J30(_data, SR)
         mode1=-1,
         mode2=-1,
         mode3=-1,
-        mode4=-1,
+        mode4=false,
         control=1,
         expansion=false,
     }
@@ -35,54 +35,46 @@ function exportRadioC130J30(_data, SR)
     _data.radios[1].name = "Intercom"
     _data.radios[1].freq = 100.0
     _data.radios[1].modulation = 2 --Special intercom modulation
-    --_data.radios[1].volMode = 0
 
     _data.radios[2].name = "UHF1"
     _data.radios[2].freq = SR.getRadioFrequency(UHF1_devid) or 0
     _data.radios[2].modulation = SR.getRadioModulation(UHF1_devid) or 3
-    --_data.radios[2].volMode = 0
 
     _data.radios[3].name = "UHF2"
     _data.radios[3].freq = SR.getRadioFrequency(UHF2_devid) or 0
     _data.radios[3].modulation = SR.getRadioModulation(UHF2_devid) or 3
-    --_data.radios[3].volMode = 0
 
     _data.radios[4].name = "VHF1"
     _data.radios[4].freq = SR.getRadioFrequency(VHF1_devid) or 0
     _data.radios[4].modulation = SR.getRadioModulation(VHF1_devid) or 3
-    --_data.radios[4].volMode = 0
 
     _data.radios[5].name = "VHF2"
     _data.radios[5].freq = SR.getRadioFrequency(VHF2_devid) or 0
     _data.radios[5].modulation = SR.getRadioModulation(VHF2_devid) or 3
-    --_data.radios[5].volMode = 0
 
     _data.radios[6].name = "HF1"
     _data.radios[6].freq = SR.getRadioFrequency(HF1_devid) or 0
     _data.radios[6].modulation = SR.getRadioModulation(HF1_devid) or 3
-    --_data.radios[6].volMode = 0
 
     _data.radios[7] = {}
     _data.radios[7].name = "HF2"
     _data.radios[7].freq = SR.getRadioFrequency(HF2_devid) or 0
     _data.radios[7].modulation = SR.getRadioModulation(HF2_devid) or 3
-    --_data.radios[7].volMode = 0
 
     -- Not implemented yet - but hard coding to a SATCOM device for now
     _data.radios[8] = {}
     _data.radios[8].name = "SAT"
-    _data.radios[8].freq = 269.0 * 1000000 --SR.getRadioFrequency(SAT_devid)
-    _data.radios[8].modulation = 5 --SR.getRadioModulation(SAT_devid)
+    _data.radios[8].freq = 269.0 * 1000000
+    _data.radios[8].modulation = 5
     _data.radios[8].freqMin = 240.0 * 1000000
     _data.radios[8].freqMax = 320.0 * 1000000
     _data.radios[8].freqMode = 1
-    --_data.radios[8].volMode = 0
 
+    -- Not fully implemented yet
     _data.radios[9] = {}
     _data.radios[9].name = "PVT"
     _data.radios[9].freq = 100.5
     _data.radios[9].modulation = 2
-    --_data.radios[9].volMode = 0
 
     local _seat = SR.lastKnownSeat -- from 0: P/CP/LM/OBS/LMF
 
@@ -110,7 +102,7 @@ function exportRadioC130J30(_data, SR)
         end
 
         -- INT:1 -> PVT:9
-        local _TXPosition = tonumber(string.format("%.0f", SR.getButtonPosition(_TXSelectorId) / (1/9))) + 1
+        local _TXPosition = math.floor(SR.getButtonPosition(_TXSelectorId) * 9 + 0.5) + 1 -- +1 offset to make INT 0
 
         local _PTTRockerPosition = SR.getButtonPosition(_PTTRockerId)
         if _PTTRockerPosition == 1 then -- Radio rocker
@@ -160,7 +152,12 @@ function exportRadioC130J30(_data, SR)
          _PTTRockerId = 292
 
          handleCockpitButtons()
-    elseif _seat == 2 then -- Aug Seat
+    elseif _seat == 2 then -- Load Master
+        _data.control = 0
+        for _, _radio in pairs(_data.radios) do
+            _radio.volMode = 1
+        end
+    elseif _seat == 3 then -- Aug Seat
         _masterVolumeId = 1361 
         _ICSVolumeId = { 268, 269 }
         _UHF1VolumeId = { 286, 287 }
@@ -178,7 +175,7 @@ function exportRadioC130J30(_data, SR)
         _PTTRockerId = 290
 
         handleCockpitButtons()
-    else -- All other seats use the radio overlay to control their comms
+    elseif _seat == 4 then -- Load Master Front
         _data.control = 0
         for _, _radio in pairs(_data.radios) do
             _radio.volMode = 1
@@ -192,16 +189,12 @@ function exportRadioC130J30(_data, SR)
     local _eng3RPM = get_param_handle("ENG_3_RPM"):get()
     local _eng4RPM = get_param_handle("ENG_4_RPM"):get()
 
-    -- Combine engines together and duck by 0.8
-    local _ambVolume = (((_eng1RPM + _eng2RPM + _eng3RPM + _eng4RPM) / 10) * 0.8) -- 0.8 is a magic number
-    SR.log(string.format("Engine RPM: %f %f %f %f", _eng1RPM, _eng2RPM, _eng3RPM, _eng4RPM))
+    local _engineVolFactor = 0.3 -- Controls how loud the primary engine sounds are
+    local _rampVolFactor   = 0.4 -- Controls how much the ramp affects the engines sounds
 
-    if _ambVolume > 0.01 then -- Engines On
-        -- (0..1 * 0.2)
-        _ambVolume = _ambVolume * ((_rampPos * 0.70) + 1)
-    end
+    local _ambVolume = (((_eng1RPM + _eng2RPM + _eng3RPM + _eng4RPM) / 10) * _engineVolFactor) -- 
 
-    SR.log(string.format("Ambient Volume: %f", _ambVolume))
+    _ambVolume = _ambVolume * ((_rampPos * _rampVolFactor) + 1)
 
     _data.ambient = {vol = _ambVolume, abType = 'hercules' }
 
@@ -210,7 +203,7 @@ end
 
 local result = {
     register = function(SR)
-        SR.exporters["C130J30"] = exportRadioC130J30
+        SR.exporters["C-130J-30"] = exportRadioC130J30
     end,
 }
 return result

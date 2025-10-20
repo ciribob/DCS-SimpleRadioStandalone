@@ -21,9 +21,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
             var floatPool = ArrayPool<float>.Shared;
             var signalCount = SignalProvider.Read(buffer, offset, count);
 
-            var sidechainAskedCount = Math.Min(signalCount, count);
-            var sidechainBuffer = floatPool.Rent(sidechainAskedCount);
-            var sidechainCount = SidechainProvider.Read(sidechainBuffer, 0, sidechainAskedCount);
+            if (signalCount == 0)
+                return 0;
+
+            var sidechainBuffer = floatPool.Rent(signalCount);
+            buffer.AsSpan(offset, signalCount).CopyTo(sidechainBuffer.AsSpan(0, signalCount));
+            var sidechainCount = SidechainProvider.Read(sidechainBuffer, 0, signalCount);
 
             var processedCount = Math.Min(signalCount, sidechainCount);
 

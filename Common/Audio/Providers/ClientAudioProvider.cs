@@ -149,7 +149,9 @@ public class ClientAudioProvider : AudioProvider
     private void AddCockpitAmbientAudio(int receiveRadio, Modulation modulation, Ambient ambient, Span<float> pcmAudio)
     {
         //Add cockpit effect - but not for Intercom unless you specifically opt in
-        if (!ambientCockpitEffectEnabled || (modulation == Modulation.INTERCOM && !ambientCockpitIntercomEffectEnabled))
+        //for MIDS - disable ambient volume for now
+        if (!ambientCockpitEffectEnabled || (modulation == Modulation.INTERCOM && !ambientCockpitIntercomEffectEnabled) 
+                                         || modulation == Modulation.MIDS)
             return;
 
         //           clientAudio.Ambient.abType = "uh1";
@@ -162,11 +164,7 @@ public class ClientAudioProvider : AudioProvider
         var effect = audioEffectProvider.GetAmbientEffect(abType);
 
         var vol = ambient.vol;
-
-        if (modulation == Modulation.MIDS)
-            //for MIDS - half volume again - just for ambient vol
-            vol = vol / 0.50f;
-
+        
         var ambientEffectProg = ambientEffectProgress[receiveRadio];
 
         if (effect.Loaded)

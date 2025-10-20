@@ -63,7 +63,7 @@ function exportRadioFA18C(_data, SR)
     -- }
     --_data.radios[3].secFreq = 243.0 * 1000000
     -- reset state on aircraft switch
-    if _lastUnitId ~= _data.unitId then
+    if SR.LastKnownUnitId ~= _data.unitId then
         _fa18.radio1.guard = 0
         _fa18.radio1.channel = nil
         _fa18.radio2.guard = 0

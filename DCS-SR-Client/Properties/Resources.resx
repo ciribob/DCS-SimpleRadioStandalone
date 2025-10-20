@@ -577,10 +577,10 @@ DCS In-game SRS Overlay</value>
     <value>Incoming Audio Automatic Gain Control</value>
   </data>
   <data name="MicDenoise" xml:space="preserve">
-    <value>Incoming Audio Noise Suppression </value>
+    <value>Microphone Noise Suppression </value>
   </data>
   <data name="IncomingAudioDenoise" xml:space="preserve">
-    <value>Microphone Noise Suppression </value>
+    <value>Noise Suppression </value>
   </data>
   <data name="MicLabel" xml:space="preserve">
     <value>Microphone</value>
@@ -907,7 +907,7 @@ Requires Tx or Rx Effects On</value>
     <value>Start</value>
   </data>
   <data name="RadioSoundEffects" xml:space="preserve">
-    <value>Wet/Dry Radio Voice Effect Slider</value>
+    <value>Dry/Wet Radio Voice Effect Slider</value>
   </data>
   <data name="RadioSoundEffectsClipping" xml:space="preserve">
     <value>Enable Clipping Effect (Requires Radio Effect &gt; 0%)</value>

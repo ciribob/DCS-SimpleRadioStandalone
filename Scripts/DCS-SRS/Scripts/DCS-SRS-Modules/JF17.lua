@@ -4,7 +4,7 @@ function exportRadioJF17(_data, SR)
     _data.capabilities = { dcsPtt = false, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
     -- reset state on aircraft switch
-    if _lastUnitId ~= _data.unitId or not _jf17 then
+    if SR.LastKnownUnitId ~= _data.unitId or not _jf17 then
         _jf17 = {
             radios = {
                 [2] = {

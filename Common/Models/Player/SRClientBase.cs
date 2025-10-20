@@ -92,7 +92,7 @@ public class SRClientBase : PropertyChangedBaseClass
     [JsonIgnore] public Guid ClientSession { get; set; }
     public bool Gateway { get; set; } = false;
 
-    public int DISEntityId { get; set; } = 1;
+    public int DISEntityId { get; set; } = -1;
 
     public override string ToString()
     {

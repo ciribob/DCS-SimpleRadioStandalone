@@ -1,4 +1,4 @@
--- Version 2.3.2.0
+-- Version 2.3.2.1
 
 -- Special thanks to Cap. Zeen, Tarres and Splash for all the help
 -- with getting the radio information :)
@@ -61,6 +61,9 @@ SR.lastKnownPos = { x = 0, y = 0, z = 0 }
 SR.lastKnownSeat = 0
 SR.lastKnownSlot = ''
 
+SR.LastKnownUnitId = "" -- used for a10c volume
+SR.LastKnownUnitType = ""    -- used for F/A-18C ENT button
+
 SR.MIDS_FREQ = 1030.0 * 1000000 -- Start at UHF 300
 SR.MIDS_FREQ_SEPARATION = 1.0 * 100000 -- 0.1 MHZ between MIDS channels
 
@@ -118,8 +121,6 @@ end
 local _prevLuaExportActivityNextEvent = LuaExportActivityNextEvent
 local _prevLuaExportBeforeNextFrame = LuaExportBeforeNextFrame
 
-local _lastUnitId = "" -- used for a10c volume
-local _lastUnitType = ""    -- used for F/A-18C ENT button
 local _tNextSRS = 0
 
 SR.exporters = {}   -- exporter table. Initialized at the end
@@ -368,8 +369,8 @@ function SR.exporter()
             _update.ambient = {vol = 0.2, abType = 'jet' }
         end
 
-        _lastUnitId = _update.unitId
-        _lastUnitType = _data.Name
+        SR.LastKnownUnitId = _update.unitId
+        SR.LastKnownUnitType = _data.Name
     else
         -- There may be a unit but we're purposely ignoring it if you're in a special slot
         
@@ -416,8 +417,8 @@ function SR.exporter()
             SR.lastKnownPos = _point
         end
 
-        _lastUnitId = ""
-        _lastUnitType = ""
+        SR.LastKnownUnitId = ""
+        SR.LastKnownUnitType = ""
     end
 
     _update.seat = SR.lastKnownSeat
@@ -908,4 +909,4 @@ end
 -- Load mods' SRS plugins
 SR.LoadModsPlugins()
 
-SR.log("Loaded SimpleRadio Standalone Export version: 2.3.0.3")
+SR.log("Loaded SimpleRadio Standalone Export version: 2.3.2.1")

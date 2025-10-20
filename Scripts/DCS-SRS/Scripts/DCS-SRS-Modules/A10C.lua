@@ -3,7 +3,7 @@ function exportRadioA10C(_data, SR)
     _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = true, intercomHotMic = false, desc = "Using cockpit PTT (HOTAS Mic Switch) requires use of VoIP bindings." }
 
     -- Check if player is in a new aircraft
-    if _lastUnitId ~= _data.unitId then
+    if SR.LastKnownUnitId ~= _data.unitId then
         -- New aircraft; Reset volumes to 100%
         local _device = GetDevice(0)
 

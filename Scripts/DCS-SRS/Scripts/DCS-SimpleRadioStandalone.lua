@@ -253,7 +253,7 @@ function SR.exporter()
         -- check for death / eject -- call below returns a number when ejected - ignore FC3
         local _device = GetDevice(0)
 
-        if type(_device) == 'number' then
+        if _device == nil or type(_device) == 'number' then
             _data = nil -- wipe out data - aircraft is gone really
         end
     end

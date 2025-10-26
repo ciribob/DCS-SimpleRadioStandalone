@@ -803,4 +803,4 @@ end
 DCS.setUserCallbacks(srsOverlay)
 
 
-net.log("Loaded - DCS-SRS Overlay GameGUI - Ciribob: 2.3.2.1 ")
+log.write('SRS-OverlayGameGUI', log.INFO, "Loaded - DCS-SRS Overlay GameGUI - Ciribob: 2.3.2.1 ")

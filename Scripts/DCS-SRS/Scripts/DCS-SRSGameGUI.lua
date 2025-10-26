@@ -21,6 +21,10 @@ function SRS.error(str)
 	log.write('SRS-GameGUI', log.ERROR, str)
 end
 
+function SRS.debug(str)
+	log.write('SRS-GameGUI', log.DEBUG, str)
+end
+
 package.path  = package.path..";.\\LuaSocket\\?.lua;"
 package.cpath = package.cpath..";.\\LuaSocket\\?.dll;"
 package.cpath = package.cpath..";"..lfs.writedir().."Mods\\Services\\DCS-SRS\\bin\\?.dll;"
@@ -345,7 +349,7 @@ SRS.onChatMessage = function(msg, from)
 			host = SRS.getHostFromMessage(msg)
 		end
 		if host == nil then 
-			SRS.error("Error getting host from message: " .. msg)
+			SRS.debug("Error getting host from message: " .. msg)
 			return
 		end
 
@@ -355,7 +359,7 @@ SRS.onChatMessage = function(msg, from)
 		if srs and enabled then
 			local path = srs.get_srs_path()
 			if path ~= "" then
-				net.log("Trying to Launch SRS @ " .. path)
+				SRS.log("Trying to Launch SRS @ " .. path)
 				srs.start_srs(host)
 			end
 		end
@@ -387,4 +391,4 @@ end
 
 DCS.setUserCallbacks(SRS)
 
-net.log("Loaded - DCS-SRS GameGUI - Ciribob: 2.3.2.1")
+SRS.log("Loaded - DCS-SRS GameGUI - Ciribob: 2.3.2.1")

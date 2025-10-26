@@ -107,7 +107,7 @@ function exportRadioOH6A(_data, SR)
         if _door > 0.2 then 
             _data.ambient = {vol = 0.35,  abType = 'oh6a' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'oh6a' }
+            _data.ambient = {vol = 0.15,  abType = 'oh6a' }
         end 
     
     else

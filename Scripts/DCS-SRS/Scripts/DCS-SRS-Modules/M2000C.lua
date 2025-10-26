@@ -158,7 +158,7 @@ function exportRadioM2000C(_data, SR)
         if _door > 0.3 then 
             _data.ambient = {vol = 0.3,  abType = 'm2000' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'm2000' }
+            _data.ambient = {vol = 0.15,  abType = 'm2000' }
         end 
     
     else

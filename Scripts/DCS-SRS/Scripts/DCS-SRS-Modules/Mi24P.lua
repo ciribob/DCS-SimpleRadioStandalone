@@ -137,7 +137,7 @@ function exportRadioMI24P(_data, SR)
         if _doorLeft > 0.2 or _doorRight > 0.2 then 
             _data.ambient = {vol = 0.35,  abType = 'mi24' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'mi24' }
+            _data.ambient = {vol = 0.15,  abType = 'mi24' }
         end 
     
     else

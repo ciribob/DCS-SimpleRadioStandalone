@@ -142,7 +142,7 @@ function exportRadioC101CC(_data, SR)
         if _doorLeft > 0.7 or _doorRight > 0.7 then 
             _data.ambient = {vol = 0.3,  abType = 'c101' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'c101' }
+            _data.ambient = {vol = 0.15,  abType = 'c101' }
         end 
     
     else

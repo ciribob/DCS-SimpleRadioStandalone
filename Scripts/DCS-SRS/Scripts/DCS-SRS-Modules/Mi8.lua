@@ -82,7 +82,7 @@ function exportRadioMI8(_data, SR)
         if _doorLeft > 0.2 or _doorRight > 0.2 then 
             _data.ambient = {vol = 0.35,  abType = 'mi8' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'mi8' }
+            _data.ambient = {vol = 0.15,  abType = 'mi8' }
         end 
     
     else

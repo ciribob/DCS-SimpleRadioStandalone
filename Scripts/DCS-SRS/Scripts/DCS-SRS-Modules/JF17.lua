@@ -163,7 +163,7 @@ function exportRadioJF17(_data, SR)
         if _door > 0.2 then 
             _data.ambient = {vol = 0.3,  abType = 'jf17' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'jf17' }
+            _data.ambient = {vol = 0.15,  abType = 'jf17' }
         end 
     
     else

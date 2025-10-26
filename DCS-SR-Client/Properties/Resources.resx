@@ -1289,4 +1289,10 @@ Recommended: 20000</value>
   <data name="InstructorTab" xml:space="preserve">
     <value>Instructor</value>
   </data>
+  <data name="ReloadAircraft" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="StopInstructorMode" xml:space="preserve">
+    <value>Stop</value>
+  </data>
 </root>

@@ -74,6 +74,9 @@ public class DCSRadio
     //should the radio restransmit?
     public bool retransmit;
 
+    [JsonNetworkIgnoreSerialization] [JsonDCSIgnoreSerialization]
+    //override for intercom - to allow tuning to another units intercom for instructor mode
+    public uint intercomUnitId = 0; 
 
     [JsonNetworkIgnoreSerialization] [JsonDCSIgnoreSerialization]
     public RetransmitMode rtMode = RetransmitMode.DISABLED;
@@ -109,6 +112,7 @@ public class DCSRadio
         if (encKey != compare.encKey) return false;
         if (retransmit != compare.retransmit) return false;
         if (!DCSPlayerRadioInfo.FreqCloseEnough(secFreq, compare.secFreq)) return false;
+        if (intercomUnitId != compare.intercomUnitId) return false;
         //if (volume != compare.volume)
         //{
         //    return false;
@@ -126,7 +130,7 @@ public class DCSRadio
         return true;
     }
 
-    public override int GetHashCode() => HashCode.Combine(name, freq, modulation, enc, encKey, retransmit, secFreq);
+    public override int GetHashCode() => HashCode.Combine(name, freq, modulation, enc, encKey, retransmit, secFreq, intercomUnitId);
 
     public DCSRadio DeepClone()
     {
@@ -152,7 +156,8 @@ public class DCSRadio
             volume = volume,
             retransmit = retransmit,
             rtMode = rtMode,
-            rxOnly = rxOnly
+            rxOnly = rxOnly,
+            intercomUnitId = intercomUnitId
         };
     }
 }

@@ -5,6 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS.Models.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.AwacsRadioOverlayWindow.InstructorMode;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.RadioOverlayWindow.PresetChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
@@ -46,6 +47,7 @@ public partial class RadioControlGroup : UserControl
 
     public PresetChannelsViewModel ChannelViewModel { get; set; }
 
+    public InstructorModeViewModel InstructorModeViewModel { get; set; }
     public int RadioId
     {
         private get => _radioId;
@@ -60,9 +62,11 @@ public partial class RadioControlGroup : UserControl
     private void UpdateBinding()
     {
         ChannelViewModel = _clientStateSingleton.FixedChannels[_radioId - 1];
+        InstructorModeViewModel = new InstructorModeViewModel(_radioId);
 
-        var bindingExpression = PresetChannelsView.GetBindingExpression(DataContextProperty);
-        bindingExpression?.UpdateTarget();
+        PresetChannelsView.GetBindingExpression(DataContextProperty)?.UpdateTarget();
+        InstructorModeView.GetBindingExpression(DataContextProperty)?.UpdateTarget();
+        
     }
 
     private void RadioFrequencyOnGotFocus(object sender, RoutedEventArgs routedEventArgs)
@@ -247,6 +251,9 @@ public partial class RadioControlGroup : UserControl
             PresetChannelsView.IsEnabled = true;
 
             ChannelTab.Visibility = Visibility.Visible;
+            
+            //TODO do this only in EAM mode
+            InstructorTab.Visibility = Visibility.Visible;
 
             var currentRadio = _clientStateSingleton.DcsPlayerRadioInfo.radios[RadioId];
 
@@ -304,6 +311,7 @@ public partial class RadioControlGroup : UserControl
             ToggleSimultaneousTransmissionButton.Foreground = new SolidColorBrush(Colors.White);
 
             ChannelTab.Visibility = Visibility.Collapsed;
+            InstructorTab.Visibility = Visibility.Collapsed;
         }
     }
 
@@ -377,6 +385,10 @@ public partial class RadioControlGroup : UserControl
             {
                 RadioFrequency.Text = Properties.Resources.OverlayIntercom;
                 RadioMetaData.Text = "";
+                ToggleButtons(false);
+                RadioLabel.Text = "INSTRC. INTERCOM "+(RadioId);
+                
+                return;
             }
             else if (currentRadio.modulation == Modulation.MIDS) //MIDS
             {
@@ -657,5 +669,10 @@ public partial class RadioControlGroup : UserControl
     private void RetransmitClick(object sender, RoutedEventArgs e)
     {
         RadioHelper.ToggleRetransmit(RadioId);
+    }
+
+    public void OnClose()
+    {
+        InstructorModeViewModel?.StopInstructorMode();
     }
 }

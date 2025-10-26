@@ -376,6 +376,7 @@ public class UDPClientAudioProcessor : IDisposable
         {
             try
             {
+                uint groupIdOverride = 0;
                 if (transmittingRadios.Count > 0)
                 {
                     var frequencies = new List<double>(transmittingRadios.Count);
@@ -399,6 +400,12 @@ public class UDPClientAudioProcessor : IDisposable
 
                         if (alreadyIncluded) continue;
 
+                        if(radio.modulation == Modulation.INTERCOM && radio.intercomUnitId > 0)
+                        {
+                            //if we're sending to an intercom, we need to send to the unitId of the intercom
+                            groupIdOverride = radio.intercomUnitId;
+                        }
+                        
                         frequencies.Add(radio.freq);
                         encryptions.Add(radio.enc ? radio.encKey : (byte)0);
                         modulations.Add((byte)radio.modulation);
@@ -418,7 +425,12 @@ public class UDPClientAudioProcessor : IDisposable
                         OriginalClientGuidBytes = _guidAsciiBytes
                     };
 
-
+                    //Instructor mode and we've overriden the group ID for intercom
+                    if (groupIdOverride > 0)
+                    {
+                        udpVoicePacket.UnitId = groupIdOverride;
+                    }
+                    
                     _udpClient.Send(udpVoicePacket);
 
                     var currentlySelectedRadio = _clientStateSingleton.DcsPlayerRadioInfo.radios[sendingOn];
@@ -507,16 +519,6 @@ public class UDPClientAudioProcessor : IDisposable
 
                         if (myClient != null && _clientStateSingleton.DcsPlayerRadioInfo.IsCurrent())
                         {
-                           var instructorMode = _globalSettings.ProfileSettingsStore.GetClientSettingBool(
-                                ProfileSettingsKeys.InstructorMode);
-                           List<uint> instructorIntercomIds = null;
-
-                           //lazy init
-                           if (instructorMode)
-                           {
-                               instructorIntercomIds = _clientStateSingleton.InstructorIntercomUnits.Values.ToList();
-                           }
-                           
                             //Decode bytes
                             var udpVoicePacket = UDPVoicePacket.DecodeVoicePacket(encodedOpusAudio);
 
@@ -554,7 +556,7 @@ public class UDPClientAudioProcessor : IDisposable
                                         udpVoicePacket.UnitId,
                                         blockedRadios,
                                         out state,
-                                        out decryptable, instructorMode, instructorIntercomIds);
+                                        out decryptable);
 
                                     var losLoss = 0.0f;
                                     var receivPowerLossPercent = 0.0;

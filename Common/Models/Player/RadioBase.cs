@@ -14,6 +14,9 @@ public partial class RadioBase
     //should the radio restransmit?
     public bool retransmit = false;
     public double secFreq = 1;
+
+    //override for intercom - to allow tuning to another units intercom for instructor mode
+    public uint intercomUnitId = 0; 
     
     private string _model = "";
 
@@ -74,11 +77,12 @@ public partial class RadioBase
         if (retransmit != compare.retransmit) return false;
         if (!FreqCloseEnough(secFreq, compare.secFreq)) return false;
         if (Model != compare?.Model) return false;
+        if (intercomUnitId != compare.intercomUnitId) return false;
 
         return true;
     }
 
-    public override int GetHashCode() => HashCode.Combine(freq, modulation, enc, encKey, retransmit, secFreq, Name);
+    public override int GetHashCode() => HashCode.Combine(freq, modulation, enc, encKey, retransmit, secFreq, Name, intercomUnitId);
 
     //comparing doubles is risky - check that we're close enough to hear (within 100hz)
 
@@ -98,7 +102,8 @@ public partial class RadioBase
             secFreq = secFreq,
             encKey = encKey,
             freq = freq,
-            Model = Model
+            Model = Model,
+            intercomUnitId = intercomUnitId
         };
     }
 

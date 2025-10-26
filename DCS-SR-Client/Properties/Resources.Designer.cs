@@ -2665,6 +2665,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reload.
+        /// </summary>
+        public static string ReloadAircraft {
+            get {
+                return ResourceManager.GetString("ReloadAircraft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rename Profile.
         /// </summary>
         public static string RenameProfile {
@@ -3079,6 +3088,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
             get {
                 object obj = ResourceManager.GetObject("status_disconnected_game", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop.
+        /// </summary>
+        public static string StopInstructorMode {
+            get {
+                return ResourceManager.GetString("StopInstructorMode", resourceCulture);
             }
         }
         

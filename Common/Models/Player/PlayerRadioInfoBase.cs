@@ -132,8 +132,10 @@ public class PlayerRadioInfoBase
                 if (receivingRadio.modulation == Modulation.INTERCOM &&
                     modulation == Modulation.INTERCOM)
                 {
-                    if (unitId > 0 && sendingUnitId > 0
-                                   && unitId == sendingUnitId)
+                    if ((unitId > 0 && sendingUnitId > 0
+                                    && unitId == sendingUnitId) 
+                        || (sendingUnitId > 0 && receivingRadio.intercomUnitId == sendingUnitId)
+                        )
                     {
                         receivingState = new RadioReceivingState
                         {

@@ -192,6 +192,7 @@ public class DCSPlayerRadioInfo
                 retransmit = radio.retransmit,
                 secFreq = radio.secFreq,
                 Model = radio.model,
+                intercomUnitId = radio.intercomUnitId
             };
         }
 
@@ -214,7 +215,7 @@ public class DCSPlayerRadioInfo
         uint sendingUnitId,
         List<int> blockedRadios,
         out RadioReceivingState receivingState,
-        out bool decryptable, bool instructorMode, List<uint> intercomUnitIds = null)
+        out bool decryptable)
     {
         //    if (!IsCurrent())
         //     {
@@ -237,12 +238,9 @@ public class DCSPlayerRadioInfo
                 if (receivingRadio.modulation == Modulation.INTERCOM &&
                     modulation == Modulation.INTERCOM)
                 {
-                    //TODO change this if we're in instructor mode
                     if ((unitId > 0 && sendingUnitId > 0
                                    && unitId == sendingUnitId)
-                            || (instructorMode 
-                                && intercomUnitIds!=null 
-                                && intercomUnitIds.Contains(sendingUnitId)))
+                            || (sendingUnitId > 0 && receivingRadio.intercomUnitId == sendingUnitId))
                     {
                         receivingState = new RadioReceivingState
                         {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -100,8 +99,6 @@ public sealed class ClientStateSingleton : PropertyChangedBaseClass, IHandle<TCP
 
     public RadioSendingState RadioSendingState { get; set; }
     public RadioReceivingState[] RadioReceivingState { get; }
-    
-    public ConcurrentDictionary<uint,uint> InstructorIntercomUnits { get; } = new();
 
     public bool IsConnected
     {

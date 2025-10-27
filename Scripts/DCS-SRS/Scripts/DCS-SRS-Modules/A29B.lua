@@ -81,7 +81,7 @@ function exportRadioA29B(_data, SR)
         if _door > 0.2 then 
             _data.ambient = {vol = 0.3,  abType = 'a29' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'a29' }
+            _data.ambient = {vol = 0.15,  abType = 'a29' }
         end 
     
     else

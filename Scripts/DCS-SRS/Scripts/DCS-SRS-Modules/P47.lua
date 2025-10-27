@@ -55,7 +55,7 @@ function exportRadioP47(_data, SR)
         if _door > 0.1 then 
             _data.ambient = {vol = 0.35,  abType = 'p47' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'p47' }
+            _data.ambient = {vol = 0.15,  abType = 'p47' }
         end 
     
     else

@@ -52,7 +52,7 @@ function exportRadioSK60(_data, SR)
         if _door < 0.9 then 
             _data.ambient = {vol = 0.3,  abType = 'sk60' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'sk60' }
+            _data.ambient = {vol = 0.15,  abType = 'sk60' }
         end 
     
     else

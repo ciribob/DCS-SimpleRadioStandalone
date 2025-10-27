@@ -175,7 +175,7 @@ function exportRadioSA342(_data, SR)
 
     if SR.getAmbientVolumeEngine()  > 10 then
         -- engine on
-        _data.ambient = {vol = 0.2,  abType = 'sa342' }
+        _data.ambient = {vol = 0.15,  abType = 'sa342' }
     else
         -- engine off
         _data.ambient = {vol = 0, abType = 'sa342' }

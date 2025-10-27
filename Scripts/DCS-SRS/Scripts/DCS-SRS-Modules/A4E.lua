@@ -78,7 +78,7 @@ function exportRadioA4E(_data, SR)
         if _door > 0.2 then 
             _data.ambient = {vol = 0.3,  abType = 'A4' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'A4' }
+            _data.ambient = {vol = 0.15,  abType = 'A4' }
         end 
     
     else

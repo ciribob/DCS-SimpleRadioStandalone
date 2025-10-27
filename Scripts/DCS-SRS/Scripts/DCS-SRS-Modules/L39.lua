@@ -65,7 +65,7 @@ function exportRadioL39(_data, SR)
         if _doorLeft > 0.2 or _doorRight > 0.2 then 
             _data.ambient = {vol = 0.3,  abType = 'l39' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'l39' }
+            _data.ambient = {vol = 0.15,  abType = 'l39' }
         end 
     
     else

@@ -48,7 +48,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
             var wetSourceBuffer = floatPool.Rent(audioOut.Length);
             audioOut.CopyTo(wetSourceBuffer);
             ISampleProvider wetProvider = new TransmissionProvider(wetSourceBuffer, 0, audioOut.Length);
-            wetProvider = new VolumeSampleProvider(wetProvider) { Volume = transmission.Volume };
 
             if (RadioEffectsRatio > 0f)
             {
@@ -72,8 +71,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
             var dryVolume = new VolumeSampleProvider(dryProvider) { Volume = Math.Max(1.0f - RadioEffectsRatio, 0.0f) };
             var wetVolume = new VolumeSampleProvider(wetProvider) { Volume = RadioEffectsRatio };
 
-            // Mix dry and wet
-            var mixer = new MixingSampleProvider(new[] { dryVolume, wetVolume });
+            // Mix dry and wet, and apply volume on the end result.
+            var mixer = new VolumeSampleProvider(new MixingSampleProvider(new[] { dryVolume, wetVolume }))
+            {
+                Volume = transmission.Volume
+            };
 
             var mixerBuffer = floatPool.Rent(audioOut.Length);
             try

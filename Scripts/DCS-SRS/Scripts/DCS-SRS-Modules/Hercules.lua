@@ -64,7 +64,7 @@ function exportRadioHercules(_data, SR)
 
     if SR.getAmbientVolumeEngine()  > 10 then
         -- engine on
-        _data.ambient = {vol = 0.2,  abType = 'hercules' }
+        _data.ambient = {vol = 0.15,  abType = 'hercules' }
     else
         -- engine off
         _data.ambient = {vol = 0, abType = 'hercules' }

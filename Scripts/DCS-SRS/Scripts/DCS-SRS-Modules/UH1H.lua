@@ -168,7 +168,7 @@ function exportRadioUH1H(_data, SR)
     if SR.getAmbientVolumeEngine()  > 10 then
         if _doorLeft >= 0 and _doorLeft < 0.5 then
             -- engine on and door closed
-            _data.ambient = {vol = 0.2,  abType = 'uh1' }
+            _data.ambient = {vol = 0.15,  abType = 'uh1' }
         else
             -- engine on and door open
             _data.ambient = {vol = 0.35, abType = 'uh1' }

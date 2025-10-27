@@ -196,7 +196,7 @@ function exportRadioCH47F(_data, SR)
     -- engine on
     if SR.getAmbientVolumeEngine()  > 10 then
         -- engine on
-        _data.ambient = {vol = 0.2, abType = 'ch47' }
+        _data.ambient = {vol = 0.15, abType = 'ch47' }
     
     else
         -- engine off

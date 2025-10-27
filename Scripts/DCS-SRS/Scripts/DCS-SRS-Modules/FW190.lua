@@ -55,7 +55,7 @@ function exportRadioFW190(_data, SR)
         if _door > 0.1 then 
             _data.ambient = {vol = 0.35,  abType = 'fw190' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'fw190' }
+            _data.ambient = {vol = 0.15,  abType = 'fw190' }
         end 
     
     else

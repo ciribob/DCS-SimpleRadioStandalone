@@ -28,7 +28,7 @@
                  Margin="10,87,0,0"
                  HorizontalAlignment="Left"
                  VerticalAlignment="Top"
-                 Text="C:\ProgramData\DCS-SimpleRadio-Standalone"
+                 Text="C:\Program Files\DCS-SimpleRadio-Standalone"
                  TextWrapping="Wrap" />
         <Button x:Name="srPathButton"
                 Width="75"

@@ -51,7 +51,7 @@ function exportRadioMiG29Fulcrum(_data, SR)
         if _door > 0.25 then 
             _data.ambient = {vol = 0.3,  abType = 'mig29' }
         else
-           _data.ambient = {vol = 0.2,  abType = 'mig29' }
+           _data.ambient = {vol = 0.15,  abType = 'mig29' }
         end 
     
     else

@@ -159,7 +159,7 @@ public class RadioMixingProvider : ISampleProvider
 
 
                     // #TODO: pass receiving radio model name.
-                    pipeline.ProcessSegments(mixBuffer, availableInBuffer, longestSegmentLength, segments, null);
+                    pipeline.ProcessSegments(targetSpan, segments, null);
 
                     //now clip all mixing
                     AudioManipulationHelper.ClipArray(targetSpan);

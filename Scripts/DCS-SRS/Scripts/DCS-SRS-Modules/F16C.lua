@@ -161,7 +161,7 @@ function exportRadioF16C(_data, SR)
         if _door > 0.1 then 
             _data.ambient = {vol = 0.3,  abType = 'f16' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'f16' }
+            _data.ambient = {vol = 0.15,  abType = 'f16' }
         end 
     
     else

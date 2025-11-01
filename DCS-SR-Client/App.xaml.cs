@@ -1,4 +1,11 @@
-﻿using System;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
+using NLog;
+using NLog.Config;
+using NLog.Targets;
+using NLog.Targets.Wrappers;
+using Sentry;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -10,15 +17,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
-using NLog;
-using NLog.Config;
-using NLog.Targets;
-using NLog.Targets.Wrappers;
-using Sentry;
 using Application = System.Windows.Application;
-using MessageBox = System.Windows.MessageBox;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client;
 
@@ -54,25 +53,22 @@ public partial class App : Application
         var location = AppDomain.CurrentDomain.BaseDirectory;
         //var location = Assembly.GetExecutingAssembly().Location;
 
-        //check for opus.dll
-        if (!File.Exists(location + "\\opus.dll"))
+        var dllsToValidate = new[] { "opus.dll", "speexdsp.dll" };
+        foreach (var dll in dllsToValidate)
         {
-            MessageBox.Show(
-                "You are missing the opus.dll - Reinstall using the Installer and don't move the client from the installation directory!",
-                "Installation Error!", MessageBoxButton.OK,
-                MessageBoxImage.Error);
+            if (!File.Exists(location + "\\" + dll))
+            {
+                TaskDialog.ShowDialog(new TaskDialogPage
+                {
+                    Caption = $"Installation Error!",
+                    Heading = $"You are missing the {dll}",
+                    Text = $"Reinstall using the Installer and don't move the client from the installation directory!",
+                    Icon = TaskDialogIcon.Error,
+                    Buttons = { TaskDialogButton.OK }
+                });
 
-            Environment.Exit(1);
-        }
-
-        if (!File.Exists(location + "\\speexdsp.dll"))
-        {
-            MessageBox.Show(
-                "You are missing the speexdsp.dll - Reinstall using the Installer and don't move the client from the installation directory!",
-                "Installation Error!", MessageBoxButton.OK,
-                MessageBoxImage.Error);
-
-            Environment.Exit(1);
+                Environment.Exit(1);
+            }
         }
 
         SetupLogging();
@@ -104,12 +100,14 @@ public partial class App : Application
                 {
                     Logger.Warn("Another SRS instance is already running, preventing second instance startup");
 
-                    MessageBoxResult result = MessageBox.Show(
-                    "Another instance of the SimpleRadio client is already running!\n\nThis one will now quit. Check your system tray for the SRS Icon",
-                    "Multiple SimpleRadio clients started!",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-
+                    TaskDialog.ShowDialog(new TaskDialogPage
+                    {
+                        Caption = "Multiple SimpleRadio clients started!",
+                        Heading = "Another instance of the SimpleRadio client is already running!",
+                        Text = $"This one will now quit. Check your system tray for the SRS Icon",
+                        Icon = TaskDialogIcon.Error,
+                        Buttons = { TaskDialogButton.OK }
+                    });
 
                     Environment.Exit(0);
                     return;
@@ -183,9 +181,14 @@ public partial class App : Application
                 }
                 catch (Win32Exception)
                 {
-                    MessageBox.Show(
-                        "SRS could not restart with elevated privilages.\n\nUnless you have a very specific need you should disable the Require Admin option in the settings.",
-                        "UAC Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    TaskDialog.ShowDialog(new TaskDialogPage
+                    {
+                        Caption = "UAC Error",
+                        Heading = "SRS could not restart with elevated privilages.",
+                        Text = $"Unless you have a very specific need you should disable the Require Admin option in the settings.",
+                        Icon = TaskDialogIcon.Warning,
+                        Buttons = { TaskDialogButton.OK }
+                    });
                 }
             });
         }

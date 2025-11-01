@@ -270,7 +270,7 @@ function exportRadioAH64D(_data, SR)
         if _doorLeft > 0.3 or _doorRight > 0.3 then 
             _data.ambient = {vol = 0.35,  abType = 'ah64' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'ah64' }
+            _data.ambient = {vol = 0.15,  abType = 'ah64' }
         end 
     
     else

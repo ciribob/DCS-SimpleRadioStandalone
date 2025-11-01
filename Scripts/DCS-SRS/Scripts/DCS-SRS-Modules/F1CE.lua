@@ -91,7 +91,7 @@ function exportRadioF1CE(_data, SR)
         if _door > 0.2 then 
             _data.ambient = {vol = 0.3,  abType = 'f1' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'f1' }
+            _data.ambient = {vol = 0.15,  abType = 'f1' }
         end 
     
     else

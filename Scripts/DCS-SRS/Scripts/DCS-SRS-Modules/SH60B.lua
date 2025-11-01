@@ -161,7 +161,7 @@ function exportRadioSH60B(_data, SR)
 
     if SR.getAmbientVolumeEngine()  > 10 then
         -- engine on
-        _data.ambient = {vol = 0.2,  abType = 'uh60' }
+        _data.ambient = {vol = 0.15,  abType = 'uh60' }
     else
         -- engine off
         _data.ambient = {vol = 0, abType = 'uh60' }

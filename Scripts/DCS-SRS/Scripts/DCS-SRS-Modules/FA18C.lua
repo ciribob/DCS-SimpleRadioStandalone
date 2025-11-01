@@ -389,7 +389,7 @@ function exportRadioFA18C(_data, SR)
         if _door > 0.5 then 
             _data.ambient = {vol = 0.3,  abType = 'fa18' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'fa18' }
+            _data.ambient = {vol = 0.15,  abType = 'fa18' }
         end 
     
     else

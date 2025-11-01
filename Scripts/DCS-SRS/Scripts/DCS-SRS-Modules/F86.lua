@@ -68,7 +68,7 @@ function exportRadioF86Sabre(_data, SR)
         if _door > 0.1 then 
             _data.ambient = {vol = 0.3,  abType = 'f86' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'f86' }
+            _data.ambient = {vol = 0.15,  abType = 'f86' }
         end 
     
     else

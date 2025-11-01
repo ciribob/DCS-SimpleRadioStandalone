@@ -78,7 +78,7 @@ function exportRadioF4U (_data, SR)
         if _door > 0.5 then
             _data.ambient = {vol = 0.35,  abType = 'f4u' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'f4u' }
+            _data.ambient = {vol = 0.15,  abType = 'f4u' }
         end
 
     else

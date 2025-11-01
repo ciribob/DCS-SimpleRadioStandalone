@@ -131,7 +131,7 @@ function exportRadioF5E(_data, SR)
         if _door > 0.1 then 
             _data.ambient = {vol = 0.3,  abType = 'f5' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'f5' }
+            _data.ambient = {vol = 0.15,  abType = 'f5' }
         end 
     
     else
@@ -144,7 +144,7 @@ end
 
 local result = {
     register = function(SR)
-        SR.exporters["F-5E-3"] = SR.exportRadioF5E
+        SR.exporters["F-5E-3"] = exportRadioF5E
     end,
 }
 return result

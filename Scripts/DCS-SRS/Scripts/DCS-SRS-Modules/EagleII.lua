@@ -62,7 +62,7 @@ function exportRadioEagleII(_data, SR)
 
     if SR.getAmbientVolumeEngine()  > 10 then
         -- engine on
-        _data.ambient = {vol = 0.2,  abType = 'ChristenEagle' }
+        _data.ambient = {vol = 0.15,  abType = 'ChristenEagle' }
     else
         -- engine off
         _data.ambient = {vol = 0, abType = 'ChristenEagle' }

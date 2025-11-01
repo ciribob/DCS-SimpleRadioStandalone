@@ -70,7 +70,7 @@ function exportRadioMosquitoFBMkVI (_data, SR)
         if _doorLeft > 0.7 or _doorRight > 0.7 then 
             _data.ambient = {vol = 0.35,  abType = 'mosquito' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'mosquito' }
+            _data.ambient = {vol = 0.15,  abType = 'mosquito' }
         end 
     
     else

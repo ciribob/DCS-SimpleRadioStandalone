@@ -49,7 +49,7 @@ function exportRadioSpitfireLFMkIX (_data, SR)
         if _door > 0.1 then 
             _data.ambient = {vol = 0.35,  abType = 'spitfire' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'spitfire' }
+            _data.ambient = {vol = 0.15,  abType = 'spitfire' }
         end 
     
     else

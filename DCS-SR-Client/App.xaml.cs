@@ -29,6 +29,7 @@ public partial class App : Application
     private static Logger Logger = LogManager.GetCurrentClassLogger();
     private NotifyIcon _notifyIcon;
     private bool loggingReady;
+    private Mutex SingleInstanceMutex { get; set; }
 
     public App()
     {
@@ -224,15 +225,9 @@ public partial class App : Application
 
     private bool IsClientRunning()
     {
-        var currentProcess = Process.GetCurrentProcess();
-        var currentProcessName = currentProcess.ProcessName.ToLower().Trim();
-
-        foreach (var clsProcess in Process.GetProcesses())
-            if (clsProcess.Id != currentProcess.Id &&
-                clsProcess.ProcessName.ToLower().Trim() == currentProcessName)
-                return true;
-
-        return false;
+        bool created;
+        SingleInstanceMutex = new Mutex(true, "DCS-SimpleRadioStandalone", out created);
+        return !created;
     }
 
     /*

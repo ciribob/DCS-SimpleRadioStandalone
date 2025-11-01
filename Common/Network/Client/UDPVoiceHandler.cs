@@ -5,11 +5,11 @@ using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using NLog;
-using Timer = System.Timers.Timer;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Client;
 
@@ -18,30 +18,18 @@ public class UDPVoiceHandler
     private const int UDP_VOIP_TIMEOUT = 42; // seconds for timeout before redoing VoIP
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-    private readonly ConnectedClientsSingleton _clients = ConnectedClientsSingleton.Instance;
-    private readonly EventBus _eventBus = EventBus.Instance;
+    private readonly ConcurrentBag<byte[]> _outgoing = new ConcurrentBag<byte[]>();
     private readonly byte[] _guidAsciiBytes;
-    private readonly CancellationTokenSource _pingStop = new();
+    private readonly CancellationTokenSource _stopRequest = new();
     private readonly IPEndPoint _serverEndpoint;
-    private readonly Timer _updateTimer;
-
-    private UdpClient _listener;
-    private bool _ready;
-
-    private bool _started;
-    private volatile bool _stop;
-    private long _udpLastReceived;
+    private volatile bool _ready;
+    private volatile bool _started;
 
     public UDPVoiceHandler(string guid, IPEndPoint endPoint)
     {
         _guidAsciiBytes = Encoding.ASCII.GetBytes(guid);
 
         _serverEndpoint = endPoint;
-
-        //TODO not sure if we need this anymore
-        _updateTimer = new Timer { Interval = 5000 };
-        _updateTimer.Elapsed += UpdateVOIPStatus;
-        _updateTimer.Start();
     }
 
     public BlockingCollection<byte[]> EncodedAudio { get; } = new();
@@ -52,20 +40,12 @@ public class UDPVoiceHandler
         get => _ready;
         private set
         {
-            _ready = value;
-            EventBus.Instance.PublishOnUIThreadAsync(new VOIPStatusMessage(_ready));
+            if (_ready != value)
+            {
+                _ready = value;
+                EventBus.Instance.PublishOnUIThreadAsync(new VOIPStatusMessage(_ready));
+            }
         }
-    }
-
-    private void UpdateVOIPStatus(object sender, EventArgs e)
-    {
-        var diff = TimeSpan.FromTicks(DateTime.Now.Ticks - _udpLastReceived);
-
-        //ping every 10 so after 40 seconds VoIP UDP issue
-        if (diff.TotalSeconds > UDP_VOIP_TIMEOUT)
-            _eventBus.PublishOnUIThreadAsync(new VOIPStatusMessage(false));
-        else
-            _eventBus.PublishOnUIThreadAsync(new VOIPStatusMessage(true));
     }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
@@ -78,54 +58,127 @@ public class UDPVoiceHandler
         }
     }
 
-    private void StartUDP()
+    private UdpClient SetupListener()
     {
-        _udpLastReceived = 0;
         Ready = false;
-        _listener = new UdpClient();
+        var listener = new UdpClient();
+        listener.Connect(_serverEndpoint);
 
         if (OperatingSystem.IsWindows())
+        {
             try
             {
-                _listener.AllowNatTraversal(true);
+                listener.AllowNatTraversal(true);
             }
-            catch
+            catch (Exception ex)
             {
-                // ignored
+                Logger.Warn(ex, $"Unable to set NAT traversal for UDP voice socket");
             }
+        }
 
-        StartPing();
+        return listener;
+    }
 
-        while (!_stop)
-            if (Ready)
+    private void CloseListener(UdpClient listener)
+    {
+        Ready = false;
+        try
+        {
+            listener.Close();
+        }
+        catch (Exception e)
+        {
+            Logger.Warn(e, "Failed to close listener");
+        }
+    }
+
+    private void StartUDP()
+    {
+        var listener = SetupListener();
+
+        // Send a first ping to check connectivity.
+        Logger.Info($"Pinging Server - Starting {Thread.CurrentThread.ManagedThreadId}");
+        var pingInterval = TimeSpan.FromSeconds(15);
+        ValueTask<UdpReceiveResult>? receiveTask = null;
+        ValueTask<int>? pingTask = null;
+        ValueTask<int>? sendTask = null;
+        long lastPingSent = 0;
+        while (!_stopRequest.IsCancellationRequested)
+        {
+            var now = DateTime.Now;
+            var timeSinceLastPing = TimeSpan.FromTicks(now.Ticks - lastPingSent);
+            Ready = pingTask.HasValue && pingTask.Value.IsCompletedSuccessfully;
+            if (!pingTask.HasValue || pingTask.Value.IsCompletedSuccessfully && timeSinceLastPing > pingInterval)
+            {
                 try
                 {
-                    var groupEp = new IPEndPoint(IPAddress.Any, _serverEndpoint.Port);
-
-                    var bytes = _listener.Receive(ref groupEp);
-
-                    if (bytes?.Length == 22)
-                    {
-                        _udpLastReceived = DateTime.Now.Ticks;
-                        Logger.Info($"Received Ping Back from Server {Thread.CurrentThread.ManagedThreadId}");
-                    }
-                    else if (bytes?.Length > 22)
-                    {
-                        _udpLastReceived = DateTime.Now.Ticks;
-                        EncodedAudio.Add(bytes);
-                    }
+                    pingTask = listener.SendAsync(_guidAsciiBytes, _stopRequest.Token);
+                    lastPingSent = now.Ticks;
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    //  logger.Error(e, "error listening for UDP Voip");
+                    Logger.Error(e, "Exception Sending Audio Ping! ");
+                }
+            }
+            else if (timeSinceLastPing > TimeSpan.FromSeconds(UDP_VOIP_TIMEOUT))
+            {
+                Logger.Error($"VoIP Timeout - Recreating VoIP Connection {Thread.CurrentThread.ManagedThreadId}");
+                pingTask = null;
+                receiveTask = null;
+                sendTask = null;
+                CloseListener(listener);
+                listener = SetupListener();
+            }
+            try
+            {
+                if (Ready)
+                {
+                
+                    if (!sendTask.HasValue || sendTask.Value.IsCompleted)
+                    {
+                        if (_outgoing.TryTake(out var outgoing))
+                        {
+                            sendTask = listener.SendAsync(outgoing, _stopRequest.Token);
+                        }
+                    }
+                    
+                    if (receiveTask.HasValue && receiveTask.Value.IsCompletedSuccessfully)
+                    {
+                        var bytes = receiveTask.Value.Result.Buffer;
+                        if (bytes?.Length == 22)
+                        {
+                            Logger.Info($"Received Ping Back from Server {Thread.CurrentThread.ManagedThreadId}");
+                        }
+                        else if (bytes?.Length > 22)
+                        {
+                            EncodedAudio.Add(bytes);
+                        }
+                        receiveTask = null;
+                    }
+
+                    if (!receiveTask.HasValue)
+                    {
+                        receiveTask = listener.ReceiveAsync(_stopRequest.Token);
+                    }
                 }
 
-        Ready = false;
+                // #TODO: Don't poll.
+                Task.Delay(5, _stopRequest.Token).Wait(_stopRequest.Token);
+            }
+            catch (Exception)
+            {
+                //  logger.Error(e, "error listening for UDP Voip");
+            }
 
-        //stop UI Refreshing
-        _updateTimer.Stop();
+            
+        }
 
-        _eventBus.PublishOnCurrentThreadAsync(new VOIPStatusMessage(false));
+        receiveTask = null;
+        sendTask = null;
+        pingTask = null;
+
+        CloseListener(listener);
+        _outgoing.Clear();
 
         _started = false;
 
@@ -135,136 +188,33 @@ public class UDPVoiceHandler
     [MethodImpl(MethodImplOptions.Synchronized)]
     public void RequestStop()
     {
-        _stop = true;
         try
         {
-            _listener?.Close();
-            _listener = null;
+            _stopRequest.Cancel();
         }
         catch (Exception)
         {
         }
-
-        try
-        {
-            _pingStop.Cancel();
-        }
-        catch (Exception)
-        {
-        }
-
-        _started = false;
-
-        _eventBus.PublishOnCurrentThreadAsync(new VOIPStatusMessage(false));
     }
 
     public bool Send(UDPVoicePacket udpVoicePacket)
     {
-        if (Ready
-            && _listener != null
-            && udpVoicePacket != null)
+        if (udpVoicePacket != null)
             try
             {
-                if (udpVoicePacket.GuidBytes == null) udpVoicePacket.GuidBytes = _guidAsciiBytes;
+                udpVoicePacket.GuidBytes ??= _guidAsciiBytes;
+                udpVoicePacket.OriginalClientGuidBytes ??= _guidAsciiBytes;
 
-                if (udpVoicePacket.OriginalClientGuidBytes == null)
-                    udpVoicePacket.OriginalClientGuidBytes = _guidAsciiBytes;
-
-                var encodedUdpVoicePacket = udpVoicePacket.EncodePacket();
-
-                _listener?.Send(encodedUdpVoicePacket, encodedUdpVoicePacket.Length, _serverEndpoint);
+                _outgoing.Add(udpVoicePacket.EncodePacket());
 
                 return true;
             }
             catch (Exception e)
             {
-                Logger.Error(e, "Exception Sending Audio Message " + e.Message);
+                Logger.Error(e, "Exception Sending Audio Message");
             }
 
 
         return false;
-    }
-
-    private void StartPing()
-    {
-        Logger.Info($"Pinging Server - Starting {Thread.CurrentThread.ManagedThreadId}");
-
-        var message = _guidAsciiBytes;
-
-        // Force immediate ping once to avoid race condition before starting to listen
-        _listener?.Send(message, message.Length, _serverEndpoint);
-
-        new Thread(() =>
-        {
-            Logger.Info($"Pinging Server - Thread Starting {Thread.CurrentThread.ManagedThreadId}");
-            //wait for initial sync - then ping
-            if (_pingStop.Token.WaitHandle.WaitOne(TimeSpan.FromSeconds(2))) return;
-
-            Ready = true;
-
-            while (!_stop)
-            {
-                //Logger.Info("Pinging Server");
-                try
-                {
-                    _listener?.Send(message, message.Length, _serverEndpoint);
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(e, "Exception Sending Audio Ping! " + e.Message);
-                }
-
-                //wait for cancel or quit
-                var cancelled = _pingStop.Token.WaitHandle.WaitOne(TimeSpan.FromSeconds(15));
-
-                if (cancelled) break;
-
-                var diff = TimeSpan.FromTicks(DateTime.Now.Ticks - _udpLastReceived);
-
-                //reconnect to UDP - port is no good!
-                if (diff.TotalSeconds > UDP_VOIP_TIMEOUT)
-                {
-                    Logger.Error($"VoIP Timeout - Recreating VoIP Connection {Thread.CurrentThread.ManagedThreadId}");
-                    Ready = false;
-                    try
-                    {
-                        _listener?.Close();
-                    }
-                    catch (Exception)
-                    {
-                    }
-
-                    _listener = null;
-
-                    _udpLastReceived = 0;
-
-                    _listener = new UdpClient();
-
-                    if (OperatingSystem.IsWindows())
-                        try
-                        {
-                            _listener?.AllowNatTraversal(true);
-                        }
-                        catch
-                        {
-                            // ignored
-                        }
-
-                    try
-                    {
-                        // Force immediate ping once to avoid race condition before starting to listen
-                        _listener?.Send(message, message.Length, _serverEndpoint);
-                        Ready = true;
-                        Logger.Error("VoIP Timeout - Success Recreating VoIP Connection");
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Error(e, "Exception Sending Audio Ping! " + e.Message);
-                    }
-                }
-            }
-
-            Logger.Info($"VoIP Ping Thread Stop {Thread.CurrentThread.ManagedThreadId}");
-        }).Start();
     }
 }

@@ -1287,7 +1287,7 @@ Recommended: 15000</value>
 Recommended: 20000</value>
   </data>
   <data name="InstructorTab" xml:space="preserve">
-    <value>Instructor</value>
+    <value>Instr.</value>
   </data>
   <data name="ReloadAircraft" xml:space="preserve">
     <value>Reload</value>

@@ -1,21 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
+using Caliburn.Micro;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS.Models.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.RadioChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.AwacsRadioOverlayWindow.InstructorMode;
 
-public class InstructorModeViewModel: INotifyPropertyChanged
+public class InstructorModeViewModel: INotifyPropertyChanged, IHandle<ServerSettingsUpdatedMessage>, IHandle<EAMDisconnectMessage>, IHandle<TCPClientStatusMessage>
 {
     private readonly object _aircraftIntercomModelsListLock = new();
     private ObservableCollection<AircraftIntercomModel> _aircraftIntercomModels = [];
@@ -81,6 +86,7 @@ public class InstructorModeViewModel: INotifyPropertyChanged
         
         var aircraftIntercomModels = new Dictionary<uint,AircraftIntercomModel>();
 
+        var guid = ClientStateSingleton.Instance.ShortGUID;
         foreach (var client in ConnectedClientsSingleton.Instance.Clients)
         {
             //copying them to avoid race conditions
@@ -88,7 +94,7 @@ public class InstructorModeViewModel: INotifyPropertyChanged
             var radioInfo = client.Value.RadioInfo;
             var unitId = radioInfo.unitId;
             
-            if(unitId <=0)
+            if(unitId <=0 || client.Value.ClientGuid == guid)
                 continue;
             
             if (aircraftIntercomModels.TryGetValue(unitId, out var lookup))
@@ -111,7 +117,7 @@ public class InstructorModeViewModel: INotifyPropertyChanged
         {
             AircraftType = "None",
             UnitId = 0,
-            PilotNames = []
+            PilotNames = ["Disabled"]
         });
         foreach (var model in aircraftIntercomModels.Values)
         {
@@ -126,6 +132,8 @@ public class InstructorModeViewModel: INotifyPropertyChanged
 
     private void SelectAircraftIntercom(AircraftIntercomModel aircraftIntercomModel)
     {
+        EventBus.Instance.SubscribeOnUIThread(this);
+        
         if (aircraftIntercomModel.UnitId == 0)
         {
             StopInstructorMode();
@@ -140,7 +148,7 @@ public class InstructorModeViewModel: INotifyPropertyChanged
             _previousRadio = radio.DeepClone();
         }
         
-        radio.intercomUnitId = aircraftIntercomModel.UnitId;
+        radio.IntercomUnitId = aircraftIntercomModel.UnitId;
         radio.rtMode = DCSRadio.RetransmitMode.DISABLED;
         radio.modulation = Modulation.INTERCOM;
         radio.freqMode = DCSRadio.FreqMode.COCKPIT;
@@ -179,10 +187,31 @@ public class InstructorModeViewModel: INotifyPropertyChanged
         });
         
         _previousRadio = null;
+        
+        EventBus.Instance.Unsubcribe(this);
+    }
+    
+    public Task HandleAsync(ServerSettingsUpdatedMessage message, CancellationToken cancellationToken)
+    {
+        if (!SyncedServerSettings.Instance.GetSettingAsBool(ServerSettingsKeys.ALLOW_INSTRUCTOR_MODE))
+        {
+            StopInstructorMode();
+        }
+        return Task.CompletedTask;
     }
 
-    public void Clear()
+    public Task HandleAsync(EAMDisconnectMessage message, CancellationToken cancellationToken)
     {
-        AircraftIntercoms.Clear();
+        StopInstructorMode();
+        return Task.CompletedTask;
+    }
+
+    public Task HandleAsync(TCPClientStatusMessage message, CancellationToken cancellationToken)
+    {
+        if (!message.Connected)
+        {
+            StopInstructorMode();
+        }
+        return Task.CompletedTask;
     }
 }

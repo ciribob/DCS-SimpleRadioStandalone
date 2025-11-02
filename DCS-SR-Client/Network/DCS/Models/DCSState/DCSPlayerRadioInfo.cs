@@ -192,7 +192,7 @@ public class DCSPlayerRadioInfo
                 retransmit = radio.retransmit,
                 secFreq = radio.secFreq,
                 Model = radio.model,
-                intercomUnitId = radio.intercomUnitId
+                IntercomUnitId = radio.IntercomUnitId
             };
         }
 
@@ -234,13 +234,18 @@ public class DCSPlayerRadioInfo
 
             if (receivingRadio != null)
             {
+                
+                if (modulation == Modulation.DISABLED
+                    || receivingRadio.modulation == Modulation.DISABLED)
+                    continue;
+                
                 //handle INTERCOM Modulation is 2
                 if (receivingRadio.modulation == Modulation.INTERCOM &&
                     modulation == Modulation.INTERCOM)
                 {
                     if ((unitId > 0 && sendingUnitId > 0
                                    && unitId == sendingUnitId)
-                            || (sendingUnitId > 0 && receivingRadio.intercomUnitId == sendingUnitId))
+                            || (sendingUnitId > 0 && receivingRadio.IntercomUnitId == sendingUnitId))
                     {
                         receivingState = new RadioReceivingState
                         {
@@ -252,14 +257,12 @@ public class DCSPlayerRadioInfo
                         return receivingRadio;
                     }
 
-                    decryptable = false;
-                    receivingState = null;
-                    return null;
+                    // decryptable = false;
+                    // receivingState = null;
+                    // return null;
+                    continue;
                 }
 
-                if (modulation == Modulation.DISABLED
-                    || receivingRadio.modulation == Modulation.DISABLED)
-                    continue;
 
                 //within 1khz
                 if (RadioBase.FreqCloseEnough(receivingRadio.freq, frequency)

@@ -1452,7 +1452,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Instructor.
+        ///   Looks up a localized string similar to Instr..
         /// </summary>
         public static string InstructorTab {
             get {

@@ -128,13 +128,16 @@ public class PlayerRadioInfoBase
 
             if (receivingRadio != null)
             {
+                if (modulation == Modulation.DISABLED
+                    || receivingRadio.modulation == Modulation.DISABLED)
+                    continue;
+                
                 //handle INTERCOM Modulation is 2
                 if (receivingRadio.modulation == Modulation.INTERCOM &&
                     modulation == Modulation.INTERCOM)
                 {
-                    if ((unitId > 0 && sendingUnitId > 0
-                                    && unitId == sendingUnitId) 
-                        || (sendingUnitId > 0 && receivingRadio.intercomUnitId == sendingUnitId)
+                    if ((sendingUnitId > 0 && unitId == sendingUnitId) 
+                        || (sendingUnitId > 0 && receivingRadio.IntercomUnitId == sendingUnitId)
                         )
                     {
                         receivingState = new RadioReceivingState
@@ -147,14 +150,12 @@ public class PlayerRadioInfoBase
                         return receivingRadio;
                     }
 
-                    decryptable = false;
-                    receivingState = null;
-                    return null;
+                    continue;
+                    // decryptable = false;
+                    // receivingState = null;
+                    // return null;
                 }
 
-                if (modulation == Modulation.DISABLED
-                    || receivingRadio.modulation == Modulation.DISABLED)
-                    continue;
 
                 //within 1khz
                 if (RadioBase.FreqCloseEnough(receivingRadio.freq, frequency)
@@ -186,7 +187,7 @@ public class PlayerRadioInfoBase
                     bestMatchingDecryptable = isDecryptable;
                 }
 
-                //within 1khz
+                //within 1khz on guard
                 if (RadioBase.FreqCloseEnough(receivingRadio.secFreq, frequency)
                     && receivingRadio.secFreq > 10000)
                 {

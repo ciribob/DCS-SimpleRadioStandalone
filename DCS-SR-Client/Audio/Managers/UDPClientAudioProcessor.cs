@@ -400,10 +400,10 @@ public class UDPClientAudioProcessor : IDisposable
 
                         if (alreadyIncluded) continue;
 
-                        if(radio.modulation == Modulation.INTERCOM && radio.intercomUnitId > 0)
+                        if(radio.modulation == Modulation.INTERCOM && radio.IntercomUnitId > 0)
                         {
                             //if we're sending to an intercom, we need to send to the unitId of the intercom
-                            groupIdOverride = radio.intercomUnitId;
+                            groupIdOverride = radio.IntercomUnitId;
                         }
                         
                         frequencies.Add(radio.freq);
@@ -647,6 +647,12 @@ public class UDPClientAudioProcessor : IDisposable
                                             else
                                             {
                                                 audio.Ambient = transmittingClient.RadioInfo.ambient;
+                                            }
+
+                                            if (transmittingClient.Muted)
+                                            {
+                                                //skip receiving this audio
+                                                continue;
                                             }
                                             
                                         }

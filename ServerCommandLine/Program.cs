@@ -180,6 +180,9 @@ internal class Program : IHandle<SRSClientStatus>
         if (options.ServerEAMRadioPresetEnabled != null && options.ServerEAMRadioPresetEnabled.HasValue)
             ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SERVER_EAM_RADIO_PRESET_ENABLED,
                 options.ServerEAMRadioPresetEnabled.Value);
+        if (options.AllowInstructorMode != null && options.AllowInstructorMode.HasValue)
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.ALLOW_INSTRUCTOR_MODE,
+                options.AllowInstructorMode.Value);
         if (options.HttpServerEnabled != null && options.HttpServerEnabled.HasValue)
             ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.HTTP_SERVER_ENABLED,
                 options.HttpServerEnabled.Value);
@@ -398,6 +401,13 @@ public class Options
             $"Enables Server EAM Presets to be used by clients - put the awacs-radios-custom.json file in a folder called Presets alongside your server.cfg file",
         Required = false)]
     public bool? ServerEAMRadioPresetEnabled { get; set; }
+    
+     
+    [Option("allowInstructorMode",
+        HelpText =
+            $"Allows anyone in EAM to be able to use the instructor mode and tune to an aircraft intercom. Default is false.",
+        Required = false)]
+    public bool? AllowInstructorMode { get; set; }
 
     public override string ToString()
     {
@@ -428,6 +438,7 @@ public class Options
             $"{nameof(RadioEffectOverride)}: {RadioEffectOverride}, \n" +
             $"{nameof(ServerPresetChannelsEnabled)}: {ServerPresetChannelsEnabled}, \n" +
             $"{nameof(ServerEAMRadioPresetEnabled)}: {ServerEAMRadioPresetEnabled}, \n" +
+            $"{nameof(AllowInstructorMode)}: {AllowInstructorMode}, \n" +
             $"{nameof(HttpServerEnabled)}: {HttpServerEnabled}, \n" +
             $"{nameof(HttpServerPort)}: {HttpServerPort}, \n" +
             $"{nameof(ServerBindIP)}: {ServerBindIP}";

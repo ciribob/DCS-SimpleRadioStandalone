@@ -385,6 +385,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                 clientRadio.encMode = DCSRadio.EncryptionMode.NO_ENCRYPTION;
                 clientRadio.volMode = DCSRadio.VolumeMode.COCKPIT;
                 clientRadio.rxOnly = false;
+                clientRadio.IntercomUnitId = 0;
             }
             else
             {
@@ -402,6 +403,11 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                 clientRadio.model = updateRadio.model;
 
                 clientRadio.modulation = updateRadio.modulation;
+                
+                if (clientRadio.modulation == Modulation.INTERCOM)
+                {
+                    clientRadio.IntercomUnitId = updateRadio.IntercomUnitId;
+                }
 
                 //update modes
                 clientRadio.freqMode = updateRadio.freqMode;

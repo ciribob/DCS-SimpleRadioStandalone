@@ -1295,4 +1295,7 @@ Recommended: 20000</value>
   <data name="StopInstructorMode" xml:space="preserve">
     <value>Stop</value>
   </data>
+  <data name="InstructorMode" xml:space="preserve">
+    <value>Instructor Mode (EAM Only)</value>
+  </data>
 </root>

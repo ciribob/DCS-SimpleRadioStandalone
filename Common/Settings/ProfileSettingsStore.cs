@@ -151,6 +151,7 @@ public class ProfileSettingsStore
             nameof(ServerPresetConfiguration.USE_CLIENT_AND_SERVER_IF_SET)
         },
         { ProfileSettingsKeys.AllowServerEAMRadioPreset.ToString(), "true" },
+        { ProfileSettingsKeys.InstructorMode.ToString(), "false" },
     
     };
 

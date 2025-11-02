@@ -19,8 +19,8 @@
         <Nullable>disable</Nullable>
         <IsPackable>false</IsPackable>
         <Company>Ciribob - GitHub.com/Ciribob</Company>
-        <AssemblyVersion>2.3.2.2</AssemblyVersion>
-        <FileVersion>2.3.2.2</FileVersion>
+        <AssemblyVersion>2.3.3.0</AssemblyVersion>
+        <FileVersion>2.3.3.0</FileVersion>
         <Product>DCS-SimpleRadio Standalone</Product>
     </PropertyGroup>
     <PropertyGroup>

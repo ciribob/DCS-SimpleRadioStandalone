@@ -11,6 +11,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using UserControl = System.Windows.Controls.UserControl;
@@ -24,7 +25,7 @@ public partial class RadioControlGroup : UserControl
 {
     private const int MaxSimultaneousTransmissions = 3;
     private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
-    private readonly ConnectedClientsSingleton _connectClientsSingleton = ConnectedClientsSingleton.Instance;
+    private readonly ProfileSettingsStore _profileSettingsStore = GlobalSettingsStore.Instance.ProfileSettingsStore;
     private bool _dragging;
 
     private int _radioId;
@@ -473,6 +474,7 @@ public partial class RadioControlGroup : UserControl
         if (dcsPlayerRadioInfo != null
             && dcsPlayerRadioInfo.IsCurrent()
             && serverSettings.GetSettingAsBool(ServerSettingsKeys.ALLOW_INSTRUCTOR_MODE)
+            && _profileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.InstructorMode)
             && ClientStateSingleton.Instance.ExternalAWACSModeConnected)
         {
             var currentRadio = dcsPlayerRadioInfo.radios[RadioId];
@@ -480,6 +482,10 @@ public partial class RadioControlGroup : UserControl
             if (currentRadio.modulation != Modulation.DISABLED)
             {
                 InstructorTab.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                InstructorTab.Visibility = Visibility.Collapsed;
             }
         }
         else

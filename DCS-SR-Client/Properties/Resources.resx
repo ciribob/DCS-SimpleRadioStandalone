@@ -1296,6 +1296,6 @@ Recommended: 20000</value>
     <value>Stop</value>
   </data>
   <data name="InstructorMode" xml:space="preserve">
-    <value>Instructor Mode (EAM Only)</value>
+    <value>Instructor Mode (Server setting needed + EAM Only)</value>
   </data>
 </root>

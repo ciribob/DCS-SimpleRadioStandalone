@@ -1452,7 +1452,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Instructor Mode (EAM Only).
+        ///   Looks up a localized string similar to Instructor Mode (Server setting needed + EAM Only).
         /// </summary>
         public static string InstructorMode {
             get {

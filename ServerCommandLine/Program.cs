@@ -253,7 +253,7 @@ public class Options
         Required = false)]
     public bool? RealRadioTX { get; set; }
 
-    [Option("realRadioTx",
+    [Option("realRadioRx",
         HelpText = "Enables receiving radio interference from other transmissions. Default is false",
         Required = false)]
     public bool? RealRadioRX { get; set; }

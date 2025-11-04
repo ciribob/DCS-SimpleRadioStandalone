@@ -34,9 +34,9 @@ public class HttpServer
     {
         _connectedClients = connectedClients;
         _serverState = serverState;
-        _port = ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.HTTP_SERVER_PORT).IntValue;
-        _enabled = ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.HTTP_SERVER_ENABLED).BoolValue;
-        _authentication = ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.HTTP_SERVER_API_KEY).RawValue.Trim();
+        _port = ServerSettingsStore.Instance.ServerSettings.HttpServerPort;
+        _enabled = ServerSettingsStore.Instance.ServerSettings.IsHttpServerEnabled;
+        _authentication = ServerSettingsStore.Instance.ServerSettings.HttpServerApiKey;
     }
 
     public void Start()

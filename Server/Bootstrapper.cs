@@ -78,10 +78,10 @@ public class Bootstrapper : BootstrapperBase
         config.LoggingRules.Add(new LoggingRule("*", LogLevel.Info, wrapper));
 
         // only add transmission logging at launch if its enabled, defer rule and target creation otherwise
-        if (ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED).BoolValue)
+        if (ServerSettingsStore.Instance.SynchronizedSettings.IsTransmissionLogEnabled)
         {
             config = LoggingHelper.GenerateTransmissionLoggingConfig(config,
-                ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_RETENTION).IntValue);
+                ServerSettingsStore.Instance.SynchronizedSettings.TransmissionLogRetentionLimit);
         }
 
         LogManager.Configuration = config;
@@ -126,7 +126,7 @@ public class Bootstrapper : BootstrapperBase
 
         DisplayRootViewForAsync<MainViewModel>(settings);
         
-        UpdaterChecker.Instance.CheckForUpdate(ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).BoolValue,
+        UpdaterChecker.Instance.CheckForUpdate(ServerSettingsStore.Instance.ServerSettings.IsCheckForBetaUpdatesEnabled,
             result =>
             {
                 if (result.UpdateAvailable)

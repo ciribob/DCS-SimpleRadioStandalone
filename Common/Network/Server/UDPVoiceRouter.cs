@@ -59,11 +59,10 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
         _eventAggregator = eventAggregator;
         _eventAggregator.SubscribeOnBackgroundThread(this);
 
-        var freqString = _serverSettings.GetGeneralSetting(ServerSettingsKeys.TEST_FREQUENCIES).StringValue;
+        var freqString = string.Join(',', _serverSettings.SynchronizedSettings.TestFrequencies);
         UpdateTestFrequencies(freqString);
 
-        var globalFreqString =
-            _serverSettings.GetGeneralSetting(ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES).StringValue;
+        var globalFreqString = string.Join(',', _serverSettings.SynchronizedSettings.GlobalLobbyFrequencies);
         UpdateGlobalLobbyFrequencies(globalFreqString);
     }
 
@@ -127,7 +126,7 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
         //outgoing packets
         new Thread(SendPendingPackets).Start();
 
-        var port = _serverSettings.GetServerPort();
+        var port = _serverSettings.ServerSettings.ServerPort;
         _listener = new UdpClient();
 
         //TODO check this
@@ -145,11 +144,11 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
         _listener.ExclusiveAddressUse = true;
         _listener.DontFragment = true;
         _listener.Client.DontFragment = true;
-        _listener.Client.Bind(new IPEndPoint(_serverSettings.GetServerIP(), port));
+        _listener.Client.Bind(new IPEndPoint(_serverSettings.ServerSettings.ServerBindIp, port));
         while (!_stop)
             try
             {
-                var groupEP = new IPEndPoint(_serverSettings.GetServerIP(), port);
+                var groupEP = new IPEndPoint(_serverSettings.ServerSettings.ServerBindIp, port);
                 var rawBytes = _listener.Receive(ref groupEP);
 
                 if (rawBytes?.Length == 22)
@@ -234,8 +233,7 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
                     {
                         client.VoipPort = udpPacket.ReceivedFrom;
 
-                        var spectatorAudioDisabled =
-                            _serverSettings.GetGeneralSetting(ServerSettingsKeys.SPECTATORS_AUDIO_DISABLED).BoolValue;
+                        var spectatorAudioDisabled = _serverSettings.SynchronizedSettings.IsSpectatorAudioDisabled;
 
                         if ((client.Coalition == 0 && spectatorAudioDisabled) || client.Muted)
                         {
@@ -327,8 +325,7 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
     private OutgoingUDPPackets GenerateOutgoingPacket(UDPVoicePacket udpVoice, PendingPacket pendingPacket,
         SRClientBase fromClient)
     {
-        var nodeHopCount =
-            _serverSettings.GetGeneralSetting(ServerSettingsKeys.RETRANSMISSION_NODE_LIMIT).IntValue;
+        var nodeHopCount = _serverSettings.SynchronizedSettings.RetransmissionNodeLimit;
 
         if (udpVoice.RetransmissionCount > nodeHopCount)
             //not allowed to retransmit any further
@@ -337,11 +334,11 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
         var outgoingList = new HashSet<IPEndPoint>();
 
         var coalitionSecurity =
-            _serverSettings.GetGeneralSetting(ServerSettingsKeys.COALITION_AUDIO_SECURITY).BoolValue;
+            _serverSettings.SynchronizedSettings.IsCoalitionAudioSecurityEnabled;
 
         var guid = fromClient.ClientGuid;
 
-        var strictEncryption = _serverSettings.GetGeneralSetting(ServerSettingsKeys.STRICT_RADIO_ENCRYPTION).BoolValue;
+        var strictEncryption = _serverSettings.SynchronizedSettings.IsStrictRadioEncryptionEnabled;
 
         foreach (var client in _clientsList)
             if (!client.Key.Equals(guid))

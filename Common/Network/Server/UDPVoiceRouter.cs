@@ -160,13 +160,16 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
                         var guid = Encoding.ASCII.GetString(
                             rawBytes, 0, 22);
 
-                        if (_clientsList.ContainsKey(guid))
+                        if (_clientsList.TryGetValue(guid, out var client))
                         {
-                            var client = _clientsList[guid];
                             client.VoipPort = groupEP;
 
                             //send back ping UDP
                             _listener.Send(rawBytes, rawBytes.Length, groupEP);
+                        }
+                        else
+                        {
+                            Logger.Error($"Client not found for GUID {guid} for audio ping.");
                         }
                     }
                     catch (Exception)

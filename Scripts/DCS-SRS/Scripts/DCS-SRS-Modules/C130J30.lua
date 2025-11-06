@@ -61,16 +61,18 @@ function exportRadioC130J30(_data, SR)
     _data.radios[7].freq = SR.getRadioFrequency(HF2_devid) or 0
     _data.radios[7].modulation = SR.getRadioModulation(HF2_devid) or 3
 
-    -- Not implemented yet - but hard coding to a SATCOM device for now
+    -- ARC-210 isn't implemented yet - update this when it is.
     _data.radios[8] = {}
     _data.radios[8].name = "SAT"
     _data.radios[8].freq = 269.0 * 1000000
-    _data.radios[8].modulation = 5
-    _data.radios[8].freqMin = 240.0 * 1000000
-    _data.radios[8].freqMax = 320.0 * 1000000
+    _data.radios[8].modulation = 0
+    _data.radios[8].freqMin = 225.0 * 1000000
+    _data.radios[8].freqMax = 399.975 * 1000000
     _data.radios[8].freqMode = 1
+    _data.radios[8].encKey = 1
+    _data.radios[8].encMode = 1
 
-    -- Not fully implemented yet
+    -- WIP - Second intercom not supported by SRS currently.
     _data.radios[9] = {}
     _data.radios[9].name = "PVT"
     _data.radios[9].freq = 100.5

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
@@ -15,7 +17,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Client;
 
 public class UDPVoiceHandler
 {
-    private const int UDP_VOIP_TIMEOUT = 42; // seconds for timeout before redoing VoIP
+    private static readonly TimeSpan UDP_VOIP_TIMEOUT = TimeSpan.FromSeconds(42); // seconds for timeout before redoing VoIP
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     private readonly ConcurrentBag<byte[]> _outgoing = new ConcurrentBag<byte[]>();
@@ -24,6 +26,7 @@ public class UDPVoiceHandler
     private readonly IPEndPoint _serverEndpoint;
     private volatile bool _ready;
     private volatile bool _started;
+    private SemaphoreSlim _outgoingSemaphore = new SemaphoreSlim(0);
 
     public UDPVoiceHandler(string guid, IPEndPoint endPoint)
     {
@@ -92,90 +95,101 @@ public class UDPVoiceHandler
         }
     }
 
-    private void StartUDP()
+    private async void StartUDP()
     {
         var listener = SetupListener();
 
         // Send a first ping to check connectivity.
         Logger.Info($"Pinging Server - Starting {Thread.CurrentThread.ManagedThreadId}");
         var pingInterval = TimeSpan.FromSeconds(15);
-        ValueTask<UdpReceiveResult>? receiveTask = null;
-        ValueTask<int>? pingTask = null;
-        ValueTask<int>? sendTask = null;
-        long lastPingSent = 0;
+
+        // Initial states to avoid null checks and also avoid throwing before we enter the loop.
+        var receiveTask = Task.FromException<UdpReceiveResult>(new Exception());
+        Task pingTask = Task.CompletedTask;
+        var timeoutTask = Task.Delay(UDP_VOIP_TIMEOUT, _stopRequest.Token);
+        var outgoingAvailableTask = _outgoingSemaphore.WaitAsync(_stopRequest.Token);
         while (!_stopRequest.IsCancellationRequested)
         {
-            var now = DateTime.Now;
-            var timeSinceLastPing = TimeSpan.FromTicks(now.Ticks - lastPingSent);
-            Ready = pingTask.HasValue && pingTask.Value.IsCompletedSuccessfully;
-            if (!pingTask.HasValue || pingTask.Value.IsCompletedSuccessfully && timeSinceLastPing > pingInterval)
-            {
-                try
-                {
-                    pingTask = listener.SendAsync(_guidAsciiBytes, _stopRequest.Token);
-                    lastPingSent = now.Ticks;
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(e, "Exception Sending Audio Ping! ");
-                }
-            }
-            else if (timeSinceLastPing > TimeSpan.FromSeconds(UDP_VOIP_TIMEOUT))
-            {
-                Logger.Error($"VoIP Timeout - Recreating VoIP Connection {Thread.CurrentThread.ManagedThreadId}");
-                pingTask = null;
-                receiveTask = null;
-                sendTask = null;
-                CloseListener(listener);
-                listener = SetupListener();
-            }
             try
             {
-                if (Ready)
+                if (pingTask.IsCompletedSuccessfully)
                 {
-                
-                    if (!sendTask.HasValue || sendTask.Value.IsCompleted)
+                    // Send ping every 15s.
+                    pingTask = listener.SendAsync(_guidAsciiBytes, _stopRequest.Token).AsTask().ContinueWith(async ping =>
                     {
-                        if (_outgoing.TryTake(out var outgoing))
+                        if (ping.IsCompletedSuccessfully)
                         {
-                            sendTask = listener.SendAsync(outgoing, _stopRequest.Token);
+                            await Task.Delay(pingInterval, _stopRequest.Token);
                         }
-                    }
-                    
-                    if (receiveTask.HasValue && receiveTask.Value.IsCompletedSuccessfully)
+                        else if (ping.IsFaulted)
+                        {
+                            Logger.Error(ping.Exception, "Exception Sending Audio Ping! ");
+                        }
+                    }, _stopRequest.Token).Unwrap();
+                }
+
+                if (receiveTask.IsCompleted)
+                {
+                    if (receiveTask.IsCompletedSuccessfully)
                     {
-                        var bytes = receiveTask.Value.Result.Buffer;
+                        var bytes = receiveTask.Result.Buffer;
                         if (bytes?.Length == 22)
                         {
+                            Ready = true;
                             Logger.Info($"Received Ping Back from Server {Thread.CurrentThread.ManagedThreadId}");
                         }
-                        else if (bytes?.Length > 22)
+                        else if (Ready && bytes?.Length > 22)
                         {
                             EncodedAudio.Add(bytes);
                         }
-                        receiveTask = null;
+
+                        // Consider this a valid heartbeat. Reset the clock!
+                        timeoutTask = Task.Delay(UDP_VOIP_TIMEOUT, _stopRequest.Token);
                     }
 
-                    if (!receiveTask.HasValue)
-                    {
-                        receiveTask = listener.ReceiveAsync(_stopRequest.Token);
-                    }
+                    receiveTask = listener.ReceiveAsync(_stopRequest.Token).AsTask();
                 }
 
-                // #TODO: Don't poll.
-                Task.Delay(5, _stopRequest.Token).Wait(_stopRequest.Token);
-            }
-            catch (Exception)
-            {
-                //  logger.Error(e, "error listening for UDP Voip");
-            }
 
-            
+                // Process send queue if in ready state.
+                if (Ready && outgoingAvailableTask.IsCompletedSuccessfully)
+                {
+                    while (_outgoing.TryTake(out var outgoing))
+                    {
+                        await listener.SendAsync(outgoing, _stopRequest.Token);
+                    }
+
+                    outgoingAvailableTask = _outgoingSemaphore.WaitAsync(_stopRequest.Token);
+                }
+
+                // Reset the socket on a timeout.
+                if (timeoutTask.IsCompletedSuccessfully)
+                {
+                    Logger.Error($"VoIP Timeout - Recreating VoIP Connection {Thread.CurrentThread.ManagedThreadId}");
+                    pingTask = null;
+
+                    CloseListener(listener);
+                    listener = SetupListener();
+                    timeoutTask = Task.Delay(UDP_VOIP_TIMEOUT, _stopRequest.Token);
+                    receiveTask = listener.ReceiveAsync(_stopRequest.Token).AsTask();
+                }
+
+                await Task.WhenAny(new[] { timeoutTask, pingTask, receiveTask, outgoingAvailableTask });
+
+            }
+            catch
+            {
+                // Reset everything but the timeout.
+                receiveTask = Task.FromException<UdpReceiveResult>(new Exception());
+                pingTask = Task.CompletedTask;
+                outgoingAvailableTask = _outgoingSemaphore.WaitAsync(_stopRequest.Token);
+            }
         }
 
         receiveTask = null;
-        sendTask = null;
+        outgoingAvailableTask = null;
         pingTask = null;
+        timeoutTask = null;
 
         CloseListener(listener);
         _outgoing.Clear();
@@ -206,6 +220,7 @@ public class UDPVoiceHandler
                 udpVoicePacket.OriginalClientGuidBytes ??= _guidAsciiBytes;
 
                 _outgoing.Add(udpVoicePacket.EncodePacket());
+                _outgoingSemaphore.Release(1);
 
                 return true;
             }

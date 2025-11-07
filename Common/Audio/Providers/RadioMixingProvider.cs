@@ -262,7 +262,7 @@ public class RadioMixingProvider : ISampleProvider
         var outputSamples = Math.Min(effectsBuffer.Count, count);
         if (outputSamples > 0)
         {
-            effectsBuffer.Read(buffer, offset, outputSamples);
+            outputSamples = effectsBuffer.Read(buffer, offset, outputSamples);
         }
 
         return outputSamples;

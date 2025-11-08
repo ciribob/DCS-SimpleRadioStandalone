@@ -154,10 +154,14 @@ public class UDPVoiceHandler
                 // Process send queue if in ready state.
                 if (Ready && outgoingAvailableTask.IsCompletedSuccessfully)
                 {
+                    // Drain the queue.
+                    var sent = new List<Task>();
                     while (_outgoing.TryTake(out var outgoing))
                     {
-                        await listener.SendAsync(outgoing, _stopRequest.Token);
+                        sent.Add(listener.SendAsync(outgoing, _stopRequest.Token).AsTask());
                     }
+
+                    await Task.WhenAll(sent);
 
                     outgoingAvailableTask = _outgoingSemaphore.WaitAsync(_stopRequest.Token);
                 }

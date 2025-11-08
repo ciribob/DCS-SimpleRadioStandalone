@@ -33,7 +33,7 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
     private readonly ConcurrentDictionary<string, SRClientBase> _clientsList;
     private readonly IEventAggregator _eventAggregator;
 
-    private readonly CancellationTokenSource _stopCancellationToken = new();
+    private CancellationTokenSource _stopCancellationToken;
 
     private readonly ServerSettingsStore _serverSettings = ServerSettingsStore.Instance;
     private List<double> _globalFrequencies = new();
@@ -150,7 +150,7 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
 
     public void RequestStop()
     {
-        _stopCancellationToken.Cancel();
+        _stopCancellationToken?.Cancel();
         _transmissionLoggingQueue?.Stop();
         _transmissionLoggingQueue = null;
     }
@@ -179,59 +179,62 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
 
     private async Task ProcessIncomingPacketsAsync(UdpClient listener)
     {
-        while (!_stopCancellationToken.IsCancellationRequested)
+        using (_stopCancellationToken = new CancellationTokenSource())
         {
-            try
+            while (!_stopCancellationToken.IsCancellationRequested)
             {
-                var inbound = await listener.ReceiveAsync(_stopCancellationToken.Token);
-                var rawBytes = inbound.Buffer;
-                var receivedFromEP = inbound.RemoteEndPoint;
-                if (rawBytes?.Length == 22)
+                try
                 {
-                    try
+                    var inbound = await listener.ReceiveAsync(_stopCancellationToken.Token);
+                    var rawBytes = inbound.Buffer;
+                    var receivedFromEP = inbound.RemoteEndPoint;
+                    if (rawBytes?.Length == 22)
                     {
-                        //lookup guid here
-                        //22 bytes are guid!
-                        var guid = Encoding.ASCII.GetString(
-                            rawBytes, 0, 22);
-
-                        if (_clientsList.TryGetValue(guid, out var client))
+                        try
                         {
-                            client.VoipPort = receivedFromEP;
+                            //lookup guid here
+                            //22 bytes are guid!
+                            var guid = Encoding.ASCII.GetString(
+                                rawBytes, 0, 22);
 
-                            //send back ping UDP, don't care much about the result.
-                            var pong = Task.Run(async() => await listener.SendAsync(rawBytes, rawBytes.Length, receivedFromEP), _stopCancellationToken.Token);
+                            if (_clientsList.TryGetValue(guid, out var client))
+                            {
+                                client.VoipPort = receivedFromEP;
+
+                                //send back ping UDP, don't care much about the result.
+                                var pong = Task.Run(async () => await listener.SendAsync(rawBytes, rawBytes.Length, receivedFromEP), _stopCancellationToken.Token);
+                            }
+                            else
+                            {
+                                Logger.Error($"Client not found for GUID {guid} for audio ping.");
+                            }
                         }
-                        else
+                        catch (Exception e)
                         {
-                            Logger.Error($"Client not found for GUID {guid} for audio ping.");
+                            Logger.Error(e, "Bad send?");
                         }
                     }
-                    catch (Exception e)
+                    else if (rawBytes?.Length > 22)
                     {
-                        Logger.Error(e, "Bad send?");
+                        var forwarded = Task.Run(async () => await ProcessPendingPacketAsync(listener, new PendingPacket
+                        {
+                            RawBytes = rawBytes,
+                            ReceivedFrom = receivedFromEP
+                        }), _stopCancellationToken.Token);
                     }
                 }
-                else if (rawBytes?.Length > 22)
+                catch (OperationCanceledException)
                 {
-                    var forwarded = Task.Run(async () => await ProcessPendingPacketAsync(listener, new PendingPacket
-                    {
-                        RawBytes = rawBytes,
-                        ReceivedFrom = receivedFromEP
-                    }), _stopCancellationToken.Token);
+                    // Normal termination, let the top while loop catch it.
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e, "Error in UDP Voice Router listener");
                 }
             }
-            catch (OperationCanceledException)
-            {
-                // Normal termination, let the top while loop catch it.
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "Error in UDP Voice Router listener");
-            }
+
+            Logger.Info("UDP Voice Router Listener stopped.");
         }
-
-        Logger.Info("UDP Voice Router Listener stopped.");
     }
 
     private async Task ProcessPendingPacketAsync(UdpClient listener, PendingPacket udpPacket)

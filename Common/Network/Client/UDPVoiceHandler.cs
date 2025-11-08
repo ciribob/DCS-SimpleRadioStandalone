@@ -166,10 +166,11 @@ public class UDPVoiceHandler
                 if (timeoutTask.IsCompletedSuccessfully)
                 {
                     Logger.Error($"VoIP Timeout - Recreating VoIP Connection {Thread.CurrentThread.ManagedThreadId}");
-                    pingTask = null;
+                    
 
                     CloseListener(listener);
                     listener = SetupListener();
+                    pingTask = Task.CompletedTask;
                     timeoutTask = Task.Delay(UDP_VOIP_TIMEOUT, _stopRequest.Token);
                     receiveTask = listener.ReceiveAsync(_stopRequest.Token).AsTask();
                 }

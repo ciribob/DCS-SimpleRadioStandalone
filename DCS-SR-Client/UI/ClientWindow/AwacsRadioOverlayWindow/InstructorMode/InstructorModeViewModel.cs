@@ -188,7 +188,7 @@ public class InstructorModeViewModel: INotifyPropertyChanged, IHandle<ServerSett
         
         _previousRadio = null;
         
-        EventBus.Instance.Unsubcribe(this);
+        EventBus.Instance.Unsubscribe(this);
     }
     
     public Task HandleAsync(ServerSettingsUpdatedMessage message, CancellationToken cancellationToken)

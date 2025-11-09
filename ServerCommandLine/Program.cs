@@ -95,7 +95,7 @@ internal class Program : IHandle<SRSClientStatus>
     {
         _serverState.StopServer();
 
-        EventBus.Instance.Unsubcribe(this);
+        EventBus.Instance.Unsubscribe(this);
     }
 
 
@@ -256,7 +256,7 @@ public class Options
         Required = false)]
     public bool? RealRadioTX { get; set; }
 
-    [Option("realRadioTx",
+    [Option("realRadioRx",
         HelpText = "Enables receiving radio interference from other transmissions. Default is false",
         Required = false)]
     public bool? RealRadioRX { get; set; }

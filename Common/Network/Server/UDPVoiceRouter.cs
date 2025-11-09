@@ -1,13 +1,3 @@
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Caliburn.Micro;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
@@ -16,6 +6,18 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Server.TransmissionLoggi
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
 using NLog;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Reflection.Metadata.Ecma335;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using LogManager = NLog.LogManager;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Server;
@@ -31,24 +33,12 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
     private readonly ConcurrentDictionary<string, SRClientBase> _clientsList;
     private readonly IEventAggregator _eventAggregator;
 
-    private readonly BlockingCollection<OutgoingUDPPackets>
-        _outGoing = new();
-
-    private readonly CancellationTokenSource _outgoingCancellationToken = new();
-
-    private readonly CancellationTokenSource _pendingProcessingCancellationToken = new();
-
-    private readonly BlockingCollection<PendingPacket> _pendingProcessingPackets =
-        new();
+    private CancellationTokenSource _stopCancellationToken;
 
     private readonly ServerSettingsStore _serverSettings = ServerSettingsStore.Instance;
     private List<double> _globalFrequencies = new();
-
-    private UdpClient _listener;
     //private List<double> _recordingFrequencies = new();
     // private AudioRecordingManager _recordingManager;
-
-    private volatile bool _stop;
     private List<double> _testFrequencies = new();
 
     private TransmissionLoggingQueue _transmissionLoggingQueue;
@@ -116,212 +106,208 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
         _globalFrequencies = newList;
     }
 
-    public void Listen()
+    public async void Listen()
     {
+        Logger.Info("UDP Voice Router starting...");
         _transmissionLoggingQueue = new TransmissionLoggingQueue();
         _transmissionLoggingQueue.Start();
 
-        //start threads
-        //packets that need processing
-        new Thread(ProcessPackets).Start();
-        //outgoing packets
-        new Thread(SendPendingPackets).Start();
-
-        var port = _serverSettings.GetServerPort();
-        _listener = new UdpClient();
+        var listener = new UdpClient();
 
         //TODO check this
         if (OperatingSystem.IsWindows())
+        {
             try
             {
-                _listener.AllowNatTraversal(true);
+                listener.AllowNatTraversal(true);
             }
             catch
             {
                 // ignored
             }
+        }
+        
+        listener.ExclusiveAddressUse = true;
+        listener.DontFragment = true;
 
+        var port = _serverSettings.GetServerPort();
+        listener.Client.Bind(new IPEndPoint(_serverSettings.GetServerIP(), port));
 
-        _listener.ExclusiveAddressUse = true;
-        _listener.DontFragment = true;
-        _listener.Client.DontFragment = true;
-        _listener.Client.Bind(new IPEndPoint(_serverSettings.GetServerIP(), port));
-        while (!_stop)
-            try
-            {
-                var groupEP = new IPEndPoint(_serverSettings.GetServerIP(), port);
-                var rawBytes = _listener.Receive(ref groupEP);
-
-                if (rawBytes?.Length == 22)
-                    try
-                    {
-                        //lookup guid here
-                        //22 bytes are guid!
-                        var guid = Encoding.ASCII.GetString(
-                            rawBytes, 0, 22);
-
-                        if (_clientsList.ContainsKey(guid))
-                        {
-                            var client = _clientsList[guid];
-                            client.VoipPort = groupEP;
-
-                            //send back ping UDP
-                            _listener.Send(rawBytes, rawBytes.Length, groupEP);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        //dont log because it slows down thread too much...
-                    }
-                else if (rawBytes?.Length > 22)
-                    _pendingProcessingPackets.Add(new PendingPacket
-                    {
-                        RawBytes = rawBytes,
-                        ReceivedFrom = groupEP
-                    });
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "Error receving audio UDP for client " + e.Message);
-            }
+        // Incoming queue.
+        await ProcessIncomingPacketsAsync(listener);
 
         try
         {
-            _listener.Close();
+            listener.Close();
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Logger.Warn(e, "Error closing UDP Voice router socket");
         }
+
+        Logger.Info("UDP Voice Router stopped.");
     }
 
     public void RequestStop()
     {
-        _stop = true;
-        try
-        {
-            _listener.Close();
-        }
-        catch (Exception)
-        {
-        }
-
+        _stopCancellationToken?.Cancel();
         _transmissionLoggingQueue?.Stop();
         _transmissionLoggingQueue = null;
-
-        _outgoingCancellationToken.Cancel();
-        _pendingProcessingCancellationToken.Cancel();
     }
 
-    private void ProcessPackets()
+    private async Task DispatchOutgoingPacketsAsync(UdpClient listener, OutgoingUDPPackets outgoingUdpPacket)
     {
-        // _recordingManager = new AudioRecordingManager();
-        //
-        // _recordingManager.Start(_recordingFrequencies);
-
-        while (!_stop)
+        var recipients = new List<Task>(outgoingUdpPacket.OutgoingEndPoints.Count);
+        foreach (var outgoingEndPoint in outgoingUdpPacket.OutgoingEndPoints)
+        {
             try
             {
-                PendingPacket udpPacket = null;
-                _pendingProcessingPackets.TryTake(out udpPacket, 100000, _pendingProcessingCancellationToken.Token);
+                recipients.Add(listener.SendAsync(outgoingUdpPacket.ReceivedPacket, outgoingEndPoint, _stopCancellationToken.Token).AsTask());
+            }
+            catch (OperationCanceledException)
+            {
+                // Expected termination.
+            }
+            catch (Exception)
+            {
+                // Deliberately ignored, can be spammy.
+            }
+        }
 
-                if (udpPacket != null)
+        await Task.WhenAll(recipients);
+    }
+
+    private async Task ProcessIncomingPacketsAsync(UdpClient listener)
+    {
+        using (_stopCancellationToken = new CancellationTokenSource())
+        {
+            while (!_stopCancellationToken.IsCancellationRequested)
+            {
+                try
                 {
-                    //last 22 bytes are guid!
-                    var guid = Encoding.ASCII.GetString(
-                        udpPacket.RawBytes, udpPacket.RawBytes.Length - 22, 22);
-
-                    if (_clientsList.TryGetValue(guid, out var client))
+                    var inbound = await listener.ReceiveAsync(_stopCancellationToken.Token);
+                    var rawBytes = inbound.Buffer;
+                    var receivedFromEP = inbound.RemoteEndPoint;
+                    if (rawBytes?.Length == 22)
                     {
-                        client.VoipPort = udpPacket.ReceivedFrom;
-
-                        var spectatorAudioDisabled =
-                            _serverSettings.GetGeneralSetting(ServerSettingsKeys.SPECTATORS_AUDIO_DISABLED).BoolValue;
-
-                        if ((client.Coalition == 0 && spectatorAudioDisabled) || client.Muted)
+                        try
                         {
-                            // IGNORE THE AUDIO
-                        }
-                        else
-                        {
-                            try
+                            //lookup guid here
+                            //22 bytes are guid!
+                            var guid = Encoding.ASCII.GetString(
+                                rawBytes, 0, 22);
+
+                            if (_clientsList.TryGetValue(guid, out var client))
                             {
-                                //decode
-                                var udpVoicePacket = UDPVoicePacket.DecodeVoicePacket(udpPacket.RawBytes);
+                                client.VoipPort = receivedFromEP;
 
-                                if (udpVoicePacket != null)
-                                    //magical ping ignore message 4 - its an empty voip packet to initialise VoIP if
-                                    //someone doesnt transmit
-                                {
-                                    var outgoingVoice = GenerateOutgoingPacket(udpVoicePacket, udpPacket, client);
-
-                                    if (outgoingVoice != null)
-                                    {
-                                        //Add to the processing queue
-                                        _outGoing.Add(outgoingVoice);
-
-                                        //mark as transmitting for the UI
-                                        var mainFrequency = udpVoicePacket.Frequencies.FirstOrDefault();
-                                        // Only trigger transmitting frequency update for "proper" packets (excluding invalid frequencies and magic ping packets with modulation 4)
-                                        if (mainFrequency > 0)
-                                        {
-                                            var mainModulation = (Modulation)udpVoicePacket.Modulations[0];
-                                            if (mainModulation == Modulation.INTERCOM)
-                                                client.TransmittingFrequency = "INTERCOM";
-                                            else
-                                                client.TransmittingFrequency =
-                                                    $"{(mainFrequency / 1000000).ToString("0.000", CultureInfo.InvariantCulture)} {mainModulation}";
-                                            client.LastTransmissionReceived = DateTime.Now;
-
-                                            // Only log the initial transmission
-                                            // only log received transmissions!
-                                            if (udpVoicePacket.RetransmissionCount == 0)
-                                                _transmissionLoggingQueue?.LogTransmission(client);
-                                        }
-                                    }
-                                }
+                                //send back ping UDP, don't care much about the result.
+                                var pong = Task.Run(async () => await listener.SendAsync(rawBytes, rawBytes.Length, receivedFromEP), _stopCancellationToken.Token);
                             }
-                            catch (Exception)
+                            else
                             {
-                                //Hide for now, slows down loop to much....
+                                Logger.Error($"Client not found for GUID {guid} for audio ping.");
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.Error(e, "Bad send?");
+                        }
+                    }
+                    else if (rawBytes?.Length > 22)
+                    {
+                        var forwarded = Task.Run(async () => await ProcessPendingPacketAsync(listener, new PendingPacket
+                        {
+                            RawBytes = rawBytes,
+                            ReceivedFrom = receivedFromEP
+                        }), _stopCancellationToken.Token);
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    // Normal termination, let the top while loop catch it.
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e, "Error in UDP Voice Router listener");
+                }
+            }
+
+            Logger.Info("UDP Voice Router Listener stopped.");
+        }
+    }
+
+    private async Task ProcessPendingPacketAsync(UdpClient listener, PendingPacket udpPacket)
+    {
+        if (udpPacket == null)
+        {
+            return;
+        }
+
+        try
+        {
+            //last 22 bytes are guid!
+            var guid = Encoding.ASCII.GetString(
+                udpPacket.RawBytes, udpPacket.RawBytes.Length - 22, 22);
+
+            if (_clientsList.TryGetValue(guid, out var client))
+            {
+                client.VoipPort = udpPacket.ReceivedFrom;
+
+                var spectatorAudioDisabled =
+                    _serverSettings.GetGeneralSetting(ServerSettingsKeys.SPECTATORS_AUDIO_DISABLED).BoolValue;
+
+                if ((client.Coalition == 0 && spectatorAudioDisabled) || client.Muted)
+                {
+                    // IGNORE THE AUDIO
+                }
+                else
+                {
+                    //decode
+                    var udpVoicePacket = UDPVoicePacket.DecodeVoicePacket(udpPacket.RawBytes);
+
+                    if (udpVoicePacket != null)
+                    //magical ping ignore message 4 - its an empty voip packet to initialise VoIP if
+                    //someone doesnt transmit
+                    {
+                        var outgoingVoice = GenerateOutgoingPacket(udpVoicePacket, udpPacket, client);
+
+                        if (outgoingVoice != null)
+                        {
+                            //Add to the processing queue
+                            await DispatchOutgoingPacketsAsync(listener, outgoingVoice);
+
+                            //mark as transmitting for the UI
+                            var mainFrequency = udpVoicePacket.Frequencies.FirstOrDefault();
+                            // Only trigger transmitting frequency update for "proper" packets (excluding invalid frequencies and magic ping packets with modulation 4)
+                            if (mainFrequency > 0)
+                            {
+                                var mainModulation = (Modulation)udpVoicePacket.Modulations[0];
+                                if (mainModulation == Modulation.INTERCOM)
+                                    client.TransmittingFrequency = "INTERCOM";
+                                else
+                                    client.TransmittingFrequency =
+                                        $"{(mainFrequency / 1000000).ToString("0.000", CultureInfo.InvariantCulture)} {mainModulation}";
+                                client.LastTransmissionReceived = DateTime.Now;
+
+                                // Only log the initial transmission
+                                // only log received transmissions!
+                                if (udpVoicePacket.RetransmissionCount == 0)
+                                    _transmissionLoggingQueue?.LogTransmission(client);
                             }
                         }
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                Logger.Info("Failed to Process UDP Packet: " + ex.Message);
-            }
-    }
-
-    private
-        void SendPendingPackets()
-    {
-        //_listener.Send(bytes, bytes.Length, ip);
-        while (!_stop)
-            try
-            {
-                _outGoing.TryTake(out var udpPacket, 100000, _pendingProcessingCancellationToken.Token);
-
-                if (udpPacket != null)
-                {
-                    var bytes = udpPacket.ReceivedPacket;
-                    var bytesLength = bytes.Length;
-                    foreach (var outgoingEndPoint in udpPacket.OutgoingEndPoints)
-                        try
-                        {
-                            _listener.Send(bytes, bytesLength, outgoingEndPoint);
-                        }
-                        catch (Exception)
-                        {
-                            //dont log, slows down too much...
-                        }
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Info("Error processing Sending Queue UDP Packet: " + ex.Message);
-            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Expected termination.
+        }
+        catch (Exception)
+        {
+            //Hide for now, slows down too much....
+        }
     }
 
     private OutgoingUDPPackets GenerateOutgoingPacket(UDPVoicePacket udpVoice, PendingPacket pendingPacket,

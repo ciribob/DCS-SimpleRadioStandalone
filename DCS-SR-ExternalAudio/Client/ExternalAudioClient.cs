@@ -27,7 +27,7 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
 
     private readonly string Guid = ShortGuid.NewGuid();
 
-    private CancellationTokenSource finished = new CancellationTokenSource();
+    private CancellationTokenSource finished;
     private UDPVoiceHandler udpVoiceHandler;
     private Program.Options opts;
     private IPEndPoint endPoint;
@@ -97,10 +97,14 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
         };
         var srsClientSyncHandler = new TCPClientHandler(Guid, srClient);
 
-        srsClientSyncHandler.TryConnect(endPoint);
+        using (finished = new CancellationTokenSource())
+        {
+            srsClientSyncHandler.TryConnect(endPoint);
 
-        //wait for it to end
-        finished.Token.WaitHandle.WaitOne();
+            //wait for it to end
+            finished.Token.WaitHandle.WaitOne();
+        }
+       
         Logger.Info("Finished - Closing");
 
         udpVoiceHandler?.RequestStop();
@@ -114,7 +118,7 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
             Logger.Info($"Connecting UDP VoIP {endPoint}");
             udpVoiceHandler = new UDPVoiceHandler(Guid, endPoint);
             udpVoiceHandler.Connect();
-            new Thread(SendAudio).Start();
+            Task.Run(SendAudio, finished.Token);
         }
     }
 
@@ -123,7 +127,7 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
         finished.Cancel();
     }
 
-    private void SendAudio()
+    private async Task SendAudio()
     {
         Logger.Info("Sending Audio... Please Wait");
         var audioGenerator = new AudioGenerator(opts);
@@ -131,10 +135,12 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
         var count = 0;
        
         //Wait until voip is ready and we're not cancelled
-        while(!udpVoiceHandler.Ready && !finished.IsCancellationRequested) 
-            Thread.Sleep(100);
+        while(!udpVoiceHandler.Ready && !finished.IsCancellationRequested)
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(100), finished.Token);
+        }
 
-        var tokenSource = new CancellationTokenSource();
+        using var tokenSource = new CancellationTokenSource();
 
         uint _packetNumber = 1;
         //get all the audio as Opus frames of 40 ms

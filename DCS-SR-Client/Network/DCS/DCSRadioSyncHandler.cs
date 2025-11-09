@@ -592,7 +592,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
 
     public void Stop()
     {
-        EventBus.Instance.Unsubcribe(this);
+        EventBus.Instance.Unsubscribe(this);
         StopExternalAWACSModeLoop();
         _stop = true;
         try

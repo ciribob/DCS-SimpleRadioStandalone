@@ -151,6 +151,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
                 samplesRead = finalProvider.Read(mixerBuffer, 0, audioOut.Length);
                 mixerBuffer.AsSpan(0, samplesRead).CopyTo(audioOut);
             }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Failed to process segments: ");
+                // Something borked - reset for the next packet(s).
+                RxRadioModels.Clear();
+            }
             finally
             {
                 floatPool.Return(mixerBuffer);

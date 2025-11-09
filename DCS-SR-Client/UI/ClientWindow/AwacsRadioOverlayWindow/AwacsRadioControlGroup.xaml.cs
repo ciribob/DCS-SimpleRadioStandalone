@@ -5,11 +5,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS.Models.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.AwacsRadioOverlayWindow.InstructorMode;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.RadioOverlayWindow.PresetChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using UserControl = System.Windows.Controls.UserControl;
 
@@ -22,7 +25,7 @@ public partial class RadioControlGroup : UserControl
 {
     private const int MaxSimultaneousTransmissions = 3;
     private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
-    private readonly ConnectedClientsSingleton _connectClientsSingleton = ConnectedClientsSingleton.Instance;
+    private readonly ProfileSettingsStore _profileSettingsStore = GlobalSettingsStore.Instance.ProfileSettingsStore;
     private bool _dragging;
 
     private int _radioId;
@@ -46,6 +49,7 @@ public partial class RadioControlGroup : UserControl
 
     public PresetChannelsViewModel ChannelViewModel { get; set; }
 
+    public InstructorModeViewModel InstructorModeViewModel { get; set; }
     public int RadioId
     {
         private get => _radioId;
@@ -60,9 +64,11 @@ public partial class RadioControlGroup : UserControl
     private void UpdateBinding()
     {
         ChannelViewModel = _clientStateSingleton.FixedChannels[_radioId - 1];
+        InstructorModeViewModel = new InstructorModeViewModel(_radioId);
 
-        var bindingExpression = PresetChannelsView.GetBindingExpression(DataContextProperty);
-        bindingExpression?.UpdateTarget();
+        PresetChannelsView.GetBindingExpression(DataContextProperty)?.UpdateTarget();
+        InstructorModeView.GetBindingExpression(DataContextProperty)?.UpdateTarget();
+        
     }
 
     private void RadioFrequencyOnGotFocus(object sender, RoutedEventArgs routedEventArgs)
@@ -85,7 +91,7 @@ public partial class RadioControlGroup : UserControl
         {
             //remove focus to somewhere else
             RadioVolume.Focus();
-            Keyboard.ClearFocus(); //then clear altogher
+            Keyboard.ClearFocus(); //then clear altogether
         }
     }
 
@@ -247,7 +253,8 @@ public partial class RadioControlGroup : UserControl
             PresetChannelsView.IsEnabled = true;
 
             ChannelTab.Visibility = Visibility.Visible;
-
+            
+        
             var currentRadio = _clientStateSingleton.DcsPlayerRadioInfo.radios[RadioId];
 
             if (_clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmissionControl ==
@@ -311,6 +318,7 @@ public partial class RadioControlGroup : UserControl
     {
         SetupEncryption();
         HandleRetransmitStatus();
+        HandleInstructorMode();
 
         var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
 
@@ -375,8 +383,12 @@ public partial class RadioControlGroup : UserControl
 
             if (currentRadio.modulation == Modulation.INTERCOM) //intercom
             {
-                RadioFrequency.Text = Properties.Resources.OverlayIntercom;
+                RadioFrequency.Text = "INT. "+RadioId;
                 RadioMetaData.Text = "";
+                ToggleButtons(false);
+                RadioLabel.Text = "INSTR. INT. "+(RadioId);
+                
+                return;
             }
             else if (currentRadio.modulation == Modulation.MIDS) //MIDS
             {
@@ -453,6 +465,33 @@ public partial class RadioControlGroup : UserControl
         var item = TabControl.SelectedItem as TabItem;
 
         if (item?.Visibility != Visibility.Visible) TabControl.SelectedIndex = 0;
+    }
+
+    private void HandleInstructorMode()
+    {
+        var serverSettings = SyncedServerSettings.Instance;
+        var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
+        if (dcsPlayerRadioInfo != null
+            && dcsPlayerRadioInfo.IsCurrent()
+            && serverSettings.GetSettingAsBool(ServerSettingsKeys.ALLOW_INSTRUCTOR_MODE)
+            && _profileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.InstructorMode)
+            && ClientStateSingleton.Instance.ExternalAWACSModeConnected)
+        {
+            var currentRadio = dcsPlayerRadioInfo.radios[RadioId];
+
+            if (currentRadio.modulation != Modulation.DISABLED)
+            {
+                InstructorTab.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                InstructorTab.Visibility = Visibility.Collapsed;
+            }
+        }
+        else
+        {
+            InstructorTab.Visibility = Visibility.Collapsed;
+        }
     }
 
 
@@ -657,5 +696,10 @@ public partial class RadioControlGroup : UserControl
     private void RetransmitClick(object sender, RoutedEventArgs e)
     {
         RadioHelper.ToggleRetransmit(RadioId);
+    }
+
+    public void OnClose()
+    {
+        InstructorModeViewModel?.StopInstructorMode();
     }
 }

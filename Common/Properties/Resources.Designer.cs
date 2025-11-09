@@ -60,6 +60,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Allow Instructor Mode.
+        /// </summary>
+        public static string AllowInstructorMode {
+            get {
+                return ResourceManager.GetString("AllowInstructorMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New.
         /// </summary>
         public static string MsgBoxUpdate1 {

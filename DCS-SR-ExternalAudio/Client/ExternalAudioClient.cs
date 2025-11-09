@@ -32,6 +32,7 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
     private Program.Options opts;
     private IPEndPoint endPoint;
     private readonly byte[] encryptionBytes;
+    private uint unitId = 100000;
 
     public ExternalAudioClient(double[] freq, Modulation[] modulation, Program.Options opts)
     {
@@ -67,6 +68,7 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
         var radioInfoBase = new PlayerRadioInfoBase();
         radioInfoBase.radios[1].modulation = modulation[0];
         radioInfoBase.radios[1].freq = freq[0]; // get into Hz
+        radioInfoBase.unitId = unitId;
 
         Logger.Info($"Starting with params:");
         for (int i = 0; i < freq.Length; i++)
@@ -157,7 +159,7 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
                         AudioPart1Bytes = opusBytes[count],
                         AudioPart1Length = (ushort)opusBytes[count].Length,
                         Frequencies = freq,
-                        UnitId = 100000,
+                        UnitId = unitId,
                         Encryptions = encryptionBytes,
                         Modulations = modulationBytes,
                         RetransmissionCount = 0,

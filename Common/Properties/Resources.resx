@@ -150,4 +150,7 @@ Cancel - Ignore</value>
     <data name="MsgBoxUpdateTitle" xml:space="preserve">
     <value>Update available</value>
   </data>
+    <data name="AllowInstructorMode" xml:space="preserve">
+    <value>Allow Instructor Mode</value>
+  </data>
 </root>

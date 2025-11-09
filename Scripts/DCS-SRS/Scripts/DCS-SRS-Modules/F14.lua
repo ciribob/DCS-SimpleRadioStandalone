@@ -163,7 +163,7 @@ function exportRadioF14(_data, SR)
         if _door > 0.2 then 
             _data.ambient = {vol = 0.3,  abType = 'f14' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'f14' }
+            _data.ambient = {vol = 0.15,  abType = 'f14' }
         end 
     
     else
@@ -178,6 +178,7 @@ local result = {
     register = function(SR)
         SR.exporters["F-14B"] = exportRadioF14
         SR.exporters["F-14A-135-GR"] = exportRadioF14
+        SR.exporters["F-14A-135-GR-Early"] = exportRadioF14
     end,
 }
 return result

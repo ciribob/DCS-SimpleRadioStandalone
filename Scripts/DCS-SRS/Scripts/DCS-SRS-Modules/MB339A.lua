@@ -79,7 +79,7 @@ function exportRadioMB339A(_data, SR)
 
     if SR.getAmbientVolumeEngine()  > 10 then
         -- engine on
-        _data.ambient = {vol = 0.2,  abType = 'MB339' }
+        _data.ambient = {vol = 0.15,  abType = 'MB339' }
     
     else
         -- engine off

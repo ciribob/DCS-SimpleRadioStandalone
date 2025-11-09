@@ -56,7 +56,7 @@ function exportRadioMIG21(_data, SR)
         if _door > 0.15 then 
             _data.ambient = {vol = 0.3,  abType = 'mig21' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'mig21' }
+            _data.ambient = {vol = 0.15,  abType = 'mig21' }
         end 
     
     else

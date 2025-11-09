@@ -1,4 +1,4 @@
--- Version 2.3.2.1
+-- Version 2.3.2.2
 
 -- Special thanks to Cap. Zeen, Tarres and Splash for all the help
 -- with getting the radio information :)
@@ -253,7 +253,7 @@ function SR.exporter()
         -- check for death / eject -- call below returns a number when ejected - ignore FC3
         local _device = GetDevice(0)
 
-        if type(_device) == 'number' then
+        if _device == nil or type(_device) == 'number' then
             _data = nil -- wipe out data - aircraft is gone really
         end
     end
@@ -909,4 +909,4 @@ end
 -- Load mods' SRS plugins
 SR.LoadModsPlugins()
 
-SR.log("Loaded SimpleRadio Standalone Export version: 2.3.2.1")
+SR.log("Loaded SimpleRadio Standalone Export version: 2.3.2.2")

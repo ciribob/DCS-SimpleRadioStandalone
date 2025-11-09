@@ -44,7 +44,7 @@ function exportRadioSU25(_data, SR)
      --   local _door = SR.getButtonPosition(181)
     
     --    if _door > 0.15 then 
-            _data.ambient = {vol = 0.3,  abType = 'su25' }
+            _data.ambient = {vol = 0.2,  abType = 'su25' }
      --   else
       --      _data.ambient = {vol = 0.2,  abType = 'su25' }
     --    end 

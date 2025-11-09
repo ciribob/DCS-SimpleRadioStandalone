@@ -59,7 +59,7 @@ function exportRadioYak52(_data, SR)
 
     if SR.getAmbientVolumeEngine()  > 10 then
         -- engine on
-        _data.ambient = {vol = 0.2,  abType = 'yak52' }
+        _data.ambient = {vol = 0.15,  abType = 'yak52' }
     else
         -- engine off
         _data.ambient = {vol = 0, abType = 'yak52' }

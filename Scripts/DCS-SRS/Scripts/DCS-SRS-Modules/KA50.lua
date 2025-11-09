@@ -57,7 +57,7 @@ function exportRadioKA50(_data, SR)
         if _door > 0.2 then 
             _data.ambient = {vol = 0.3,  abType = 'ka50' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'ka50' }
+            _data.ambient = {vol = 0.15,  abType = 'ka50' }
         end 
     
     else

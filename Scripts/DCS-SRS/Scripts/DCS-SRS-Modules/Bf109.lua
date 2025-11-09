@@ -53,7 +53,7 @@ function exportRadioBF109(_data, SR)
         if _door > 0.1 then 
             _data.ambient = {vol = 0.35,  abType = 'bf109' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'bf109' }
+            _data.ambient = {vol = 0.15,  abType = 'bf109' }
         end 
     
     else

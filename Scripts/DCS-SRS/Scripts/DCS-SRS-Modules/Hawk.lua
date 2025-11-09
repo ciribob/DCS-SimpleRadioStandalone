@@ -54,7 +54,7 @@ function exportRadioHawk(_data, SR)
 
     if SR.getAmbientVolumeEngine()  > 10 then
         -- engine on
-        _data.ambient = {vol = 0.2,  abType = 'jet' }
+        _data.ambient = {vol = 0.15,  abType = 'jet' }
     
     else
         -- engine off

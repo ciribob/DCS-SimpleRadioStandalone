@@ -198,7 +198,7 @@ end
         if _door > 0.2 then 
             _data.ambient = {vol = 0.35,  abType = 'av8bna' }
         else
-            _data.ambient = {vol = 0.2,  abType = 'av8bna' }
+            _data.ambient = {vol = 0.15,  abType = 'av8bna' }
         end 
     
     else

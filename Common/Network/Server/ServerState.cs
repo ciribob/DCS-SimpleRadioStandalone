@@ -107,8 +107,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
             PopulateBanList();
             _stop = false;
             _serverListener = new UDPVoiceRouter(_connectedClients, _eventAggregator);
-            var listenerThread = new Thread(_serverListener.Listen);
-            listenerThread.Start();
+            Task.Run(_serverListener.Listen);
 
             _serverSync = new ServerSync(_connectedClients, _bannedIps, _eventAggregator);
             var serverSyncThread = new Thread(_serverSync.StartListening);
@@ -172,7 +171,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
             }
         }
 
-        Task.Factory.StartNew(() =>
+        Task.Run(async () =>
         {
             while (!_stop)
             {
@@ -190,7 +189,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
                     }) + "\n";
                     try
                     {
-                        File.WriteAllText(exportFilePath, json);
+                        await File.WriteAllTextAsync(exportFilePath, json);
                     }
                     catch (IOException e)
                     {
@@ -198,16 +197,13 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
                     }
                 }
 
-                Thread.Sleep(5000);
+                await Task.Delay(5000);
             }
         });
 
-        var udpSocket = new UdpClient();
-
-
-        Task.Factory.StartNew(() =>
+        Task.Run(async () =>
         {
-            using (udpSocket)
+            using (var udpSocket = new UdpClient())
             {
                 while (!_stop)
                 {
@@ -293,7 +289,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
                                         IncludeFields = true,
                                     }) + "\n");
 
-                            udpSocket.Send(byteData, byteData.Length, host);
+                            await udpSocket.SendAsync(byteData, byteData.Length, host);
                         }
                     }
                     catch (Exception e)
@@ -302,7 +298,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
                     }
 
                     //every 2s
-                    Thread.Sleep(2000);
+                    await Task.Delay(2000);
                 }
 
                 try

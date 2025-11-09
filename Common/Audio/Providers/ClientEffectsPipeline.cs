@@ -78,13 +78,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
             return voiceProvider;
         }
 
-        public int ProcessSegments(float[] mixBuffer, int offset, int count, IReadOnlyList<TransmissionSegment> segments, string modelName = null)
+        public int ProcessSegments(Span<float> audioOut, IReadOnlyList<TransmissionSegment> segments, string modelName = null)
         {
             RefreshSettings();
             var floatPool = ArrayPool<float>.Shared;
-            var workingBuffer = floatPool.Rent(count);
-            var workingSpan = workingBuffer.AsSpan(0, count);
-            workingSpan.Clear();
+
+            var drySourceBuffer = floatPool.Rent(audioOut.Length);
+            var drySpan = drySourceBuffer.AsSpan(0, audioOut.Length);
+            drySpan.Clear();
 
             TransmissionSegment capturedFMSegment = null;
             foreach (var segment in segments)
@@ -101,15 +102,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
                 {
                     // Everything, just mix.
                     // Accumulate in destination buffer.
-                    Mix(workingSpan, segment.AudioSpan);
+                    Mix(drySpan, segment.AudioSpan);
                 }
             }
 
             if (capturedFMSegment != null)
             {
                 // Use the last one (highest power).
-                Mix(workingSpan, capturedFMSegment.AudioSpan);
+                Mix(drySpan, capturedFMSegment.AudioSpan);
             }
+
+            
 
             //Get desire RadioModel
             var desiredName = perRadioModelEffect && modelName != null ? modelName : string.Empty;
@@ -118,10 +121,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
                 radioModel = RadioModelFactory.Instance.LoadRxOrDefaultIntercom(desiredName);
                 RxRadioModels.Add(desiredName, radioModel);
             }
-          
+
             // Create dry and wet providers
-            var dryProvider = new TransmissionProvider(workingBuffer, 0, count);
-            var wetProvider = BuildRXPipeline(dryProvider, radioModel);
+            // Wet/effected provider: must use a separate buffer to avoid double-reading
+           
+            var dryProvider = new TransmissionProvider(drySourceBuffer, 0, drySpan.Length);
+
+            var wetSourceBuffer = floatPool.Rent(audioOut.Length);
+            var wetSpan = wetSourceBuffer.AsSpan(0, audioOut.Length);
+            drySpan.CopyTo(wetSpan);
+            var wetProvider = BuildRXPipeline(new TransmissionProvider(wetSourceBuffer, 0, wetSpan.Length), radioModel);
 
             // Set up volume providers for wet/dry mix
             var dryVolume = new VolumeSampleProvider(dryProvider) { Volume = 1.0f - radioEffectRatio };
@@ -135,9 +144,27 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
             if (clippingEnabled && radioEffectRatio > 0f)
                 finalProvider = new ClippingProvider(mixer, -1f, 1f);
 
-            int samplesRead = finalProvider.Read(mixBuffer, offset, count);
+            var mixerBuffer = floatPool.Rent(audioOut.Length);
+            int samplesRead = 0;
+            try
+            {
+                samplesRead = finalProvider.Read(mixerBuffer, 0, audioOut.Length);
+                mixerBuffer.AsSpan(0, samplesRead).CopyTo(audioOut);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Failed to process segments: ");
+                // Something borked - reset for the next packet(s).
+                RxRadioModels.Clear();
+            }
+            finally
+            {
+                floatPool.Return(mixerBuffer);
+            }
 
-            floatPool.Return(workingBuffer);
+            floatPool.Return(wetSourceBuffer);
+            floatPool.Return(drySourceBuffer);
+            
             return samplesRead;
         }
 

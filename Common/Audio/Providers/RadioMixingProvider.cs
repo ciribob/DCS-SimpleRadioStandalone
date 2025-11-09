@@ -56,11 +56,6 @@ public class RadioMixingProvider : ISampleProvider
     }
 
     /// <summary>
-    ///     Returns the mixer inputs (read-only - use AddMixerInput to add an input
-    /// </summary>
-    public IEnumerable<ClientAudioProvider> MixerInputs => sources;
-
-    /// <summary>
     ///     The output WaveFormat of this sample provider
     /// </summary>
     public WaveFormat WaveFormat { get; }
@@ -91,13 +86,14 @@ public class RadioMixingProvider : ISampleProvider
         // Are we starved? Rehydrate.
         if (monoOffset < monoBufferLength)
         {
-            List<TransmissionSegment> segments = new(sources.Count);
+            List<TransmissionSegment> segments = null; 
 
             // Update sources by queueing incoming audio.
             var ky58Tone = false;
             var longestSegmentLength = 0;
             lock (sources)
             {
+                segments = new(sources.Count);
                 var index = sources.Count - 1;
                 var desired = monoBufferLength - monoOffset;
                 while (index >= 0)
@@ -266,7 +262,7 @@ public class RadioMixingProvider : ISampleProvider
         var outputSamples = Math.Min(effectsBuffer.Count, count);
         if (outputSamples > 0)
         {
-            effectsBuffer.Read(buffer, offset, outputSamples);
+            outputSamples = effectsBuffer.Read(buffer, offset, outputSamples);
         }
 
         return outputSamples;

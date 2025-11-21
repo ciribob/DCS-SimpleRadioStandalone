@@ -92,6 +92,9 @@ public class InstructorModeViewModel: INotifyPropertyChanged, IHandle<ServerSett
             //copying them to avoid race conditions
             //as they can change during iteration
             var radioInfo = client.Value.RadioInfo;
+            if (radioInfo == null)
+                continue;
+
             var unitId = radioInfo.unitId;
             
             if(unitId <=0 || client.Value.ClientGuid == guid)

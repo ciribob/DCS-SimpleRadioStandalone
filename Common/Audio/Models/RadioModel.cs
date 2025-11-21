@@ -1,6 +1,6 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models.Dto;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Dsp;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models.Dto;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers;
-using NAudio.Dsp;
 using NAudio.Utils;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
@@ -16,6 +16,72 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models
 {
     namespace Dto
     {
+        [JsonConverter(typeof(JsonIFilterConverter))]
+
+        internal abstract class IFilter
+        {
+            public required float Frequency { get; set; }
+            public abstract Dsp.IFilter ToFilter();
+        };
+
+        internal class FirstOrderLowPassFilter : IFilter
+        {
+            public override Dsp.IFilter ToFilter()
+            {
+                return FirstOrderFilter.LowPass(Constants.OUTPUT_SAMPLE_RATE, Frequency);
+            }
+        }
+
+        internal class FirstOrderHighPassFilter : IFilter
+        {
+            public override Dsp.IFilter ToFilter()
+            {
+                return FirstOrderFilter.HighPass(Constants.OUTPUT_SAMPLE_RATE, Frequency);
+            }
+        }
+
+        internal abstract class IBiQuadFilter : IFilter
+        {
+            public required float Q { get; set; }
+        }
+
+        internal class BiQuadHighPassFilter : IBiQuadFilter
+        {
+            public override Dsp.IFilter ToFilter()
+            {
+                return new Dsp.BiQuadFilter
+                {
+                    Filter = NAudio.Dsp.BiQuadFilter.HighPassFilter(Constants.OUTPUT_SAMPLE_RATE, Frequency, Q)
+                };
+            }
+        };
+
+        
+
+        internal class BiQuadLowPassFilter : IBiQuadFilter
+        {
+            public override Dsp.IFilter ToFilter()
+            {
+                return new Dsp.BiQuadFilter
+                {
+                    Filter = NAudio.Dsp.BiQuadFilter.LowPassFilter(Constants.OUTPUT_SAMPLE_RATE, Frequency, Q)
+                };
+            }
+        };
+
+        internal class BiQuadPeakingEQFilter : IBiQuadFilter
+        {
+            public required float Gain { get; set; }
+
+            public override Dsp.IFilter ToFilter()
+            {
+                return new Dsp.BiQuadFilter
+                {
+                    Filter = NAudio.Dsp.BiQuadFilter.PeakingEQ(Constants.OUTPUT_SAMPLE_RATE, Frequency, Q, Gain)
+                };
+            }
+        };
+
         [JsonDerivedType(typeof(ChainEffect), typeDiscriminator: "chain")]
         [JsonDerivedType(typeof(FiltersEffect), typeDiscriminator: "filters")]
 
@@ -54,12 +120,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models
 
         internal class FiltersEffect : IEffect
         {
-            public required Dsp.IFilter[] Filters { get; set; }
+            public required IFilter[] Filters { get; set; }
             public override ISampleProvider ToSampleProvider(ISampleProvider source)
             {
+                var filters = new Dsp.IFilter[Filters.Length];
+                for (var i = 0; i < Filters.Length; ++i)
+                {
+                    filters[i] = Filters[i].ToFilter();
+                }
                 return new FiltersProvider(source)
                 {
-                    Filters = Filters
+                    Filters = filters
                 };
             }
         };
@@ -158,11 +229,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models
     {
         public DeferredSourceProvider TxSource { get; } = new DeferredSourceProvider();
 
-        public ISampleProvider TxEffectProvider { get; set; }
+        public ISampleProvider TxEffectProvider { get; init; }
 
-        public ISampleProvider EncryptionProvider { get; set; }
+        public ISampleProvider EncryptionProvider { get; init; }
 
-        public float NoiseGain { get; set; }
+        public float NoiseGain { get; init; }
 
         public TxRadioModel(Models.Dto.RadioModel dtoPreset)
         {
@@ -181,7 +252,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models
     {
         public DeferredSourceProvider RxSource { get; } = new DeferredSourceProvider();
 
-        public ISampleProvider RxEffectProvider { get; set; }
+        public ISampleProvider RxEffectProvider { get; init; }
 
         public RxRadioModel(Models.Dto.RadioModel dtoPreset)
         {
@@ -324,18 +395,23 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models
                 {
                     new FiltersEffect()
                     {
-                        Filters = new Dsp.IFilter[]
+                        Filters = new Dto.IFilter[]
                         {
-                            new Dsp.BiQuadFilter()
+                            new BiQuadHighPassFilter
                             {
-                                Filter = BiQuadFilter.HighPassFilter(Constants.OUTPUT_SAMPLE_RATE, 1700, 0.53f),
+                                Frequency = 1700,
+                                Q = 0.53f
                             },
-                            new Dsp.BiQuadFilter()
+                            new BiQuadPeakingEQFilter
                             {
-                                Filter = BiQuadFilter.PeakingEQ(Constants.OUTPUT_SAMPLE_RATE, 2801, 0.5f, 5f),
+                                Frequency = 2801,
+                                Q = 0.5f,
+                                Gain = 5f
                             },
-
-                            Dsp.FirstOrderFilter.LowPass(Constants.OUTPUT_SAMPLE_RATE, 5538),
+                            new FirstOrderLowPassFilter
+                            {
+                                Frequency = 5538
+                            }
                         }
                     },
 
@@ -356,21 +432,26 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models
                         {
                             Filters = new[]
                             {
-                                Dsp.FirstOrderFilter.HighPass(Constants.OUTPUT_SAMPLE_RATE, 709),
+                                new FirstOrderHighPassFilter
+                                {
+                                    Frequency = 709
+                                }
                             }
                         }
                     },
                     new FiltersEffect()
                     {
-                        Filters = new[]
+                        Filters = new Dto.IFilter[]
                         {
-                            new Dsp.BiQuadFilter()
+                            new BiQuadHighPassFilter
                             {
-                                Filter = BiQuadFilter.HighPassFilter(Constants.OUTPUT_SAMPLE_RATE, 456, 0.36f),
+                                Frequency = 456,
+                                Q = 0.36f
                             },
-                            new Dsp.BiQuadFilter()
+                            new BiQuadLowPassFilter
                             {
-                                Filter = BiQuadFilter.LowPassFilter(Constants.OUTPUT_SAMPLE_RATE, 5435, 0.39f)
+                                Frequency = 5435,
+                                Q = 0.39f
                             }
                         }
                     },
@@ -385,12 +466,20 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models
 
             RxEffect = new FiltersEffect()
             {
-                Filters = new Dsp.IFilter[]
+                Filters = new Dto.IFilter[]
                 {
-                    Dsp.FirstOrderFilter.HighPass(Constants.OUTPUT_SAMPLE_RATE, 270),
-                    Dsp.FirstOrderFilter.LowPass(Constants.OUTPUT_SAMPLE_RATE, 4500)
+                    new FirstOrderHighPassFilter
+                    {
+                        Frequency = 270,
+                    },
+                    new FirstOrderLowPassFilter
+                    {
+                        Frequency = 4500
+                    }
                 },
             },
+
+            EncryptionEffect = new CVSDEffect(),
 
             NoiseGain = -33,
         };
@@ -404,22 +493,28 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models
                 {
                     new FiltersEffect()
                     {
-                        Filters = new Dsp.IFilter[]
+                        Filters = new Dto.IFilter[]
                         {
-                            new Dsp.BiQuadFilter()
+                            new BiQuadHighPassFilter
                             {
-                                Filter = BiQuadFilter.HighPassFilter(Constants.OUTPUT_SAMPLE_RATE, 207, 0.5f),
+                                Frequency = 207,
+                                Q = 0.5f
                             },
-                            new Dsp.BiQuadFilter()
+                            new BiQuadPeakingEQFilter
                             {
-                                Filter = BiQuadFilter.PeakingEQ(Constants.OUTPUT_SAMPLE_RATE, 3112, 0.4f, 16f),
+                                Frequency = 3112,
+                                Q = 0.4f,
+                                Gain = 16f
                             },
-                            new Dsp.BiQuadFilter()
+                            new BiQuadLowPassFilter
                             {
-                                Filter = BiQuadFilter.LowPassFilter(Constants.OUTPUT_SAMPLE_RATE, 6036, 0.4f),
+                                Frequency = 6036,
+                                Q = 0.4f
                             },
-
-                            Dsp.FirstOrderFilter.LowPass(Constants.OUTPUT_SAMPLE_RATE, 5538),
+                            new FirstOrderLowPassFilter
+                            {
+                                Frequency = 5538
+                            }
                         },
                     },
 
@@ -438,24 +533,29 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models
                         Ratio = 1.18f,
                         SidechainEffect = new FiltersEffect
                         {
-                            Filters = new[]
+                            Filters = new Dto.IFilter[]
                             {
-                                Dsp.FirstOrderFilter.HighPass(Constants.OUTPUT_SAMPLE_RATE, 709),
+                                new FirstOrderHighPassFilter
+                                {
+                                    Frequency = 709
+                                }
                             }
                         }
                     },
 
                     new FiltersEffect
                     {
-                        Filters = new[]
+                        Filters = new Dto.IFilter[]
                         {
-                            new Dsp.BiQuadFilter()
+                            new BiQuadHighPassFilter
                             {
-                                Filter = BiQuadFilter.HighPassFilter(Constants.OUTPUT_SAMPLE_RATE, 393, 0.43f),
+                                Frequency = 393,
+                                Q =  0.43f
                             },
-                            new Dsp.BiQuadFilter()
+                            new BiQuadLowPassFilter
                             {
-                                Filter = BiQuadFilter.LowPassFilter(Constants.OUTPUT_SAMPLE_RATE, 4875, 0.3f)
+                                Frequency = 4875,
+                                Q = 0.3f
                             }
                         },
                     },
@@ -469,10 +569,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models
 
             RxEffect = new FiltersEffect()
             {
-                Filters = new[]
+                Filters = new Dto.IFilter[]
                 {
-                    Dsp.FirstOrderFilter.HighPass(Constants.OUTPUT_SAMPLE_RATE, 270),
-                    Dsp.FirstOrderFilter.LowPass(Constants.OUTPUT_SAMPLE_RATE, 4500)
+                    new FirstOrderHighPassFilter
+                    {
+                        Frequency = 270,
+                    },
+                    new FirstOrderLowPassFilter
+                    {
+                        Frequency = 4500
+                    }
                 },
             },
 

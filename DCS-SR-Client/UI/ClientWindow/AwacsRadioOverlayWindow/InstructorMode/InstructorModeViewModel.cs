@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading;
@@ -17,11 +18,14 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
+using NLog;
+using LogManager = Caliburn.Micro.LogManager;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.AwacsRadioOverlayWindow.InstructorMode;
 
 public class InstructorModeViewModel: INotifyPropertyChanged, IHandle<ServerSettingsUpdatedMessage>, IHandle<EAMDisconnectMessage>, IHandle<TCPClientStatusMessage>
 {
+    private readonly Logger Logger = NLog.LogManager.GetCurrentClassLogger();
     private readonly object _aircraftIntercomModelsListLock = new();
     private ObservableCollection<AircraftIntercomModel> _aircraftIntercomModels = [];
     private int _radioId;
@@ -77,54 +81,60 @@ public class InstructorModeViewModel: INotifyPropertyChanged, IHandle<ServerSett
 
     public void Reload()
     {
-        // StopInstructorMode();
-        // SelectedAircraftIntercom = null;
-        
-        AircraftIntercoms.Clear();
-        
-        var radios = ClientStateSingleton.Instance.DcsPlayerRadioInfo.radios;
-        
-        var aircraftIntercomModels = new Dictionary<uint,AircraftIntercomModel>();
-
-        var guid = ClientStateSingleton.Instance.ShortGUID;
-        foreach (var client in ConnectedClientsSingleton.Instance.Clients)
+        try
         {
-            //copying them to avoid race conditions
-            //as they can change during iteration
-            var radioInfo = client.Value.RadioInfo;
-            if (radioInfo == null)
-                continue;
+            // StopInstructorMode();
+            // SelectedAircraftIntercom = null;
+            
+            AircraftIntercoms.Clear();
+            
+            var aircraftIntercomModels = new Dictionary<uint,AircraftIntercomModel>();
 
-            var unitId = radioInfo.unitId;
-            
-            if(unitId <=0 || client.Value.ClientGuid == guid)
-                continue;
-            
-            if (aircraftIntercomModels.TryGetValue(unitId, out var lookup))
+            var guid = ClientStateSingleton.Instance.ShortGUID;
+            foreach (var client in ConnectedClientsSingleton.Instance.Clients)
             {
-                lookup.PilotNames.Add(client.Value.Name);
-            }
-            else
-            {
-                var aircraftModel = new AircraftIntercomModel()
+                //copying them to avoid race conditions
+                //as they can change during iteration
+                var radioInfo = client.Value.RadioInfo;
+                if (radioInfo == null)
+                    continue;
+
+                var unitId = radioInfo.unitId;
+                
+                if(unitId <=0 || client.Value.ClientGuid == guid)
+                    continue;
+                
+                if (aircraftIntercomModels.TryGetValue(unitId, out var lookup))
                 {
-                    UnitId = unitId,
-                    PilotNames = [client.Value.Name],
-                    AircraftType = radioInfo.unit
-                };
-                aircraftIntercomModels[unitId] = aircraftModel;
+                    lookup.PilotNames.Add(client.Value.Name);
+                }
+                else
+                {
+                    var aircraftModel = new AircraftIntercomModel()
+                    {
+                        UnitId = unitId,
+                        PilotNames = [client.Value.Name],
+                        AircraftType = radioInfo.unit
+                    };
+                    aircraftIntercomModels[unitId] = aircraftModel;
+                }
             }
-        }
 
-        AircraftIntercoms.Add(new AircraftIntercomModel()
+            AircraftIntercoms.Add(new AircraftIntercomModel()
+            {
+                AircraftType = "None",
+                UnitId = 0,
+                PilotNames = ["Disabled"]
+            });
+            foreach (var model in aircraftIntercomModels.Values)
+            {
+                AircraftIntercoms.Add(model);
+            }
+        
+        }
+        catch (Exception ex)
         {
-            AircraftType = "None",
-            UnitId = 0,
-            PilotNames = ["Disabled"]
-        });
-        foreach (var model in aircraftIntercomModels.Values)
-        {
-            AircraftIntercoms.Add(model);
+            Logger.Error(ex, "Exception Reloading Instructor Mode");
         }
     }
 

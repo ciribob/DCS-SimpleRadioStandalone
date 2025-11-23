@@ -36,6 +36,7 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
 
     public ExternalAudioClient(double[] freq, Modulation[] modulation, Program.Options opts)
     {
+        this.unitId = opts.UnitId;
         this.freq = freq;
         this.modulation = modulation;
         this.opts = opts;

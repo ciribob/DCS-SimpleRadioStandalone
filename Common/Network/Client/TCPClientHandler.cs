@@ -23,7 +23,7 @@ using Timer = System.Timers.Timer;
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Client;
 
 public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitUpdateMessage>,
-    IHandle<EAMConnectRequestMessage>
+    IHandle<EAMConnectRequestMessage>, IHandle<GatewayUnitUpdateMessage>
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -516,5 +516,55 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
         }
 
         Logger.Error("Disconnecting from server");
+    }
+
+    public Task HandleAsync(GatewayUnitUpdateMessage message, CancellationToken cancellationToken)
+    {
+        if (message.FullUpdate)
+        {
+
+            var clone = message.UnitUpdate.DeepClone();
+            clone.GatewayClient = true;
+        
+            var updateMessage = new NetworkMessage
+            {
+                Client = clone,
+                MsgType = NetworkMessage.MessageType.GATEWAY_CLIENT_FULL_UPDATE
+            };
+    
+            var needValidPosition = _serverSettings.GetSettingAsBool(ServerSettingsKeys.DISTANCE_ENABLED) ||
+                                    _serverSettings.GetSettingAsBool(ServerSettingsKeys.LOS_ENABLED);
+    
+            if (!needValidPosition)
+                updateMessage.Client.LatLngPosition = new LatLngPosition();
+    
+    
+            SendToServer(updateMessage);
+        }
+        else
+        {
+            var clone = message.UnitUpdate.DeepClone();
+            clone.GatewayClient = true;
+          
+            var needValidPosition = _serverSettings.GetSettingAsBool(ServerSettingsKeys.DISTANCE_ENABLED) ||
+                                    _serverSettings.GetSettingAsBool(ServerSettingsKeys.LOS_ENABLED);
+
+
+                clone.RadioInfo = null;
+                var updateMessage = new NetworkMessage
+                {
+                    Client = clone,
+                    MsgType = NetworkMessage.MessageType.GATEWAY_CLIENT_METADATA_UPDATE
+                };
+                
+                if (!needValidPosition)
+                    updateMessage.Client.LatLngPosition = new LatLngPosition();
+            
+                //update state
+                SendToServer(updateMessage);
+            
+        }
+           
+        return Task.CompletedTask;
     }
 }

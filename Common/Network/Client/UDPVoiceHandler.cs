@@ -218,14 +218,17 @@ public class UDPVoiceHandler
         }
     }
 
-    public bool Send(UDPVoicePacket udpVoicePacket)
+    public bool Send(UDPVoicePacket udpVoicePacket, bool gatewayClient = false)
     {
         if (udpVoicePacket != null)
             try
             {
-                udpVoicePacket.GuidBytes ??= _guidAsciiBytes;
-                udpVoicePacket.OriginalClientGuidBytes ??= _guidAsciiBytes;
-
+                if (!gatewayClient)
+                {
+                    udpVoicePacket.GuidBytes ??= _guidAsciiBytes;
+                    udpVoicePacket.OriginalClientGuidBytes ??= _guidAsciiBytes;
+                }
+                
                 _outgoing.Add(udpVoicePacket.EncodePacket());
                 _outgoingSemaphore.Release(1);
 

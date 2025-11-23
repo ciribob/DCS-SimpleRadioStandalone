@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
@@ -23,6 +24,8 @@ public class SRSClientSession : TcpSession
     private string _ip;
     private long _lastFullRadioSent;
     private int _port;
+
+    public ConcurrentDictionary<string, string> GatewayClients { get; set; } = new();
 
     public SRSClientSession(ServerSync server,
         HashSet<IPAddress> bannedIps) : base(server)
@@ -139,7 +142,15 @@ public class SRSClientSession : TcpSession
 
         LastMessageReceived = DateTime.Now.Ticks;
 
-        foreach (var s in GetNetworkMessage()) ((ServerSync)Server).HandleMessage(this, s);
+        foreach (var s in GetNetworkMessage())
+        {
+            if (s.MsgType is NetworkMessage.MessageType.GATEWAY_CLIENT_FULL_UPDATE or NetworkMessage.MessageType.GATEWAY_CLIENT_METADATA_UPDATE)
+            {
+                GatewayClients[s.Client.ClientGuid] = s.Client.ClientGuid;
+            }
+            ((ServerSync)Server).HandleMessage(this, s);
+        }
+           
     }
 
     protected override void OnTrySendException(Exception ex)

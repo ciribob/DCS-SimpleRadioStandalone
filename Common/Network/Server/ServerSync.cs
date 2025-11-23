@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -140,8 +141,12 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
         {
             Logger.Debug($"Received:  Msg - {message.MsgType} from {state.SRSGuid}");
 
-            if (!HandleConnectedClient(state, message))
-                Logger.Info($"Invalid Client - disconnecting {state.SRSGuid}");
+            if (message.MsgType != NetworkMessage.MessageType.GATEWAY_CLIENT_FULL_UPDATE &&
+                message.MsgType != NetworkMessage.MessageType.GATEWAY_CLIENT_METADATA_UPDATE)
+            {
+                if (!HandleConnectedClient(state, message))
+                    Logger.Info($"Invalid Client - disconnecting {state.SRSGuid}");
+            }
 
             switch (message.MsgType)
             {
@@ -170,6 +175,14 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
                 case NetworkMessage.MessageType.EXTERNAL_AWACS_MODE_DISCONNECT:
                     HandleExternalAWACSModeDisconnect(state, message.Client);
                     break;
+                case NetworkMessage.MessageType.GATEWAY_CLIENT_FULL_UPDATE:
+                case NetworkMessage.MessageType.GATEWAY_CLIENT_METADATA_UPDATE:
+                    //Update Metadata data and send metadata update
+                    HandleGatewayClientUpdate(message);
+                    break;
+                case NetworkMessage.MessageType.GATEWAY_CLIENT_DISCONNECT:
+                    HandleGatewayClientDisconnect(state,message.Client);
+                    break;
                 default:
                     Logger.Warn("Recevied unknown message type");
                     break;
@@ -179,6 +192,101 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
         {
             Logger.Error(ex, "Exception Handling Message " + ex.Message);
         }
+    }
+
+    private void HandleGatewayClientDisconnect(SRSClientSession state,SRClientBase disconnectedClient)
+    {
+        state.GatewayClients.TryRemove(disconnectedClient.ClientGuid, out _);
+        if (_clients.TryRemove(disconnectedClient.ClientGuid, out _))
+        {
+            Logger.Info("Removed Disconnected Gateway Client " + disconnectedClient.ClientGuid);
+            
+            try
+            {
+                _eventAggregator.PublishOnUIThreadAsync(
+                    new ServerStateMessage(true, new List<SRClientBase>(_clients.Values), state.SRSGuid));
+            }
+            catch (Exception ex)
+            {
+                Logger.Info(ex, "Exception Publishing Client Update After Disconnect");
+            }
+        }
+    }
+
+    private void HandleGatewayClientUpdate(NetworkMessage message)
+    {
+        SRClientBase client;
+        if (!_clients.TryGetValue(message.Client.ClientGuid, out  client))
+        {
+            client = message.Client.DeepClone();
+            _clients[message.Client.ClientGuid] = client;
+        }
+        
+        if (message.Client.LatLngPosition == null) message.Client.LatLngPosition = new LatLngPosition();
+
+        if (message.MsgType == NetworkMessage.MessageType.GATEWAY_CLIENT_METADATA_UPDATE)
+        {
+            
+            bool changed = !client.MetaDataEquals(message.Client, true);
+
+            if (changed)
+            {
+                //copy the data we need
+                client.Name = message.Client.Name;
+                client.Coalition = message.Client.Coalition;
+                client.LatLngPosition = message.Client.LatLngPosition;
+                client.Seat = message.Client.Seat;
+                client.AllowRecord = message.Client.AllowRecord;
+
+                //send update to everyone
+                //Remove Client Radio Info
+                var replyMessage = new NetworkMessage
+                {
+                    MsgType = NetworkMessage.MessageType.UPDATE,
+                    Client = new SRClientBase
+                    {
+                        ClientGuid = client.ClientGuid,
+                        Coalition = client.Coalition,
+                        Name = client.Name,
+                        LatLngPosition = client.LatLngPosition,
+                        Seat = client.Seat,
+                        AllowRecord = client.AllowRecord,
+                        Gateway = client.Gateway,
+                        DISEntityId = client.DISEntityId,
+                        //remove radios
+                        RadioInfo = null
+                    }
+                };
+                
+                Multicast(replyMessage.Encode());
+                _eventAggregator.PublishOnUIThreadAsync(new ServerStateMessage(true,
+                    new List<SRClientBase>(_clients.Values)));
+            }
+        }
+        else if(message.MsgType == NetworkMessage.MessageType.GATEWAY_CLIENT_FULL_UPDATE)
+        {
+            var replyMessage = new NetworkMessage
+            {
+                MsgType = NetworkMessage.MessageType.RADIO_UPDATE,
+                Client = new SRClientBase
+                {
+                    ClientGuid = client.ClientGuid,
+                    Coalition = client.Coalition,
+                    Name = client.Name,
+                    LatLngPosition = client.LatLngPosition,
+                    RadioInfo = client.RadioInfo, //send radio info
+                    Seat = client.Seat,
+                    DISEntityId = client.DISEntityId,
+                    Gateway = client.Gateway,
+                    AllowRecord = client.AllowRecord
+                }
+            };
+            Multicast(replyMessage.Encode());
+            
+            _eventAggregator.PublishOnUIThreadAsync(new ServerStateMessage(true,
+                new List<SRClientBase>(_clients.Values)));
+        }
+       
     }
 
     private bool HandleConnectedClient(SRSClientSession state, NetworkMessage message)
@@ -310,6 +418,26 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
         };
 
         MulticastAllExeceptOne(message.Encode(), srsSession.Id);
+
+        if (!srsSession.GatewayClients.IsEmpty)
+        {
+            var gatewayClients = _clients.Values.Where(connectedClient => connectedClient.GatewayClient).ToList();
+            //find all gateway clients and remove - currently assume only one gateway per server
+
+            foreach (var gatewayClientGuid in srsSession.GatewayClients.Keys)
+            {
+                if (_clients.TryRemove(gatewayClientGuid, out var gatewayClient))
+                {
+                    Logger.Info("Removed Gateway Client " + gatewayClient.ClientGuid);
+                    MulticastAllExeceptOne(new NetworkMessage
+                    {
+                        Client = gatewayClient,
+                        MsgType = NetworkMessage.MessageType.CLIENT_DISCONNECT
+                    }.Encode(), srsSession.Id);
+                }
+            }
+        }
+        
         try
         {
             srsSession.Dispose();

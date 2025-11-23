@@ -93,6 +93,7 @@ public class SRClientBase : PropertyChangedBaseClass
     public bool Gateway { get; set; } = false;
 
     public int DISEntityId { get; set; } = -1;
+    public bool GatewayClient { get; set; }
 
     public override string ToString()
     {
@@ -135,7 +136,8 @@ public class SRClientBase : PropertyChangedBaseClass
             AllowRecord = AllowRecord,
             Seat = Seat,
             ClientGuid = ClientGuid,
-            Coalition = Coalition
+            Coalition = Coalition,
+            GatewayClient = GatewayClient
         };
 
         return copy;

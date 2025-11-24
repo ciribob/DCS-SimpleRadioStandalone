@@ -97,8 +97,6 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
 
             Environment.Exit(0);
         }
-        
-        
     }
 
     public void HandleDisconnect(SRSClientSession state)
@@ -181,7 +179,7 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
                     HandleGatewayClientUpdate(message);
                     break;
                 case NetworkMessage.MessageType.GATEWAY_CLIENT_DISCONNECT:
-                    HandleGatewayClientDisconnect(state,message.Client);
+                    HandleGatewayClientDisconnect(state, message.Client);
                     break;
                 default:
                     Logger.Warn("Recevied unknown message type");
@@ -194,13 +192,21 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
         }
     }
 
-    private void HandleGatewayClientDisconnect(SRSClientSession state,SRClientBase disconnectedClient)
+    private void HandleGatewayClientDisconnect(SRSClientSession state, SRClientBase disconnectedClient)
     {
         state.GatewayClients.TryRemove(disconnectedClient.ClientGuid, out _);
         if (_clients.TryRemove(disconnectedClient.ClientGuid, out _))
         {
             Logger.Info("Removed Disconnected Gateway Client " + disconnectedClient.ClientGuid);
-            
+
+            var message = new NetworkMessage
+            {
+                Client = disconnectedClient.DeepClone(),
+                MsgType = NetworkMessage.MessageType.CLIENT_DISCONNECT
+            };
+
+            Multicast(message.Encode());
+
             try
             {
                 _eventAggregator.PublishOnUIThreadAsync(
@@ -216,17 +222,16 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
     private void HandleGatewayClientUpdate(NetworkMessage message)
     {
         SRClientBase client;
-        if (!_clients.TryGetValue(message.Client.ClientGuid, out  client))
+        if (!_clients.TryGetValue(message.Client.ClientGuid, out client))
         {
             client = message.Client.DeepClone();
             _clients[message.Client.ClientGuid] = client;
         }
-        
+
         if (message.Client.LatLngPosition == null) message.Client.LatLngPosition = new LatLngPosition();
 
         if (message.MsgType == NetworkMessage.MessageType.GATEWAY_CLIENT_METADATA_UPDATE)
         {
-            
             bool changed = !client.MetaDataEquals(message.Client, true);
 
             if (changed)
@@ -257,13 +262,13 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
                         RadioInfo = null
                     }
                 };
-                
+
                 Multicast(replyMessage.Encode());
                 _eventAggregator.PublishOnUIThreadAsync(new ServerStateMessage(true,
                     new List<SRClientBase>(_clients.Values)));
             }
         }
-        else if(message.MsgType == NetworkMessage.MessageType.GATEWAY_CLIENT_FULL_UPDATE)
+        else if (message.MsgType == NetworkMessage.MessageType.GATEWAY_CLIENT_FULL_UPDATE)
         {
             var replyMessage = new NetworkMessage
             {
@@ -282,11 +287,10 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
                 }
             };
             Multicast(replyMessage.Encode());
-            
+
             _eventAggregator.PublishOnUIThreadAsync(new ServerStateMessage(true,
                 new List<SRClientBase>(_clients.Values)));
         }
-       
     }
 
     private bool HandleConnectedClient(SRSClientSession state, NetworkMessage message)
@@ -437,7 +441,7 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
                 }
             }
         }
-        
+
         try
         {
             srsSession.Dispose();

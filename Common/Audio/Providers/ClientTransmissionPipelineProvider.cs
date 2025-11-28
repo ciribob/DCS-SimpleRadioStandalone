@@ -83,6 +83,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
                 int samplesRead = mixer.Read(mixerBuffer, 0, audioOut.Length);
                 mixerBuffer.AsSpan(0, samplesRead).CopyTo(audioOut);
             }
+            catch(Exception e)
+            {
+                Logger.Error(e, "Failed to process client audio: ");
+                // Something borked - reset for the next packet(s).
+                TxRadioModels.Clear();
+            }
             finally
             {
                 floatPool.Return(mixerBuffer);

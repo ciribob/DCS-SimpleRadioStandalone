@@ -58,6 +58,7 @@ public class DCSRadioSyncManager
             {
                 _clientStateSingleton.PlayerCoaltionLocationMetadata.Reset();
                 _clientStateSingleton.DcsPlayerRadioInfo.Reset();
+                _clientStateSingleton.LastSent = 0;
 
                 //TODO handle this
 

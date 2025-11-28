@@ -369,30 +369,26 @@ public class AudioManager : IHandle<SRClientUpdateMessage>
 
                             if (segment != null)
                             {
-                                var audioSpan = segment.AudioSpan;
+                                var audioSpan = segment.Audio.AsSpan();
                                 // passthrough, run without transforms.
                                 if (_micWaveOutBuffer != null && _micWaveOut != null)
                                 {
                                     //now its a processed Mono audio
-                                    _tempMicOutputBuffer =
-                                        BufferHelpers.Ensure(_tempMicOutputBuffer, audioSpan.Length * 4);
-                                    MemoryMarshal.AsBytes(audioSpan).CopyTo(_tempMicOutputBuffer);
+                                    var audioSpanBytes = MemoryMarshal.AsBytes(audioSpan);
+                                    _tempMicOutputBuffer = BufferHelpers.Ensure(_tempMicOutputBuffer, audioSpanBytes.Length);
+                                    audioSpanBytes.CopyTo(_tempMicOutputBuffer);
 
                                     //_beforeWaveFile?.WriteSamples(jitterBufferAudio.Audio,0,jitterBufferAudio.Audio.Length);
                                     //_beforeWaveFile?.Write(pcm32, 0, pcm32.Length);
                                     //_beforeWaveFile?.Flush();
 
-                                    _micWaveOutBuffer.AddSamples(_tempMicOutputBuffer, 0, segment.AudioSpan.Length * 4);
+                                    _micWaveOutBuffer.AddSamples(_tempMicOutputBuffer, 0, audioSpanBytes.Length);
                                 }
 
                                 if (recordAudio)
                                 {
-                                    var segmentAudio = floatPool.Rent(segment.AudioSpan.Length);
-                                    segment.AudioSpan.CopyTo(segmentAudio);
-                                    _audioRecordingManager.AppendPlayerAudio(segmentAudio, audioSpan.Length, clientAudio.ReceivedRadio);
-                                    floatPool.Return(segmentAudio);
+                                    _audioRecordingManager.AppendPlayerAudio(segment.Audio, audioSpan.Length, clientAudio.ReceivedRadio);
                                 }
-                                segment.Dispose();
                             }
                         }
                     }
@@ -586,7 +582,7 @@ public class AudioManager : IHandle<SRClientUpdateMessage>
 
             AudioRecordingManager.Instance.Stop();
 
-            EventBus.Instance.Unsubcribe(this);
+            EventBus.Instance.Unsubscribe(this);
         }
     }
 

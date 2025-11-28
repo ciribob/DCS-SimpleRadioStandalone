@@ -1286,4 +1286,16 @@ Recommended: 15000</value>
     <value>How much amplitude the incoming audio will occupy.
 Recommended: 20000</value>
   </data>
+  <data name="InstructorTab" xml:space="preserve">
+    <value>Instr.</value>
+  </data>
+  <data name="ReloadAircraft" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="StopInstructorMode" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="InstructorMode" xml:space="preserve">
+    <value>Instructor Mode (Server setting needed + EAM Only)</value>
+  </data>
 </root>

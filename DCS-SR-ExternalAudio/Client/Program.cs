@@ -181,6 +181,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.ExternalAudioClient.Client
             //     HelpText = "",
             //     Required = false, Default = "127.0.0.1")]
             public string IP { get; set; } = "127.0.0.1";
+
+            [Option("unitId",
+                HelpText =
+                    "Sets the Unit ID of the transmitter - if you set this to the same as an aircraft you can then communicate over intercom with that aircraft",
+                Required = false, Default = 1000)]
+            public uint UnitId { get; set; }
         }
         public static void Main(string[] args)
         {

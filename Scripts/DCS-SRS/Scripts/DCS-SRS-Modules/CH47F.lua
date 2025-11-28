@@ -11,6 +11,13 @@ function exportRadioCH47F(_data, SR)
         _ch47.radio3 = {guard=0,enc=false}
     end
 
+    local _radioDeviceIDs = {
+        ARC164 = 50,
+        ARC186 = 51,
+        ARC201_1 = 52,
+        ARC220 = 53,
+    }
+
     _data.radios[1].name = "Intercom"
     _data.radios[1].freq = 100.0
     _data.radios[1].modulation = 2 --Special intercom modulation
@@ -18,8 +25,8 @@ function exportRadioCH47F(_data, SR)
 
 
     _data.radios[2].name = "AN/ARC-201 FM1" -- ARC 201
-    _data.radios[2].freq = SR.getRadioFrequency(51)
-    _data.radios[2].modulation = SR.getRadioModulation(51)
+    _data.radios[2].freq = SR.getRadioFrequency(_radioDeviceIDs.ARC201_1)
+    _data.radios[2].modulation = SR.getRadioModulation(_radioDeviceIDs.ARC201_1)
     _data.radios[2].model = SR.RadioModels.AN_ARC201D
 
     _data.radios[2].encKey = 1
@@ -28,8 +35,8 @@ function exportRadioCH47F(_data, SR)
 
 
     _data.radios[3].name = "AN/ARC-164 UHF" -- ARC_164
-    _data.radios[3].freq = SR.getRadioFrequency(49)
-    _data.radios[3].modulation = SR.getRadioModulation(49)
+    _data.radios[3].freq = SR.getRadioFrequency(_radioDeviceIDs.ARC164)
+    _data.radios[3].modulation = SR.getRadioModulation(_radioDeviceIDs.ARC164)
     _data.radios[3].model = SR.RadioModels.AN_ARC164
 
     _data.radios[3].encKey = 1
@@ -38,8 +45,8 @@ function exportRadioCH47F(_data, SR)
 
 
     _data.radios[4].name = "AN/ARC-186 VHF" -- ARC_186
-    _data.radios[4].freq = SR.getRadioFrequency(50)
-    _data.radios[4].modulation = SR.getRadioModulation(50)
+    _data.radios[4].freq = SR.getRadioFrequency(_radioDeviceIDs.ARC186)
+    _data.radios[4].modulation = SR.getRadioModulation(_radioDeviceIDs.ARC186)
     _data.radios[4].model = SR.RadioModels.AN_ARC186
 
     _data.radios[4].encKey = 1
@@ -57,8 +64,8 @@ function exportRadioCH47F(_data, SR)
 
 
     _data.radios[5].name = "AN/ARC-220 HF" -- ARC_220
-    _data.radios[5].freq = SR.getRadioFrequency(52)
-    _data.radios[5].modulation = SR.getRadioModulation(52)
+    _data.radios[5].freq = SR.getRadioFrequency(_radioDeviceIDs.ARC220)
+    _data.radios[5].modulation = SR.getRadioModulation(_radioDeviceIDs.ARC220)
     _data.radios[5].model = SR.RadioModels.AN_ARC220
 
     _data.radios[5].encMode = 0

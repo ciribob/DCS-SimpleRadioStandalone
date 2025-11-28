@@ -72,6 +72,7 @@ public enum ProfileSettingsKeys
     DisableExpansionRadios,
     ServerPresetSelection,
     AllowServerEAMRadioPreset, //sets if the awacs custom radio config can be used
+    InstructorMode // allows tuning to Intercoms, only for receiving - cant send
 }
 
 public enum ServerPresetConfiguration
@@ -150,6 +151,7 @@ public class ProfileSettingsStore
             nameof(ServerPresetConfiguration.USE_CLIENT_AND_SERVER_IF_SET)
         },
         { ProfileSettingsKeys.AllowServerEAMRadioPreset.ToString(), "true" },
+        { ProfileSettingsKeys.InstructorMode.ToString(), "false" },
     
     };
 

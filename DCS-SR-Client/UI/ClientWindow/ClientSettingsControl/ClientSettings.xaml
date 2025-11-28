@@ -804,6 +804,7 @@
                                 <RowDefinition />
                                 <RowDefinition />
                                 <RowDefinition />
+                                <RowDefinition />
                             </Grid.RowDefinitions>
 
                             <Label Grid.Row="0"
@@ -991,6 +992,17 @@
                                 Grid.Row="10"
                                 Grid.Column="1"
                                 ToggleValue="{Binding ServerEAMRadioPresetEnabled, Mode=TwoWay}" />
+                            
+                            <Label Grid.Row="11"
+                                   Grid.Column="0"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center"
+                                   Content="{x:Static p:Resources.InstructorMode}" />
+                            
+                            <clientSettingsControl:SettingsToggleControl
+                                Grid.Row="11"
+                                Grid.Column="1"
+                                ToggleValue="{Binding InstructorModeEnabled, Mode=TwoWay}" />
                         </Grid>
                     </GroupBox>
 

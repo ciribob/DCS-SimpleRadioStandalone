@@ -140,6 +140,12 @@ public partial class AwaRadioOverlayWindow : Window
 
         AwacsActive = false;
         _updateTimer.Stop();
+
+        foreach (var radioControlGroup in radioControlGroup)
+        {
+            radioControlGroup?.OnClose();
+
+        }
     }
 
     private void Button_Minimise(object sender, RoutedEventArgs e)
@@ -156,6 +162,14 @@ public partial class AwaRadioOverlayWindow : Window
     private void Button_Close(object sender, RoutedEventArgs e)
     {
         Close();
+    }
+
+    protected override void OnClosed(EventArgs e)
+    {
+        base.OnClosed(e);
+        //TODO reset the state for the radios, remove intercom mode and clear the selected intercom radios
+       
+        //TODO force a radio resync so it goes back to normal radio if there were entries in the instructor intercom units list
     }
 
     private void windowOpacitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

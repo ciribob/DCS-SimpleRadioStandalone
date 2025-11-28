@@ -28,7 +28,7 @@ public class UpdaterChecker
 
     public static readonly string MINIMUM_PROTOCOL_VERSION = "1.9.0.0";
 
-    public static readonly string VERSION = "2.3.2.2";
+    public static readonly string VERSION = "2.3.3.2";
 
     private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 

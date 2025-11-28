@@ -291,6 +291,18 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         }
     }
     
+    public bool InstructorModeEnabled
+    {
+        get =>   GlobalSettingsStore.Instance.ProfileSettingsStore.GetClientSettingBool(
+            ProfileSettingsKeys.InstructorMode);
+        set
+        {
+            _globalSettings.ProfileSettingsStore.SetClientSettingBool(ProfileSettingsKeys.InstructorMode,
+                value);
+            NotifyPropertyChanged();
+        }
+    }
+    
     public bool VOXEnabled
     {
         get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.VOX);

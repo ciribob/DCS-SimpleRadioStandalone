@@ -1,9 +1,9 @@
--- Version 2.3.2.2
+-- Version 2.3.3.2
 -- Make sure you COPY this file to the same location as the Export.lua as well! 
 -- Otherwise the Overlay will not work
 
 
-log.write('SRS-OverlayGameGUI', log.INFO, "Loading - DCS-SRS Overlay GameGUI - Ciribob: 2.3.2.2 ")
+log.write('SRS-OverlayGameGUI', log.INFO, "Loading - DCS-SRS Overlay GameGUI - Ciribob: 2.3.3.2 ")
 
 local base = _G
 
@@ -150,6 +150,78 @@ srsOverlay.module_specific["FA-18C_hornet"] = function(radios)
     local roundrobin = srsOverlay.module_specific.fa18queue
 
     local _hotasDevice = base.Export.GetDevice(13)
+
+    -- Find active radios, clear the state of every one as we go.
+    local activeRadios = {}
+    local anyActive = false
+    for _i, _details in pairs(commands) do
+        local _radio = radios[_i]
+        if _radio then
+            _hotasDevice:SetCommand(_details.id, 0)
+            
+            local _isReceiving = srsOverlay.isReceiving(_i)
+            local _isTransmitting = srsOverlay.isTransmitting(_i, _radio)
+            local isActive = _isReceiving > 0 or _isTransmitting
+            if isActive then
+                activeRadios[_i] = _details
+                anyActive = true
+            end
+        end
+    end
+
+    -- Limitation - we can currently only show one active radio at a time.
+    -- If multiple radios are transmitting simultaneously, take turn showing the activity indicator.
+    if anyActive then
+
+        -- Locate the first radio at the head of the round-robin that happens to be active.
+        local priorityRadio = nil
+        repeat
+            priorityRadio = table.remove(roundrobin)
+            table.insert(roundrobin, 1, priorityRadio)
+        until activeRadios[priorityRadio]
+
+        _hotasDevice:SetCommand(activeRadios[priorityRadio].id, activeRadios[priorityRadio].value)
+    end
+end
+
+-- Display the COMM cues (highlight UHF/VHF on the DED when active)
+srsOverlay.module_specific["F-16C_50"] = function(radios)
+    if DCS.isMultiplayer() then
+        local _serverSettings = net.get_server_settings()
+        if (_serverSettings.advanced.voice_chat_server == true) then
+            -- Do nothing, to avoid potential conflicts with in game VoIP.
+            return
+        end
+    end
+
+
+    -- THROTTLE_TRANSMIT_X_VOIP
+    local commands = {
+
+        -- FWD (VHF)
+        [3] = {
+            id = 3048,
+            value = 1
+        },
+
+        -- AFT (UHF)
+        [2] = {
+            id = 3049,
+            value = 1
+        },
+    }
+
+    
+    if srsOverlay.module_specific.f16queue == nil then
+        srsOverlay.module_specific.f16queue = { }
+        -- Initialize the round robin with all radios.
+        for _i, _ in pairs(commands) do
+            table.insert(srsOverlay.module_specific.f16queue, _i)
+        end
+    end
+    local roundrobin = srsOverlay.module_specific.f16queue
+
+    local _hotasDevice = base.Export.GetDevice(16)
 
     -- Find active radios, clear the state of every one as we go.
     local activeRadios = {}
@@ -803,4 +875,4 @@ end
 DCS.setUserCallbacks(srsOverlay)
 
 
-log.write('SRS-OverlayGameGUI', log.INFO, "Loaded - DCS-SRS Overlay GameGUI - Ciribob: 2.3.2.2 ")
+log.write('SRS-OverlayGameGUI', log.INFO, "Loaded - DCS-SRS Overlay GameGUI - Ciribob: 2.3.3.2 ")

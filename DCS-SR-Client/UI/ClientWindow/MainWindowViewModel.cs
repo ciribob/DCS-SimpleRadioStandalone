@@ -568,7 +568,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         _dcsManager?.Stop();
         _dcsManager = null;
 
-        _client?.Disconnect();
+        _client?.RequestDisconnect();
         _client = null;
 
         ClientState.DcsPlayerRadioInfo.Reset();
@@ -824,7 +824,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         //stop timer
         _updateTimer?.Stop();
 
-        _client?.Disconnect();
+        _client?.RequestDisconnect();
         _client = null;
 
         Stop();

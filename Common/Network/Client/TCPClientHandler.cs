@@ -114,6 +114,7 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
         tcpThread.Start();
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
     private void Connect()
     {
         _lastSent = DateTime.Now.Ticks;

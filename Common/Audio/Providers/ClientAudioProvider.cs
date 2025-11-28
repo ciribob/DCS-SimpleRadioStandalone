@@ -7,6 +7,7 @@ using NAudio.Wave;
 using System.Buffers;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers;
 
@@ -60,16 +61,14 @@ public class ClientAudioProvider : AudioProvider
 
         var newTransmission = LikelyNewTransmission();
 
-        var floatPool = JitterBufferAudio.Pool;
-        var pcmAudioFloat = floatPool.Rent(MaxSamples);
+        using var pcmFloats = new PooledArray<float>(MaxSamples);
 
         // Target buffer contains at least one frame.
-        var decodedLength = _decoder.DecodeFloat(audio.EncodedAudio, new Memory<float>(pcmAudioFloat, 0, MaxSamples), newTransmission);
+        var decodedLength = _decoder.DecodeFloat(audio.EncodedAudio, new Memory<float>(pcmFloats.Array, 0, pcmFloats.Length), newTransmission);
 
         if (decodedLength <= 0)
         {
             Logger.Info("Failed to decode audio from Packet for client");
-            floatPool.Return(pcmAudioFloat);
             return 0;
         }
 
@@ -83,11 +82,15 @@ public class ClientAudioProvider : AudioProvider
 
         LastUpdate = DateTime.Now.Ticks;
 
+        // Give it a 'real' array for returning.
+        // Most of the time, we shouldn't need 120ms of audio, typically more 20-40ms.
+        var decodedAudio = new float[decodedLength];
+        pcmFloats.Array.AsSpan(0, decodedLength).CopyTo(decodedAudio.AsSpan(0, decodedLength));
+
         //return and skip jitter buffer if its passthrough as its local mic
         var jitter = new JitterBufferAudio
         {
-            Audio = pcmAudioFloat,
-            AudioLength = decodedLength,
+            Audio = decodedAudio,
             PacketNumber = audio.PacketNumber,
             Decryptable = decrytable,
             Modulation = (Modulation)audio.Modulation,
@@ -170,12 +173,7 @@ public class ClientAudioProvider : AudioProvider
         if (effect.Loaded)
         {
             var effectLength = effect.AudioEffectFloat.Length;
-
-            if (!ambientEffectProg.TryGetValue(abType, out var progress))
-            {
-                progress = 0;
-                ambientEffectProg[abType] = 0;
-            }
+            var progress = ambientEffectProg.GetValueOrDefault(abType, 0);
 
             var vectorSize = Vector<float>.Count;
             var remainder = pcmAudio.Length % vectorSize;
@@ -282,14 +280,16 @@ public class ClientAudioProvider : AudioProvider
     {
         //random float at max volume at eights
         var f = _random.Next(-32768 / 8, 32768 / 8) / (float)32768;
-        if (f > 1) f = 1;
-        if (f < -1) f = -1;
+        f = Math.Clamp(f, -1f, 1f);
 
         return f;
     }
 
     public TransmissionSegment Read(int radioId, int desired)
     {
+        if (desired == 0)
+            return null;
+
         var transmission = JitterBufferProviderInterface[radioId].Read(desired);
         if (transmission.PCMAudioLength == 0)
             return null;
@@ -297,7 +297,7 @@ public class ClientAudioProvider : AudioProvider
         preprocessProvider.Read(transmission.PCMMonoAudio, 0, transmission.PCMAudioLength);
         var segment = new TransmissionSegment(transmission);
 
-        var segmentAudio = segment.AudioSpan;
+        var segmentAudio = segment.Audio.AsSpan();
         if (transmission.Decryptable)
         {
             

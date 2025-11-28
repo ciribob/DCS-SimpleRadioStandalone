@@ -130,7 +130,7 @@ public class RadioMixingProvider : ISampleProvider
                 
             }
 
-            var hasIncomingAudio = segments.Count > 0;
+            var hasIncomingAudio = segments?.Count > 0;
 
             //copy to the recording service - as we have everything we need to know about the audio
             //at this point

@@ -101,7 +101,7 @@ public class SRSMixingSampleProvider : ISampleProvider
         {
             if (float.IsFinite(buffer[offset + i]))
             {
-                buffer[i] = Math.Clamp(buffer[offset + i], -1f, 1f);
+                buffer[offset + i] = Math.Clamp(buffer[offset + i], -1f, 1f);
             }
             else
             {

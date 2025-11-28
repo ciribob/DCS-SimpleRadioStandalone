@@ -109,7 +109,7 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
         Logger.Info("Finished - Closing");
 
         udpVoiceHandler?.RequestStop();
-        srsClientSyncHandler?.Disconnect();
+        srsClientSyncHandler?.RequestDisconnect();
     }
 
     private void ReadyToSend()

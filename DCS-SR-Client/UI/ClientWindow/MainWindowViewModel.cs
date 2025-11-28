@@ -361,6 +361,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
 
                 if (switchServer)
                 {
+                    Logger.Info($"Switching from {ServerAddress} to {message.Address}");
                     ConnectIsEnabled = false;
                     ServerAddress = message.Address;
                     Stop();
@@ -558,8 +559,9 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         {
             _audioManager.StopEncoding();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Logger.Warn(ex, "Failed to stop enconding audio");
         }
 
 

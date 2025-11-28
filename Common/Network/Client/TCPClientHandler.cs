@@ -38,8 +38,6 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
     private long _lastSent = -1;
     private SRClientBase _playerUnitState;
     private IPEndPoint _serverEndpoint;
-
-    private volatile bool _stop;
     private TcpClient _tcpClient;
 
     public TCPClientHandler(string guid, SRClientBase playerUnitState)
@@ -53,15 +51,6 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
         _idleTimeout.Elapsed += CheckIfIdleTimeOut;
         _idleTimeout.AutoReset = true;
         _idleTimeout.Enabled = false;
-    }
-
-    public bool TCPConnected
-    {
-        get
-        {
-            if (_tcpClient != null) return _tcpClient.Connected;
-            return false;
-        }
     }
 
     public Task HandleAsync(DisconnectRequestMessage message, CancellationToken cancellationToken)
@@ -407,7 +396,7 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
                     catch (Exception ex)
                     {
                         decodeErrors++;
-                        if (!_stop) Logger.Error(ex, "Client exception reading from socket ");
+                        Logger.Error(ex, "Client exception reading from socket ");
 
                         if (decodeErrors > MAX_DECODE_ERRORS)
                         {
@@ -421,11 +410,9 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
             }
             catch (Exception ex)
             {
-                if (!_stop) Logger.Error(ex, "Client exception reading - Disconnecting ");
+                Logger.Error(ex, "Client exception reading - Disconnecting ");
             }
         }
-
-        EventBus.Instance.Unsubscribe(this);
 
         //clear the clients list
         _clients.Clear();
@@ -485,7 +472,7 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
         }
         catch (Exception ex)
         {
-            if (!_stop) Logger.Error(ex, "Client exception sending to server");
+            Logger.Error(ex, "Client exception sending to server");
 
             Disconnect();
         }
@@ -496,9 +483,8 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
     [MethodImpl(MethodImplOptions.Synchronized)]
     public void Disconnect()
     {
+        Logger.Info("Disconnecting from server...");
         EventBus.Instance.Unsubscribe(this);
-
-        _stop = true;
 
         _lastSent = DateTime.Now.Ticks;
 
@@ -511,10 +497,11 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
                 EventBus.Instance.PublishOnUIThreadAsync(new TCPClientStatusMessage(false));
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Logger.Warn(ex, "Error closing tcp client");
         }
 
-        Logger.Error("Disconnecting from server");
+        Logger.Info("Disconnected.");
     }
 }

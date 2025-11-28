@@ -102,7 +102,7 @@ public class UDPVoiceHandler
             var listener = SetupListener();
 
             // Send a first ping to check connectivity.
-            Logger.Info($"Pinging Server - Starting {Thread.CurrentThread.ManagedThreadId}");
+            Logger.Info($"Pinging Server - Starting");
             var pingInterval = TimeSpan.FromSeconds(15);
 
             // Initial states to avoid null checks and also avoid throwing before we enter the loop.
@@ -137,8 +137,12 @@ public class UDPVoiceHandler
                             var bytes = receiveTask.Result.Buffer;
                             if (bytes?.Length == 22)
                             {
+                                if (!Ready)
+                                {
+                                    Logger.Info($"Received initial Ping Back from Server");
+                                }
                                 Ready = true;
-                                Logger.Info($"Received Ping Back from Server {Thread.CurrentThread.ManagedThreadId}");
+                                
                             }
                             else if (Ready && bytes?.Length > 22)
                             {
@@ -171,7 +175,7 @@ public class UDPVoiceHandler
                     // Reset the socket on a timeout.
                     if (timeoutTask.IsCompletedSuccessfully)
                     {
-                        Logger.Error($"VoIP Timeout - Recreating VoIP Connection {Thread.CurrentThread.ManagedThreadId}");
+                        Logger.Error("VoIP Timeout - Recreating VoIP Connection");
 
 
                         CloseListener(listener);
@@ -182,10 +186,10 @@ public class UDPVoiceHandler
                     }
 
                     await Task.WhenAny(new[] { timeoutTask, pingTask, receiveTask, outgoingAvailableTask });
-
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Logger.Warn(ex, "Voice handler exception");
                     // Reset everything but the timeout.
                     receiveTask = Task.FromException<UdpReceiveResult>(new Exception());
                     pingTask = Task.CompletedTask;
@@ -203,7 +207,7 @@ public class UDPVoiceHandler
 
             _started = false;
 
-            Logger.Info($"UDP Voice Handler Thread Stop {Thread.CurrentThread.ManagedThreadId}");
+            Logger.Info("UDP Voice Handler Thread Stop");
         }
     }
 

@@ -62,13 +62,20 @@ public class ClientAudioProvider : AudioProvider
         var newTransmission = LikelyNewTransmission();
 
         using var pcmFloats = new PooledArray<float>(MaxSamples);
-
+        var decodedLength = 0;
         // Target buffer contains at least one frame.
-        var decodedLength = _decoder.DecodeFloat(audio.EncodedAudio, new Memory<float>(pcmFloats.Array, 0, pcmFloats.Length), newTransmission);
-
-        if (decodedLength <= 0)
+        try
         {
-            Logger.Info("Failed to decode audio from Packet for client");
+            decodedLength = _decoder.DecodeFloat(audio.EncodedAudio, new Memory<float>(pcmFloats.Array, 0, pcmFloats.Length), newTransmission);
+            if (decodedLength <= 0)
+            {
+                Logger.Info("Failed to decode audio from Packet for client");
+                return 0;
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Warn(e, "Error decoding audio packet.");
             return 0;
         }
 

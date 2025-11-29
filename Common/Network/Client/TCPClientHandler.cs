@@ -394,7 +394,7 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
 
                                 break;
                             default:
-                                Logger.Error("Received unknown " + line);
+                                Logger.Error($"Received unknown {line}");
                                 break;
                         }
                     }
@@ -412,6 +412,10 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
                     }
 
                 // do something with line
+            }
+            catch (OperationCanceledException)
+            {
+                Logger.Info("Disconnecting.");
             }
             catch (Exception ex)
             {

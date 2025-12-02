@@ -31,10 +31,24 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
     private readonly GlobalSettingsStore _globalSettings = GlobalSettingsStore.Instance;
     private readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+    public string CurrentRecordingPath
+    {
+        get
+        {
+            return _globalSettings.GetClientSetting(GlobalSettingsKeys.RecordingPath).StringValue;
+        }
+        set
+        {
+            //string exeDir = AppDomain.CurrentDomain.BaseDirectory;
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.RecordingPath, value);
+            Logger.Error($"Set recordings directory to: '{value}'");
+            NotifyPropertyChanged();
+        }
+    }
 
     public ClientSettingsViewModel()
     {
-        SetSRSPathCommand = new DelegateCommand(() =>
+    SetSRSPathCommand = new DelegateCommand(() =>
         {
             DirectoryInfo di = new DirectoryInfo(Directory.GetCurrentDirectory());
             Registry.SetValue("HKEY_CURRENT_USER\\SOFTWARE\\DCS-SR-Standalone", "SRPathStandalone",
@@ -46,6 +60,7 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
         });
+
         ResetOverlayCommand = new DelegateCommand(() =>
         {
             EventBus.Instance.PublishOnUIThreadAsync(new CloseRadioOverlayMessage());
@@ -1190,6 +1205,7 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         NotifyPropertyChanged(nameof(RecordTransmissions));
         NotifyPropertyChanged(nameof(SingleFileMixdown));
         NotifyPropertyChanged(nameof(RecordingQuality));
+        NotifyPropertyChanged(nameof(CurrentRecordingPath));
 
         NotifyPropertyChanged(nameof(AutoSelectInputProfile));
         NotifyPropertyChanged(nameof(CheckForBetaUpdates));

@@ -18,7 +18,7 @@ using LogManager = NLog.LogManager;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Server.UI.MainWindow;
 
-public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
+public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>, IHandle<ServerErrorMessage>
 {
     private readonly ClientAdminViewModel _clientAdminViewModel;
     private readonly IEventAggregator _eventAggregator;
@@ -241,6 +241,19 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         IsServerRunning = message.IsRunning;
         ClientsCount = message.Count;
             return Task.CompletedTask;
+    }
+
+    public async Task HandleAsync(ServerErrorMessage message, CancellationToken cancellationToken)
+    {
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            MessageBox.Show(
+                $"Server error: {message.Error}\n\n{message.Exception?.Message}",
+                "Server Error",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error
+            );
+        });
     }
 
     public void ServerStartStop()

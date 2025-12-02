@@ -1,0 +1,124 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dialogHost="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+        xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.Properties"
+        xmlns:viewmodel="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.viewmodel"
+        xmlns:ui="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.View"
+        MinHeight="250"
+        Width="420" MinWidth="420"
+        mc:Ignorable="d" d:DesignWidth="420" d:DesignHeight="600"
+        x:Class="Ciribob.DCS.SimpleRadio.Standalone.Server.View.MainWindow"
+        x:DataType="viewmodel:MainViewModel" Focusable="True">
+
+	<Design.DataContext>
+		<viewmodel:DesignMainViewModel />
+	</Design.DataContext>
+	
+	<DockPanel>
+		<!-- Status Bar comes first so it stays on top of the other content. -->
+		<DockPanel DockPanel.Dock="Bottom"
+		           VerticalAlignment="Bottom"
+		           Background="{DynamicResource SystemAccentColor}">
+			<Panel.Styles>
+				<Style Selector="Label">
+					<Setter Property="Width" Value="55" />
+				</Style>
+			</Panel.Styles>
+
+			<StackPanel DockPanel.Dock="Left"
+			            Orientation="Horizontal">
+				<Label Content="{x:Static p:Resources.PresenterLabelStatus}" />
+				<Label Content="{Binding Server.State}" Width="80" />
+			</StackPanel>
+			<StackPanel DockPanel.Dock="Right"
+			            Orientation="Horizontal"
+			            HorizontalAlignment="Right">
+				<Label Content="{x:Static p:Resources.LabelClients}" />
+				<Label x:Name="ClientsCount" Content="{Binding Server.ConnectedClients.Count}" />
+				<Label Content="{x:Static p:Resources.PresenterLabelPort}" />
+				<Label x:Name="LabelPort" Content="{Binding ServerSettings.ServerPort, Mode=OneWay}" />
+			</StackPanel>
+		</DockPanel>
+	
+		<dialogHost:DialogHost CloseOnClickAway="True" Name="OverlayDialog" IsOpen="{Binding UpdateCallback.UpdateAvailable}">
+			<dialogHost:DialogHost.DialogContent>
+				<Panel>
+					<DockPanel Name="UpdateFailed" IsVisible="False">
+						<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center">
+							<Button Name="UpdateFailedButton"
+							        Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=dialogHost:DialogHost}, Path=CloseDialogCommand}"
+							        Content="{x:Static p:Resources.ButtonConfirm}"/>
+						</StackPanel>
+						<TextBlock Name="Errortext" HorizontalAlignment="Center" TextAlignment="Center" Text="{x:Static p:Resources.TextUpdateFailed}" />
+					</DockPanel>
+					
+					<DockPanel Name="UpdateAvailable" IsVisible="True">
+						<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"  HorizontalAlignment="Center">
+							<Button Name="LeftButton" Classes="accent" 
+							        Command="{Binding AutomaticUpdateServerCommand}"
+							        Content="{x:Static p:Resources.ButtonAutomatic}"/>
+							<Button Name="MiddleButton" 
+							        Command="{Binding ManualUpdateServerCommand}"
+							        Content="{x:Static p:Resources.ButtonManual}"/>
+							<Button Name="RightButton" 
+							        Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=dialogHost:DialogHost}, Path=CloseDialogCommand}"
+							        Content="{x:Static p:Resources.ButtonIgnore}" />
+						</StackPanel>
+						<TextBlock Name="DialogText" HorizontalAlignment="Center" TextAlignment="Center" Width="350" >
+							<Run FontWeight="Bold" FontSize="20" Text="{x:Static p:Resources.TextUpdateNewVersionAvailable}" />
+							<LineBreak /><LineBreak />
+							<Run Text="{Binding UpdateCallback.Version}"/> <Run>-</Run> <Run Text="{Binding UpdateCallback.Branch}" />
+							<LineBreak /><LineBreak />
+							<Run Text="{x:Static p:Resources.TextUpdateBodyText}" /><LineBreak/>
+							<Run FontWeight="Bold" Text="{x:Static p:Resources.TextUpdateNowQuestion}"/>
+						</TextBlock>
+					</DockPanel>
+				</Panel>
+			</dialogHost:DialogHost.DialogContent>
+		<Grid RowDefinitions="Auto,*">
+			<ToggleButton Grid.Row="0"
+			              x:Name="ServerStartStop"
+			              HorizontalAlignment="Stretch"
+			              Width="200"
+			              Command="{Binding StartStopServerCommand }"
+			              Tag="{Binding Server.State}">
+				<ToggleButton.Styles>
+					<Style Selector="ToggleButton[Tag=Stopped]">
+						<Setter Property="Content" Value="{x:Static p:Resources.ButtonStartServer}" />
+						<Setter Property="IsEnabled" Value="True"/>
+						<Setter Property="IsChecked" Value="False"/>
+					</Style>
+					<Style Selector="ToggleButton[Tag=Running]">
+						<Setter Property="Content" Value="{x:Static p:Resources.ButtonStopServer}" />
+						<Setter Property="IsEnabled" Value="True"/>
+						<Setter Property="IsChecked" Value="True"/>
+					</Style>
+					<Style Selector="ToggleButton[Tag=Starting]">
+						<Setter Property="Content" Value="{x:Static p:Resources.ButtonStartingServer}" />
+						<Setter Property="IsEnabled" Value="False"/>
+						<Setter Property="IsChecked" Value="False"/>
+					</Style>
+					<Style Selector="ToggleButton[Tag=Stopping]">
+						<Setter Property="Content" Value="{x:Static p:Resources.ButtonStoppingServer}" />
+						<Setter Property="IsEnabled" Value="False"/>
+						<Setter Property="IsChecked" Value="False"/>
+					</Style>
+				</ToggleButton.Styles>
+			</ToggleButton>
+			
+			<TabControl Grid.Row="1">
+				<TabItem Header="{x:Static p:Resources.LabelTabHeaderSettings}">
+					<ui:SettingsPanel />
+				</TabItem>
+
+				<TabItem Header="{x:Static p:Resources.LabelTabHeaderClientAdmin}">
+					<ui:ClientPanel />
+				</TabItem>
+			</TabControl>
+
+		</Grid>
+		</dialogHost:DialogHost>
+	</DockPanel>
+</Window>

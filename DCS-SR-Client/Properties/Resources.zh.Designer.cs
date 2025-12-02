@@ -21,14 +21,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources_zh_hans_cn {
+    public class Resources_zh {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources_zh_hans_cn() {
+        internal Resources_zh() {
         }
         
         /// <summary>
@@ -38,7 +38,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Ciribob.DCS.SimpleRadio.Standalone.Client.Properties.Resources.zh-hans-cn", typeof(Resources_zh_hans_cn).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Ciribob.DCS.SimpleRadio.Standalone.Client.Properties.Resources.zh", typeof(Resources_zh).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -665,15 +665,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to FM音效音量.
-        /// </summary>
-        public static string FMEffectVolume {
-            get {
-                return ResourceManager.GetString("FMEffectVolume", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to 游戏.
         /// </summary>
         public static string GameConnectionStatusLabel {
@@ -1013,11 +1004,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to HF音效音量.
+        ///   Looks up a localized string similar to .
         /// </summary>
-        public static string HFEffectVolume {
+        public static string HFNoiseGainDB {
             get {
-                return ResourceManager.GetString("HFEffectVolume", resourceCulture);
+                return ResourceManager.GetString("HFNoiseGainDB", resourceCulture);
             }
         }
         
@@ -1822,6 +1813,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string NoiseGainDB {
+            get {
+                return ResourceManager.GetString("NoiseGainDB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 座舱内可用.
         /// </summary>
         public static string OverlayAvailableCockpit {
@@ -2052,6 +2052,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         public static string OverlayTransponder {
             get {
                 return ResourceManager.GetString("OverlayTransponder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string PerRadioModelEffects {
+            get {
+                return ResourceManager.GetString("PerRadioModelEffects", resourceCulture);
             }
         }
         
@@ -3079,15 +3088,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to UHF音效音量.
-        /// </summary>
-        public static string UHFEffectVolume {
-            get {
-                return ResourceManager.GetString("UHFEffectVolume", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to 允许VAICOM阻止发送.
         /// </summary>
         public static string VAICOMTXInhibitEnabled {
@@ -3165,15 +3165,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         public static string ValueUnknown {
             get {
                 return ResourceManager.GetString("ValueUnknown", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to VHF音效音量.
-        /// </summary>
-        public static string VHFEffectVolume {
-            get {
-                return ResourceManager.GetString("VHFEffectVolume", resourceCulture);
             }
         }
         

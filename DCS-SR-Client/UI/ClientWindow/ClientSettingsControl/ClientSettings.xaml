@@ -180,20 +180,132 @@
                                 Grid.Column="1"
                                 ToggleValue="{Binding MicAGC, Mode=TwoWay}" />
 
-
                             <Label Grid.Row="2"
+                                   Grid.Column="0"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center"
+                                   IsEnabled="{Binding MicAGC}"
+                                   ToolTip="{x:Static p:Resources.MicAGCMaxDBToolTip}"
+                                   Content="{x:Static p:Resources.MicAGCMaxDB}" />
+                            <StackPanel Grid.Row="2"
+                                 Grid.Column="1"
+                                 IsEnabled="{Binding MicAGC}">
+                                <Slider
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    SmallChange="1" LargeChange="5"
+                                    ToolTip="{Binding MicAGCMaxDB }"
+                                    Minimum="0" Maximum="70" Value="{Binding MicAGCMaxDB, Mode=TwoWay}" />
+                                <Label
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Content="{Binding MicAGCMaxDB}" />
+                            </StackPanel>
+                            <Label Grid.Row="3"
+                                   Grid.Column="0"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center"
+                                   IsEnabled="{Binding MicAGC}"
+                                   ToolTip="{x:Static p:Resources.MicAGCTargetLevelToolTip}"
+                                   Content="{x:Static p:Resources.MicAGCTargetLevel}" />
+                            <Slider Grid.Row="3"
+                                   Grid.Column="1"
+                                 HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 ToolTip="{Binding MicAGCTarget }"
+                                 Minimum="1000" Maximum="30000"
+                                 SmallChange="100" LargeChange="1000"
+                                 Value="{Binding MicAGCTarget, Mode=TwoWay}" />
+
+                            <Label Grid.Row="4"
                                    Grid.Column="0"
                                    HorizontalContentAlignment="Center"
                                    VerticalContentAlignment="Center"
                                    Content="{x:Static p:Resources.MicDenoise}" />
 
                             <clientSettingsControl:SettingsToggleControl
-                                Grid.Row="2"
+                                Grid.Row="4"
                                 Grid.Column="1"
                                 ToggleValue="{Binding MicDenoise, Mode=TwoWay}" />
                         </Grid>
                     </GroupBox>
+                    <GroupBox Header="{x:Static p:Resources.IncomingAudioHeader}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
 
+                            </Grid.RowDefinitions>
+
+                            <Label Grid.Row="1"
+                                    Grid.Column="0"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Content="{x:Static p:Resources.IncomingAudioAGC}" /> 
+
+                            <clientSettingsControl:SettingsToggleControl
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                ToggleValue="{Binding IncomingAudioAGC, Mode=TwoWay}" />
+
+                            <Label Grid.Row="2"
+                                 Grid.Column="0"
+                                 HorizontalContentAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 IsEnabled="{Binding IncomingAudioAGC}"
+                                 ToolTip="{x:Static p:Resources.IncomingAudioAGCMaxDBToolTip}"
+                                 Content="{x:Static p:Resources.IncomingAudioAGCMaxDB}" />
+                            <StackPanel Grid.Row="2"
+                                        Grid.Column="1"
+                                        IsEnabled="{Binding IncomingAudioAGC}">
+                                <Slider
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        SmallChange="1" LargeChange="5"
+                                        ToolTip="{Binding IncomingAudioAGCMaxDB }"
+                                        Minimum="0" Maximum="70" Value="{Binding IncomingAudioAGCMaxDB, Mode=TwoWay}" />
+                                <Label
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Content="{Binding IncomingAudioAGCMaxDB}" />
+                            </StackPanel>
+                            <Label Grid.Row="3"
+                                    Grid.Column="0"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    IsEnabled="{Binding IncomingAudioAGC}"
+                                    ToolTip="{x:Static p:Resources.IncomingAudioAGCTargetLevelToolTip}"
+                                    Content="{x:Static p:Resources.IncomingAudioAGCTargetLevel}" />
+                            <Slider Grid.Row="3"
+                                    Grid.Column="1"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    ToolTip="{Binding IncomingAudioAGCTarget }"
+                                    Minimum="1000" Maximum="30000"
+                                    SmallChange="100" LargeChange="1000"
+                                    Value="{Binding IncomingAudioAGCTarget, Mode=TwoWay}" />
+
+                            <Label Grid.Row="4"
+                                    Grid.Column="0"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Content="{x:Static p:Resources.IncomingAudioDenoise}" />
+
+                            <clientSettingsControl:SettingsToggleControl
+                                    Grid.Row="4"
+                                    Grid.Column="1"
+                                    ToggleValue="{Binding IncomingAudioDenoise, Mode=TwoWay}" />
+                        </Grid>
+                    </GroupBox>
                     <GroupBox Header="{x:Static p:Resources.VOXHeader}">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -383,13 +495,25 @@
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 ToggleValue="{Binding SingleFileMixdown, Mode=TwoWay}" />
-
                             <Label Grid.Row="3"
                                    Grid.Column="0"
                                    HorizontalContentAlignment="Center"
                                    VerticalContentAlignment="Center"
+                                   Content="{x:Static p:Resources.RecordingFormat}" />
+                            <ComboBox x:Name="RecordingFormat"
+                                   Grid.Row="3"
+                                   Grid.Column="1"
+                                   Width="215"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Top"
+                                   ItemsSource="{Binding RecordingFormats}"
+                                   SelectedItem="{Binding SelectedRecordingFormat, Mode=TwoWay}" />     
+                            <Label Grid.Row="4"
+                                   Grid.Column="0"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center"
                                    Content="{x:Static p:Resources.RecordingQuality}" />
-                            <StackPanel Grid.Row="3"
+                            <StackPanel Grid.Row="4"
                                         Grid.Column="1" Margin="10">
 
                                 <Slider x:Name="RecordingQuality"
@@ -420,14 +544,14 @@
                                 </Grid>
                             </StackPanel>
 
-                            <Label Grid.Row="4"
+                            <Label Grid.Row="5"
                                    Grid.Column="0"
                                    HorizontalContentAlignment="Center"
                                    VerticalContentAlignment="Center"
                                    Content="{x:Static p:Resources.DisallowedAudioTone}" />
 
                             <clientSettingsControl:SettingsToggleControl
-                                Grid.Row="4"
+                                Grid.Row="5"
                                 Grid.Column="1"
                                 ToggleValue="{Binding DisallowedAudioTone, Mode=TwoWay}" />
                         </Grid>
@@ -680,6 +804,7 @@
                                 <RowDefinition />
                                 <RowDefinition />
                                 <RowDefinition />
+                                <RowDefinition />
                             </Grid.RowDefinitions>
 
                             <Label Grid.Row="0"
@@ -855,6 +980,29 @@
                                       VerticalAlignment="Top"
                                       ItemsSource="{Binding ServerPresetConfigurations}"
                                       SelectedItem="{Binding SelectedServerPresetConfiguration, Mode=TwoWay}" />
+                            
+                            <Label Grid.Row="10"
+                                   Grid.Column="0"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center"
+                                   Content="{x:Static p:Resources.AllowServerEAMRadioPreset}" />
+
+
+                            <clientSettingsControl:SettingsToggleControl
+                                Grid.Row="10"
+                                Grid.Column="1"
+                                ToggleValue="{Binding ServerEAMRadioPresetEnabled, Mode=TwoWay}" />
+                            
+                            <Label Grid.Row="11"
+                                   Grid.Column="0"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center"
+                                   Content="{x:Static p:Resources.InstructorMode}" />
+                            
+                            <clientSettingsControl:SettingsToggleControl
+                                Grid.Row="11"
+                                Grid.Column="1"
+                                ToggleValue="{Binding InstructorModeEnabled, Mode=TwoWay}" />
                         </Grid>
                     </GroupBox>
 
@@ -1026,33 +1174,45 @@
                                    VerticalContentAlignment="Center"
                                    Content="{x:Static p:Resources.RadioSoundEffects}" />
 
-                            <clientSettingsControl:SettingsToggleControl
-                                Grid.Row="8"
-                                Grid.Column="1"
-                                ToggleValue="{Binding RadioSoundEffects, Mode=TwoWay}" />
-
+                            <clientSettingsControl:BackgroundEffectVolumeControl
+                                    Grid.Row="8"
+                                    Grid.Column="1"
+                                    MaximumPercentage="100"
+                                    VolumeValue="{Binding RadioSoundEffectsRatio, Mode=TwoWay}" />
 
                             <Label Grid.Row="9"
+                               Grid.Column="0"
+                               HorizontalContentAlignment="Center"
+                               VerticalContentAlignment="Center"
+                               Content="{x:Static p:Resources.PerRadioModelEffects}" />
+
+                            <clientSettingsControl:SettingsToggleControl
+                                Grid.Row="9"
+                                Grid.Column="1"
+                                ToggleValue="{Binding PerRadioModelEffects, Mode=TwoWay}" />   
+
+
+                            <Label Grid.Row="10"
                                    Grid.Column="0"
                                    HorizontalContentAlignment="Center"
                                    VerticalContentAlignment="Center"
                                    Content="{x:Static p:Resources.RadioSoundEffectsClipping}" />
 
                             <clientSettingsControl:SettingsToggleControl
-                                Grid.Row="9"
+                                Grid.Row="10"
                                 Grid.Column="1"
                                 ToggleValue="{Binding RadioSoundEffectsClipping, Mode=TwoWay}" />
                             
-                            <Label Grid.Row="10"
+                            <Label Grid.Row="11"
                                    Grid.Column="0"
                                    HorizontalContentAlignment="Center"
                                    VerticalContentAlignment="Center"
                                    Content="{x:Static p:Resources.NATORadioTone}" />
                             
-                            <Border Grid.Row="10"
+                            <Border Grid.Row="11"
                                     Grid.Column="1" BorderBrush="CornflowerBlue" BorderThickness="1">
 
-                            <StackPanel Grid.Row="10"
+                            <StackPanel Grid.Row="12"
                                         Grid.Column="1" Margin="10">
                                 <clientSettingsControl:SettingsToggleControl
 
@@ -1063,13 +1223,13 @@
                             </StackPanel>
                                 </Border>
 
-                            <Label Grid.Row="11"
+                            <Label Grid.Row="13"
                                    Grid.Column="0"
                                    HorizontalContentAlignment="Center"
                                    VerticalContentAlignment="Center"
                                    Content="{x:Static p:Resources.HQEffect}" />
 
-                            <Border Grid.Row="11"
+                            <Border Grid.Row="13"
                                 Grid.Column="1" BorderBrush="CornflowerBlue" BorderThickness="1">
                                 <StackPanel Margin="10">
                                     <clientSettingsControl:SettingsToggleControl
@@ -1081,60 +1241,40 @@
 
                                 </StackPanel>
                             </Border>
-                            <Label Grid.Row="12"
+                            <Label Grid.Row="14"
                                    Grid.Column="0"
                                    HorizontalContentAlignment="Center"
                                    VerticalContentAlignment="Center"
                                    Content="{x:Static p:Resources.BackgroundRadioNoise}" />
 
                             <clientSettingsControl:SettingsToggleControl
-                                Grid.Row="12"
-                                Grid.Column="1"
-                                ToggleValue="{Binding BackgroundRadioNoiseToggle, Mode=TwoWay}" />
-
-                            <Label Grid.Row="13"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.UHFEffectVolume}" />
-
-                            <clientSettingsControl:BackgroundEffectVolumeControl
-                                Grid.Row="13"
-                                Grid.Column="1"
-                                VolumeValue="{Binding UHFEffectVolume,Mode=TwoWay}" />
-
-                            <Label Grid.Row="14"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.VHFEffectVolume}" />
-
-                            <clientSettingsControl:BackgroundEffectVolumeControl
                                 Grid.Row="14"
                                 Grid.Column="1"
-                                VolumeValue="{Binding VHFEffectVolume,Mode=TwoWay}" />
+                                ToggleValue="{Binding BackgroundRadioNoiseToggle, Mode=TwoWay}" />
 
                             <Label Grid.Row="15"
                                    Grid.Column="0"
                                    HorizontalContentAlignment="Center"
                                    VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.HFEffectVolume}" />
+                                   Content="{x:Static p:Resources.NoiseGainDB}" />
 
-                            <clientSettingsControl:BackgroundEffectVolumeControl
+                            <clientSettingsControl:GainDBControl
                                 Grid.Row="15"
                                 Grid.Column="1"
-                                VolumeValue="{Binding HFEffectVolume,Mode=TwoWay}" />
+                                IsEnabled="{Binding BackgroundRadioNoiseToggle}"
+                                GainDBValue="{Binding NoiseGainDB,Mode=TwoWay}" />
 
                             <Label Grid.Row="16"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.FMEffectVolume}" />
+                               Grid.Column="0"
+                               HorizontalContentAlignment="Center"
+                               VerticalContentAlignment="Center"
+                               Content="{x:Static p:Resources.HFNoiseGainDB}" />
 
-                            <clientSettingsControl:BackgroundEffectVolumeControl
-                                Grid.Row="16"
-                                Grid.Column="1"
-                                VolumeValue="{Binding FMEffectVolume,Mode=TwoWay}" />
+                        <clientSettingsControl:GainDBControl
+                            Grid.Row="16"
+                            Grid.Column="1"
+                            IsEnabled="{Binding BackgroundRadioNoiseToggle}"
+                            GainDBValue="{Binding HFNoiseGainDB,Mode=TwoWay}" />
 
                             <Label Grid.Row="17"
                                    Grid.Column="0"

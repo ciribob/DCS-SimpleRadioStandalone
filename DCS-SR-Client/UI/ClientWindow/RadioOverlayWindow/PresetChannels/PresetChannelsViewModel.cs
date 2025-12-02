@@ -12,6 +12,7 @@ using Caliburn.Micro;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.RadioChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
@@ -123,7 +124,7 @@ public class PresetChannelsViewModel : INotifyPropertyChanged, IHandle<ProfileCh
             
             foreach (var channel in SyncedServerSettings.Instance.GetPresetChannels(FilePresetChannelsStore.NormaliseString(radio.name)))
             {
-                var freq = channel.Frequency * FilePresetChannelsStore.MHz; //convert to Hz from MHz,
+                var freq = channel.Frequency * RadioCalculator.MHz; //convert to Hz from MHz,
                 if (freq <= Max
                     && freq >= Min)
                     presetChannelServerList.Add( new PresetChannel()
@@ -149,7 +150,7 @@ public class PresetChannelsViewModel : INotifyPropertyChanged, IHandle<ProfileCh
                 {
                     presetChannelServerList.Add( new PresetChannel()
                     {
-                        Value = (double) midsChannel * (FilePresetChannelsStore.MHz/10) + FilePresetChannelsStore.MidsOffsetMHz,
+                        Value = RadioCalculator.Link16.ChannelToFrequency(midsChannel),
                         Text = channel.Name,
                         MidsChannel = midsChannel
                     });
@@ -221,7 +222,7 @@ public class PresetChannelsViewModel : INotifyPropertyChanged, IHandle<ProfileCh
                         MidsChannel = chn,
                         Channel = chn,
                         Text = "MIDS " + chn,
-                        Value = (double) (chn * (FilePresetChannelsStore.MHz/10) + FilePresetChannelsStore.MidsOffsetMHz)
+                        Value = RadioCalculator.Link16.ChannelToFrequency(chn)
                     });
             }
         }

@@ -16,6 +16,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.RadioOverlayWind
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Recording;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
@@ -278,6 +279,30 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
                 .ServerPresetSelection);
     }
 
+    public bool ServerEAMRadioPresetEnabled
+    {
+        get =>   GlobalSettingsStore.Instance.ProfileSettingsStore.GetClientSettingBool(
+            ProfileSettingsKeys.AllowServerEAMRadioPreset);
+        set
+        {
+            _globalSettings.ProfileSettingsStore.SetClientSettingBool(ProfileSettingsKeys.AllowServerEAMRadioPreset,
+                value);
+            NotifyPropertyChanged();
+        }
+    }
+    
+    public bool InstructorModeEnabled
+    {
+        get =>   GlobalSettingsStore.Instance.ProfileSettingsStore.GetClientSettingBool(
+            ProfileSettingsKeys.InstructorMode);
+        set
+        {
+            _globalSettings.ProfileSettingsStore.SetClientSettingBool(ProfileSettingsKeys.InstructorMode,
+                value);
+            NotifyPropertyChanged();
+        }
+    }
+    
     public bool VOXEnabled
     {
         get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.VOX);
@@ -359,6 +384,18 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         }
     }
 
+    public IReadOnlyList<string> RecordingFormats => AudioRecordingManager.Instance.AvailableFormats;
+
+    public string SelectedRecordingFormat
+    {
+        get => _globalSettings.GetClientSetting(GlobalSettingsKeys.RecordingFormat).StringValue;
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.RecordingFormat, value);
+            NotifyPropertyChanged();
+        }
+    }
+
     public bool AutoSelectInputProfile
     {
         get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.AutoSelectSettingsProfile);
@@ -384,12 +421,18 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.RequireAdmin);
         set
         {
-            _globalSettings.SetClientSetting(GlobalSettingsKeys.RequireAdmin, value);
-
-            MessageBox.Show(Application.Current.MainWindow,
+            if (value)
+            {
+                var choice = MessageBox.Show(Application.Current.MainWindow,
                 Resources.MsgBoxAdminText,
-                Resources.MsgBoxAdmin, MessageBoxButton.OK, MessageBoxImage.Warning);
+                Resources.MsgBoxAdmin, MessageBoxButton.YesNo, MessageBoxImage.Stop);
 
+                if (choice != MessageBoxResult.Yes)
+                {
+                    value = false;
+                }
+            }
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.RequireAdmin, value);
             NotifyPropertyChanged();
         }
     }
@@ -437,13 +480,33 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
             NotifyPropertyChanged();
         }
     }
-
+#region Automatic Gain Control (Microphone)
     public bool MicAGC
     {
         get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.AGC);
         set
         {
             _globalSettings.SetClientSetting(GlobalSettingsKeys.AGC, value);
+            NotifyPropertyChanged();
+        }
+    }
+
+    public int MicAGCMaxDB
+    {
+        get => _globalSettings.GetClientSettingInt(GlobalSettingsKeys.AGCLevelMax);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.AGCLevelMax, value);
+            NotifyPropertyChanged();
+        }
+    }
+
+    public int MicAGCTarget
+    {
+        get => _globalSettings.GetClientSettingInt(GlobalSettingsKeys.AGCTarget);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.AGCTarget, value);
             NotifyPropertyChanged();
         }
     }
@@ -457,6 +520,48 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
             NotifyPropertyChanged();
         }
     }
+    #endregion Automatic Gain Control (Microphone)
+    #region Automatic Gain Control (Microphone)
+    public bool IncomingAudioAGC
+    {
+        get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.IncomingAudioAGC);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.IncomingAudioAGC, value);
+            NotifyPropertyChanged();
+        }
+    }
+
+    public int IncomingAudioAGCMaxDB
+    {
+        get => _globalSettings.GetClientSettingInt(GlobalSettingsKeys.IncomingAudioAGCLevelMax);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.IncomingAudioAGCLevelMax, value);
+            NotifyPropertyChanged();
+        }
+    }
+
+    public int IncomingAudioAGCTarget
+    {
+        get => _globalSettings.GetClientSettingInt(GlobalSettingsKeys.IncomingAudioAGCTarget);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.IncomingAudioAGCTarget, value);
+            NotifyPropertyChanged();
+        }
+    }
+
+    public bool IncomingAudioDenoise
+    {
+        get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.IncomingAudioDenoise);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.IncomingAudioDenoise, value);
+            NotifyPropertyChanged();
+        }
+    }
+#endregion Automatic Gain Control (IncomingAudio)
 
     public bool PlayConnectionSounds
     {
@@ -710,7 +815,6 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
             NotifyPropertyChanged();
         }
     }
-
 /***
  *
  */
@@ -775,15 +879,19 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         get => CachedAudioEffectProvider.Instance.SelectedIntercomTransmissionEndEffect;
     }
 
-/***
- *
- */
-    public bool RadioSoundEffects
+    // Add the new float property for the slider (0-100%)
+    public float RadioSoundEffectsRatio
     {
-        get => _globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.RadioEffects);
+        get
+        {
+            float value = _globalSettings.ProfileSettingsStore.GetClientSettingFloat(ProfileSettingsKeys.RadioEffectsRatio);
+            value = Math.Clamp(value, 0f, 1f);
+            return value * 100f; // 0.0–1.0 → 0–100%
+        }
         set
         {
-            _globalSettings.ProfileSettingsStore.SetClientSettingBool(ProfileSettingsKeys.RadioEffects, value);
+            float clamped = Math.Clamp(value, 0f, 100f) / 100f; // 0–100% → 0.0–1.0
+            _globalSettings.ProfileSettingsStore.SetClientSettingFloat(ProfileSettingsKeys.RadioEffectsRatio, clamped);
             NotifyPropertyChanged();
         }
     }
@@ -840,78 +948,32 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         }
     }
 
-    public double UHFEffectVolume
+    public bool PerRadioModelEffects
     {
-        get => _globalSettings.ProfileSettingsStore.GetClientSettingFloat(ProfileSettingsKeys.UHFNoiseVolume)
-            / double.Parse(
-                ProfileSettingsStore.DefaultSettingsProfileSettings[ProfileSettingsKeys.UHFNoiseVolume.ToString()],
-                CultureInfo.InvariantCulture) * 100.0f;
+        get => _globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.PerRadioModelEffects);
         set
         {
-            var orig = double.Parse(
-                ProfileSettingsStore.DefaultSettingsProfileSettings[ProfileSettingsKeys.UHFNoiseVolume.ToString()],
-                CultureInfo.InvariantCulture);
-            var vol = orig * (value / 100.0f);
-
-            _globalSettings.ProfileSettingsStore.SetClientSettingFloat(ProfileSettingsKeys.UHFNoiseVolume,
-                (float)vol);
+            _globalSettings.ProfileSettingsStore.SetClientSettingBool(ProfileSettingsKeys.PerRadioModelEffects, value);
             NotifyPropertyChanged();
         }
     }
 
-    public double VHFEffectVolume
+    public float NoiseGainDB
     {
-        get => _globalSettings.ProfileSettingsStore.GetClientSettingFloat(ProfileSettingsKeys.VHFNoiseVolume)
-            / double.Parse(
-                ProfileSettingsStore.DefaultSettingsProfileSettings[ProfileSettingsKeys.VHFNoiseVolume.ToString()],
-                CultureInfo.InvariantCulture) * 100.0f;
+        get => _globalSettings.ProfileSettingsStore.GetClientSettingFloat(ProfileSettingsKeys.NoiseGainDB);
         set
         {
-            var orig = double.Parse(
-                ProfileSettingsStore.DefaultSettingsProfileSettings[ProfileSettingsKeys.VHFNoiseVolume.ToString()],
-                CultureInfo.InvariantCulture);
-            var vol = orig * (value / 100.0f);
-
-            _globalSettings.ProfileSettingsStore.SetClientSettingFloat(ProfileSettingsKeys.VHFNoiseVolume,
-                (float)vol);
+            _globalSettings.ProfileSettingsStore.SetClientSettingFloat(ProfileSettingsKeys.NoiseGainDB, value);
             NotifyPropertyChanged();
         }
     }
 
-    public double HFEffectVolume
+    public float HFNoiseGainDB
     {
-        get => _globalSettings.ProfileSettingsStore.GetClientSettingFloat(ProfileSettingsKeys.HFNoiseVolume)
-            / double.Parse(
-                ProfileSettingsStore.DefaultSettingsProfileSettings[ProfileSettingsKeys.HFNoiseVolume.ToString()],
-                CultureInfo.InvariantCulture) * 100.0f;
+        get => _globalSettings.ProfileSettingsStore.GetClientSettingFloat(ProfileSettingsKeys.HFNoiseGainDB);
         set
         {
-            var orig = double.Parse(
-                ProfileSettingsStore.DefaultSettingsProfileSettings[ProfileSettingsKeys.HFNoiseVolume.ToString()],
-                CultureInfo.InvariantCulture);
-            var vol = orig * (value / 100.0f);
-
-            _globalSettings.ProfileSettingsStore.SetClientSettingFloat(ProfileSettingsKeys.HFNoiseVolume,
-                (float)vol);
-            NotifyPropertyChanged();
-        }
-    }
-
-    public double FMEffectVolume
-    {
-        get => _globalSettings.ProfileSettingsStore.GetClientSettingFloat(ProfileSettingsKeys.FMNoiseVolume)
-            / double.Parse(
-                ProfileSettingsStore.DefaultSettingsProfileSettings[ProfileSettingsKeys.FMNoiseVolume.ToString()],
-                CultureInfo.InvariantCulture) * 100.0f;
-        set
-        {
-            var orig = double.Parse(
-                ProfileSettingsStore.DefaultSettingsProfileSettings[ProfileSettingsKeys.FMNoiseVolume.ToString()],
-                CultureInfo.InvariantCulture);
-            var vol = orig * (value / 100.0f);
-
-            _globalSettings.ProfileSettingsStore.SetClientSettingFloat(ProfileSettingsKeys.FMNoiseVolume,
-                (float)vol);
+            _globalSettings.ProfileSettingsStore.SetClientSettingFloat(ProfileSettingsKeys.HFNoiseGainDB, value);
             NotifyPropertyChanged();
         }
     }
@@ -1157,17 +1219,15 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         NotifyPropertyChanged(nameof(SelectedIntercomEndTransmitEffect));
         NotifyPropertyChanged(nameof(RadioEncryptionEffectsToggle));
         NotifyPropertyChanged(nameof(RadioMIDSToggle));
-        NotifyPropertyChanged(nameof(RadioSoundEffects));
+        NotifyPropertyChanged(nameof(RadioSoundEffectsRatio));
         NotifyPropertyChanged(nameof(RadioSoundEffectsClipping));
         NotifyPropertyChanged(nameof(NATORadioToneToggle));
         NotifyPropertyChanged(nameof(NATORadioToneVolume));
         NotifyPropertyChanged(nameof(HQEffectToggle));
         NotifyPropertyChanged(nameof(HQEffectVolume));
         NotifyPropertyChanged(nameof(BackgroundRadioNoiseToggle));
-        NotifyPropertyChanged(nameof(UHFEffectVolume));
-        NotifyPropertyChanged(nameof(VHFEffectVolume));
-        NotifyPropertyChanged(nameof(HFEffectVolume));
-        NotifyPropertyChanged(nameof(FMEffectVolume));
+        NotifyPropertyChanged(nameof(NoiseGainDB));
+        NotifyPropertyChanged(nameof(HFNoiseGainDB));
 
         NotifyPropertyChanged(nameof(AmbientEffectToggle));
         NotifyPropertyChanged(nameof(AmbientEffectIntercomToggle));

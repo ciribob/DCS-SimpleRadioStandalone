@@ -27,14 +27,16 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
 
     private readonly string Guid = ShortGuid.NewGuid();
 
-    private CancellationTokenSource finished = new CancellationTokenSource();
+    private CancellationTokenSource finished;
     private UDPVoiceHandler udpVoiceHandler;
     private Program.Options opts;
     private IPEndPoint endPoint;
     private readonly byte[] encryptionBytes;
+    private uint unitId = 100000;
 
     public ExternalAudioClient(double[] freq, Modulation[] modulation, Program.Options opts)
     {
+        this.unitId = opts.UnitId;
         this.freq = freq;
         this.modulation = modulation;
         this.opts = opts;
@@ -67,6 +69,7 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
         var radioInfoBase = new PlayerRadioInfoBase();
         radioInfoBase.radios[1].modulation = modulation[0];
         radioInfoBase.radios[1].freq = freq[0]; // get into Hz
+        radioInfoBase.unitId = unitId;
 
         Logger.Info($"Starting with params:");
         for (int i = 0; i < freq.Length; i++)
@@ -87,7 +90,7 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
         var srClient = new SRClientBase
         {
             LatLngPosition = position,
-            AllowRecord = true,
+            AllowRecord = opts.Record,
             ClientGuid = Guid,
             Coalition = opts.Coalition,
             Name = opts.Name,
@@ -95,14 +98,18 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
         };
         var srsClientSyncHandler = new TCPClientHandler(Guid, srClient);
 
-        srsClientSyncHandler.TryConnect(endPoint);
+        using (finished = new CancellationTokenSource())
+        {
+            srsClientSyncHandler.TryConnect(endPoint);
 
-        //wait for it to end
-        finished.Token.WaitHandle.WaitOne();
+            //wait for it to end
+            finished.Token.WaitHandle.WaitOne();
+        }
+       
         Logger.Info("Finished - Closing");
 
         udpVoiceHandler?.RequestStop();
-        srsClientSyncHandler?.Disconnect();
+        srsClientSyncHandler?.RequestDisconnect();
     }
 
     private void ReadyToSend()
@@ -112,7 +119,7 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
             Logger.Info($"Connecting UDP VoIP {endPoint}");
             udpVoiceHandler = new UDPVoiceHandler(Guid, endPoint);
             udpVoiceHandler.Connect();
-            new Thread(SendAudio).Start();
+            Task.Run(SendAudio, finished.Token);
         }
     }
 
@@ -121,7 +128,7 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
         finished.Cancel();
     }
 
-    private void SendAudio()
+    private async Task SendAudio()
     {
         Logger.Info("Sending Audio... Please Wait");
         var audioGenerator = new AudioGenerator(opts);
@@ -129,10 +136,12 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
         var count = 0;
        
         //Wait until voip is ready and we're not cancelled
-        while(!udpVoiceHandler.Ready && !finished.IsCancellationRequested) 
-            Thread.Sleep(100);
+        while(!udpVoiceHandler.Ready && !finished.IsCancellationRequested)
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(100), finished.Token);
+        }
 
-        var tokenSource = new CancellationTokenSource();
+        using var tokenSource = new CancellationTokenSource();
 
         uint _packetNumber = 1;
         //get all the audio as Opus frames of 40 ms
@@ -151,7 +160,7 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
                         AudioPart1Bytes = opusBytes[count],
                         AudioPart1Length = (ushort)opusBytes[count].Length,
                         Frequencies = freq,
-                        UnitId = 100000,
+                        UnitId = unitId,
                         Encryptions = encryptionBytes,
                         Modulations = modulationBytes,
                         RetransmissionCount = 0,

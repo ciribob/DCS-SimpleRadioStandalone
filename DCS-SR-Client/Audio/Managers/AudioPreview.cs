@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Utility;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Opus.Core;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using NLog;
-using WPFCustomMessageBox;
 using Application = Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Opus.Application;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Utility;
+using System.Windows.Forms;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
 
@@ -34,7 +33,7 @@ internal class AudioPreview
 
     private float _speakerBoost = 1.0f;
 
-    private Preprocessor _speex;
+    private SpeexProcessor _speex;
     //private readonly CircularBuffer _circularBuffer = new CircularBuffer();
 
     private VolumeSampleProviderWithPeak _volumeSampleProvider;
@@ -118,7 +117,7 @@ internal class AudioPreview
 
         try
         {
-            _speex = new Preprocessor(Constants.MIC_SEGMENT_FRAMES, Constants.MIC_SAMPLE_RATE);
+            _speex = new SpeexProcessor(Constants.MIC_SEGMENT_FRAMES, Constants.MIC_SAMPLE_RATE);
             //opus
             _encoder = OpusEncoder.Create(Constants.MIC_SAMPLE_RATE, 1, Application.Voip);
             _encoder.ForwardErrorCorrection = false;
@@ -161,50 +160,81 @@ internal class AudioPreview
 
     private void ShowInputError()
     {
-        if (Environment.OSVersion.Version.Major == 10)
+        var audioInputErrorDialog = TaskDialog.ShowDialog(new TaskDialogPage
         {
-            var messageBoxResult = CustomMessageBox.ShowYesNoCancel(
-                "Problem initialising Audio Input!\n\nIf you are using Windows 10, this could be caused by your privacy settings (make sure to allow apps to access your microphone).\nAlternatively, try a different Input device and please post your client log to the support Discord server.",
-                "Audio Input Error",
-                "OPEN PRIVACY SETTINGS",
-                "JOIN DISCORD SERVER",
-                "CLOSE",
-                MessageBoxImage.Error);
-            if (messageBoxResult == MessageBoxResult.Yes)
-                Process.Start(new ProcessStartInfo("ms-settings:privacy-microphone")
-                    { UseShellExecute = true });
-            else if (messageBoxResult == MessageBoxResult.No)
-                Process.Start(new ProcessStartInfo("https://discord.gg/baw7g3t")
-                    { UseShellExecute = true });
-        }
-        else
-        {
-            var messageBoxResult = CustomMessageBox.ShowYesNo(
-                "Problem initialising Audio Input!\n\nTry a different Input device and please post your client log to the support Discord server.",
-                "Audio Input Error",
-                "JOIN DISCORD SERVER",
-                "CLOSE",
-                MessageBoxImage.Error);
+            Caption = "Audio Input Error",
+            Heading = "\"Problem initialising Audio Input!",
+            Text = "If you are using Windows 10, this could be caused by your privacy settings (make sure to allow apps to access your microphone).\nAlternatively, try a different Input device and please post your client log to the support Discord server.",
+            Icon = TaskDialogIcon.Error,
+            Buttons =
+                {
+                    new TaskDialogButton
+                    {
+                        Text = "OPEN PRIVACY SETTINGS",
+                        Tag = 1
+                    },
+                    new TaskDialogButton
+                    {
+                        Text =  "JOIN DISCORD SERVER",
+                        Tag = 2
+                    },
+                    new TaskDialogButton
+                    {
+                        Text = "CLOSE",
+                        Tag = 3
+                    }
+                }
+        });
 
-            if (messageBoxResult == MessageBoxResult.Yes)
-                Process.Start(new ProcessStartInfo("https://discord.gg/baw7g3t")
+        if (audioInputErrorDialog.Tag is int choice)
+        {
+            switch (choice)
+            {
+                case 1:
+                    Process.Start(new ProcessStartInfo("ms-settings:privacy-microphone")
                     { UseShellExecute = true });
+                    break;
+                case 2:
+                    Process.Start(new ProcessStartInfo("https://discord.gg/baw7g3t")
+                    { UseShellExecute = true });
+                    break;
+            }
         }
     }
 
     private void ShowOutputError(string message)
     {
-        var messageBoxResult = CustomMessageBox.ShowYesNo(
-            $"{message}\n\n" +
-            "Try a different output device and please post your client log to the support Discord server.",
-            "Audio Output Error",
-            "JOIN DISCORD SERVER",
-            "CLOSE",
-            MessageBoxImage.Error);
+        var audioOutputErrorDialog = TaskDialog.ShowDialog(new TaskDialogPage
+        {
+            Caption = "Audio Output Error",
+            Heading = message,
+            Text = "Try a different output device and please post your client log to the support Discord server.",
+            Icon = TaskDialogIcon.Error,
+            Buttons =
+            {
+                new TaskDialogButton
+                {
+                    Text =  "JOIN DISCORD SERVER",
+                    Tag = 2
+                },
+                new TaskDialogButton
+                {
+                    Text = "CLOSE",
+                    Tag = 3
+                }
+            }
+        });
 
-        if (messageBoxResult == MessageBoxResult.Yes)
-            Process.Start(new ProcessStartInfo("https://discord.gg/baw7g3t")
-                { UseShellExecute = true });
+        if (audioOutputErrorDialog.Tag is int choice)
+        {
+            switch (choice)
+            {
+                case 2:
+                    Process.Start(new ProcessStartInfo("https://discord.gg/baw7g3t")
+                    { UseShellExecute = true });
+                    break;
+            }
+        }
     }
 
     private void WasapiCaptureOnRecordingStopped(object sender, StoppedEventArgs e)

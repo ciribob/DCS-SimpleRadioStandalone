@@ -5,16 +5,16 @@ on: [push, pull_request]
 jobs:
   build:
     name: Build
-    runs-on: windows-2022
+    runs-on: windows-2025
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v6
 
     - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1
+      uses: microsoft/setup-msbuild@v2
 
     - name: Setup NuGet
-      uses: nuget/setup-nuget@v1
+      uses: nuget/setup-nuget@v2
 
     - name: Restore NuGet packages
       run: nuget restore
@@ -22,16 +22,35 @@ jobs:
     - name: Build
       run: msbuild /p:Configuration=Release /p:Platform=x64 /p:SourceLinkCreate=false
 
-    - name: Archive
-      uses: actions/upload-artifact@v4
-      with:
-        name: DCS-SimpleRadioStandalone
-        path: install-build
-
     - name: Setup VSTest
       uses: Malcolmnixon/Setup-VSTest@v3
 
     - name: VSTest DCS-SR-CommonTests
-      run: VSTest.Console DCS-SR-CommonTests\bin\Release\net8.0-windows\DCS-SR-CommonTests.dll
+      run: VSTest.Console DCS-SR-CommonTests\bin\Release\net9.0-windows\DCS-SR-CommonTests.dll
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+  publish:
+    name: publish
+    runs-on: windows-2025
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: '9.0.x'
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v2
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v2
+    - name: Restore NuGet packages
+      run: nuget restore
+    - name: Publish
+      run: ./publish.ps1 -NoSign -Zip
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: DCS-SimpleRadioStandalone-CI
+        path: install-build/DCS-SimpleRadioStandalone-*.zip
+        compression-level: 0 # Zipping a zip...
+
+

@@ -5,6 +5,7 @@
              xmlns:local="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.UI"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.Properties"
+             xmlns:common="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Common.Properties;assembly=SRS-Common"
              Width="330"
              Height="575"
              mc:Ignorable="d">
@@ -17,6 +18,12 @@
                     <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
@@ -511,6 +518,38 @@
                 <Button x:Name="ServerPresetsEnabledToggle"
                         Content="{Binding ServerPresetsEnabledText}"
                         Grid.Row="24"
+                        Grid.Column="2"
+                        Width="75"
+                        Height="20"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"/>
+                
+                <Label Content="{x:Static p:Resources.ServerEAMRadioPresetEnabled}"
+                       Grid.Row="25"
+                       Grid.Column="0"
+                       Grid.ColumnSpan="2"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"/>
+                
+                <Button x:Name="ServerEAMRadioPresetEnabledToggle"
+                        Content="{Binding ServerEAMRadioPresetEnabledText}"
+                        Grid.Row="25"
+                        Grid.Column="2"
+                        Width="75"
+                        Height="20"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"/>
+                
+                <Label Content="{x:Static common:Resources.AllowInstructorMode}"
+                       Grid.Row="26"
+                       Grid.Column="0"
+                       Grid.ColumnSpan="2"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"/>
+                   
+                <Button x:Name="AllowInstructorModeToggle"
+                        Content="{Binding AllowInstructorMode}"
+                        Grid.Row="26"
                         Grid.Column="2"
                         Width="75"
                         Height="20"

@@ -30,6 +30,8 @@ public class SyncedServerSettings
     public List<double> GlobalFrequencies { get; set; } = new();
 
     private Dictionary<string, List<ServerPresetChannel>> ServerPresetChannels { get; set; } = new();
+    
+    public List<DCSRadioCustom> CustomEAMRadios { get; private set; } = new();
 
     public string ServerVersion { get; set; }
 
@@ -122,6 +124,28 @@ public class SyncedServerSettings
                 catch (Exception)
                 {
                     ServerPresetChannels = new Dictionary<string, List<ServerPresetChannel>>();
+                }
+            }
+            else if (kvp.Key.Equals(ServerSettingsKeys.SERVER_EAM_RADIO_PRESET.ToString()))
+            {
+                try
+                {
+                    CustomEAMRadios = JsonSerializer.Deserialize<List<DCSRadioCustom>>(kvp.Value,
+                        new JsonSerializerOptions()
+                        {
+                            PropertyNameCaseInsensitive = true,
+                            IncludeFields = true,
+                        });
+
+                    if (CustomEAMRadios.Count != 11 || (CustomEAMRadios[0].modulation != Modulation.DISABLED && CustomEAMRadios[0].modulation != Modulation.INTERCOM))
+                    {
+                        //invalid config
+                        CustomEAMRadios = new List<DCSRadioCustom>();
+                    }
+                }
+                catch (Exception)
+                {
+                    CustomEAMRadios = new List<DCSRadioCustom>();
                 }
             }
         }

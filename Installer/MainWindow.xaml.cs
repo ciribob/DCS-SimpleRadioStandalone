@@ -464,7 +464,7 @@ namespace Installer
             ProcessStartInfo procInfo = new ProcessStartInfo
             {
                 WorkingDirectory = path,
-                FileName = (path + "\\" + "sr-server.exe"),
+                FileName = (path + "\\Server\\" + "srs-server.exe"),
                 UseShellExecute = false
             };
             Process.Start(procInfo);
@@ -525,7 +525,8 @@ namespace Installer
                 DeleteDirectory(programPath + "\\AudioEffects");
                 DeleteDirectory(programPath + "\\zh-CN");
 
-                DeleteDirectory(programPath + "\\Client\\AudioEffects");
+                DeleteDirectory(programPath + "\\Client\\AudioEffects\\Ambient");
+                DeleteDirectory(programPath + "\\Client\\RadioModels");
                 DeleteDirectory(programPath + "\\Client\\runtimes");
                 DeleteFileIfExists(programPath + "\\Client\\awacs-radios.json");
                 DeleteFileIfExists(programPath + "\\Client\\clientlog.txt");
@@ -766,7 +767,9 @@ namespace Installer
 
             foreach (var directory in Directory.EnumerateDirectories(path))
             {
-                if (directory.ToUpper().Contains("DCS.") || directory.ToUpper().EndsWith("DCS"))
+                if (directory.ToUpper().Contains("DCS.") || directory.ToUpper().EndsWith("DCS") 
+                                                         || directory.ToUpper().Contains("MCS.") 
+                                                         || directory.ToUpper().EndsWith("MCS"))
                 {
                     //check for config/network.vault and options.lua
                     var network = directory + "\\config\\network.vault";
@@ -1188,7 +1191,7 @@ namespace Installer
                         dSecurity.AddAccessRule(new FileSystemAccessRule(WindowsIdentity.GetCurrent().Owner,
                             FileSystemRights.Modify,
                             InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit,
-                            PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
+                            PropagationFlags.None, AccessControlType.Allow));
                     }
 
                     if (WindowsIdentity.GetCurrent().User != null)
@@ -1196,7 +1199,7 @@ namespace Installer
                         dSecurity.AddAccessRule(new FileSystemAccessRule(WindowsIdentity.GetCurrent().User,
                             FileSystemRights.Modify,
                             InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit,
-                            PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
+                            PropagationFlags.None, AccessControlType.Allow));
                     }
 
                     dir.SetAccessControl(dSecurity);

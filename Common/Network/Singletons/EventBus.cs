@@ -34,7 +34,7 @@ public class EventBus
         }
     }
 
-    public void Unsubcribe(object obj)
+    public void Unsubscribe(object obj)
     {
         _eventAggregator.Unsubscribe(obj);
     }

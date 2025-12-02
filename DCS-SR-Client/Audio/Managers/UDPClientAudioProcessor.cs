@@ -40,7 +40,7 @@ public class UDPClientAudioProcessor : IDisposable
     private readonly byte[] _guidAsciiBytes;
     private readonly RadioReceivingState[] _radioReceivingState;
     private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
-    private readonly CancellationTokenSource _stopFlag = new();
+    private CancellationTokenSource _stopFlag;
     private readonly UDPVoiceHandler _udpClient;
     private readonly object lockObj = new();
     private long _firstPTTPress; // to delay start PTT time
@@ -376,6 +376,7 @@ public class UDPClientAudioProcessor : IDisposable
         {
             try
             {
+                uint groupIdOverride = 0;
                 if (transmittingRadios.Count > 0)
                 {
                     var frequencies = new List<double>(transmittingRadios.Count);
@@ -399,6 +400,12 @@ public class UDPClientAudioProcessor : IDisposable
 
                         if (alreadyIncluded) continue;
 
+                        if(radio.modulation == Modulation.INTERCOM && radio.IntercomUnitId > 0)
+                        {
+                            //if we're sending to an intercom, we need to send to the unitId of the intercom
+                            groupIdOverride = radio.IntercomUnitId;
+                        }
+                        
                         frequencies.Add(radio.freq);
                         encryptions.Add(radio.enc ? radio.encKey : (byte)0);
                         modulations.Add((byte)radio.modulation);
@@ -418,7 +425,12 @@ public class UDPClientAudioProcessor : IDisposable
                         OriginalClientGuidBytes = _guidAsciiBytes
                     };
 
-
+                    //Instructor mode and we've overriden the group ID for intercom
+                    if (groupIdOverride > 0)
+                    {
+                        udpVoicePacket.UnitId = groupIdOverride;
+                    }
+                    
                     _udpClient.Send(udpVoicePacket);
 
                     var currentlySelectedRadio = _clientStateSingleton.DcsPlayerRadioInfo.radios[sendingOn];
@@ -443,7 +455,7 @@ public class UDPClientAudioProcessor : IDisposable
                     {
                         Frequency = frequencies[0], Modulation = modulations[0],
                         EncodedAudio = bytes,
-                        Encryption = 0,
+                        Encryption = encryptions[0],
                         Volume = 1,
                         Decryptable = true,
                         LineOfSightLoss = 0,
@@ -486,203 +498,212 @@ public class UDPClientAudioProcessor : IDisposable
 
     private void UdpAudioDecode()
     {
-        try
+        using (_stopFlag = new CancellationTokenSource())
         {
-            while (!_stop)
-                try
-                {
-                    var encodedOpusAudio = new byte[0];
-                    _udpClient.EncodedAudio.TryTake(out encodedOpusAudio, 100000, _stopFlag.Token);
-
-                    var time = DateTime.Now.Ticks; //should add at the receive instead?
-
-                    if (encodedOpusAudio != null
-                        && encodedOpusAudio.Length >=
-                        UDPVoicePacket.PacketHeaderLength + UDPVoicePacket.FixedPacketLength +
-                        UDPVoicePacket.FrequencySegmentLength)
+            try
+            {
+                while (!_stop)
+                    try
                     {
-                        //  process
-                        // check if we should play audio
-                        var myClient = IsClientMetaDataValid(_guid);
+                        var encodedOpusAudio = new byte[0];
+                        _udpClient.EncodedAudio.TryTake(out encodedOpusAudio, 100000, _stopFlag.Token);
 
-                        if (myClient != null && _clientStateSingleton.DcsPlayerRadioInfo.IsCurrent())
+                        var time = DateTime.Now.Ticks; //should add at the receive instead?
+
+                        if (encodedOpusAudio != null
+                            && encodedOpusAudio.Length >=
+                            UDPVoicePacket.PacketHeaderLength + UDPVoicePacket.FixedPacketLength +
+                            UDPVoicePacket.FrequencySegmentLength)
                         {
-                            //Decode bytes
-                            var udpVoicePacket = UDPVoicePacket.DecodeVoicePacket(encodedOpusAudio);
+                            //  process
+                            // check if we should play audio
+                            var myClient = IsClientMetaDataValid(_guid);
 
-                            if (udpVoicePacket != null)
+                            if (myClient != null && _clientStateSingleton.DcsPlayerRadioInfo.IsCurrent())
                             {
-                                var globalFrequencies = _serverSettings.GlobalFrequencies;
+                                //Decode bytes
+                                var udpVoicePacket = UDPVoicePacket.DecodeVoicePacket(encodedOpusAudio);
 
-                                var frequencyCount = udpVoicePacket.Frequencies.Length;
-
-                                var radioReceivingPriorities =
-                                    new List<RadioReceivingPriority>(frequencyCount);
-                                var blockedRadios = CurrentlyBlockedRadios();
-
-                                var strictEncryption =
-                                    _serverSettings.GetSettingAsBool(ServerSettingsKeys.STRICT_RADIO_ENCRYPTION);
-
-                                // Parse frequencies into receiving radio priority for selection below
-                                for (var i = 0; i < frequencyCount; i++)
+                                if (udpVoicePacket != null)
                                 {
-                                    RadioReceivingState state = null;
-                                    bool decryptable;
+                                    var globalFrequencies = _serverSettings.GlobalFrequencies;
 
-                                    //Check if Global
-                                    var globalFrequency = globalFrequencies.Contains(udpVoicePacket.Frequencies[i]);
+                                    var frequencyCount = udpVoicePacket.Frequencies.Length;
 
-                                    if (globalFrequency)
-                                        //remove encryption for global
-                                        udpVoicePacket.Encryptions[i] = 0;
+                                    var radioReceivingPriorities =
+                                        new List<RadioReceivingPriority>(frequencyCount);
+                                    var blockedRadios = CurrentlyBlockedRadios();
 
-                                    var radio = _clientStateSingleton.DcsPlayerRadioInfo.CanHearTransmission(
-                                        udpVoicePacket.Frequencies[i],
-                                        (Modulation)udpVoicePacket.Modulations[i],
-                                        udpVoicePacket.Encryptions[i],
-                                        strictEncryption,
-                                        udpVoicePacket.UnitId,
-                                        blockedRadios,
-                                        out state,
-                                        out decryptable);
+                                    var strictEncryption =
+                                        _serverSettings.GetSettingAsBool(ServerSettingsKeys.STRICT_RADIO_ENCRYPTION);
 
-                                    var losLoss = 0.0f;
-                                    var receivPowerLossPercent = 0.0;
-
-                                    if (radio != null && state != null)
-                                        if (
-                                                radio.modulation == Modulation.INTERCOM
-                                                || radio.modulation ==
-                                                Modulation
-                                                    .MIDS // IGNORE LOS and Distance for MIDS - we assume a Link16 Network is in place
-                                                || globalFrequency
-                                                || (
-                                                    HasLineOfSight(udpVoicePacket, out losLoss)
-                                                    && InRange(udpVoicePacket.Guid, udpVoicePacket.Frequencies[i],
-                                                        out receivPowerLossPercent)
-                                                    && !blockedRadios.Contains(state.ReceivedOn)
-                                                )
-                                            )
-                                            // This is already done in CanHearTransmission!!
-                                            //decryptable =
-                                            //    (udpVoicePacket.Encryptions[i] == radio.encKey && radio.enc) ||
-                                            //    (!strictEncryption && udpVoicePacket.Encryptions[i] == 0);
-                                            radioReceivingPriorities.Add(new RadioReceivingPriority
-                                            {
-                                                Decryptable = decryptable,
-                                                Encryption = udpVoicePacket.Encryptions[i],
-                                                Frequency = udpVoicePacket.Frequencies[i],
-                                                LineOfSightLoss = losLoss,
-                                                Modulation = udpVoicePacket.Modulations[i],
-                                                ReceivingPowerLossPercent = receivPowerLossPercent,
-                                                ReceivingRadio = radio,
-                                                ReceivingState = state
-                                            });
-                                }
-
-                                // Sort receiving radios to play audio on correct one
-                                radioReceivingPriorities.Sort(SortRadioReceivingPriorities);
-
-                                if (radioReceivingPriorities.Count > 0)
-                                {
-                                    //ALL GOOD!
-                                    //create marker for bytes
-                                    for (var i = 0; i < radioReceivingPriorities.Count; i++)
+                                    // Parse frequencies into receiving radio priority for selection below
+                                    for (var i = 0; i < frequencyCount; i++)
                                     {
-                                        var destinationRadio = radioReceivingPriorities[i];
-                                        var isSimultaneousTransmission = radioReceivingPriorities.Count > 1 && i > 0;
+                                        RadioReceivingState state = null;
+                                        bool decryptable;
 
-                                        var audio = new ClientAudio
-                                        {
-                                            ClientGuid = udpVoicePacket.Guid,
-                                            EncodedAudio = udpVoicePacket.AudioPart1Bytes,
-                                            //Convert to Shorts!
-                                            ReceiveTime = DateTime.Now.Ticks,
-                                            Frequency = destinationRadio.Frequency,
-                                            Modulation = destinationRadio.Modulation,
-                                            Volume = VolumeConversionHelper.ConvertRadioVolumeSlider(destinationRadio
-                                                .ReceivingRadio.volume),
-                                            ReceivedRadio = destinationRadio.ReceivingState.ReceivedOn,
-                                            UnitId = udpVoicePacket.UnitId,
-                                            Encryption = destinationRadio.Encryption,
-                                            Decryptable = destinationRadio.Decryptable,
-                                            // mark if we can decrypt it
-                                            RadioReceivingState = destinationRadio.ReceivingState,
-                                            RecevingPower =
-                                                destinationRadio
-                                                    .ReceivingPowerLossPercent, //loss of 1.0 or greater is total loss
-                                            LineOfSightLoss =
-                                                destinationRadio
-                                                    .LineOfSightLoss, // Loss of 1.0 or greater is total loss
-                                            PacketNumber = udpVoicePacket.PacketNumber,
-                                            OriginalClientGuid = udpVoicePacket.OriginalClientGuid,
-                                            IsSecondary = destinationRadio.ReceivingState.IsSecondary
-                                        };
+                                        //Check if Global
+                                        var globalFrequency = globalFrequencies.Contains(udpVoicePacket.Frequencies[i]);
 
-                                        var transmitterName = "";
-                                        if (_clients.TryGetValue(udpVoicePacket.Guid, out var transmittingClient))
-                                        {
-                                            if (_serverSettings.GetSettingAsBool(ServerSettingsKeys
-                                                    .SHOW_TRANSMITTER_NAME)
-                                                && _globalSettings.GetClientSettingBool(GlobalSettingsKeys
-                                                    .ShowTransmitterName))
-                                                transmitterName = transmittingClient.Name;
+                                        if (globalFrequency)
+                                            //remove encryption for global
+                                            udpVoicePacket.Encryptions[i] = 0;
 
-                                            if (transmittingClient.RadioInfo?.ambient == null)
-                                            {
-                                                audio.Ambient = new Ambient();
-                                            }
-                                            else
-                                            {
-                                                audio.Ambient = transmittingClient.RadioInfo.ambient;
-                                            }
-                                            
-                                        }
+                                        var radio = _clientStateSingleton.DcsPlayerRadioInfo.CanHearTransmission(
+                                            udpVoicePacket.Frequencies[i],
+                                            (Modulation)udpVoicePacket.Modulations[i],
+                                            udpVoicePacket.Encryptions[i],
+                                            strictEncryption,
+                                            udpVoicePacket.UnitId,
+                                            blockedRadios,
+                                            out state,
+                                            out decryptable);
 
-                                        var newRadioReceivingState = new RadioReceivingState
-                                        {
-                                            IsSecondary = destinationRadio.ReceivingState.IsSecondary,
-                                            IsSimultaneous = isSimultaneousTransmission,
-                                            LastReceivedAt = DateTime.Now.Ticks,
-                                            ReceivedOn = destinationRadio.ReceivingState.ReceivedOn,
-                                            SentBy = transmitterName
-                                        };
+                                        var losLoss = 0.0f;
+                                        var receivPowerLossPercent = 0.0;
 
-                                        _radioReceivingState[audio.ReceivedRadio] = newRadioReceivingState;
-
-
-                                        //we now WANT to duplicate through multiple pipelines ONLY if AM blocking is on
-                                        //this is a nice optimisation to save duplicated audio on servers without that setting 
-                                        if (i == 0 || _serverSettings.GetSettingAsBool(ServerSettingsKeys
-                                                .IRL_RADIO_RX_INTERFERENCE))
-                                        {
-                                            if (_serverSettings.GetSettingAsBool(ServerSettingsKeys
-                                                    .RADIO_EFFECT_OVERRIDE))
-                                            {
-                                                audio.NoAudioEffects =
-                                                    _serverSettings.GlobalFrequencies.Contains(audio.Frequency);
-                                                ;
-                                            }
-
-                                            _audioManager.AddClientAudio(audio);
-                                        }
+                                        if (radio != null && state != null)
+                                            if (
+                                                    radio.modulation == Modulation.INTERCOM
+                                                    || radio.modulation ==
+                                                    Modulation
+                                                        .MIDS // IGNORE LOS and Distance for MIDS - we assume a Link16 Network is in place
+                                                    || globalFrequency
+                                                    || (
+                                                        HasLineOfSight(udpVoicePacket, out losLoss)
+                                                        && InRange(udpVoicePacket.Guid, udpVoicePacket.Frequencies[i],
+                                                            out receivPowerLossPercent)
+                                                        && !blockedRadios.Contains(state.ReceivedOn)
+                                                    )
+                                                )
+                                                // This is already done in CanHearTransmission!!
+                                                //decryptable =
+                                                //    (udpVoicePacket.Encryptions[i] == radio.encKey && radio.enc) ||
+                                                //    (!strictEncryption && udpVoicePacket.Encryptions[i] == 0);
+                                                radioReceivingPriorities.Add(new RadioReceivingPriority
+                                                {
+                                                    Decryptable = decryptable,
+                                                    Encryption = udpVoicePacket.Encryptions[i],
+                                                    Frequency = udpVoicePacket.Frequencies[i],
+                                                    LineOfSightLoss = losLoss,
+                                                    Modulation = udpVoicePacket.Modulations[i],
+                                                    ReceivingPowerLossPercent = receivPowerLossPercent,
+                                                    ReceivingRadio = radio,
+                                                    ReceivingState = state
+                                                });
                                     }
 
-                                    //handle retransmission
-                                    RetransmitAudio(udpVoicePacket, radioReceivingPriorities);
+                                    // Sort receiving radios to play audio on correct one
+                                    radioReceivingPriorities.Sort(SortRadioReceivingPriorities);
+
+                                    if (radioReceivingPriorities.Count > 0)
+                                    {
+                                        //ALL GOOD!
+                                        //create marker for bytes
+                                        for (var i = 0; i < radioReceivingPriorities.Count; i++)
+                                        {
+                                            var destinationRadio = radioReceivingPriorities[i];
+                                            var isSimultaneousTransmission = radioReceivingPriorities.Count > 1 && i > 0;
+
+                                            var audio = new ClientAudio
+                                            {
+                                                ClientGuid = udpVoicePacket.Guid,
+                                                EncodedAudio = udpVoicePacket.AudioPart1Bytes,
+                                                //Convert to Shorts!
+                                                ReceiveTime = DateTime.Now.Ticks,
+                                                Frequency = destinationRadio.Frequency,
+                                                Modulation = destinationRadio.Modulation,
+                                                Volume = VolumeConversionHelper.ConvertRadioVolumeSlider(destinationRadio
+                                                    .ReceivingRadio.volume),
+                                                ReceivedRadio = destinationRadio.ReceivingState.ReceivedOn,
+                                                UnitId = udpVoicePacket.UnitId,
+                                                Encryption = destinationRadio.Encryption,
+                                                Decryptable = destinationRadio.Decryptable,
+                                                // mark if we can decrypt it
+                                                RadioReceivingState = destinationRadio.ReceivingState,
+                                                RecevingPower =
+                                                    destinationRadio
+                                                        .ReceivingPowerLossPercent, //loss of 1.0 or greater is total loss
+                                                LineOfSightLoss =
+                                                    destinationRadio
+                                                        .LineOfSightLoss, // Loss of 1.0 or greater is total loss
+                                                PacketNumber = udpVoicePacket.PacketNumber,
+                                                OriginalClientGuid = udpVoicePacket.OriginalClientGuid,
+                                                IsSecondary = destinationRadio.ReceivingState.IsSecondary
+                                            };
+
+                                            var transmitterName = "";
+                                            if (_clients.TryGetValue(udpVoicePacket.Guid, out var transmittingClient))
+                                            {
+                                                if (_serverSettings.GetSettingAsBool(ServerSettingsKeys
+                                                        .SHOW_TRANSMITTER_NAME)
+                                                    && _globalSettings.GetClientSettingBool(GlobalSettingsKeys
+                                                        .ShowTransmitterName))
+                                                    transmitterName = transmittingClient.Name;
+
+                                                if (transmittingClient.RadioInfo?.ambient == null)
+                                                {
+                                                    audio.Ambient = new Ambient();
+                                                }
+                                                else
+                                                {
+                                                    audio.Ambient = transmittingClient.RadioInfo.ambient;
+                                                }
+                                                
+                                                if (transmittingClient.Muted)
+                                                {
+                                                    //skip receiving this audio
+                                                   continue;
+                                                }
+
+                                            }
+
+                                            var newRadioReceivingState = new RadioReceivingState
+                                            {
+                                                IsSecondary = destinationRadio.ReceivingState.IsSecondary,
+                                                IsSimultaneous = isSimultaneousTransmission,
+                                                LastReceivedAt = DateTime.Now.Ticks,
+                                                ReceivedOn = destinationRadio.ReceivingState.ReceivedOn,
+                                                SentBy = transmitterName
+                                            };
+
+                                            _radioReceivingState[audio.ReceivedRadio] = newRadioReceivingState;
+
+
+                                            //we now WANT to duplicate through multiple pipelines ONLY if AM blocking is on
+                                            //this is a nice optimisation to save duplicated audio on servers without that setting 
+                                            if (i == 0 || _serverSettings.GetSettingAsBool(ServerSettingsKeys
+                                                    .IRL_RADIO_RX_INTERFERENCE))
+                                            {
+                                                if (_serverSettings.GetSettingAsBool(ServerSettingsKeys
+                                                        .RADIO_EFFECT_OVERRIDE))
+                                                {
+                                                    audio.NoAudioEffects =
+                                                        _serverSettings.GlobalFrequencies.Contains(audio.Frequency);
+                                                    ;
+                                                }
+
+                                                _audioManager.AddClientAudio(audio);
+                                            }
+                                        }
+
+                                        //handle retransmission
+                                        RetransmitAudio(udpVoicePacket, radioReceivingPriorities);
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                catch (Exception ex)
-                {
-                    if (!_stop) Logger.Info(ex, "Failed to decode audio from Packet");
-                }
-        }
-        catch (OperationCanceledException)
-        {
-            Logger.Info("Stopped DeJitter Buffer");
+                    catch (Exception ex)
+                    {
+                        if (!_stop) Logger.Info(ex, "Failed to decode audio from Packet");
+                    }
+            }
+            catch (OperationCanceledException)
+            {
+                Logger.Info("Stopped DeJitter Buffer");
+            }
         }
     }
 
@@ -867,7 +888,7 @@ public class UDPClientAudioProcessor : IDisposable
         lock (lockObj)
         {
             _stop = true;
-            _stopFlag.Cancel();
+            _stopFlag?.Cancel();
             _clientStateSingleton.RadioSendingState.IsSending = false;
             //TODO fix this
             // _udpCommandListener?.Stop();

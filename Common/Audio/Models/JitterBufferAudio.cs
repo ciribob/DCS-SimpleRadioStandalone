@@ -1,26 +1,31 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
+using System;
+using System.Buffers;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models;
 
 public class JitterBufferAudio
 {
-    public float[] Audio { get; set; }
+    public float[] Audio { get; internal init; }
 
-    public ulong PacketNumber { get; set; }
+    public ulong PacketNumber { get; internal init; }
 
-    public int ReceivedRadio { get; set; }
+    public int ReceivedRadio { get; internal init; }
 
-    public Modulation Modulation { get; internal set; }
+    public Modulation Modulation { get; internal init; }
 
-    public bool Decryptable { get; internal set; }
+    public bool Decryptable { get; internal init; }
 
-    public float Volume { get; internal set; }
-    public bool IsSecondary { get; set; }
+    public float Volume { get; internal init; }
+    public bool IsSecondary { get; internal init; }
 
-    public double Frequency { get; set; }
-    public bool NoAudioEffects { get; set; }
+    public double Frequency { get; internal init; }
+    public bool NoAudioEffects { get; internal init; }
 
-    public string Guid { get; set; }
-    public string OriginalClientGuid { get; set; }
-    public short Encryption { get; set; }
+    public string Guid { get; internal init; }
+    public string OriginalClientGuid { get; internal init; }
+    public short Encryption { get; internal init; }
+    public double ReceivingPower { get; internal init; }
+    public float LineOfSightLoss { get; internal init; }
+    public Ambient Ambient { get; internal init; }
 }

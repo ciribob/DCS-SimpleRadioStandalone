@@ -15,6 +15,29 @@ public partial class RadioBase
     public bool retransmit = false;
     public double secFreq = 1;
 
+    //override for intercom - to allow tuning to another units intercom for instructor mode
+    public uint IntercomUnitId { get; set; } = 0;
+
+    private string _model = "";
+
+    // Radio model, lowercase alphanumeric only (arc123, r456, etc).
+    public string Model
+    {
+        get => _model;
+        set { 
+            value ??= "";
+
+            value = value.ToLowerInvariant().Trim();
+
+            value = NormaliseRadioRegex().Replace(value, "");
+            if (value.Length > 32)
+            {
+                value = value.Substring(0, 32);
+            }
+            _model = value;
+        }
+    }
+
     public string Name
     {
         get => _name;
@@ -25,8 +48,11 @@ public partial class RadioBase
             value = value.ToLowerInvariant().Trim();
 
             value = NormaliseRadioRegex().Replace(value, "");
-
-            if (value.Length > 32) value = value.Substring(0, 32);
+            
+            if (value.Length > 32)
+            {
+                value = value.Substring(0, 32);
+            }
             _name = value;
         }
     }
@@ -50,12 +76,13 @@ public partial class RadioBase
         if (encKey != compare.encKey) return false;
         if (retransmit != compare.retransmit) return false;
         if (!FreqCloseEnough(secFreq, compare.secFreq)) return false;
-        if (Name != compare?.Name) return false;
+        if (Model != compare?.Model) return false;
+        if (IntercomUnitId != compare.IntercomUnitId) return false;
 
         return true;
     }
 
-    public override int GetHashCode() => HashCode.Combine(freq, modulation, enc, encKey, retransmit, secFreq, Name);
+    public override int GetHashCode() => HashCode.Combine(freq, modulation, enc, encKey, retransmit, secFreq, Name, IntercomUnitId);
 
     //comparing doubles is risky - check that we're close enough to hear (within 100hz)
 
@@ -75,7 +102,8 @@ public partial class RadioBase
             secFreq = secFreq,
             encKey = encKey,
             freq = freq,
-            Name = Name
+            Model = Model,
+            IntercomUnitId = IntercomUnitId
         };
     }
 

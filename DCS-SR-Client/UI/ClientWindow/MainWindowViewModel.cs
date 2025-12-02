@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Caliburn.Micro;
@@ -29,7 +30,6 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
 using NAudio.CoreAudioApi;
 using NLog;
-using WPFCustomMessageBox;
 using AwaRadioOverlayWindow =
     Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.AwacsRadioOverlayWindow.AwaRadioOverlayWindow;
 using LogManager = NLog.LogManager;
@@ -40,6 +40,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
     IHandle<VOIPStatusMessage>, IHandle<ProfileChangedMessage>, IHandle<EAMConnectedMessage>,
     IHandle<EAMDisconnectMessage>, IHandle<ServerSettingsUpdatedMessage>, IHandle<AutoConnectMessage>, IHandle<ToogleAwacsRadioOverlayMessage>, IHandle<ToggleSingleStackRadioOverlayMessage>
 {
+    private static readonly long OVERLAY_DEBOUNCE = 500;
     private readonly AudioManager _audioManager;
 
     private readonly GlobalSettingsStore _globalSettings = GlobalSettingsStore.Instance;
@@ -83,15 +84,15 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
 
         TrayIconCommand = new DelegateCommand(() =>
         {
-            Application.Current.MainWindow.Show();
-            Application.Current.MainWindow.WindowState = WindowState.Normal;
+            App.Current.MainWindow.Show();
+            App.Current.MainWindow.WindowState = WindowState.Normal;
         });
 
         SingleStackOverlayCommand = new DelegateCommand(SingleRadioStackOverlay);
 
         AwacsRadioOverlayCommand = new DelegateCommand(MultiRadioOverlay);
 
-        TrayIconQuitCommand = new DelegateCommand(() => { Application.Current.Shutdown(); });
+        TrayIconQuitCommand = new DelegateCommand(() => { App.Current.Shutdown(); });
 
         //TODO might not need to do this - should be triggered by notifyproperty
         _updateTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
@@ -348,7 +349,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
                 {
                     WindowHelper.BringProcessToFront(Process.GetCurrentProcess());
 
-                    var result = MessageBox.Show(App.Current.MainWindow,
+                    var result = System.Windows.MessageBox.Show(App.Current.MainWindow,
                         $"{Resources.MsgBoxMismatchText1} {message.Address} {Resources.MsgBoxMismatchText2} {ServerAddress} {Resources.MsgBoxMismatchText3}\n\n" +
                         $"{Resources.MsgBoxMismatchText4}",
                         Resources.MsgBoxMismatch,
@@ -360,6 +361,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
 
                 if (switchServer)
                 {
+                    Logger.Info($"Switching from {ServerAddress} to {message.Address}");
                     ConnectIsEnabled = false;
                     ServerAddress = message.Address;
                     Stop();
@@ -521,7 +523,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
                 else
                 {
                     //invalid ID
-                    MessageBox.Show("Invalid IP or Host Name!", "Host Name Error", MessageBoxButton.OK,
+                    System.Windows.MessageBox.Show("Invalid IP or Host Name!", "Host Name Error", MessageBoxButton.OK,
                         MessageBoxImage.Error);
 
                     IsConnected = false;
@@ -529,7 +531,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
             }
             catch (Exception ex) when (ex is SocketException || ex is ArgumentException)
             {
-                MessageBox.Show("Invalid IP or Host Name!", "Host Name Error", MessageBoxButton.OK,
+                System.Windows.MessageBox.Show("Invalid IP or Host Name!", "Host Name Error", MessageBoxButton.OK,
                     MessageBoxImage.Error);
 
                 IsConnected = false;
@@ -557,15 +559,16 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         {
             _audioManager.StopEncoding();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Logger.Warn(ex, "Failed to stop enconding audio");
         }
 
 
         _dcsManager?.Stop();
         _dcsManager = null;
 
-        _client?.Disconnect();
+        _client?.RequestDisconnect();
         _client = null;
 
         ClientState.DcsPlayerRadioInfo.Reset();
@@ -643,7 +646,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
     {
         if (_globalSettings.GetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId).RawValue
             .Equals(_globalSettings.GetClientSetting(GlobalSettingsKeys.AudioOutputDeviceId).RawValue))
-            MessageBox.Show(
+            System.Windows.MessageBox.Show(
                 "Mic Output and Speaker Output should not be set to the same device!\n\nMic Output is just for recording and not for use as a sidetone. You will hear yourself with a small delay!\n\nHit disconnect and change Mic Output / Passthrough",
                 "Warning", MessageBoxButton.OK,
                 MessageBoxImage.Warning);
@@ -687,7 +690,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
     private void StartAudio(IPEndPoint endPoint)
     {
         //Must be main thread
-        Application.Current.Dispatcher.Invoke(delegate
+        App.Current.Dispatcher.Invoke(delegate
         {
             try
             {
@@ -700,11 +703,21 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
                     ex.Message);
                 Stop();
 
-                var messageBoxResult = CustomMessageBox.ShowOK(
-                    "Problem initialising Audio Output!\n\nTry a different Output device and check privacy settings\n\nIf the problem persists, disable ALL other outputs and restart DCS SRS",
-                    "Audio Output Error",
-                    "Close",
-                    MessageBoxImage.Error);
+                var audioOutputErrorDialog = TaskDialog.ShowDialog(new TaskDialogPage
+                {
+                    Caption = "Audio Output Error",
+                    Heading = "Problem initialising Audio Output!",
+                    Text = "Try a different Output device and check privacy settings\n\nIf the problem persists, disable ALL other outputs and restart DCS SRS",
+                    Icon = TaskDialogIcon.Error,
+                    Buttons =
+                    {
+                        new TaskDialogButton
+                        {
+                            Text = "Close",
+                            Tag = 3
+                        }
+                    }
+                });
             }
         });
     }
@@ -776,7 +789,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
 
             _serverSettingsWindow = new ServerSettingsWindow.ServerSettingsWindow();
             _serverSettingsWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            _serverSettingsWindow.Owner = Application.Current.MainWindow;
+            _serverSettingsWindow.Owner = App.Current.MainWindow;
             _serverSettingsWindow.Show();
         }
         else
@@ -795,7 +808,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
 
             _clientListWindow = new ClientListWindow();
             _clientListWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            _clientListWindow.Owner = Application.Current.MainWindow;
+            _clientListWindow.Owner = App.Current.MainWindow;
             _clientListWindow.Show();
         }
         else
@@ -811,7 +824,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         //stop timer
         _updateTimer?.Stop();
 
-        _client?.Disconnect();
+        _client?.RequestDisconnect();
         _client = null;
 
         Stop();
@@ -832,17 +845,30 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         _serverSettingsWindow = null;
     }
 
+    private long lastAwacsToggleTime;
+    private long lastRadioToggleTime;
     public Task HandleAsync(ToogleAwacsRadioOverlayMessage message, CancellationToken cancellationToken)
     {
-        // Even though it should be the UI thread - it wasnt working so this forces the UI / STA thread
-        Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(MultiRadioOverlay));
+        if (TimeSpan.FromTicks(DateTime.Now.Ticks - lastAwacsToggleTime).TotalMilliseconds > OVERLAY_DEBOUNCE)
+        {
+            lastAwacsToggleTime = DateTime.Now.Ticks;
+            //Debounce
+            // Even though it should be the UI thread - it wasnt working so this forces the UI / STA thread
+            App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(MultiRadioOverlay));
+        }
+     
         return Task.CompletedTask;
     }
 
     public Task HandleAsync(ToggleSingleStackRadioOverlayMessage message, CancellationToken cancellationToken)
     {
-        // Even though it should be the UI thread - it wasnt working so this forces the UI / STA thread
-        Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(ToggleSingleRadioStack));
+        if (TimeSpan.FromTicks(DateTime.Now.Ticks - lastRadioToggleTime).TotalMilliseconds > OVERLAY_DEBOUNCE)
+        {
+            lastRadioToggleTime = DateTime.Now.Ticks;
+            // Even though it should be the UI thread - it wasnt working so this forces the UI / STA thread
+            App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(ToggleSingleRadioStack));
+        }
+
         return Task.CompletedTask;
     }
 }

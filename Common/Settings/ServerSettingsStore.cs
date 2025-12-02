@@ -13,6 +13,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 
 public class ServerSettingsStore
 {
+    public static readonly string AWACS_RADIOS_CUSTOM_FILE = "awacs-radios-custom.json";
     public static readonly string CFG_BACKUP_FILE_NAME = "server.cfg.bak";
 
     private static ServerSettingsStore instance;
@@ -26,6 +27,7 @@ public class ServerSettingsStore
     private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
     private ServerChannelPresetHelper _serverChannelPresetHelper;
+    private List<DCSRadioCustom> _customRadios = null;
 
     public ServerSettingsStore()
     {
@@ -236,6 +238,65 @@ public class ServerSettingsStore
         {
             settings[nameof(ServerSettingsKeys.SERVER_PRESETS)] =
                 JsonSerializer.Serialize(new Dictionary<string, List<ServerPresetChannel>>());
+        }
+        
+        if (GetGeneralSetting(ServerSettingsKeys.SERVER_EAM_RADIO_PRESET_ENABLED).BoolValue)
+        {
+            //lazy init
+            if (_customRadios == null)
+            {
+                _customRadios = new List<DCSRadioCustom>();
+
+                try
+                {
+                    var path = Path.Combine(Path.Combine(Path.GetDirectoryName(CFG_FILE_NAME), "Presets", AWACS_RADIOS_CUSTOM_FILE));
+
+                    if (File.Exists(path))
+                    {
+                        var customRadioText = File.ReadAllText(path);
+               
+                        _customRadios  = JsonSerializer.Deserialize<List<DCSRadioCustom>>(customRadioText,
+                            new JsonSerializerOptions()
+                            {
+                                AllowTrailingCommas = true,
+                                PropertyNameCaseInsensitive = true,
+                                ReadCommentHandling = JsonCommentHandling.Skip,
+                                IncludeFields = true,
+                            });
+
+                        if (_customRadios.Count != Constants.MAX_RADIOS)
+                        {
+                            _customRadios =  new List<DCSRadioCustom>();
+                            _logger.Error($"Custom Radios has {_customRadios.Count} custom radios and needs exactly {Constants.MAX_RADIOS}");
+                        }
+                    }
+                    else
+                    {
+                        _logger.Error($"Custom Radios file not found at {path}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _customRadios = new List<DCSRadioCustom>();
+                    _logger.Error($"Unable to parse custom radio file. Error: {ex.Message}");
+                }
+               
+            }
+            
+            //I apologise to the programming gods - but this keeps it backwards compatible :/
+            settings[nameof(ServerSettingsKeys.SERVER_EAM_RADIO_PRESET)] =
+                JsonSerializer.Serialize(_customRadios, new JsonSerializerOptions()
+                {
+                    AllowTrailingCommas = true,
+                    PropertyNameCaseInsensitive = true,
+                    ReadCommentHandling = JsonCommentHandling.Skip,
+                    IncludeFields = true,
+                });
+        }
+        else
+        {
+            settings[nameof(ServerSettingsKeys.SERVER_EAM_RADIO_PRESET)] =
+                JsonSerializer.Serialize(new List<DCSRadioCustom>());
         }
 
         return settings;

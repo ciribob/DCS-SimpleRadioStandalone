@@ -1,0 +1,14 @@
+
+
+STTS.PlayMP3("C:\\Users\\Ciaran\\Downloads\\PR-Music.mp3","255,31","AM,FM","0.5","Multiple",2,Unit.getByName("RADIO"):getPoint())
+
+STTS.TextToSpeech("Default Female audio test","251","AM","1.0","SRS2",2)
+
+STTS.TextToSpeech("Google Text to Speech - 1","251","AM","1.0","SRS",2,null,1,"female","cz-CZ","cs-CZ-Wavenet-A",true)
+
+STTS.TextToSpeech("Male Microsoft text to speech - 2","251","AM","1.0","SRS",2,null,1,"male","en-US")
+  
+
+STTS.TextToSpeech("Microsoft russian female text to speech - 3","251","AM","1.0","SRS",2,null,1,"female","ru-RU","Microsoft Irina Desktop")
+
+

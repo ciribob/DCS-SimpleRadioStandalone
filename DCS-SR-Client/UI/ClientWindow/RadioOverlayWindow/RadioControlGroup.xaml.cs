@@ -7,6 +7,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS.Models.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.RadioOverlayWindow.PresetChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 
@@ -17,7 +18,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.RadioOverlay
 /// </summary>
 public partial class RadioControlGroup : UserControl
 {
-    private const double MHz = 1000000;
     private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
     private readonly ConnectedClientsSingleton _connectClientsSingleton = ConnectedClientsSingleton.Instance;
     private bool _dragging;
@@ -169,15 +169,26 @@ public partial class RadioControlGroup : UserControl
             }
             else
             {
-                Up10.Visibility = Visibility.Hidden;
-                Up1.Visibility = Visibility.Hidden;
-                Up01.Visibility = Visibility.Hidden;
+                
+                Up10.Visibility = Visibility.Visible;
+                Up1.Visibility = Visibility.Visible;
+                Up01.Visibility = Visibility.Visible;
+
+                Down10.Visibility = Visibility.Visible;
+                Down1.Visibility = Visibility.Visible;
+                Down01.Visibility = Visibility.Visible;
+                
+                Up10.IsEnabled = true;
+                Up1.IsEnabled = true;
+                Up01.IsEnabled = true;
+                
+                Down10.IsEnabled = true;
+                Down1.IsEnabled = true;
+                Down01.IsEnabled = true;
+                
                 Up001.Visibility = Visibility.Hidden;
                 Up0001.Visibility = Visibility.Hidden;
-
-                Down10.Visibility = Visibility.Hidden;
-                Down1.Visibility = Visibility.Hidden;
-                Down01.Visibility = Visibility.Hidden;
+                
                 Down001.Visibility = Visibility.Hidden;
                 Down0001.Visibility = Visibility.Hidden;
             }
@@ -283,28 +294,42 @@ public partial class RadioControlGroup : UserControl
             }
             else if (currentRadio.modulation == Modulation.MIDS) //MIDS
             {
-                RadioFrequency.Text = Properties.Resources.OverlayMIDS;
-                if (currentRadio.channel >= 0)
-                    RadioFrequency.Text += " " + Properties.Resources.OverlayChannelPrefix + " " + currentRadio.channel;
-                else
-                    RadioFrequency.Text += " " + Properties.Resources.ValueOFF;
+                switch (RadioCalculator.Link16.FrequencyToChannel(currentRadio.freq))
+                {
+                    case > 0:
+                        RadioFrequency.Text = RadioCalculator.Link16.FrequencyToChannel(currentRadio.freq).ToString();
+                        RadioFrequency.Text += Properties.Resources.OverlayMIDS;
+                        break;
+                    default:
+                        RadioFrequency.Text = "";
+                        RadioFrequency.Text += Properties.Resources.ValueOFF;
+                        break;
+                }
             }
             else
             {
                 RadioFrequency.Text =
-                    (currentRadio.freq / MHz).ToString("0.000",
+                    (currentRadio.freq / RadioCalculator.MHz).ToString("0.000",
                         CultureInfo.InvariantCulture); //make number UK / US style with decimals not commas!
 
-                if (currentRadio.modulation == Modulation.AM)
-                    RadioFrequency.Text += "AM";
-                else if (currentRadio.modulation == Modulation.FM)
-                    RadioFrequency.Text += "FM";
-                else if (currentRadio.modulation == Modulation.SINCGARS)
-                    RadioFrequency.Text += "SG";
-                else if (currentRadio.modulation == Modulation.HAVEQUICK)
-                    RadioFrequency.Text += "HQ";
-                else
-                    RadioFrequency.Text += "";
+                switch (currentRadio.modulation)
+                {
+                    case Modulation.AM:
+                        RadioFrequency.Text += "AM";
+                        break;
+                    case Modulation.FM:
+                        RadioFrequency.Text += "FM";
+                        break;
+                    case Modulation.SINCGARS:
+                        RadioFrequency.Text += "SG";
+                        break;
+                    case Modulation.HAVEQUICK:
+                        RadioFrequency.Text += "HQ";
+                        break;
+                    default:
+                        RadioFrequency.Text += "";
+                        break;
+                }
 
                 if (currentRadio.secFreq > 100) RadioFrequency.Text += " G";
 

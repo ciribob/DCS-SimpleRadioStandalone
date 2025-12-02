@@ -167,7 +167,7 @@ public sealed class ClientStateSingleton : PropertyChangedBaseClass, IHandle<TCP
 
             return name;
         }
-        set => GlobalSettingsStore.Instance.SetClientSetting(GlobalSettingsKeys.LastSeenName, value);
+        set => GlobalSettingsStore.Instance.SetClientSetting(GlobalSettingsKeys.LastSeenName, value, true);
     }
 
     public VAICOMMessageWrapper InhibitTX { get; set; } = new(); //used to temporarily stop PTT for VAICOM

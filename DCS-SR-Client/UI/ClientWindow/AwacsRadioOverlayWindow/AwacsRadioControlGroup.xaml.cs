@@ -5,10 +5,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS.Models.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.AwacsRadioOverlayWindow.InstructorMode;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.RadioOverlayWindow.PresetChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using UserControl = System.Windows.Controls.UserControl;
 
@@ -19,10 +23,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.AwacsRadioOv
 /// </summary>
 public partial class RadioControlGroup : UserControl
 {
-    private const double MHz = 1000000;
     private const int MaxSimultaneousTransmissions = 3;
     private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
-    private readonly ConnectedClientsSingleton _connectClientsSingleton = ConnectedClientsSingleton.Instance;
+    private readonly ProfileSettingsStore _profileSettingsStore = GlobalSettingsStore.Instance.ProfileSettingsStore;
     private bool _dragging;
 
     private int _radioId;
@@ -46,6 +49,7 @@ public partial class RadioControlGroup : UserControl
 
     public PresetChannelsViewModel ChannelViewModel { get; set; }
 
+    public InstructorModeViewModel InstructorModeViewModel { get; set; }
     public int RadioId
     {
         private get => _radioId;
@@ -60,9 +64,11 @@ public partial class RadioControlGroup : UserControl
     private void UpdateBinding()
     {
         ChannelViewModel = _clientStateSingleton.FixedChannels[_radioId - 1];
+        InstructorModeViewModel = new InstructorModeViewModel(_radioId);
 
-        var bindingExpression = PresetChannelsView.GetBindingExpression(DataContextProperty);
-        bindingExpression?.UpdateTarget();
+        PresetChannelsView.GetBindingExpression(DataContextProperty)?.UpdateTarget();
+        InstructorModeView.GetBindingExpression(DataContextProperty)?.UpdateTarget();
+        
     }
 
     private void RadioFrequencyOnGotFocus(object sender, RoutedEventArgs routedEventArgs)
@@ -85,13 +91,14 @@ public partial class RadioControlGroup : UserControl
         {
             //remove focus to somewhere else
             RadioVolume.Focus();
-            Keyboard.ClearFocus(); //then clear altogher
+            Keyboard.ClearFocus(); //then clear altogether
         }
     }
 
     private void RadioFrequencyOnLostFocus(object sender, RoutedEventArgs routedEventArgs)
     {
         double freq = 0;
+
         // Some locales/cultures (e.g. German) do not parse "." as decimal points since they use decimal commas ("123,45"), leading to "123.45" being parsed as "12345" and frequencies being set too high
         // Using an invariant culture makes sure the decimal point is parsed properly for all locales - replacing any commas makes sure people entering numbers in a weird format still get correct results
         if (double.TryParse(RadioFrequency.Text.Replace(',', '.').Trim(), NumberStyles.AllowDecimalPoint,
@@ -220,15 +227,25 @@ public partial class RadioControlGroup : UserControl
             }
             else
             {
-                Up10.Visibility = Visibility.Hidden;
-                Up1.Visibility = Visibility.Hidden;
-                Up01.Visibility = Visibility.Hidden;
+                Up10.Visibility = Visibility.Visible;
+                Up1.Visibility = Visibility.Visible;
+                Up01.Visibility = Visibility.Visible;
+
+                Down10.Visibility = Visibility.Visible;
+                Down1.Visibility = Visibility.Visible;
+                Down01.Visibility = Visibility.Visible;
+                
+                Up10.IsEnabled = true;
+                Up1.IsEnabled = true;
+                Up01.IsEnabled = true;
+                
+                Down10.IsEnabled = true;
+                Down1.IsEnabled = true;
+                Down01.IsEnabled = true;
+                
                 Up001.Visibility = Visibility.Hidden;
                 Up0001.Visibility = Visibility.Hidden;
-
-                Down10.Visibility = Visibility.Hidden;
-                Down1.Visibility = Visibility.Hidden;
-                Down01.Visibility = Visibility.Hidden;
+                
                 Down001.Visibility = Visibility.Hidden;
                 Down0001.Visibility = Visibility.Hidden;
             }
@@ -236,7 +253,8 @@ public partial class RadioControlGroup : UserControl
             PresetChannelsView.IsEnabled = true;
 
             ChannelTab.Visibility = Visibility.Visible;
-
+            
+        
             var currentRadio = _clientStateSingleton.DcsPlayerRadioInfo.radios[RadioId];
 
             if (_clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmissionControl ==
@@ -300,6 +318,7 @@ public partial class RadioControlGroup : UserControl
     {
         SetupEncryption();
         HandleRetransmitStatus();
+        HandleInstructorMode();
 
         var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
 
@@ -364,16 +383,27 @@ public partial class RadioControlGroup : UserControl
 
             if (currentRadio.modulation == Modulation.INTERCOM) //intercom
             {
-                RadioFrequency.Text = Properties.Resources.OverlayIntercom;
+                RadioFrequency.Text = "INT. "+RadioId;
                 RadioMetaData.Text = "";
+                ToggleButtons(false);
+                RadioLabel.Text = "INSTR. INT. "+(RadioId);
+                
+                return;
             }
             else if (currentRadio.modulation == Modulation.MIDS) //MIDS
             {
-                RadioFrequency.Text = Properties.Resources.OverlayMIDS;
-                if (currentRadio.channel >= 0)
-                    RadioMetaData.Text = " " + Properties.Resources.OverlayChannelPrefix + " " + currentRadio.channel;
-                else
-                    RadioMetaData.Text = " " + Properties.Resources.ValueOFF;
+                switch (RadioCalculator.Link16.FrequencyToChannel(currentRadio.freq))
+                {
+                    case > 0:
+                        if (!RadioFrequency.IsFocused || currentRadio.freqMode == DCSRadio.FreqMode.COCKPIT) 
+                            RadioFrequency.Text = RadioCalculator.Link16.FrequencyToChannel(currentRadio.freq).ToString();
+                        RadioMetaData.Text = Properties.Resources.OverlayMIDS;
+                        break;
+                    default:
+                        RadioFrequency.Text = "";
+                        RadioMetaData.Text = Properties.Resources.ValueOFF;
+                        break;
+                }
             }
             else
             {
@@ -381,19 +411,27 @@ public partial class RadioControlGroup : UserControl
                     || currentRadio.freqMode == DCSRadio.FreqMode.COCKPIT
                     || currentRadio.modulation == Modulation.DISABLED)
                     RadioFrequency.Text =
-                        (currentRadio.freq / MHz).ToString("0.000",
+                        (currentRadio.freq / RadioCalculator.MHz).ToString("0.000",
                             CultureInfo.InvariantCulture); //make number UK / US style with decimals not commas!
 
-                if (currentRadio.modulation == Modulation.AM)
-                    RadioMetaData.Text = "AM";
-                else if (currentRadio.modulation == Modulation.FM)
-                    RadioMetaData.Text = "FM";
-                else if (currentRadio.modulation == Modulation.SINCGARS)
-                    RadioMetaData.Text = "SG";
-                else if (currentRadio.modulation == Modulation.HAVEQUICK)
-                    RadioMetaData.Text = "HQ";
-                else
-                    RadioMetaData.Text += "";
+                switch (currentRadio.modulation)
+                {
+                    case Modulation.AM:
+                        RadioMetaData.Text = Properties.Resources.OverlayAM;
+                        break;
+                    case Modulation.FM:
+                        RadioMetaData.Text = Properties.Resources.OverlayFM;
+                        break;
+                    case Modulation.SINCGARS:
+                        RadioMetaData.Text = Properties.Resources.OverlaySG;
+                        break;
+                    case Modulation.HAVEQUICK:
+                        RadioMetaData.Text = Properties.Resources.OverlayHQ;
+                        break;
+                    default:
+                        RadioMetaData.Text += "";
+                        break;
+                }
 
                 if (currentRadio.secFreq > 100) RadioMetaData.Text += " G";
 
@@ -427,6 +465,33 @@ public partial class RadioControlGroup : UserControl
         var item = TabControl.SelectedItem as TabItem;
 
         if (item?.Visibility != Visibility.Visible) TabControl.SelectedIndex = 0;
+    }
+
+    private void HandleInstructorMode()
+    {
+        var serverSettings = SyncedServerSettings.Instance;
+        var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
+        if (dcsPlayerRadioInfo != null
+            && dcsPlayerRadioInfo.IsCurrent()
+            && serverSettings.GetSettingAsBool(ServerSettingsKeys.ALLOW_INSTRUCTOR_MODE)
+            && _profileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.InstructorMode)
+            && ClientStateSingleton.Instance.ExternalAWACSModeConnected)
+        {
+            var currentRadio = dcsPlayerRadioInfo.radios[RadioId];
+
+            if (currentRadio.modulation != Modulation.DISABLED)
+            {
+                InstructorTab.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                InstructorTab.Visibility = Visibility.Collapsed;
+            }
+        }
+        else
+        {
+            InstructorTab.Visibility = Visibility.Collapsed;
+        }
     }
 
 
@@ -631,5 +696,10 @@ public partial class RadioControlGroup : UserControl
     private void RetransmitClick(object sender, RoutedEventArgs e)
     {
         RadioHelper.ToggleRetransmit(RadioId);
+    }
+
+    public void OnClose()
+    {
+        InstructorModeViewModel?.StopInstructorMode();
     }
 }

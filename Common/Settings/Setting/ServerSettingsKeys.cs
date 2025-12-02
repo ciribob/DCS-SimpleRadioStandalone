@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Models;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
 
@@ -38,6 +40,10 @@ public enum ServerSettingsKeys
     SERVER_PRESETS = 31,
     HTTP_SERVER_ENABLED = 32,
     HTTP_SERVER_PORT = 33,
+    HTTP_SERVER_API_KEY = 34,
+    SERVER_EAM_RADIO_PRESET_ENABLED = 35,
+    SERVER_EAM_RADIO_PRESET = 36,
+    ALLOW_INSTRUCTOR_MODE = 37
 }
 
 public class DefaultServerSettings
@@ -76,6 +82,9 @@ public class DefaultServerSettings
         { ServerSettingsKeys.SERVER_IP.ToString(), "0.0.0.0" },
         { ServerSettingsKeys.SERVER_PRESETS_ENABLED.ToString(), "false" },
         { ServerSettingsKeys.HTTP_SERVER_ENABLED.ToString(), "false" },
-        { ServerSettingsKeys.HTTP_SERVER_PORT.ToString(), "8080" }
+        { ServerSettingsKeys.HTTP_SERVER_PORT.ToString(), "8080" },
+        { ServerSettingsKeys.HTTP_SERVER_API_KEY.ToString(), ShortGuid.NewGuid() },
+        { ServerSettingsKeys.SERVER_EAM_RADIO_PRESET_ENABLED.ToString(), "false" },
+        { ServerSettingsKeys.ALLOW_INSTRUCTOR_MODE.ToString(), "false" },
     };
 }

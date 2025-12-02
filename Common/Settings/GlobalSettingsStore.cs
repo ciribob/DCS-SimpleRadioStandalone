@@ -11,6 +11,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 
 public enum GlobalSettingsKeys
 {
+    Version,
     MinimiseToTray,
     StartMinimised,
 
@@ -53,6 +54,13 @@ public enum GlobalSettingsKeys
 
     Denoise,
     DenoiseAttenuation,
+    IncomingAudioAGC,
+    IncomingAudioAGCTarget,
+    IncomingAudioAGCDecrement,
+    IncomingAudioAGCLevelMax,
+    
+    IncomingAudioDenoise,
+    IncomingAudioDenoiseAttenuation,
 
     LastSeenName,
 
@@ -89,6 +97,7 @@ public enum GlobalSettingsKeys
     RecordAudio,
     SingleFileMixdown,
     RecordingQuality,
+    RecordingFormat,
     DisallowedAudioTone,
     VOX,
     VOXMode,
@@ -237,8 +246,11 @@ public class GlobalSettingsStore
         { GlobalSettingsKeys.SettingsProfiles.ToString(), new[] { "default.cfg" } }
     };
 
+    private static readonly int CurrentVersion = 1;
+
     private readonly Dictionary<string, string> defaultGlobalSettings = new()
     {
+        { GlobalSettingsKeys.Version.ToString(), "0" },
         { GlobalSettingsKeys.AutoConnect.ToString(), "true" },
         { GlobalSettingsKeys.AutoConnectPrompt.ToString(), "false" },
         { GlobalSettingsKeys.AutoConnectMismatchPrompt.ToString(), "true" },
@@ -287,12 +299,20 @@ public class GlobalSettingsStore
 
 
         { GlobalSettingsKeys.AGC.ToString(), "true" },
-        { GlobalSettingsKeys.AGCTarget.ToString(), "30000" },
+        { GlobalSettingsKeys.AGCTarget.ToString(), "14000" },
         { GlobalSettingsKeys.AGCDecrement.ToString(), "-60" },
-        { GlobalSettingsKeys.AGCLevelMax.ToString(), "68" },
+        { GlobalSettingsKeys.AGCLevelMax.ToString(), "40" },
 
         { GlobalSettingsKeys.Denoise.ToString(), "true" },
         { GlobalSettingsKeys.DenoiseAttenuation.ToString(), "-30" },
+
+        { GlobalSettingsKeys.IncomingAudioAGC.ToString(), "true" },
+        { GlobalSettingsKeys.IncomingAudioAGCTarget.ToString(), "14000" },
+        { GlobalSettingsKeys.IncomingAudioAGCDecrement.ToString(), "-60" },
+        { GlobalSettingsKeys.IncomingAudioAGCLevelMax.ToString(), "40" },
+                             
+        { GlobalSettingsKeys.IncomingAudioDenoise.ToString(), "true" },
+        { GlobalSettingsKeys.IncomingAudioDenoiseAttenuation.ToString(), "-30" },
 
         { GlobalSettingsKeys.LastSeenName.ToString(), "" },
 
@@ -303,7 +323,7 @@ public class GlobalSettingsStore
         { GlobalSettingsKeys.DisableWindowVisibilityCheck.ToString(), "false" },
         { GlobalSettingsKeys.PlayConnectionSounds.ToString(), "true" },
 
-        { GlobalSettingsKeys.RequireAdmin.ToString(), "true" },
+        { GlobalSettingsKeys.RequireAdmin.ToString(), "false" },
 
         { GlobalSettingsKeys.AutoSelectSettingsProfile.ToString(), "false" },
 
@@ -322,6 +342,7 @@ public class GlobalSettingsStore
         { GlobalSettingsKeys.RecordAudio.ToString(), "false" },
         { GlobalSettingsKeys.SingleFileMixdown.ToString(), "false" },
         { GlobalSettingsKeys.RecordingQuality.ToString(), "V3" },
+        { GlobalSettingsKeys.RecordingFormat.ToString(), "mp3" },
         { GlobalSettingsKeys.DisallowedAudioTone.ToString(), "false" },
 
         { GlobalSettingsKeys.VOX.ToString(), "false" },
@@ -359,17 +380,20 @@ public class GlobalSettingsStore
             }
 
             _configuration = Configuration.LoadFromFile(Path + ConfigFileName);
+            UpgradeSettings();
         }
         catch (FileNotFoundException)
         {
             Logger.Info(
                 $"Did not find client config file at path ${Path}/${ConfigFileName}, initialising with default config");
 
-            _configuration = new Configuration();
-            _configuration.Add(new Section("Position Settings"));
-            _configuration.Add(new Section("Client Settings"));
-            _configuration.Add(new Section("Network Settings"));
-
+            _configuration = new Configuration
+            {
+                new Section("Position Settings"),
+                new Section("Client Settings"),
+                new Section("Network Settings")
+            };
+            SetClientSetting(GlobalSettingsKeys.Version, CurrentVersion);
             Save();
         }
         catch (ParserException ex)
@@ -393,10 +417,13 @@ public class GlobalSettingsStore
                 Logger.Error(e, "Failed to create backup of corrupted config file, ignoring");
             }
 
-            _configuration = new Configuration();
-            _configuration.Add(new Section("Position Settings"));
-            _configuration.Add(new Section("Client Settings"));
-            _configuration.Add(new Section("Network Settings"));
+            _configuration = new Configuration
+            {
+                new Section("Position Settings"),
+                new Section("Client Settings"),
+                new Section("Network Settings")
+            };
+            SetClientSetting(GlobalSettingsKeys.Version, CurrentVersion);
 
             Save();
         }
@@ -496,10 +523,10 @@ public class GlobalSettingsStore
         return GetSetting("Client Settings", key.ToString());
     }
 
-    public void SetClientSetting(GlobalSettingsKeys key, string value)
+    public void SetClientSetting(GlobalSettingsKeys key, string value, bool raw = false)
     {
         _settingsCache.TryRemove(key.ToString(), out _);
-        SetSetting("Client Settings", key.ToString(), value);
+        SetSetting("Client Settings", key.ToString(), value, raw);
     }
 
     public void SetClientSetting(GlobalSettingsKeys key, bool value)
@@ -572,7 +599,7 @@ public class GlobalSettingsStore
         return _configuration[section][setting];
     }
 
-    private void SetSetting(string section, string key, object setting)
+    private void SetSetting(string section, string key, object setting, bool raw = false)
     {
         if (setting == null) setting = "";
         if (!_configuration.Contains(section)) _configuration.Add(section);
@@ -586,7 +613,12 @@ public class GlobalSettingsStore
             if (setting is bool)
                 _configuration[section][key].BoolValue = (bool)setting;
             else if (setting.GetType() == typeof(string))
-                _configuration[section][key].StringValue = setting as string;
+            {
+                if (raw)
+                    _configuration[section][key].RawValue = setting as string;
+                else
+                    _configuration[section][key].StringValue = setting as string;
+            }
             else if (setting is string[])
                 _configuration[section][key].StringValueArray = setting as string[];
             else if (setting is int)
@@ -613,6 +645,26 @@ public class GlobalSettingsStore
             {
                 Logger.Error("Unable to save settings!");
             }
+        }
+    }
+
+    private void UpgradeSettings()
+    {
+        var loadedVersion = GetClientSettingInt(GlobalSettingsKeys.Version);
+        if (loadedVersion == 0)
+        {
+            // Update to V1:
+            // * Force enable AGC again.
+            // * Fix up the values.
+            SetClientSetting(GlobalSettingsKeys.AGC, true);
+            SetClientSetting(GlobalSettingsKeys.AGCLevelMax, 45);
+            SetClientSetting(GlobalSettingsKeys.AGCTarget, 14000);
+
+            // Upgrade done
+            SetClientSetting(GlobalSettingsKeys.Version, 1);
+
+            Save();
+            loadedVersion = 1;
         }
     }
 }

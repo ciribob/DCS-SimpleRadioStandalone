@@ -340,29 +340,31 @@
                                    Source="{Binding Path=IsConnected, Converter={StaticResource ConnectionStatusImageConverter}}"
                                    HorizontalAlignment="Center"
                                    Height="26"
-                                   Margin="5,0,5,0" />
+                                   Margin="0,0,5,0" />
+                            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                             <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center"
                                    Content="{x:Static p:Resources.VOIPConnectionStatusLabel}" />
                             <Image x:Name="VOIPConnectionStatus"
                                    Source="{Binding Path=IsVoIPConnected, Converter={StaticResource ConnectionStatusImageConverter}}"
                                    Height="26"
                                    HorizontalAlignment="Center"
-                                   Margin="5,0,5,0" />
-                       
+                                   Margin="0,0,5,0" />
+                            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                             <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center"
                                    Content="{x:Static p:Resources.GameConnectionStatusLabel}" />
                             <Image x:Name="GameConnectionStatus"
                                    Source="{Binding Path=ClientState.IsGameConnected, Converter={StaticResource ConnectionStatusImageConverter}}"
                                    Height="26"
                                    HorizontalAlignment="Center"
-                                   Margin="5,0,5,0" />
+                                   Margin="0,0,5,0" />
+                            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                             <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center"
                                    Content="{x:Static p:Resources.LotATCConnectionStatusLabel}" />
                             <Image x:Name="LotATCConnectionStatus"
                                    Source="{Binding Path=ClientState.IsLotATCConnected, Converter={StaticResource ConnectionStatusImageConverter}}"
                                    Height="26"
                                    HorizontalAlignment="Center"
-                                   Margin="5,0,0,0" />
+                                   Margin="0,0,0,0" />
 
                         </StackPanel>
 

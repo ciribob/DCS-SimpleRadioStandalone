@@ -89,6 +89,14 @@ public partial class ServerSettingsWindow : MetroWindow
             ServerPresetsEnabled.Content = settings.GetSettingAsBool(ServerSettingsKeys.SERVER_PRESETS_ENABLED)
                 ? Properties.Resources.ValueENABLED
                 : Properties.Resources.ValueDISABLED;
+            
+            ServerEAMRadioPresetEnabled.Content = settings.GetSettingAsBool(ServerSettingsKeys.SERVER_EAM_RADIO_PRESET_ENABLED)
+                ? Properties.Resources.ValueENABLED
+                : Properties.Resources.ValueDISABLED;
+            
+            AllowInstructorMode.Content = settings.GetSettingAsBool(ServerSettingsKeys.ALLOW_INSTRUCTOR_MODE)
+                ? Properties.Resources.ValueENABLED
+                : Properties.Resources.ValueDISABLED;
 
             ServerVersion.Content = SyncedServerSettings.Instance.ServerVersion;
 

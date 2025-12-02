@@ -56,7 +56,7 @@ public partial class MainWindow : Window
         {
             DownloadLatestVersion();
         }
-        catch (Exception)
+        catch (Exception exception)
         {
             ShowError();
         }
@@ -75,6 +75,7 @@ public partial class MainWindow : Window
     {
         foreach (var clsProcess in Process.GetProcesses())
             if (clsProcess.ProcessName.ToLower().Trim().StartsWith("sr-server") ||
+                clsProcess.ProcessName.ToLower().Trim().StartsWith("srs-server") ||
                 clsProcess.ProcessName.ToLower().Trim().StartsWith("sr-client"))
             {
                 clsProcess.Kill();
@@ -177,11 +178,11 @@ public partial class MainWindow : Window
                     if (path.Length > 0)
                     {
                         var latestVersion = new Version(release.TagName.Replace("v", ""));
-                        var serverExe = Path.Combine(path, "SR-Server.exe");
+                        var serverExe = Path.Combine(path,"Server", "SRS-Server.exe");
                         var useThisVersion = true;
                         if (Path.Exists(serverExe))
                         {
-                            var serverVersion = Assembly.LoadFile(serverExe).GetName().Version;
+                            var serverVersion = new Version(FileVersionInfo.GetVersionInfo(serverExe).FileVersion);
                             useThisVersion = serverVersion < latestVersion;
                         }
                         
@@ -286,7 +287,7 @@ public partial class MainWindow : Window
                 _progressCheckTimer.Start();
             }
         }
-        catch (Exception)
+        catch (Exception exception)
         {
             ShowError();
         }

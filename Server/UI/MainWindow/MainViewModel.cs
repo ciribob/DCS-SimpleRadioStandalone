@@ -223,12 +223,18 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public string TransmissionLogEnabledText
             => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.TRANSMISSION_LOG_ENABLED).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
-
         public string ServerPresetsEnabledText
             => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.SERVER_PRESETS_ENABLED).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
         
-    public string ListeningPort
-        => ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.SERVER_PORT).StringValue;
+        public string ServerEAMRadioPresetEnabledText
+            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.SERVER_EAM_RADIO_PRESET_ENABLED).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+        
+        public string ListeningPort
+            => ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.SERVER_PORT).StringValue;
+        
+        public string AllowInstructorMode
+            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.ALLOW_INSTRUCTOR_MODE).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+
 
     public Task HandleAsync(ServerStateMessage message, CancellationToken token)
     {
@@ -425,6 +431,15 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
         }
+        
+        public void AllowInstructorModeToggle()
+        {
+            var newSetting = AllowInstructorMode != $"{Properties.Resources.BtnOn}";
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.ALLOW_INSTRUCTOR_MODE, newSetting);
+            NotifyOfPropertyChange(() => AllowInstructorMode);
+
+            _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
+        }
 
         public void LotATCExportToggle()
         {
@@ -471,6 +486,15 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
             var newSetting = ServerPresetsEnabledText != $"{Properties.Resources.BtnOn}";
             ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SERVER_PRESETS_ENABLED, newSetting);
             NotifyOfPropertyChange(() => ServerPresetsEnabledText);
+
+            _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
+        }
+        
+        public void ServerEAMRadioPresetEnabledToggle()
+        {
+            var newSetting = ServerEAMRadioPresetEnabledText != $"{Properties.Resources.BtnOn}";
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SERVER_EAM_RADIO_PRESET_ENABLED, newSetting);
+            NotifyOfPropertyChange(() => ServerEAMRadioPresetEnabledText);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
         }

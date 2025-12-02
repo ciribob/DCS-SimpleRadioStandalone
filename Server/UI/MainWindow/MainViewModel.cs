@@ -229,8 +229,12 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public string ServerEAMRadioPresetEnabledText
             => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.SERVER_EAM_RADIO_PRESET_ENABLED).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
         
-    public string ListeningPort
-        => ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.SERVER_PORT).StringValue;
+        public string ListeningPort
+            => ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.SERVER_PORT).StringValue;
+        
+        public string AllowInstructorMode
+            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.ALLOW_INSTRUCTOR_MODE).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+
 
     public Task HandleAsync(ServerStateMessage message, CancellationToken token)
     {
@@ -424,6 +428,15 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
             var newSetting = TunedCountText != $"{Properties.Resources.BtnOn}";
             ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SHOW_TUNED_COUNT, newSetting);
             NotifyOfPropertyChange(() => TunedCountText);
+
+            _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
+        }
+        
+        public void AllowInstructorModeToggle()
+        {
+            var newSetting = AllowInstructorMode != $"{Properties.Resources.BtnOn}";
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.ALLOW_INSTRUCTOR_MODE, newSetting);
+            NotifyOfPropertyChange(() => AllowInstructorMode);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
         }

@@ -9,8 +9,8 @@
     <PlatformTarget>x64</PlatformTarget>
     <Company>Ciribob - GitHub.com/Ciribob</Company>
     <Product>DCS-SimpleRadio Standalone</Product>
-    <AssemblyVersion>2.3.2.2</AssemblyVersion>
-    <FileVersion>2.3.2.2</FileVersion>
+    <AssemblyVersion>2.3.3.3</AssemblyVersion>
+    <FileVersion>2.3.3.3</FileVersion>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Ciribob.DCS.SimpleRadio.Standalone.ExternalAudioClient.Client.Program</StartupObject>

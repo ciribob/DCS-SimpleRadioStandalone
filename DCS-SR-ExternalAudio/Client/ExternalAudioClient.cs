@@ -32,9 +32,11 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
     private Program.Options opts;
     private IPEndPoint endPoint;
     private readonly byte[] encryptionBytes;
+    private uint unitId = 100000;
 
     public ExternalAudioClient(double[] freq, Modulation[] modulation, Program.Options opts)
     {
+        this.unitId = opts.UnitId;
         this.freq = freq;
         this.modulation = modulation;
         this.opts = opts;
@@ -67,6 +69,7 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
         var radioInfoBase = new PlayerRadioInfoBase();
         radioInfoBase.radios[1].modulation = modulation[0];
         radioInfoBase.radios[1].freq = freq[0]; // get into Hz
+        radioInfoBase.unitId = unitId;
 
         Logger.Info($"Starting with params:");
         for (int i = 0; i < freq.Length; i++)
@@ -87,7 +90,7 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
         var srClient = new SRClientBase
         {
             LatLngPosition = position,
-            AllowRecord = true,
+            AllowRecord = opts.Record,
             ClientGuid = Guid,
             Coalition = opts.Coalition,
             Name = opts.Name,
@@ -106,7 +109,7 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
         Logger.Info("Finished - Closing");
 
         udpVoiceHandler?.RequestStop();
-        srsClientSyncHandler?.Disconnect();
+        srsClientSyncHandler?.RequestDisconnect();
     }
 
     private void ReadyToSend()
@@ -157,7 +160,7 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
                         AudioPart1Bytes = opusBytes[count],
                         AudioPart1Length = (ushort)opusBytes[count].Length,
                         Frequencies = freq,
-                        UnitId = 100000,
+                        UnitId = unitId,
                         Encryptions = encryptionBytes,
                         Modulations = modulationBytes,
                         RetransmissionCount = 0,

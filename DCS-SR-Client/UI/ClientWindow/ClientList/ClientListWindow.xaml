@@ -4,8 +4,8 @@
                       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                       xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Properties"
                       Title="{x:Static p:Resources.ClientWindowTitle}"
-                      Width="300"
-                      Height="390"
+                      Width="400"
+                      Height="500"
                       ResizeMode="NoResize">
     <ListBox Name="ClientList" HorizontalContentAlignment="Stretch" Padding="5">
         <ListBox.ItemTemplate>
@@ -15,17 +15,29 @@
                         <ColumnDefinition Width="5*" />
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="{Binding Name}" />
-                    <TextBlock Grid.Column="1" HorizontalAlignment="Right" Text="{Binding AllowRecordingStatus}" />
+                    <TextBlock Grid.Column="0" HorizontalAlignment="Left"     
+                               VerticalAlignment="Center"  Text="{Binding Name}" />
+                    <TextBlock Grid.Column="1" HorizontalAlignment="Center"     
+                               VerticalAlignment="Center" Text="{Binding AllowRecordingStatus}" />
                     <Ellipse Width="12"
                              Grid.Column="2"
                              Height="12"
                              Margin="2"
-                             HorizontalAlignment="Right"
+                             HorizontalAlignment="Center"
                              VerticalAlignment="Center"
                              Fill="{Binding ClientCoalitionColour}"
                              Stroke="Black" />
+                    <TextBlock Grid.Column="3"  
+                               Padding="5,0,5,0"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" Text="{Binding IsMuted}" />
+                    <Button Grid.Column="4"
+                                  Command="{Binding ToggleMute}"
+                                  Content="Toggle Mute"
+                                  ></Button>
                 </Grid>
             </DataTemplate>
         </ListBox.ItemTemplate>

@@ -1,4 +1,5 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
@@ -81,10 +82,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
         public int ProcessSegments(Span<float> audioOut, IReadOnlyList<TransmissionSegment> segments, string modelName = null)
         {
             RefreshSettings();
-            var floatPool = ArrayPool<float>.Shared;
-
-            var drySourceBuffer = floatPool.Rent(audioOut.Length);
-            var drySpan = drySourceBuffer.AsSpan(0, audioOut.Length);
+            using var drySourceBuffer = new PooledArray<float>(audioOut.Length);
+            var drySpan = drySourceBuffer.Array.AsSpan(0, drySourceBuffer.Length);
             drySpan.Clear();
 
             TransmissionSegment capturedFMSegment = null;
@@ -102,14 +101,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
                 {
                     // Everything, just mix.
                     // Accumulate in destination buffer.
-                    Mix(drySpan, segment.AudioSpan);
+                    Mix(drySpan, segment.Audio.AsSpan());
                 }
             }
 
             if (capturedFMSegment != null)
             {
                 // Use the last one (highest power).
-                Mix(drySpan, capturedFMSegment.AudioSpan);
+                Mix(drySpan, capturedFMSegment.Audio.AsSpan());
             }
 
             
@@ -125,12 +124,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
             // Create dry and wet providers
             // Wet/effected provider: must use a separate buffer to avoid double-reading
            
-            var dryProvider = new TransmissionProvider(drySourceBuffer, 0, drySpan.Length);
+            var dryProvider = new TransmissionProvider(drySourceBuffer.Array, 0, drySourceBuffer.Length);
 
-            var wetSourceBuffer = floatPool.Rent(audioOut.Length);
-            var wetSpan = wetSourceBuffer.AsSpan(0, audioOut.Length);
+            using var wetSourceBuffer = new PooledArray<float>(audioOut.Length);
+            var wetSpan = wetSourceBuffer.Array.AsSpan(0, wetSourceBuffer.Length);
             drySpan.CopyTo(wetSpan);
-            var wetProvider = BuildRXPipeline(new TransmissionProvider(wetSourceBuffer, 0, wetSpan.Length), radioModel);
+            var wetProvider = BuildRXPipeline(new TransmissionProvider(wetSourceBuffer.Array, 0, wetSourceBuffer.Length), radioModel);
 
             // Set up volume providers for wet/dry mix
             var dryVolume = new VolumeSampleProvider(dryProvider) { Volume = 1.0f - radioEffectRatio };
@@ -144,12 +143,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
             if (clippingEnabled && radioEffectRatio > 0f)
                 finalProvider = new ClippingProvider(mixer, -1f, 1f);
 
-            var mixerBuffer = floatPool.Rent(audioOut.Length);
+            using var mixerBuffer = new PooledArray<float>(audioOut.Length);
             int samplesRead = 0;
             try
             {
-                samplesRead = finalProvider.Read(mixerBuffer, 0, audioOut.Length);
-                mixerBuffer.AsSpan(0, samplesRead).CopyTo(audioOut);
+                samplesRead = finalProvider.Read(mixerBuffer.Array, 0, mixerBuffer.Length);
+                mixerBuffer.Array.AsSpan(0, samplesRead).CopyTo(audioOut);
             }
             catch (Exception e)
             {
@@ -157,13 +156,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers
                 // Something borked - reset for the next packet(s).
                 RxRadioModels.Clear();
             }
-            finally
-            {
-                floatPool.Return(mixerBuffer);
-            }
-
-            floatPool.Return(wetSourceBuffer);
-            floatPool.Return(drySourceBuffer);
             
             return samplesRead;
         }

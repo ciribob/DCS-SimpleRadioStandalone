@@ -26,7 +26,7 @@ using LogManager = NLog.LogManager;
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS;
 
 public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisconnectMessage>,
-    IHandle<TCPClientStatusMessage>
+    IHandle<TCPClientStatusMessage>, IHandle<InstructorModeMessage>
 {
     public static readonly string AWACS_RADIOS_FILE = "awacs-radios.json";
     public static readonly string AWACS_RADIOS_CUSTOM_FILE = "awacs-radios-custom.json";
@@ -50,6 +50,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
     private volatile bool _stop;
 
     private volatile bool _stopExternalAWACSMode;
+    private DCSRadio[] _awacsRadios;
 
     public DCSRadioSyncHandler()
     {
@@ -246,7 +247,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                     _globalSettings.GetNetworkSetting(GlobalSettingsKeys
                         .OutgoingDCSUDPOther))); // send to Flight Control Panels
         }
-        catch (Exception e)
+        catch (Exception e) when (!_stop)
         {
             Logger.Error(e, "Exception Sending DCS Radio Update Message");
         }
@@ -384,6 +385,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                 clientRadio.encMode = DCSRadio.EncryptionMode.NO_ENCRYPTION;
                 clientRadio.volMode = DCSRadio.VolumeMode.COCKPIT;
                 clientRadio.rxOnly = false;
+                clientRadio.IntercomUnitId = 0;
             }
             else
             {
@@ -401,6 +403,11 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                 clientRadio.model = updateRadio.model;
 
                 clientRadio.modulation = updateRadio.modulation;
+                
+                if (clientRadio.modulation == Modulation.INTERCOM)
+                {
+                    clientRadio.IntercomUnitId = updateRadio.IntercomUnitId;
+                }
 
                 //update modes
                 clientRadio.freqMode = updateRadio.freqMode;
@@ -613,29 +620,29 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
     {
         _stopExternalAWACSMode = false;
 
-        DCSRadio[] awacsRadios = null;
+    
 
         if (_globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys
                 .AllowServerEAMRadioPreset))
         {
-            awacsRadios = processServerCustomEAMRadio(_serverSettings.CustomEAMRadios);
+            _awacsRadios = processServerCustomEAMRadio(_serverSettings.CustomEAMRadios);
         }
         
-        if (awacsRadios == null)
-            awacsRadios = processClientCustomEAMRadio(AWACS_RADIOS_CUSTOM_FILE);
+        if (_awacsRadios == null)
+            _awacsRadios = processClientCustomEAMRadio(AWACS_RADIOS_CUSTOM_FILE);
 
-        if (awacsRadios == null)
+        if (_awacsRadios == null)
         {
-            awacsRadios = processClientCustomEAMRadio(AWACS_RADIOS_FILE);
+            _awacsRadios = processClientCustomEAMRadio(AWACS_RADIOS_FILE);
         }
 
-        if (awacsRadios == null)
+        if (_awacsRadios == null)
         {
             Logger.Warn("Failed to load AWACS radio file from server, default or custom one");
 
-            awacsRadios = new DCSRadio[Constants.MAX_RADIOS];
+            _awacsRadios = new DCSRadio[Constants.MAX_RADIOS];
             for (var i = 0; i < Constants.MAX_RADIOS; i++)
-                awacsRadios[i] = new DCSRadio
+                _awacsRadios[i] = new DCSRadio
                 {
                     freq = 1,
                     freqMin = 1,
@@ -671,7 +678,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                     control = DCSPlayerRadioInfo.RadioSwitchControls.HOTAS,
                     name = _clientStateSingleton.LastSeenName,
                     ptt = false,
-                    radios = awacsRadios,
+                    radios = _awacsRadios,
                     selected = 1,
                     latLng = new LatLngPosition { lat = 0, lng = 0, alt = 0 },
                     simultaneousTransmission = false,
@@ -823,5 +830,19 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
             Logger.Log(LogLevel.Error, $"Unable to process Server Custom Radio {ex.Message}");   
         }
         return null;
+    }
+
+    public Task HandleAsync(InstructorModeMessage message, CancellationToken cancellationToken)
+    {
+
+        if (_awacsRadios != null && _awacsRadios.Length > message.RadioId)
+        {
+            _awacsRadios[message.RadioId] = message.Radio.DeepClone();
+            
+            //make radio data stale to force resysnc
+            ClientStateSingleton.Instance.LastSent = 0;
+        }
+        
+        return Task.CompletedTask;
     }
 }

@@ -1,0 +1,51 @@
+﻿<UserControl x:Class="Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.AwacsRadioOverlayWindow.InstructorMode.InstructorModeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Properties"
+             xmlns:local="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.AwacsRadioOverlayWindow.InstructorMode"
+             d:DataContext="{d:DesignInstance local:InstructorModeViewModel,
+                                              IsDesignTimeCreatable=False}"
+             mc:Ignorable="d"
+             d:DesignHeight="100"
+             d:DesignWidth="135">
+    <StackPanel HorizontalAlignment="Center"
+                Background="#444"
+                Orientation="Vertical">
+        <ComboBox x:Name="FrequencyDropDown"
+                  Width="135"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Top"
+                  ItemsSource="{Binding Path=AircraftIntercoms}"
+                  SelectedItem="{Binding Path=SelectedAircraftIntercom}">
+            <behaviors:Interaction.Triggers>
+                <behaviors:EventTrigger EventName="DropDownClosed" SourceObject="{Binding ElementName=FrequencyDropDown}">
+                    <behaviors:InvokeCommandAction Command="{Binding DropDownClosedCommand}" />
+                </behaviors:EventTrigger>
+            </behaviors:Interaction.Triggers>
+        </ComboBox>
+
+        <StackPanel HorizontalAlignment="Center"
+                    Background="#444"
+                    Orientation="Horizontal">
+            <Button Name="RefreshButton"
+                    Width="60"
+                    Height="20"
+                    Margin="2"
+                    HorizontalAlignment="Center"
+                    Command="{Binding Path=ReloadCommand}"
+                    Content="{x:Static p:Resources.ReloadAircraft}"
+                    Style="{x:Null}" />
+            <Button Name="CreateButton"
+                    Width="60"
+                    Height="20"
+                    Margin="2"
+                    HorizontalAlignment="Center"
+                    Command="{Binding Path=StopInstructorModeCommand}"
+                    Content="{x:Static p:Resources.StopInstructorMode}"
+                    Style="{x:Null}" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

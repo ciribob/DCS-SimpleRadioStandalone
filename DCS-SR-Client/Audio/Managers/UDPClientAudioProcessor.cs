@@ -376,6 +376,7 @@ public class UDPClientAudioProcessor : IDisposable
         {
             try
             {
+                uint groupIdOverride = 0;
                 if (transmittingRadios.Count > 0)
                 {
                     var frequencies = new List<double>(transmittingRadios.Count);
@@ -399,6 +400,12 @@ public class UDPClientAudioProcessor : IDisposable
 
                         if (alreadyIncluded) continue;
 
+                        if(radio.modulation == Modulation.INTERCOM && radio.IntercomUnitId > 0)
+                        {
+                            //if we're sending to an intercom, we need to send to the unitId of the intercom
+                            groupIdOverride = radio.IntercomUnitId;
+                        }
+                        
                         frequencies.Add(radio.freq);
                         encryptions.Add(radio.enc ? radio.encKey : (byte)0);
                         modulations.Add((byte)radio.modulation);
@@ -418,7 +425,12 @@ public class UDPClientAudioProcessor : IDisposable
                         OriginalClientGuidBytes = _guidAsciiBytes
                     };
 
-
+                    //Instructor mode and we've overriden the group ID for intercom
+                    if (groupIdOverride > 0)
+                    {
+                        udpVoicePacket.UnitId = groupIdOverride;
+                    }
+                    
                     _udpClient.Send(udpVoicePacket);
 
                     var currentlySelectedRadio = _clientStateSingleton.DcsPlayerRadioInfo.radios[sendingOn];
@@ -637,6 +649,12 @@ public class UDPClientAudioProcessor : IDisposable
                                                 else
                                                 {
                                                     audio.Ambient = transmittingClient.RadioInfo.ambient;
+                                                }
+                                                
+                                                if (transmittingClient.Muted)
+                                                {
+                                                    //skip receiving this audio
+                                                   continue;
                                                 }
 
                                             }

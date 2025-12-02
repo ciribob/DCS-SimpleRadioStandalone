@@ -303,7 +303,7 @@ public class AudioRecordingManager
         {
             if (_connectedClientsSingleton.TryGetValue(segment.OriginalClientGuid, out var client))
             {
-                var segmentSpan = segment.AudioSpan;
+                var segmentSpan = segment.Audio.AsSpan();
                 if (mixLength < segmentSpan.Length)
                 {
                     var resizedBuffer = floatPool.Rent(segmentSpan.Length);

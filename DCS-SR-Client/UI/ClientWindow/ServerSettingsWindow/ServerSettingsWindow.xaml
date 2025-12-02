@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Properties"
+    xmlns:properties="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Common.Properties;assembly=SRS-Common"
     Title="{x:Static p:Resources.ServerWindowTitle}"
     Width="400"
     Height="300"
@@ -19,6 +20,10 @@
 
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
@@ -242,6 +247,19 @@
 
                 <Label Name="NodeLimit"
                        Grid.Row="15"
+                       Grid.Column="1"
+                       HorizontalContentAlignment="Center"
+                       VerticalContentAlignment="Center"
+                       Content="0" />
+                
+                <Label Grid.Row="16"
+                       Grid.Column="0"
+                       HorizontalContentAlignment="Center"
+                       VerticalContentAlignment="Center"
+                       Content="{x:Static properties:Resources.AllowInstructorMode}" />
+                
+                <Label Name="AllowInstructorMode"
+                       Grid.Row="16"
                        Grid.Column="1"
                        HorizontalContentAlignment="Center"
                        VerticalContentAlignment="Center"

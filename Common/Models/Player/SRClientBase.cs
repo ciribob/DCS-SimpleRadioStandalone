@@ -121,6 +121,7 @@ public class SRClientBase : PropertyChangedBaseClass
         return Coalition == other.Coalition
                && Seat == other.Seat
                && Name == other.Name
+               && DISEntityId == other.DISEntityId
                //RadioInfo is ignored!
                && AllowRecord == other.AllowRecord
                && ClientGuid == other.ClientGuid;
@@ -137,7 +138,10 @@ public class SRClientBase : PropertyChangedBaseClass
             Seat = Seat,
             ClientGuid = ClientGuid,
             Coalition = Coalition,
-            GatewayClient = GatewayClient
+            GatewayClient = GatewayClient,
+            DISEntityId = DISEntityId,
+            Gateway = Gateway,
+            
         };
 
         return copy;

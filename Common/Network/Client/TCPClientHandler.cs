@@ -508,6 +508,7 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
         client.LatLngPosition = updatedSrClient.LatLngPosition;
         client.Name = updatedSrClient.Name;
         client.Seat = updatedSrClient.Seat;
+        client.DISEntityId = updatedSrClient.DISEntityId;
     }
 
     private void HandleFullUpdate(NetworkMessage networkMessage, SRClientBase client)

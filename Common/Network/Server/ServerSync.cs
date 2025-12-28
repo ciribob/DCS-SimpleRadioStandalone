@@ -378,6 +378,7 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
                     client.LatLngPosition = message.Client.LatLngPosition;
                     client.Seat = message.Client.Seat;
                     client.AllowRecord = message.Client.AllowRecord;
+                    client.DISEntityId = message.Client.DISEntityId;
 
                     //send update to everyone
                     //Remove Client Radio Info

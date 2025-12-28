@@ -93,40 +93,44 @@ public class RadioMixingProvider : ISampleProvider
             var longestSegmentLength = 0;
             lock (sources)
             {
-                segments = new(sources.Count);
-                var index = sources.Count - 1;
-                var desired = monoBufferLength - monoOffset;
-                while (index >= 0)
+                if (sources.Count > 0)
                 {
-                    var source = sources[index];
-                    
-                    // #TODO: Should run TX effect chain per ClientAudioProvider, then mixdown.
-                    // Read from the source, which should dejitter + transform the audio.
-                    // Then have this radio run its mixer.
-                    try
+                    segments = new(sources.Count);
+                    var index = sources.Count - 1;
+                    var desired = monoBufferLength - monoOffset;
+                    while (index >= 0)
                     {
-                        var segment = source.Read(radioId, desired);
-                        if (segment != null)
+                        var source = sources[index];
+
+                        // #TODO: Should run TX effect chain per ClientAudioProvider, then mixdown.
+                        // Read from the source, which should dejitter + transform the audio.
+                        // Then have this radio run its mixer.
+                        try
                         {
-                            segments.Add(segment);
-                            longestSegmentLength = Math.Max(longestSegmentLength, segment.AudioSpan.Length);
-                            if (segment.Decryptable && segment.HasEncryption)
+                            var segment = source.Read(radioId, desired);
+                            if (segment != null)
                             {
-                                ky58Tone = true;
+                                segments.Add(segment);
+                                longestSegmentLength = Math.Max(longestSegmentLength, segment.Audio.Length);
+                                if (segment.Decryptable && segment.HasEncryption)
+                                {
+                                    ky58Tone = true;
+                                }
                             }
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        logger.Error("Error reading from source: ", e);
-                    }
-                    
+                        catch (Exception e)
+                        {
+                            logger.Error("Error reading from source: ", e);
+                        }
 
-                    index--;
+
+                        index--;
+                    }
                 }
+                
             }
 
-            var hasIncomingAudio = segments.Count > 0;
+            var hasIncomingAudio = segments?.Count > 0;
 
             //copy to the recording service - as we have everything we need to know about the audio
             //at this point
@@ -166,14 +170,8 @@ public class RadioMixingProvider : ISampleProvider
                 }
                 catch (Exception e)
                 {
-                    logger.Error("Error mixing segments: ", e);
+                    logger.Error(e, "Error mixing segments");
                 }
-            }
-
-            // Return everything to the pool
-            foreach (var segment in segments)
-            {
-                segment.Dispose();
             }
         }
 
@@ -453,6 +451,7 @@ public class RadioMixingProvider : ISampleProvider
     public static void CreateBalancedMix(float[] srcFloat, int srcOffset, int srcCount, float[] dstFloat,
         int dstOffset, float balance)
     {
+        balance = Math.Clamp(balance, -1f, 1f);
         var left = (1.0f - balance) / 2.0f;
         var right = 1.0f - left;
 

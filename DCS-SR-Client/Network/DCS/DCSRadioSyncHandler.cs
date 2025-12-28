@@ -248,7 +248,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                     _globalSettings.GetNetworkSetting(GlobalSettingsKeys
                         .OutgoingDCSUDPOther))); // send to Flight Control Panels
         }
-        catch (Exception e)
+        catch (Exception e) when (!_stop)
         {
             Logger.Error(e, "Exception Sending DCS Radio Update Message");
         }

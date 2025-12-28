@@ -126,14 +126,15 @@ public class DCSAutoConnectHandler
 
     public void Stop()
     {
-        _cts.Cancel();
-        _cts.Dispose();
+        
 
         try
         {
+            _cts.Cancel();
+            _cts.Dispose();
             _dcsUdpListener?.Close();
-        } catch(Exception){
-            // ignored
+        } catch(Exception ex){
+            Logger.Warn(ex, "Error closing AutoConnectHandler");
         }
 
     }

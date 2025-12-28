@@ -361,6 +361,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
 
                 if (switchServer)
                 {
+                    Logger.Info($"Switching from {ServerAddress} to {message.Address}");
                     ConnectIsEnabled = false;
                     ServerAddress = message.Address;
                     Stop();
@@ -558,15 +559,16 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         {
             _audioManager.StopEncoding();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Logger.Warn(ex, "Failed to stop enconding audio");
         }
 
 
         _dcsManager?.Stop();
         _dcsManager = null;
 
-        _client?.Disconnect();
+        _client?.RequestDisconnect();
         _client = null;
 
         ClientState.DcsPlayerRadioInfo.Reset();
@@ -822,7 +824,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         //stop timer
         _updateTimer?.Stop();
 
-        _client?.Disconnect();
+        _client?.RequestDisconnect();
         _client = null;
 
         Stop();

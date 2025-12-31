@@ -7,6 +7,7 @@ using NAudio.Wave;
 using System.Buffers;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers;
@@ -128,7 +129,8 @@ public class ClientAudioProvider : AudioProvider
             ambientCockpitEffectEnabled =
                 settingsStore.GetClientSettingBool(ProfileSettingsKeys.AmbientCockpitNoiseEffect);
             ambientCockpitEffectVolume =
-                settingsStore.GetClientSettingFloat(ProfileSettingsKeys.AmbientCockpitNoiseEffectVolume);
+                VolumeConversionHelper.ConvertRadioVolumeSlider(
+                    settingsStore.GetClientSettingFloat(ProfileSettingsKeys.AmbientCockpitNoiseEffectVolume), true);
             ambientCockpitIntercomEffectEnabled =
                 settingsStore.GetClientSettingBool(ProfileSettingsKeys.AmbientCockpitIntercomNoiseEffect);
 
@@ -166,8 +168,8 @@ public class ClientAudioProvider : AudioProvider
 
         // ambient = new Ambient()
         // {
-        //     abType = "fa18",
-        //     vol = 30.0f
+        //     abType = "uh1",
+        //     vol = 0.35f
         // };
         //
         var abType = ambient?.abType;
@@ -175,8 +177,8 @@ public class ClientAudioProvider : AudioProvider
         if (string.IsNullOrEmpty(abType)) return;
 
         var effect = audioEffectProvider.GetAmbientEffect(abType);
-
-        var vol = ambient.vol;
+        
+        var vol = (float) VolumeConversionHelper.DecibelsToLinear(VolumeConversionHelper.GetTargetdB( effect.RMS,ambient.vol));
         
         var ambientEffectProg = ambientEffectProgress[receiveRadio];
 

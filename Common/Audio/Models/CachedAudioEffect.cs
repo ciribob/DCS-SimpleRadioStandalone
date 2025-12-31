@@ -37,6 +37,8 @@ public class CachedAudioEffect
         cachedEffectsLoaderDelegate)
     {
     }
+    
+    public double RMS { get; }
 
     public CachedAudioEffect(AudioEffectTypes audioEffect, string fileName, string path,
         CachedAudioEffectProvider.CachedEffectsLoaderDelegate cachedEffectsLoaderDelegate)
@@ -74,6 +76,8 @@ public class CachedAudioEffect
                             //now to float
                             AudioEffectFloat = ConversionHelpers.ShortPCM16ArrayToFloat32Array(tmpShort);
 
+                            RMS = VolumeConversionHelper.CalculateRMS(AudioEffectFloat, 0, AudioEffectFloat.Length);
+
                             Loaded = true;
                         }
                         else
@@ -104,6 +108,8 @@ public class CachedAudioEffect
 
                             //now to float
                             AudioEffectFloat = ConversionHelpers.ShortPCM16ArrayToFloat32Array(tmpShort);
+                            
+                            RMS = VolumeConversionHelper.CalculateRMS(AudioEffectFloat, 0, AudioEffectFloat.Length);
 
                             Loaded = true;
                         }

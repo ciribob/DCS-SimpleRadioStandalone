@@ -385,6 +385,7 @@ public class AudioManager : IHandle<SRClientUpdateMessage>
                                     _micWaveOutBuffer.AddSamples(_tempMicOutputBuffer, 0, audioSpanBytes.Length);
                                 }
 
+                                //TODO fix this as we're only recording our own audio if passthrough is enabled?
                                 if (recordAudio)
                                 {
                                     _audioRecordingManager.AppendPlayerAudio(segment.Audio, audioSpan.Length, clientAudio.ReceivedRadio);
@@ -594,9 +595,9 @@ public class AudioManager : IHandle<SRClientUpdateMessage>
         //TODO: Clean  - remove if we havent received audio in a while?
         // If we have recieved audio, create a new buffered audio and read it
         ClientAudioProvider client = null;
-        if (_clientsBufferedAudio.ContainsKey(audio.OriginalClientGuid))
+        if (_clientsBufferedAudio.TryGetValue(audio.OriginalClientGuid, out var value))
         {
-            client = _clientsBufferedAudio[audio.OriginalClientGuid];
+            client = value;
         }
         else
         {

@@ -164,9 +164,7 @@ public class ClientAudioProvider : AudioProvider
                                          || modulation == Modulation.MIDS)
             return;
 
-        //           clientAudio.Ambient.abType = "uh1";
-        //           clientAudio.Ambient.vol = 0.35f;
-
+        
         var abType = ambient?.abType;
 
         if (string.IsNullOrEmpty(abType)) return;
@@ -188,7 +186,8 @@ public class ClientAudioProvider : AudioProvider
 
             var effectVolume = vol * ambientCockpitEffectVolume;
             var v_effectVolume = new Vector<float>(effectVolume);
-
+            var v_min = new Vector<float>(-1.0f);
+            var v_max = new Vector<float>(1.0f);
 
             ref float pcmAudioPtr = ref MemoryMarshal.GetReference(pcmAudio);
             ref float effectPtr = ref effect.AudioEffectFloat[0];
@@ -201,16 +200,31 @@ public class ClientAudioProvider : AudioProvider
                 var v_samples = Vector.LoadUnsafe(ref pcmAudioPtr, (nuint)i);
                 var v_effect = Vector.LoadUnsafe(ref effectPtr, (nuint)progress);
 
-                (v_samples + v_effect * v_effectVolume).StoreUnsafe(ref pcmAudioPtr, (nuint)i);
+                var v_mixed = v_samples + v_effect * v_effectVolume;
+
+                if (!Vector.LessThanOrEqualAll(v_mixed, v_min) 
+                    && !Vector.GreaterThanOrEqualAll(v_mixed, v_max))
+                {
+                    (v_samples + v_effect * v_effectVolume).StoreUnsafe(ref pcmAudioPtr, (nuint)i);
+                }
 
                 progress += vectorSize;
                 if (progress >= effectLength)
                     progress = 0;
             }
+            
+            //should be impossible
+            if (limit != pcmAudio.Length && (pcmAudio.Length - limit) + progress >= effectLength)
+                progress = 0;
 
             for (var i = limit; i < pcmAudio.Length; i++)
             {
-                pcmAudio[i] += effect.AudioEffectFloat[progress] * effectVolume;
+                var mixed = pcmAudio[i] + effect.AudioEffectFloat[progress] * effectVolume;
+
+                if (mixed is > -1f and < 1f)
+                {
+                    pcmAudio[i] = Math.Clamp(pcmAudio[i] + effect.AudioEffectFloat[progress] * effectVolume, -1f, 1f);
+                }
 
                 progress++;
 

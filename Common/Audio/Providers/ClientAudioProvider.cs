@@ -164,12 +164,12 @@ public class ClientAudioProvider : AudioProvider
                                          || modulation == Modulation.MIDS)
             return;
 
-        ambient = new Ambient()
-        {
-            abType = "uh1",
-            vol = 30.0f
-        };
-        
+        // ambient = new Ambient()
+        // {
+        //     abType = "fa18",
+        //     vol = 30.0f
+        // };
+        //
         var abType = ambient?.abType;
 
         if (string.IsNullOrEmpty(abType)) return;

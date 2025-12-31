@@ -164,6 +164,11 @@ public class ClientAudioProvider : AudioProvider
                                          || modulation == Modulation.MIDS)
             return;
 
+        ambient = new Ambient()
+        {
+            abType = "uh1",
+            vol = 30.0f
+        };
         
         var abType = ambient?.abType;
 
@@ -202,8 +207,8 @@ public class ClientAudioProvider : AudioProvider
 
                 var v_mixed = v_samples + v_effect * v_effectVolume;
 
-                if (!Vector.LessThanOrEqualAll(v_mixed, v_min) 
-                    && !Vector.GreaterThanOrEqualAll(v_mixed, v_max))
+                if (!Vector.LessThanOrEqualAny(v_mixed, v_min) 
+                    && !Vector.GreaterThanOrEqualAny(v_mixed, v_max))
                 {
                     (v_samples + v_effect * v_effectVolume).StoreUnsafe(ref pcmAudioPtr, (nuint)i);
                 }

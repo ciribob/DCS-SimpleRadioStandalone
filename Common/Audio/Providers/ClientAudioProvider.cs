@@ -223,7 +223,7 @@ public class ClientAudioProvider : AudioProvider
 
                 if (mixed is > -1f and < 1f)
                 {
-                    pcmAudio[i] = Math.Clamp(pcmAudio[i] + effect.AudioEffectFloat[progress] * effectVolume, -1f, 1f);
+                    pcmAudio[i] = mixed;
                 }
 
                 progress++;

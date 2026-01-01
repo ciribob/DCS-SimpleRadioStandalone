@@ -92,7 +92,8 @@ public class DCSGameGuiHandler
                                 LatLngPosition = _clientStateSingleton.PlayerCoaltionLocationMetadata.LngLngPosition,
                                 Seat = _clientStateSingleton.PlayerCoaltionLocationMetadata.seat,
                                 Name = _clientStateSingleton.LastSeenName,
-                                AllowRecord = _globalSettings.GetClientSettingBool(GlobalSettingsKeys.AllowRecording)
+                                AllowRecord = _globalSettings.GetClientSettingBool(GlobalSettingsKeys.AllowRecording),
+                                DISEntityId = _globalSettings.GetClientSettingInt(GlobalSettingsKeys.DISEntityID)
                             }
                         });
                         

@@ -106,7 +106,8 @@ public enum GlobalSettingsKeys
 
     AllowXInputController,
 
-    LastPresetsFolder
+    LastPresetsFolder,
+    DISEntityID
 }
 
 public enum InputBinding
@@ -352,7 +353,9 @@ public class GlobalSettingsStore
 
 
         { GlobalSettingsKeys.AllowXInputController.ToString(), "false" },
-        { GlobalSettingsKeys.LastPresetsFolder.ToString(), string.Empty }
+        { GlobalSettingsKeys.LastPresetsFolder.ToString(), string.Empty },
+        
+        { GlobalSettingsKeys.DISEntityID.ToString(), "-1" }
     };
 
     private readonly Logger Logger = LogManager.GetCurrentClassLogger();

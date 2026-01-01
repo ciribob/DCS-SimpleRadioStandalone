@@ -40,10 +40,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Utility
                 //only check settings store every 5 seconds
                 var settingsStore = GlobalSettingsStore.Instance;
 
-                var agc = settingsStore.GetClientSettingBool(GlobalSettingsKeys.AGC);
-                var agcTarget = settingsStore.GetClientSetting(GlobalSettingsKeys.AGCTarget).IntValue;
-                var agcDecrement = settingsStore.GetClientSetting(GlobalSettingsKeys.AGCDecrement).IntValue;
-                var agcMaxGain = settingsStore.GetClientSetting(GlobalSettingsKeys.AGCLevelMax).IntValue;
+                // var agc = settingsStore.GetClientSettingBool(GlobalSettingsKeys.AGC);
+                // var agcTarget = settingsStore.GetClientSetting(GlobalSettingsKeys.AGCTarget).IntValue;
+                // var agcDecrement = settingsStore.GetClientSetting(GlobalSettingsKeys.AGCDecrement).IntValue;
+                // var agcMaxGain = settingsStore.GetClientSetting(GlobalSettingsKeys.AGCLevelMax).IntValue;
 
                 var denoise = settingsStore.GetClientSettingBool(GlobalSettingsKeys.Denoise);
                 var denoiseAttenuation = settingsStore.GetClientSetting(GlobalSettingsKeys.DenoiseAttenuation).IntValue;
@@ -51,10 +51,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Utility
                 //From https://github.com/mumble-voip/mumble/blob/a189969521081565b8bda93d253670370778d471/src/mumble/Settings.cpp
                 //and  https://github.com/mumble-voip/mumble/blob/3ffd9ad3ed18176774d8e1c64a96dffe0de69655/src/mumble/AudioInput.cpp#L605
 
-                if (agc != speex.AutomaticGainControl) speex.AutomaticGainControl = agc;
-                if (agcTarget != speex.AutomaticGainControlTarget) speex.AutomaticGainControlTarget = agcTarget;
-                if (agcDecrement != speex.AutomaticGainControlDecrement) speex.AutomaticGainControlDecrement = agcDecrement;
-                if (agcMaxGain != speex.AutomaticGainControlMaxGain) speex.AutomaticGainControlMaxGain = agcMaxGain;
+                // if (agc != speex.AutomaticGainControl) speex.AutomaticGainControl = agc;
+                // if (agcTarget != speex.AutomaticGainControlTarget) speex.AutomaticGainControlTarget = agcTarget;
+                // if (agcDecrement != speex.AutomaticGainControlDecrement) speex.AutomaticGainControlDecrement = agcDecrement;
+                // if (agcMaxGain != speex.AutomaticGainControlMaxGain) speex.AutomaticGainControlMaxGain = agcMaxGain;
+
+                speex.AutomaticGainControl = false;
 
                 if (denoise != speex.Denoise) speex.Denoise = denoise;
                 if (denoiseAttenuation != speex.DenoiseAttenuation) speex.DenoiseAttenuation = denoiseAttenuation;

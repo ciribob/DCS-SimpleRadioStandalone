@@ -169,7 +169,7 @@ public class ClientAudioProvider : AudioProvider
         // ambient = new Ambient()
         // {
         //     abType = "uh1",
-        //     vol = 0.35f
+        //     vol = 100f
         // };
         //
         var abType = ambient?.abType;
@@ -208,12 +208,15 @@ public class ClientAudioProvider : AudioProvider
                 var v_effect = Vector.LoadUnsafe(ref effectPtr, (nuint)progress);
 
                 var v_mixed = v_samples + v_effect * v_effectVolume;
-
-                if (!Vector.LessThanOrEqualAny(v_mixed, v_min) 
-                    && !Vector.GreaterThanOrEqualAny(v_mixed, v_max))
-                {
-                    (v_samples + v_effect * v_effectVolume).StoreUnsafe(ref pcmAudioPtr, (nuint)i);
-                }
+                
+                var v_tooLow = Vector.LessThan(v_mixed, v_min);
+                var v_tooHigh = Vector.GreaterThan(v_mixed, v_max);
+                var v_outOfAudioBounds = Vector.BitwiseOr(v_tooLow, v_tooHigh);
+                
+                // If out of bounds, pick original audio , else pick v_mixed (with effect)
+                var v_final = Vector.ConditionalSelect(v_outOfAudioBounds, v_samples, v_mixed);
+                
+                v_final.StoreUnsafe(ref pcmAudioPtr, (nuint)i);
 
                 progress += vectorSize;
                 if (progress >= effectLength)

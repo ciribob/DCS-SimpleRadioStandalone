@@ -206,13 +206,16 @@ public class AudioManager : IHandle<SRClientUpdateMessage>
 
         if (device == null) device = WasapiCapture.GetDefaultCaptureDevice();
 
-        try
+        if (!WineDetector.IsRunningUnderWine())
         {
-            device.AudioEndpointVolume.Mute = false;
-        }
-        catch (Exception ex)
-        {
-            Logger.Warn(ex, "Failed to forcibly unmute: " + ex.Message);
+            try
+            {
+                device.AudioEndpointVolume.Mute = false;
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex, "Failed to forcibly unmute: " + ex.Message);
+            }
         }
 
         _wasapiCapture = new WasapiCapture(device, true);

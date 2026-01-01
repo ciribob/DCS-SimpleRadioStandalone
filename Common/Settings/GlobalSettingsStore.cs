@@ -297,12 +297,6 @@ public class GlobalSettingsStore
         { GlobalSettingsKeys.DCSLOSIncomingUDP.ToString(), "9085" },
         { GlobalSettingsKeys.DCSAutoConnectUDP.ToString(), "5069" },
 
-
-        // { GlobalSettingsKeys.AGC.ToString(), "true" },
-        // { GlobalSettingsKeys.AGCTarget.ToString(), "14000" },
-        // { GlobalSettingsKeys.AGCDecrement.ToString(), "-60" },
-        // { GlobalSettingsKeys.AGCLevelMax.ToString(), "40" },
-
         { GlobalSettingsKeys.Denoise.ToString(), "true" },
         { GlobalSettingsKeys.DenoiseAttenuation.ToString(), "-30" },
 

@@ -47,10 +47,10 @@ public enum GlobalSettingsKeys
     DCSIncomingGameGUIUDP, // 5068
     DCSLOSIncomingUDP, //9085
 
-    AGC,
-    AGCTarget,
-    AGCDecrement,
-    AGCLevelMax,
+    // AGC,
+    // AGCTarget,
+    // AGCDecrement,
+    // AGCLevelMax,
 
     Denoise,
     DenoiseAttenuation,
@@ -296,12 +296,6 @@ public class GlobalSettingsStore
         { GlobalSettingsKeys.DCSIncomingGameGUIUDP.ToString(), "5068" },
         { GlobalSettingsKeys.DCSLOSIncomingUDP.ToString(), "9085" },
         { GlobalSettingsKeys.DCSAutoConnectUDP.ToString(), "5069" },
-
-
-        { GlobalSettingsKeys.AGC.ToString(), "true" },
-        { GlobalSettingsKeys.AGCTarget.ToString(), "14000" },
-        { GlobalSettingsKeys.AGCDecrement.ToString(), "-60" },
-        { GlobalSettingsKeys.AGCLevelMax.ToString(), "40" },
 
         { GlobalSettingsKeys.Denoise.ToString(), "true" },
         { GlobalSettingsKeys.DenoiseAttenuation.ToString(), "-30" },
@@ -656,9 +650,9 @@ public class GlobalSettingsStore
             // Update to V1:
             // * Force enable AGC again.
             // * Fix up the values.
-            SetClientSetting(GlobalSettingsKeys.AGC, true);
-            SetClientSetting(GlobalSettingsKeys.AGCLevelMax, 45);
-            SetClientSetting(GlobalSettingsKeys.AGCTarget, 14000);
+            // SetClientSetting(GlobalSettingsKeys.AGC, true);
+            // SetClientSetting(GlobalSettingsKeys.AGCLevelMax, 45);
+            // SetClientSetting(GlobalSettingsKeys.AGCTarget, 14000);
 
             // Upgrade done
             SetClientSetting(GlobalSettingsKeys.Version, 1);

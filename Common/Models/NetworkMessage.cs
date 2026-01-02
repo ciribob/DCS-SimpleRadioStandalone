@@ -20,6 +20,10 @@ public class NetworkMessage
         VERSION_MISMATCH,
         EXTERNAL_AWACS_MODE_PASSWORD, // Received server side to "authenticate"/pick side for external AWACS mode
         EXTERNAL_AWACS_MODE_DISCONNECT // Received server side on "voluntary" disconnect by the client (without closing the server connection)
+        ,
+        GATEWAY_CLIENT_FULL_UPDATE,
+        GATEWAY_CLIENT_METADATA_UPDATE,
+        GATEWAY_CLIENT_DISCONNECT
     }
 
     private static readonly JsonSerializerOptions JsonSerializerSettings = new()

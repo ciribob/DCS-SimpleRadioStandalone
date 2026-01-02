@@ -200,14 +200,10 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
                             if (_clientsList.TryGetValue(guid, out var client))
                             {
                                 client.VoipPort = receivedFromEP;
-
-                                //send back ping UDP, don't care much about the result.
-                                var pong = Task.Run(async () => await listener.SendAsync(rawBytes, rawBytes.Length, receivedFromEP), _stopCancellationToken.Token);
                             }
-                            else
-                            {
-                                Logger.Error($"Client not found for GUID {guid} for audio ping.");
-                            }
+                            //send back ping UDP, don't care much about the result.
+                            var pong = Task.Run(async () => await listener.SendAsync(rawBytes, rawBytes.Length, receivedFromEP), _stopCancellationToken.Token);
+                           
                         }
                         catch (Exception e)
                         {
@@ -270,7 +266,7 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
                     //magical ping ignore message 4 - its an empty voip packet to initialise VoIP if
                     //someone doesnt transmit
                     {
-                        var outgoingVoice = GenerateOutgoingPacket(udpVoicePacket, udpPacket, client);
+                        var outgoingVoice = GenerateOutgoingPacket(udpVoicePacket, udpPacket, client.ClientGuid, client.Coalition);
 
                         if (outgoingVoice != null)
                         {
@@ -299,6 +295,26 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
                     }
                 }
             }
+            //If in gateway mode, forward even if the client is not in the list
+            //TODO have a setting for DISGatewayMode
+            else if (true)
+            {
+                    //decode
+                    var udpVoicePacket = UDPVoicePacket.DecodeVoicePacket(udpPacket.RawBytes);
+
+                    if (udpVoicePacket != null)
+                    //magical ping ignore message 4 - its an empty voip packet to initialise VoIP if
+                    //someone doesnt transmit
+                    {
+                        var outgoingVoice = GenerateOutgoingPacket(udpVoicePacket, udpPacket, "", 0);
+
+                        if (outgoingVoice != null)
+                        {
+                            //Add to the processing queue
+                            await DispatchOutgoingPacketsAsync(listener, outgoingVoice);
+                        }
+                    }
+            }
         }
         catch (OperationCanceledException)
         {
@@ -311,7 +327,7 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
     }
 
     private OutgoingUDPPackets GenerateOutgoingPacket(UDPVoicePacket udpVoice, PendingPacket pendingPacket,
-        SRClientBase fromClient)
+        string sendingClientGuid, int sendingClientCoalition)
     {
         var nodeHopCount =
             _serverSettings.GetGeneralSetting(ServerSettingsKeys.RETRANSMISSION_NODE_LIMIT).IntValue;
@@ -325,12 +341,10 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
         var coalitionSecurity =
             _serverSettings.GetGeneralSetting(ServerSettingsKeys.COALITION_AUDIO_SECURITY).BoolValue;
 
-        var guid = fromClient.ClientGuid;
-
         var strictEncryption = _serverSettings.GetGeneralSetting(ServerSettingsKeys.STRICT_RADIO_ENCRYPTION).BoolValue;
 
         foreach (var client in _clientsList)
-            if (!client.Key.Equals(guid))
+            if (!client.Key.Equals(sendingClientGuid))
             {
                 var ip = client.Value.VoipPort;
                 var global = false;
@@ -350,7 +364,7 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
                         outgoingList.Add(ip);
                     }
                     // check that either coalition radio security is disabled OR the coalitions match
-                    else if (!coalitionSecurity || client.Value.Coalition == fromClient.Coalition)
+                    else if (!coalitionSecurity || client.Value.Coalition == sendingClientCoalition)
                     {
                         var radioInfo = client.Value.RadioInfo;
 

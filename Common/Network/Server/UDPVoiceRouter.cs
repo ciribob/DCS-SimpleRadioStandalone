@@ -248,7 +248,8 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
 
             if (_clientsList.TryGetValue(guid, out var client))
             {
-                client.VoipPort = udpPacket.ReceivedFrom;
+                if(!client.GatewayClient)
+                    client.VoipPort = udpPacket.ReceivedFrom;
 
                 var spectatorAudioDisabled =
                     _serverSettings.GetGeneralSetting(ServerSettingsKeys.SPECTATORS_AUDIO_DISABLED).BoolValue;
@@ -295,26 +296,6 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
                     }
                 }
             }
-            //If in gateway mode, forward even if the client is not in the list
-            //TODO have a setting for DISGatewayMode
-            else if (true)
-            {
-                    //decode
-                    var udpVoicePacket = UDPVoicePacket.DecodeVoicePacket(udpPacket.RawBytes);
-
-                    if (udpVoicePacket != null)
-                    //magical ping ignore message 4 - its an empty voip packet to initialise VoIP if
-                    //someone doesnt transmit
-                    {
-                        var outgoingVoice = GenerateOutgoingPacket(udpVoicePacket, udpPacket, "", 0);
-
-                        if (outgoingVoice != null)
-                        {
-                            //Add to the processing queue
-                            await DispatchOutgoingPacketsAsync(listener, outgoingVoice);
-                        }
-                    }
-            }
         }
         catch (OperationCanceledException)
         {
@@ -348,43 +329,42 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
             {
                 var ip = client.Value.VoipPort;
                 var global = false;
-                if (ip != null)
+                if (client.Value.GatewayClient || ip == null) continue;
+                
+                for (var i = 0; i < udpVoice.Frequencies.Length; i++)
+                    foreach (var testFrequency in _globalFrequencies)
+                        if (RadioBase.FreqCloseEnough(testFrequency, udpVoice.Frequencies[i]))
+                        {
+                            //ignore everything as its global frequency
+                            global = true;
+                            break;
+                        }
+
+                if (global || client.Value.Gateway)
                 {
-                    for (var i = 0; i < udpVoice.Frequencies.Length; i++)
-                        foreach (var testFrequency in _globalFrequencies)
-                            if (RadioBase.FreqCloseEnough(testFrequency, udpVoice.Frequencies[i]))
-                            {
-                                //ignore everything as its global frequency
-                                global = true;
-                                break;
-                            }
+                    outgoingList.Add(ip);
+                }
+                // check that either coalition radio security is disabled OR the coalitions match
+                else if (!coalitionSecurity || client.Value.Coalition == sendingClientCoalition)
+                {
+                    var radioInfo = client.Value.RadioInfo;
 
-                    if (global || client.Value.Gateway)
-                    {
-                        outgoingList.Add(ip);
-                    }
-                    // check that either coalition radio security is disabled OR the coalitions match
-                    else if (!coalitionSecurity || client.Value.Coalition == sendingClientCoalition)
-                    {
-                        var radioInfo = client.Value.RadioInfo;
+                    if (radioInfo != null)
+                        for (var i = 0; i < udpVoice.Frequencies.Length; i++)
+                        {
+                            RadioReceivingState radioReceivingState = null;
+                            var receivingRadio = radioInfo.CanHearTransmission(udpVoice.Frequencies[i],
+                                (Modulation)udpVoice.Modulations[i],
+                                udpVoice.Encryptions[i],
+                                strictEncryption,
+                                udpVoice.UnitId,
+                                _emptyBlockedRadios,
+                                out radioReceivingState,
+                                out _);
 
-                        if (radioInfo != null)
-                            for (var i = 0; i < udpVoice.Frequencies.Length; i++)
-                            {
-                                RadioReceivingState radioReceivingState = null;
-                                var receivingRadio = radioInfo.CanHearTransmission(udpVoice.Frequencies[i],
-                                    (Modulation)udpVoice.Modulations[i],
-                                    udpVoice.Encryptions[i],
-                                    strictEncryption,
-                                    udpVoice.UnitId,
-                                    _emptyBlockedRadios,
-                                    out radioReceivingState,
-                                    out _);
-
-                                //only send if we can hear!
-                                if (receivingRadio != null) outgoingList.Add(ip);
-                            }
-                    }
+                            //only send if we can hear!
+                            if (receivingRadio != null) outgoingList.Add(ip);
+                        }
                 }
             }
             else

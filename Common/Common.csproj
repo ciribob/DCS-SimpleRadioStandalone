@@ -35,7 +35,7 @@
         <Folder Include="Audio\NAudioLame\" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Caliburn.Micro.Core" Version="4.0.230" />
+        <PackageReference Include="Caliburn.Micro.Core" Version="5.0.258" />
         <PackageReference Include="Concentus.Oggfile" Version="1.0.6" />
         <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
@@ -43,7 +43,7 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="NAudio.Core" Version="2.2.1" />
-        <PackageReference Include="NLog" Version="6.0.0" />
+        <PackageReference Include="NLog" Version="6.0.6" />
         <PackageReference Include="Octokit" Version="14.0.0" />
         <PackageReference Include="OggVorbisEncoder" Version="1.2.2" />
         <PackageReference Include="sharpconfig" Version="3.2.9.1" />

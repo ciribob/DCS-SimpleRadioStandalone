@@ -15,11 +15,19 @@ using NLog;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using DeviceType = SharpDX.DirectInput.DeviceType;
+using System.Runtime.InteropServices;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 
+
+
 public class InputDeviceManager : IDisposable
 {
+[DllImport("user32.dll")]
+    private static extern short GetAsyncKeyState(int vKey);
+
+    private const int VirtualKeyOffset = 256; // Offset to avoid collision with DirectInput keys
+    private const int MaxVirtualKey = 0xFF;   // Highest virtual key code to check
     public delegate void DetectButton(InputDevice inputDevice);
 
     public delegate void DetectPttCallback(List<InputBindState> buttonStates);
@@ -113,7 +121,6 @@ public class InputDeviceManager : IDisposable
                     _globalSettings.GetClientSettingBool(GlobalSettingsKeys.ExpandControls) +
                     ". Use XInput (for Xbox controllers): " + allowXInput);
 
-
         var deviceInstances = _directInput.GetDevices();
 
         _inputDevices.Clear();
@@ -144,7 +151,6 @@ public class InputDeviceManager : IDisposable
                             deviceInstance.ProductName.Trim().Replace("\0", ""));
                 continue;
             }
-
 
             if (deviceInstance.Type == DeviceType.Keyboard)
             {
@@ -255,6 +261,22 @@ public class InputDeviceManager : IDisposable
     public bool IsWhiteListed(Guid device)
     {
         return _whitelistDevices.Contains(device);
+    }
+
+    private static bool IsStandardKeyboardKey(int vKey)
+    {
+        // Modifier keys
+        if (vKey == 0x10 || vKey == 0x11 || vKey == 0x12) // SHIFT, CTRL, ALT
+            return true;
+
+        // Standard keys (A-Z, 0-9, F1-F12, etc.)
+        if ((vKey >= 0x30 && vKey <= 0x39) || // 0-9
+            (vKey >= 0x41 && vKey <= 0x5A) || // A-Z
+            (vKey >= 0x70 && vKey <= 0x7B))   // F1-F12
+            return true;
+
+        // Add more if needed, or use Keys enum for completeness
+        return false;
     }
 
     public void AssignButton(DetectButton callback)
@@ -403,7 +425,34 @@ public class InputDeviceManager : IDisposable
                                     }
                                 }
                         }
-                        else if (deviceList[i] is Keyboard)
+
+                        // --- Virtual Key Detection (all possible virtual keys) ---
+                        for (int vKey = 0x01; vKey <= MaxVirtualKey; vKey++)
+                        {
+                            bool isPressed = (GetAsyncKeyState(vKey) & 0x8000) != 0;
+                            int keyIndex = VirtualKeyOffset + vKey;
+
+                            if (isPressed)
+                            {
+                                if (IsStandardKeyboardKey(vKey)) {
+                                    continue; // Let keyboard logic handle it
+                                    }
+
+                                // Handle as VirtualKeyboard
+                                found = true;
+                                var inputDevice = new InputDevice
+                                {
+                                    DeviceName = "VirtualKeyboard",
+                                    Button = keyIndex,
+                                    InstanceGuid = Guid.Empty,
+                                    ButtonValue = 1
+                                };
+                                Application.Current.Dispatcher.Invoke(() => { callback(inputDevice); });
+                                return;
+                            }
+                        }
+
+                        if (deviceList[i] is Keyboard)
                         {
                             var keyboard = deviceList[i] as Keyboard;
                             var state = keyboard.GetCurrentState();
@@ -433,7 +482,7 @@ public class InputDeviceManager : IDisposable
                             //                                    MessageBox.Show("Keyboard!");
                             //                                }
                         }
-                        else if (deviceList[i] is Mouse)
+                        if (deviceList[i] is Mouse)
                         {
                             var state = (deviceList[i] as Mouse).GetCurrentState();
 
@@ -672,6 +721,13 @@ public class InputDeviceManager : IDisposable
 
     private bool GetButtonState(InputDevice inputDeviceBinding)
     {
+        // Check for virtual key
+        if (inputDeviceBinding.Button >= VirtualKeyOffset && inputDeviceBinding.Button <= VirtualKeyOffset + MaxVirtualKey)
+        {
+            int vKey = inputDeviceBinding.Button - VirtualKeyOffset;
+            return (GetAsyncKeyState(vKey) & 0x8000) != 0;
+        }
+
         foreach (var kpDevice in _inputDevices)
         {
             var device = kpDevice.Value;

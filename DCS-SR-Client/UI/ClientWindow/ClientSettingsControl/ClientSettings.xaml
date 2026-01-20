@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:clientSettingsControl="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.ClientSettingsControl"
+             xmlns:clientWindow="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow"
              xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Properties"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
@@ -554,6 +555,20 @@
                                 Grid.Row="5"
                                 Grid.Column="1"
                                 ToggleValue="{Binding DisallowedAudioTone, Mode=TwoWay}" />
+
+                            <Label Grid.Row="6"
+                               Grid.Column="0"
+                               HorizontalContentAlignment="Center"
+                               VerticalContentAlignment="Center"
+                               Content="{x:Static p:Resources.SetSRSRecordingPath}" />
+
+                            <StackPanel Grid.Row="6" Grid.Column="1" Margin="10">
+                                <clientWindow:BrowseFolderControl
+                                    Path="{Binding CurrentRecordingPath, Mode=TwoWay}"
+                                    DefaultPath="Recordings"
+                                    DialogTitle="{x:Static p:Resources.SetSRSRecordingPath}"
+                                 />
+                            </StackPanel>
                         </Grid>
                     </GroupBox>
                     <GroupBox Header="{x:Static p:Resources.MiscellanousHeader}">

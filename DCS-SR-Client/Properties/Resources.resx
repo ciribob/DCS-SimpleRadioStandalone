@@ -1225,6 +1225,18 @@ Requires Tx or Rx Effects On</value>
   <data name="DisableExpansionRadios" xml:space="preserve">
     <value>Disable Expansion Radios</value>
   </data>
+  <data name="SetSRSRecordingPath" xml:space="preserve">
+    <value>Select Recordings Directory</value>
+  </data>
+  <data name="Browse" xml:space="preserve">
+    <value>Browse</value>
+  </data>
+  <data name="DirectoryNotFound" xml:space="preserve">
+    <value>Directory Not Found</value>
+  </data>
+  <data name="DirectoryNotExist" xml:space="preserve">
+    <value>The directory you entered does not exist</value>
+  </data>
   <data name="RecordingFormat" xml:space="preserve">
     <value>Recording Format (requires restart)</value>
   </data>

@@ -242,6 +242,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Browse.
+        /// </summary>
+        public static string Browse {
+            get {
+                return ResourceManager.GetString("Browse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close.
         /// </summary>
         public static string BtnClose {
@@ -472,6 +481,24 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         public static string DeviceSet {
             get {
                 return ResourceManager.GetString("DeviceSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The directory you entered does not exist.
+        /// </summary>
+        public static string DirectoryNotExist {
+            get {
+                return ResourceManager.GetString("DirectoryNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Directory Not Found.
+        /// </summary>
+        public static string DirectoryNotFound {
+            get {
+                return ResourceManager.GetString("DirectoryNotFound", resourceCulture);
             }
         }
         
@@ -2778,6 +2805,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         public static string SetSRSPathBtn {
             get {
                 return ResourceManager.GetString("SetSRSPathBtn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Recordings Directory.
+        /// </summary>
+        public static string SetSRSRecordingPath {
+            get {
+                return ResourceManager.GetString("SetSRSRecordingPath", resourceCulture);
             }
         }
         

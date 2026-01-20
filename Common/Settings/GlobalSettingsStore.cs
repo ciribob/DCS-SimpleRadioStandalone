@@ -106,7 +106,9 @@ public enum GlobalSettingsKeys
 
     AllowXInputController,
 
-    LastPresetsFolder
+    LastPresetsFolder,
+
+    RecordingPath
 }
 
 public enum InputBinding
@@ -352,7 +354,9 @@ public class GlobalSettingsStore
 
 
         { GlobalSettingsKeys.AllowXInputController.ToString(), "false" },
-        { GlobalSettingsKeys.LastPresetsFolder.ToString(), string.Empty }
+        { GlobalSettingsKeys.LastPresetsFolder.ToString(), string.Empty },
+
+        { GlobalSettingsKeys.RecordingPath.ToString(), "Recordings" }
     };
 
     private readonly Logger Logger = LogManager.GetCurrentClassLogger();

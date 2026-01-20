@@ -1,9 +1,11 @@
-﻿using NAudio.Wave;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
+using NAudio.Wave;
 using NLog;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Recording
 {
@@ -27,12 +29,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Recording
             _waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(sampleRate, 1);
             _sampleRate = sampleRate;
             _maxSamples = maxSamples;
-
-            if (!Directory.Exists("Recordings"))
-            {
-                _logger.Info("Recordings directory missing, creating directory");
-                Directory.CreateDirectory("Recordings");
-            }
         }
 
         public void ProcessAudio()
@@ -63,5 +59,28 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Recording
 
         protected abstract void DoPrepareProcessAudio();
         protected abstract void DoProcessAudioStream(int streamIndex, ReadOnlySpan<float> samples);
+        public string GetRecordingDirectory()
+        {
+            string dir = GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.RecordingPath).StringValue;
+            if (string.IsNullOrEmpty(dir))
+                return Directory.GetCurrentDirectory();
+
+            if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+            {
+                _logger.Info($"Recording directory '{dir}' missing, creating directory");
+                try
+                {
+                    Directory.CreateDirectory(dir);
+                    _logger.Info("Directory Created!");
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(ex, $"Failed to create recording directory '{dir}': {ex.Message}");
+                    return Directory.GetCurrentDirectory(); //return CurrentDirectory if we can't create the user specified one
+                }
+            }
+
+            return dir;
+        }
     }
 }

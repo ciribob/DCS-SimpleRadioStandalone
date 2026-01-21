@@ -79,7 +79,14 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
         OptionKeepAlive = true;
         try
         {
-            Start();
+            var (success, errorMessage) = StartWithError();
+            if (!success)
+            {
+                //surface the error as appropriate for your environment (Gui or CommandLine)
+                Logger.Error($"Failed to start TCP server: {errorMessage}");
+                _eventAggregator.PublishOnUIThreadAsync(new ServerErrorMessage(errorMessage ?? "Unknown error", null));
+                return;
+            }
         }
         catch (Exception ex)
         {
@@ -93,11 +100,12 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
 
             Logger.Error(ex, "Unable to start the SRS Server");
 
-
-            Environment.Exit(0);
+            // Notify the main thread of the error
+            _eventAggregator.PublishOnUIThreadAsync(new ServerErrorMessage("Unhandled exception in StartListening", ex));
+            //Environment.Exit(0);
         }
-        
-        
+
+
     }
 
     public void HandleDisconnect(SRSClientSession state)

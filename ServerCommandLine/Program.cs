@@ -16,7 +16,7 @@ using LogManager = NLog.LogManager;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Server;
 
-internal class Program : IHandle<SRSClientStatus>
+internal class Program : IHandle<SRSClientStatus>, IHandle<ServerErrorMessage>
 {
     private readonly EventAggregator _eventAggregator = new();
     private ServerState _serverState;
@@ -40,6 +40,15 @@ internal class Program : IHandle<SRSClientStatus>
         }
 
         return Task.CompletedTask;
+    }
+
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+    public async Task HandleAsync(ServerErrorMessage message, CancellationToken cancellationToken)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+    {
+        Console.Error.WriteLine($"Server error: {message.Error}");
+        if (message.Exception != null)
+            Console.Error.WriteLine(message.Exception);
     }
 
     private static void Main(string[] args)

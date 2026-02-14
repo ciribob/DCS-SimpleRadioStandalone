@@ -47,10 +47,10 @@ public enum GlobalSettingsKeys
     DCSIncomingGameGUIUDP, // 5068
     DCSLOSIncomingUDP, //9085
 
-    AGC,
-    AGCTarget,
-    AGCDecrement,
-    AGCLevelMax,
+    // AGC,
+    // AGCTarget,
+    // AGCDecrement,
+    // AGCLevelMax,
 
     Denoise,
     DenoiseAttenuation,
@@ -106,7 +106,8 @@ public enum GlobalSettingsKeys
 
     AllowXInputController,
 
-    LastPresetsFolder
+    LastPresetsFolder,
+    DISEntityID
 }
 
 public enum InputBinding
@@ -297,12 +298,6 @@ public class GlobalSettingsStore
         { GlobalSettingsKeys.DCSLOSIncomingUDP.ToString(), "9085" },
         { GlobalSettingsKeys.DCSAutoConnectUDP.ToString(), "5069" },
 
-
-        { GlobalSettingsKeys.AGC.ToString(), "true" },
-        { GlobalSettingsKeys.AGCTarget.ToString(), "14000" },
-        { GlobalSettingsKeys.AGCDecrement.ToString(), "-60" },
-        { GlobalSettingsKeys.AGCLevelMax.ToString(), "40" },
-
         { GlobalSettingsKeys.Denoise.ToString(), "true" },
         { GlobalSettingsKeys.DenoiseAttenuation.ToString(), "-30" },
 
@@ -352,7 +347,9 @@ public class GlobalSettingsStore
 
 
         { GlobalSettingsKeys.AllowXInputController.ToString(), "false" },
-        { GlobalSettingsKeys.LastPresetsFolder.ToString(), string.Empty }
+        { GlobalSettingsKeys.LastPresetsFolder.ToString(), string.Empty },
+        
+        { GlobalSettingsKeys.DISEntityID.ToString(), "-1" }
     };
 
     private readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -656,9 +653,9 @@ public class GlobalSettingsStore
             // Update to V1:
             // * Force enable AGC again.
             // * Fix up the values.
-            SetClientSetting(GlobalSettingsKeys.AGC, true);
-            SetClientSetting(GlobalSettingsKeys.AGCLevelMax, 45);
-            SetClientSetting(GlobalSettingsKeys.AGCTarget, 14000);
+            // SetClientSetting(GlobalSettingsKeys.AGC, true);
+            // SetClientSetting(GlobalSettingsKeys.AGCLevelMax, 45);
+            // SetClientSetting(GlobalSettingsKeys.AGCTarget, 14000);
 
             // Upgrade done
             SetClientSetting(GlobalSettingsKeys.Version, 1);

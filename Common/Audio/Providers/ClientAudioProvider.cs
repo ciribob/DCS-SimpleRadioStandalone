@@ -7,6 +7,7 @@ using NAudio.Wave;
 using System.Buffers;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers;
@@ -128,7 +129,8 @@ public class ClientAudioProvider : AudioProvider
             ambientCockpitEffectEnabled =
                 settingsStore.GetClientSettingBool(ProfileSettingsKeys.AmbientCockpitNoiseEffect);
             ambientCockpitEffectVolume =
-                settingsStore.GetClientSettingFloat(ProfileSettingsKeys.AmbientCockpitNoiseEffectVolume);
+                VolumeConversionHelper.ConvertRadioVolumeSlider(
+                    settingsStore.GetClientSettingFloat(ProfileSettingsKeys.AmbientCockpitNoiseEffectVolume), true);
             ambientCockpitIntercomEffectEnabled =
                 settingsStore.GetClientSettingBool(ProfileSettingsKeys.AmbientCockpitIntercomNoiseEffect);
 
@@ -164,16 +166,19 @@ public class ClientAudioProvider : AudioProvider
                                          || modulation == Modulation.MIDS)
             return;
 
-        //           clientAudio.Ambient.abType = "uh1";
-        //           clientAudio.Ambient.vol = 0.35f;
-
+        // ambient = new Ambient()
+        // {
+        //     abType = "uh1",
+        //     vol = 100f
+        // };
+        //
         var abType = ambient?.abType;
 
         if (string.IsNullOrEmpty(abType)) return;
 
         var effect = audioEffectProvider.GetAmbientEffect(abType);
-
-        var vol = ambient.vol;
+        
+        var vol = (float) VolumeConversionHelper.DecibelsToLinear(VolumeConversionHelper.GetTargetdB( effect.RMS,ambient.vol));
         
         var ambientEffectProg = ambientEffectProgress[receiveRadio];
 
@@ -188,7 +193,8 @@ public class ClientAudioProvider : AudioProvider
 
             var effectVolume = vol * ambientCockpitEffectVolume;
             var v_effectVolume = new Vector<float>(effectVolume);
-
+            var v_min = new Vector<float>(-1.0f);
+            var v_max = new Vector<float>(1.0f);
 
             ref float pcmAudioPtr = ref MemoryMarshal.GetReference(pcmAudio);
             ref float effectPtr = ref effect.AudioEffectFloat[0];
@@ -201,16 +207,34 @@ public class ClientAudioProvider : AudioProvider
                 var v_samples = Vector.LoadUnsafe(ref pcmAudioPtr, (nuint)i);
                 var v_effect = Vector.LoadUnsafe(ref effectPtr, (nuint)progress);
 
-                (v_samples + v_effect * v_effectVolume).StoreUnsafe(ref pcmAudioPtr, (nuint)i);
+                var v_mixed = v_samples + v_effect * v_effectVolume;
+                
+                var v_tooLow = Vector.LessThan(v_mixed, v_min);
+                var v_tooHigh = Vector.GreaterThan(v_mixed, v_max);
+                var v_outOfAudioBounds = Vector.BitwiseOr(v_tooLow, v_tooHigh);
+                
+                // If out of bounds, pick original audio , else pick v_mixed (with effect)
+                var v_final = Vector.ConditionalSelect(v_outOfAudioBounds, v_samples, v_mixed);
+                
+                v_final.StoreUnsafe(ref pcmAudioPtr, (nuint)i);
 
                 progress += vectorSize;
                 if (progress >= effectLength)
                     progress = 0;
             }
+            
+            //should be impossible
+            if (limit != pcmAudio.Length && (pcmAudio.Length - limit) + progress >= effectLength)
+                progress = 0;
 
             for (var i = limit; i < pcmAudio.Length; i++)
             {
-                pcmAudio[i] += effect.AudioEffectFloat[progress] * effectVolume;
+                var mixed = pcmAudio[i] + effect.AudioEffectFloat[progress] * effectVolume;
+
+                if (mixed is > -1f and < 1f)
+                {
+                    pcmAudio[i] = mixed;
+                }
 
                 progress++;
 

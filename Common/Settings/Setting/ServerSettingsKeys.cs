@@ -43,7 +43,8 @@ public enum ServerSettingsKeys
     HTTP_SERVER_API_KEY = 34,
     SERVER_EAM_RADIO_PRESET_ENABLED = 35,
     SERVER_EAM_RADIO_PRESET = 36,
-    ALLOW_INSTRUCTOR_MODE = 37
+    ALLOW_INSTRUCTOR_MODE = 37,
+    HTTP_SERVER_ADDRESS = 38,
 }
 
 public class DefaultServerSettings
@@ -86,5 +87,6 @@ public class DefaultServerSettings
         { ServerSettingsKeys.HTTP_SERVER_API_KEY.ToString(), ShortGuid.NewGuid() },
         { ServerSettingsKeys.SERVER_EAM_RADIO_PRESET_ENABLED.ToString(), "false" },
         { ServerSettingsKeys.ALLOW_INSTRUCTOR_MODE.ToString(), "false" },
+        { ServerSettingsKeys.HTTP_SERVER_ADDRESS.ToString(), "localhost" },
     };
 }

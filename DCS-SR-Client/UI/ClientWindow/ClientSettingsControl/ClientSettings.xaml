@@ -168,63 +168,15 @@
                                 <RowDefinition />
 
                             </Grid.RowDefinitions>
-
+                            
                             <Label Grid.Row="1"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.MicAGC}" />
-
-                            <clientSettingsControl:SettingsToggleControl
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                ToggleValue="{Binding MicAGC, Mode=TwoWay}" />
-
-                            <Label Grid.Row="2"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   IsEnabled="{Binding MicAGC}"
-                                   ToolTip="{x:Static p:Resources.MicAGCMaxDBToolTip}"
-                                   Content="{x:Static p:Resources.MicAGCMaxDB}" />
-                            <StackPanel Grid.Row="2"
-                                 Grid.Column="1"
-                                 IsEnabled="{Binding MicAGC}">
-                                <Slider
-                                    HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center"
-                                    SmallChange="1" LargeChange="5"
-                                    ToolTip="{Binding MicAGCMaxDB }"
-                                    Minimum="0" Maximum="70" Value="{Binding MicAGCMaxDB, Mode=TwoWay}" />
-                                <Label
-                                    HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center"
-                                    Content="{Binding MicAGCMaxDB}" />
-                            </StackPanel>
-                            <Label Grid.Row="3"
-                                   Grid.Column="0"
-                                   HorizontalContentAlignment="Center"
-                                   VerticalContentAlignment="Center"
-                                   IsEnabled="{Binding MicAGC}"
-                                   ToolTip="{x:Static p:Resources.MicAGCTargetLevelToolTip}"
-                                   Content="{x:Static p:Resources.MicAGCTargetLevel}" />
-                            <Slider Grid.Row="3"
-                                   Grid.Column="1"
-                                 HorizontalContentAlignment="Center"
-                                 VerticalContentAlignment="Center"
-                                 ToolTip="{Binding MicAGCTarget }"
-                                 Minimum="1000" Maximum="30000"
-                                 SmallChange="100" LargeChange="1000"
-                                 Value="{Binding MicAGCTarget, Mode=TwoWay}" />
-
-                            <Label Grid.Row="4"
                                    Grid.Column="0"
                                    HorizontalContentAlignment="Center"
                                    VerticalContentAlignment="Center"
                                    Content="{x:Static p:Resources.MicDenoise}" />
 
                             <clientSettingsControl:SettingsToggleControl
-                                Grid.Row="4"
+                                Grid.Row="1"
                                 Grid.Column="1"
                                 ToggleValue="{Binding MicDenoise, Mode=TwoWay}" />
                         </Grid>

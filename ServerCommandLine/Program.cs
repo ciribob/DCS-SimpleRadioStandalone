@@ -189,6 +189,9 @@ internal class Program : IHandle<SRSClientStatus>
         if (options.HttpServerPort != null && options.HttpServerPort.HasValue)
             ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.HTTP_SERVER_PORT,
                 options.HttpServerPort.Value.ToString());
+        if (options.HttpServerAddress != null && options.HttpServerAddress.Trim().Length > 0)
+            ServerSettingsStore.Instance.SetServerSetting(ServerSettingsKeys.HTTP_SERVER_ADDRESS,
+                options.HttpServerAddress);
 
         Console.WriteLine("Final Settings:");
         foreach (var setting in ServerSettingsStore.Instance.GetAllSettings()) Console.WriteLine(setting);
@@ -360,6 +363,11 @@ public class Options
         HelpText = "Sets the HTTP Server Port if Enabled. Default is 8080.",
         Required = false)]
     public int? HttpServerPort { get; set; }
+
+    [Option("httpServerAddress",
+       HelpText = "Sets the HTTP Server Address if Enabled. Default is localhost.",
+       Required = false)]
+    public string? HttpServerAddress { get; set; }
 
     [Option("radioEffectOverride",
         HelpText = "Disables Radio Effects on the global frequency (for Music etc). Default is false",

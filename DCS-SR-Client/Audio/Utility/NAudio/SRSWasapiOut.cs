@@ -425,12 +425,12 @@ public class SRSWasapiOut : IWavePlayer, IWavePosition
     /// </summary>
     public float Volume
     {
-        get => mmDevice.AudioEndpointVolume.MasterVolumeLevelScalar;
+        get => 1;
         set
         {
-            if (value < 0) throw new ArgumentOutOfRangeException("value", "Volume must be between 0.0 and 1.0");
-            if (value > 1) throw new ArgumentOutOfRangeException("value", "Volume must be between 0.0 and 1.0");
-            mmDevice.AudioEndpointVolume.MasterVolumeLevelScalar = value;
+            // if (value < 0) throw new ArgumentOutOfRangeException("value", "Volume must be between 0.0 and 1.0");
+            // if (value > 1) throw new ArgumentOutOfRangeException("value", "Volume must be between 0.0 and 1.0");
+            // mmDevice.AudioEndpointVolume.MasterVolumeLevelScalar = value;
         }
     }
 

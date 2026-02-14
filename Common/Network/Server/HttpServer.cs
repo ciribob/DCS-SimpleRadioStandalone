@@ -20,6 +20,7 @@ public class HttpServer
     private readonly int _port;
     private readonly ServerState _serverState;
     private readonly string _authentication;
+    private readonly string _address;
 
     private HttpListener _listener;
     
@@ -37,6 +38,7 @@ public class HttpServer
         _port = ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.HTTP_SERVER_PORT).IntValue;
         _enabled = ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.HTTP_SERVER_ENABLED).BoolValue;
         _authentication = ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.HTTP_SERVER_API_KEY).RawValue.Trim();
+        _address = ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.HTTP_SERVER_ADDRESS).RawValue.Trim();
     }
 
     public void Start()
@@ -44,7 +46,7 @@ public class HttpServer
         if (_enabled)
         {
             _listener = new HttpListener();
-            _listener.Prefixes.Add("http://*:" + _port + "/");
+            _listener.Prefixes.Add($"http://{_address}:{_port}/");
             _listener.Start();
             Logger.Info($"HTTP Server Started on Port: {_port}");
             Logger.Info($"HTTP Server Header {API_HEADER} Required: {_authentication}" );

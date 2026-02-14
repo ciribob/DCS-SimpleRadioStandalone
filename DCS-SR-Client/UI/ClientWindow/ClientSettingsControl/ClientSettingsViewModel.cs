@@ -480,36 +480,7 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
             NotifyPropertyChanged();
         }
     }
-#region Automatic Gain Control (Microphone)
-    public bool MicAGC
-    {
-        get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.AGC);
-        set
-        {
-            _globalSettings.SetClientSetting(GlobalSettingsKeys.AGC, value);
-            NotifyPropertyChanged();
-        }
-    }
 
-    public int MicAGCMaxDB
-    {
-        get => _globalSettings.GetClientSettingInt(GlobalSettingsKeys.AGCLevelMax);
-        set
-        {
-            _globalSettings.SetClientSetting(GlobalSettingsKeys.AGCLevelMax, value);
-            NotifyPropertyChanged();
-        }
-    }
-
-    public int MicAGCTarget
-    {
-        get => _globalSettings.GetClientSettingInt(GlobalSettingsKeys.AGCTarget);
-        set
-        {
-            _globalSettings.SetClientSetting(GlobalSettingsKeys.AGCTarget, value);
-            NotifyPropertyChanged();
-        }
-    }
 
     public bool MicDenoise
     {
@@ -520,8 +491,8 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
             NotifyPropertyChanged();
         }
     }
-    #endregion Automatic Gain Control (Microphone)
-    #region Automatic Gain Control (Microphone)
+
+    #region Automatic Gain Control (Incoming Audio)
     public bool IncomingAudioAGC
     {
         get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.IncomingAudioAGC);
@@ -561,7 +532,7 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
             NotifyPropertyChanged();
         }
     }
-#endregion Automatic Gain Control (IncomingAudio)
+#endregion Automatic Gain Control (Incoming Audio)
 
     public bool PlayConnectionSounds
     {
@@ -1177,8 +1148,7 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         NotifyPropertyChanged(nameof(MinimiseToTray));
         NotifyPropertyChanged(nameof(StartMinimised));
         NotifyPropertyChanged(nameof(ShowTransmitterName));
-
-        NotifyPropertyChanged(nameof(MicAGC));
+        
         NotifyPropertyChanged(nameof(MicDenoise));
 
         NotifyPropertyChanged(nameof(VOXEnabled));

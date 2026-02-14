@@ -97,22 +97,31 @@ public static class VolumeConversionHelper
         return 20 * Math.Log10(rms);
     }
 
-    public static float ConvertRadioVolumeSlider(float sliderValue)
+    public static float ConvertRadioVolumeSlider(float sliderValue, bool allowBoost = false)
     {
-        var dB = ConvertSliderToVolume(sliderValue);
+        var dB = ConvertSliderToVolume(sliderValue, allowBoost);
         return dBToLinearScale(dB);
     }
 
-    private static double ConvertSliderToVolume(double sliderValue)
+    private static double ConvertSliderToVolume(double sliderValue, bool allowBoost)
     {
         if (sliderValue <= 0)
             sliderValue = 0.000001;
-        else if (sliderValue > 1) sliderValue = 1;
+        else if (sliderValue > 1 && !allowBoost) sliderValue = 1;
         return 20 * Math.Log10(sliderValue);
     }
 
     private static float dBToLinearScale(double dB)
     {
-        return (float)Math.Pow(10, dB / 20);
+        return (float)Math.Pow(10, dB / 20.0d);
+    }
+    
+    public static double GetTargetdB(double currentDb, double reductionFactor)
+    {
+        if (reductionFactor <= 0) return -144.0; 
+        if (reductionFactor >= 1) return currentDb;
+
+        double dbChange = 10 * Math.Log(reductionFactor, 2);
+        return currentDb + dbChange;
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Properties;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using NAudio.CoreAudioApi;
 using NAudio.Dmo;
@@ -135,6 +136,13 @@ public class AudioOutputSingleton
 
     private bool DetectWindowsN()
     {
+
+        if (WineDetector.IsRunningUnderWine())
+        {
+            Logger.Warn("WINE / Linux Detected - using inbuilt resampler");
+            return true;
+        }
+        
         try
         {
             var dmoResampler = new DmoResampler();

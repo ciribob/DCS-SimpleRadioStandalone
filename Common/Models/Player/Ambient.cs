@@ -6,7 +6,7 @@ public class Ambient
 {
     //  public float pitch = 1.0f;
     public string abType = "";
-    public float vol = 1.0f;
+    public float vol = 0.15f;
 
     public override bool Equals(object obj)
     {

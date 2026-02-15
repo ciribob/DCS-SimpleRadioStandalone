@@ -5,13 +5,24 @@ param(
 
 $MSBuildExe="msbuild"
 if ($null -eq (Get-Command $MSBuildExe -ErrorAction SilentlyContinue)) {
-    $MSBuildExe="C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe"
-    Write-Warning "MSBuild not in path, using $MSBuildExe"
-    
-    if ($null -eq (Get-Command $MSBuildExe -ErrorAction SilentlyContinue)) {
+    # 18 = VS 2026.
+    $VSVersionCandidates = @('18', '2022')
+    foreach ($VSVersion in $VSVersionCandidates) {
+        $MSBuildExe="C:\Program Files\Microsoft Visual Studio\$VSVersion\Community\MSBuild\Current\Bin\MSBuild.exe"
+        Write-Warning "MSBuild not in path, trying $MSBuildExe..."
+        if ($null -ne (Get-Command $MSBuildExe -ErrorAction SilentlyContinue)) {
+            # Found, proceed.
+            break
+        }
+        $MSBuildExe=$null
+    }
+
+    if ($null -eq $MSBuildExe) {
         Writer-Error "Cannot find MSBuild (aborting)"
         exit 1
     }
+
+    Write-Host "Using MSBuild $MSBuildExe"
 }
 
 if ($NoSign) {
@@ -36,7 +47,7 @@ $commonParams = @(
 )
 
 # Define the path to signtool.exe
-$signToolPath = "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22000.0\x86\signtool.exe"
+$signToolPath = "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x86\signtool.exe"
 if (-not $NoSign -and -not (Test-Path $signToolPath)) {
     Write-Error "SignTool.exe not found at $signToolPath. Please verify the path."
     exit 1
@@ -59,7 +70,7 @@ dotnet clean "./DCS-SR-Client/DCS-SR-Client.csproj"
 dotnet publish "./DCS-SR-Client/DCS-SR-Client.csproj" `
     --runtime win-x64 `
     --output "$outputPath\Client" `
-    --self-contained false `
+    --no-self-contained `
     @commonParams
 Remove-Item "$outputPath\Client\*.so" -Recurse -ErrorAction SilentlyContinue
 Remove-Item "$outputPath\Client\*.config"  -Recurse -ErrorAction SilentlyContinue
@@ -73,7 +84,7 @@ dotnet clean "./Server/Server.csproj"
 dotnet publish "./Server/Server.csproj" `
     --runtime win-x64 `
     --output "$outputPath\Server" `
-    --self-contained false `
+    --no-self-contained `
     @commonParams
 Remove-Item "$outputPath\Server\*.so"  -Recurse -ErrorAction SilentlyContinue
 Remove-Item "$outputPath\Server\*.config"  -Recurse -ErrorAction SilentlyContinue
@@ -86,7 +97,7 @@ dotnet clean "./ServerCommandLine\ServerCommandLine.csproj"
 dotnet publish "./ServerCommandLine\ServerCommandLine.csproj" `
     --runtime win-x64 `
     --output "$outputPath\ServerCommandLine-Windows" `
-    --self-contained true `
+    --self-contained `
     @commonParams
 Remove-Item "$outputPath\ServerCommandLine-Windows\*.so"  -Recurse -ErrorAction SilentlyContinue
 
@@ -97,7 +108,7 @@ dotnet clean "./ServerCommandLine\ServerCommandLine.csproj"
 dotnet publish "./ServerCommandLine\ServerCommandLine.csproj" `
     --runtime linux-x64 `
     --output "$outputPath\ServerCommandLine-Linux" `
-    --self-contained true `
+    --self-contained `
     @commonParams
 Remove-Item "$outputPath\ServerCommandLine-Linux\*.dll"  -Recurse -ErrorAction SilentlyContinue
 
@@ -109,7 +120,7 @@ dotnet clean "./DCS-SR-ExternalAudio\DCS-SR-ExternalAudio.csproj"
 dotnet publish "./DCS-SR-ExternalAudio\DCS-SR-ExternalAudio.csproj" `
     --runtime win-x64 `
     --output "$outputPath\ExternalAudio" `
-    --self-contained false `
+    --no-self-contained `
     @commonParams
 Remove-Item "$outputPath\ExternalAudio\*.so"  -Recurse -ErrorAction SilentlyContinue
 
@@ -121,7 +132,7 @@ dotnet clean "./AutoUpdater\AutoUpdater.csproj"
 dotnet publish "./AutoUpdater\AutoUpdater.csproj" `
     --runtime win-x64 `
     --output "$outputPath\AutoUpdater" `
-    --self-contained false `
+    --no-self-contained `
     @commonParams
 
 
@@ -147,12 +158,12 @@ dotnet clean "./Installer\Installer.csproj"
 dotnet publish "./Installer\Installer.csproj" `
     --runtime win-x64 `
     --output "$outputPath\Installer" `
-    --self-contained false `
+    --no-self-contained `
     @commonParams
 
 # VC Redist
 Write-Host "Downloading VC redistributables..." -ForegroundColor Green
-Invoke-WebRequest -Uri "https://aka.ms/vs/17/release/vc_redist.x64.exe" -OutFile "$outputPath\VC_redist.x64.exe"
+Invoke-WebRequest -Uri "https://aka.ms/vs/18/release/vc_redist.x64.exe" -OutFile "$outputPath\VC_redist.x64.exe"
 
 
 ##Prep Directory

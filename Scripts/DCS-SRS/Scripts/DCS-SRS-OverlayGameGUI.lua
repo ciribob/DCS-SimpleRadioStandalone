@@ -231,9 +231,8 @@ srsOverlay.module_specific["F-16C_50"] = function(radios)
         if _radio then
             _hotasDevice:SetCommand(_details.id, 0)
             
-            local _isReceiving = srsOverlay.isReceiving(_i)
             local _isTransmitting = srsOverlay.isTransmitting(_i, _radio)
-            local isActive = _isReceiving > 0 or _isTransmitting
+            local isActive = _isTransmitting
             if isActive then
                 activeRadios[_i] = _details
                 anyActive = true

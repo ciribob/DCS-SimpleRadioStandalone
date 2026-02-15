@@ -75,6 +75,16 @@ function SR.error(str)
     log.write('SRS-export', log.ERROR, str)
 end
 
+function SR.debug(str)
+    log.write('SRS-export', log.DEBUG, str)
+end
+
+function SR.trace(str)
+    log.write('SRS-export', log.TRACE, str)
+end
+
+SR.log("Loading SimpleRadio Standalone Export...")
+
 package.path = package.path .. ";.\\LuaSocket\\?.lua;"
 package.cpath = package.cpath .. ";.\\LuaSocket\\?.dll;"
 
@@ -114,7 +124,7 @@ SR.UDPSeatReceiveSocket:settimeout(0)
 local terrain = require('terrain')
 
 if terrain ~= nil then
-    SR.log("Loaded Terrain - SimpleRadio Standalone!")
+    SR.debug("Loaded Terrain - SimpleRadio Standalone!")
 end
 
 -- Prev Export functions.
@@ -185,7 +195,7 @@ function SR.ModsPuginsRecursiveSearch(modsPath)
         return
     end
 
-    SR.log("Searching for mods in '" .. modsPath)
+    SR.debug("Searching for mods in '" .. modsPath)
     
     -- Process each available Mod
     for modFolder in lfs.dir(modsPath) do
@@ -209,7 +219,7 @@ function SR.LoadModule(modulePath)
         if error then
             SR.error("Failed loading SRS Mod plugin due to an error in '" .. modulePath .. "'")
         else
-            SR.log("Loaded SRS Mod plugin '" .. modulePath .. "'")
+            SR.debug("Loaded SRS Mod plugin '" .. modulePath .. "'")
         end
     end
 end

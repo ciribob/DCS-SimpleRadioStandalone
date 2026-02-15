@@ -508,8 +508,6 @@ public class UDPClientAudioProcessor : IDisposable
                         var encodedOpusAudio = new byte[0];
                         _udpClient.EncodedAudio.TryTake(out encodedOpusAudio, 100000, _stopFlag.Token);
 
-                        var time = DateTime.Now.Ticks; //should add at the receive instead?
-
                         if (encodedOpusAudio != null
                             && encodedOpusAudio.Length >=
                             UDPVoicePacket.PacketHeaderLength + UDPVoicePacket.FixedPacketLength +

@@ -10,21 +10,12 @@ using Octokit;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 
-//Quick and dirty update checker based on GitHub Published Versions
-//TODO make this a singleton
+// UpdaterChecker now inherits from GitHubUpdaterBase for GitHub API and rate limit management
 public class UpdaterChecker
 {
     public delegate void UpdateCallback(UpdateCallbackResult result);
 
-    private static UpdaterChecker _instance;
-    private static readonly object _lock = new();
-
-    public static readonly string GITHUB_USERNAME = "ciribob";
-
-    public static readonly string GITHUB_REPOSITORY = "DCS-SimpleRadioStandalone";
-
-    // Required for all requests against the GitHub API, as per https://developer.github.com/v3/#user-agent-required
-    public static readonly string GITHUB_USER_AGENT = $"{GITHUB_USERNAME}_{GITHUB_REPOSITORY}";
+    private static readonly UpdaterChecker _instance = new UpdaterChecker();
 
     public static readonly string MINIMUM_PROTOCOL_VERSION = "1.9.0.0";
 
@@ -32,32 +23,22 @@ public class UpdaterChecker
 
     private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
-    public static UpdaterChecker Instance
-    {
-        get
-        {
-            lock (_lock)
-            {
-                if (_instance == null) _instance = new UpdaterChecker();
-            }
+    public static UpdaterChecker Instance => _instance;
 
-            return _instance;
-        }
-    }
+    public UpdaterChecker() { }
 
     public async void CheckForUpdate(bool checkForBetaUpdates, UpdateCallback updateCallback)
     {
         var currentVersion = Version.Parse(VERSION);
 
-
         try
         {
-            var githubClient = new GitHubClient(new ProductHeaderValue(GITHUB_USER_AGENT, VERSION));
+//#if DEBUG
+//            return;
+//#endif
 
-#if DEBUG
-            return;
-#endif
-            var releases = await githubClient.Repository.Release.GetAll(GITHUB_USERNAME, GITHUB_REPOSITORY);
+            // Get all releases using the new static helper
+            var releases = await GitHubUpdater.GetAllReleasesAsync(null, VERSION);
 
             var latestStableVersion = new Version();
             Release latestStableRelease = null;
@@ -198,7 +179,6 @@ public class UpdaterChecker
             _logger.Error("Unable to find SRS-AutoUpdater.exe");
             return false;
         }
-
 
         Task.Run(() =>
         {

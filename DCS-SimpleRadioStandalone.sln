@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36221.1 d17.14
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11505.172 d18.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoUpdater", "AutoUpdater\AutoUpdater.csproj", "{B5956387-B0A8-085C-7A60-C58090962AF1}"
 EndProject
@@ -27,6 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Scripts\DCS-SRS\Scripts\DCS-Plugin-Example\SRS\autoload.lua = Scripts\DCS-SRS\Scripts\DCS-Plugin-Example\SRS\autoload.lua
 		DCS-SR-Client\awacs-radios.json = DCS-SR-Client\awacs-radios.json
+		.github\workflows\build.yml = .github\workflows\build.yml
 		Scripts\DCS-SRS\Scripts\DCS-SimpleRadioStandalone.lua = Scripts\DCS-SRS\Scripts\DCS-SimpleRadioStandalone.lua
 		Scripts\DCS-SRS-AutoConnectGameGUI.lua = Scripts\DCS-SRS-AutoConnectGameGUI.lua
 		Scripts\Hooks\DCS-SRS-hook.lua = Scripts\Hooks\DCS-SRS-hook.lua
@@ -35,9 +36,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Scripts\DCS-SRS\Scripts\DCS-SRSGameGUI.lua = Scripts\DCS-SRS\Scripts\DCS-SRSGameGUI.lua
 		Scripts\DCS-SRS\entry.lua = Scripts\DCS-SRS\entry.lua
 		Scripts\Export.lua = Scripts\Export.lua
+		global.json = global.json
 		publish.ps1 = publish.ps1
 		Scripts\DCS-SRS\Scripts\DCS-Plugin-Example\Readme.txt = Scripts\DCS-SRS\Scripts\DCS-Plugin-Example\Readme.txt
-		global.json = global.json
 	EndProjectSection
 EndProject
 Global

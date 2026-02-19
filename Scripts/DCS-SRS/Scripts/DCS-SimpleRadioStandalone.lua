@@ -1,4 +1,4 @@
--- Version 2.3.6.0
+-- Version 2.3.7.0
 
 -- Special thanks to Cap. Zeen, Tarres and Splash for all the help
 -- with getting the radio information :)
@@ -919,4 +919,4 @@ end
 -- Load mods' SRS plugins
 SR.LoadModsPlugins()
 
-SR.log("Loaded SimpleRadio Standalone Export version: 2.3.6.0")
+SR.log("Loaded SimpleRadio Standalone Export version: 2.3.7.0")

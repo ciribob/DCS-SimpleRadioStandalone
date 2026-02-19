@@ -1,8 +1,8 @@
--- Version 2.3.6.0
+-- Version 2.3.7.0
 -- Make sure you COPY this file to the same location as the Export.lua as well! 
 -- Otherwise the Radio Might not work
 
-log.write('SRS-GameGUI', log.INFO, "Loading - DCS-SRS GameGUI - Ciribob: 2.3.6.0")
+log.write('SRS-GameGUI', log.INFO, "Loading - DCS-SRS GameGUI - Ciribob: 2.3.7.0")
 
 local base = _G
 
@@ -391,4 +391,4 @@ end
 
 DCS.setUserCallbacks(SRS)
 
-SRS.log("Loaded - DCS-SRS GameGUI - Ciribob: 2.3.6.0")
+SRS.log("Loaded - DCS-SRS GameGUI - Ciribob: 2.3.7.0")

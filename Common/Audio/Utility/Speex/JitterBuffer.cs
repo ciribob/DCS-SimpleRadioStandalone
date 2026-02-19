@@ -5,7 +5,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility.Speex
 {
     // Freely inspired from Speex's JitterBuffer: https://gitlab.xiph.org/xiph/speexdsp/-/blob/main/libspeexdsp/jitter.c?ref_type=heads
     // BSD-3-Clause Copyright (C) 2002 Jean-Marc Valin
-    internal class Jitter<T>
+    internal sealed class JitterBuffer<T>
     {
         static readonly int MAX_BUFFER_SIZE = 200; /// Maximum number of packets in jitter buffer
         static readonly int MAX_BUFFERS = 3;
@@ -212,7 +212,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility.Speex
             return opt;
         }
 
-        public Jitter(int step_size)
+        public JitterBuffer(int step_size)
         {
             delay_step = step_size;
             concealment_size = step_size;

@@ -15,8 +15,8 @@ internal class JitterBufferProviderInterface
 
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-    private Jitter<JitterBufferAudio>.Packet _packet = null;
-    private readonly Jitter<JitterBufferAudio> _jitter = new(Constants.OUTPUT_SEGMENT_FRAMES);
+    private JitterBuffer<JitterBufferAudio>.Packet _packet = null;
+    private readonly JitterBuffer<JitterBufferAudio> _jitter = new(Constants.OUTPUT_SEGMENT_FRAMES);
 
 
     private readonly Lock _lock = new();
@@ -32,7 +32,7 @@ internal class JitterBufferProviderInterface
 
     private static readonly ArrayPool<float> PCMPool = ArrayPool<float>.Shared;
 
-    Jitter<JitterBufferAudio>.Status Get(int span, out Jitter<JitterBufferAudio>.Packet packet)
+    JitterBuffer<JitterBufferAudio>.Status Get(int span, out JitterBuffer<JitterBufferAudio>.Packet packet)
     {
         // #TODO: lock (_lock) with C# 13
         using (_lock.EnterScope())
@@ -41,7 +41,7 @@ internal class JitterBufferProviderInterface
         }
     }
 
-    void Put(Jitter<JitterBufferAudio>.Packet packet)
+    void Put(JitterBuffer<JitterBufferAudio>.Packet packet)
     {
         // #TODO: lock (_lock) with C# 13
         using (_lock.EnterScope())
@@ -75,7 +75,7 @@ internal class JitterBufferProviderInterface
             var status = Get(Constants.OUTPUT_SEGMENT_FRAMES, out _packet);
             switch (status)
             {
-                case Jitter<JitterBufferAudio>.Status.OK:
+                case JitterBuffer<JitterBufferAudio>.Status.OK:
                     lastTransmission = new DeJitteredTransmission
                     {
                         Modulation = _packet.Data.Modulation,
@@ -94,7 +94,7 @@ internal class JitterBufferProviderInterface
                     };
 
                     break;
-                case Jitter<JitterBufferAudio>.Status.Missing:
+                case JitterBuffer<JitterBufferAudio>.Status.Missing:
                     _packet = null;
                     break;
                 default: break;

@@ -1,161 +1,167 @@
-﻿using System;
-using System.Buffers;
-using System.Collections.Generic;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility;
-using NAudio.Utils;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Models;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility.Speex;
 using NAudio.Wave;
 using NLog;
+using System;
+using System.Buffers;
+using System.Diagnostics;
+using System.Threading;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers;
 
 internal class JitterBufferProviderInterface
 {
-
-    public static readonly int MAXIMUM_BUFFER_SIZE_MS = 2500;
     public static readonly TimeSpan JITTER_MS = TimeSpan.FromMilliseconds(400);
 
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-    
 
-    private readonly LinkedList<JitterBufferAudio> _bufferedAudio = new();
-    private readonly CircularFloatBuffer _circularBuffer;
+    private Jitter<JitterBufferAudio>.Packet _packet = null;
+    private readonly Jitter<JitterBufferAudio> _jitter = new(Constants.OUTPUT_SEGMENT_FRAMES);
 
-    private readonly object _lock = new();
 
-    private readonly float[] _silence = new float[Constants.OUTPUT_SEGMENT_FRAMES];
-
-    private ulong _lastRead; // gives current index - unsigned as it'll loops eventually
-    private long _lastPacketTicks = 0;
-
-    //  private const int INITIAL_DELAY_MS = 200;
-    //   private long _delayedUntil = -1; //holds audio for a period of time
+    private readonly Lock _lock = new();
 
     private DeJitteredTransmission lastTransmission;
 
     internal JitterBufferProviderInterface(WaveFormat waveFormat)
     {
         WaveFormat = waveFormat;
-
-        _circularBuffer = new CircularFloatBuffer(Constants.OUTPUT_SAMPLE_RATE * 3); //3 seconds worth of audio
-
-        Array.Clear(_silence, 0, _silence.Length);
     }
 
     public WaveFormat WaveFormat { get; }
 
     private static readonly ArrayPool<float> PCMPool = ArrayPool<float>.Shared;
 
+    Jitter<JitterBufferAudio>.Status Get(int span, out Jitter<JitterBufferAudio>.Packet packet)
+    {
+        // #TODO: lock (_lock) with C# 13
+        using (_lock.EnterScope())
+        {
+            return _jitter.Get(span, out packet);
+        }
+    }
+
+    void Put(Jitter<JitterBufferAudio>.Packet packet)
+    {
+        // #TODO: lock (_lock) with C# 13
+        using (_lock.EnterScope())
+        {
+            _jitter.Put(packet);
+        }
+    }
+
+    void Tick()
+    {
+        // #TODO: lock (_lock) with C# 13
+        using (_lock.EnterScope())
+        {
+            _jitter.Tick();
+        }
+    }
+
+    bool Available()
+    {
+        using (_lock.EnterScope())
+        {
+            return _jitter.Available;
+        }
+    }
+
+    bool Hydrate()
+    {
+        // Hydrate the packet from the jitter buffer.
+        while (_packet == null && Available())
+        {
+            var status = Get(Constants.OUTPUT_SEGMENT_FRAMES, out _packet);
+            switch (status)
+            {
+                case Jitter<JitterBufferAudio>.Status.OK:
+                    lastTransmission = new DeJitteredTransmission
+                    {
+                        Modulation = _packet.Data.Modulation,
+                        Frequency = _packet.Data.Frequency,
+                        Decryptable = _packet.Data.Decryptable,
+                        IsSecondary = _packet.Data.IsSecondary,
+                        ReceivedRadio = _packet.Data.ReceivedRadio,
+                        Volume = _packet.Data.Volume,
+                        NoAudioEffects = _packet.Data.NoAudioEffects,
+                        Guid = _packet.Data.Guid,
+                        OriginalClientGuid = _packet.Data.OriginalClientGuid,
+                        Encryption = _packet.Data.Encryption,
+                        ReceivingPower = _packet.Data.ReceivingPower,
+                        LineOfSightLoss = _packet.Data.LineOfSightLoss,
+                        Ambient = _packet.Data.Ambient,
+                    };
+
+                    break;
+                case Jitter<JitterBufferAudio>.Status.Missing:
+                    _packet = null;
+                    break;
+                default: break;
+            }
+        }
+
+        Tick();
+        return _packet != null;
+    }
+
+    int Read(Span<float> buffer)
+    {
+        var read = 0;
+        var desired = buffer.Length;
+        if (_packet != null)
+        {
+            // How much data from the current packet?
+            var fromBuffer = Math.Min(desired, (int)_packet.span);
+            if (fromBuffer > 0)
+            {
+                if (_packet.Data != null)
+                {
+                    // Want to read <fromBuffer> bytes from packet.
+                    var startIndex = (int)(_packet.Data.Audio.Length - _packet.span);
+                    var source = _packet.Data.Audio.AsSpan().Slice(startIndex, fromBuffer);
+                    source.CopyTo(buffer);
+                    _packet.span -= source.Length;
+                    read += source.Length;
+                }
+                else
+                {
+                    // 'fake' packet (insertion case).
+                    // 'fake' read (keep silence)
+                    _packet.span -= fromBuffer;
+                    read += fromBuffer;
+                }
+
+                if (_packet.span == 0)
+                {
+                    // Drained everything available, need to rehydrate.
+                    _packet = null;
+                }
+            }
+        }
+
+        return read;
+    }
+
     internal ref DeJitteredTransmission Read(int count)
     {
-        //  int now = Environment.TickCount;
-        var now = DateTime.Now.Ticks;
-        var timeSinceLastDequeue = TimeSpan.FromTicks(now - _lastPacketTicks);
-
         var pcmBuffer = PCMPool.Rent(count);
-        pcmBuffer.AsSpan(0, count).Clear();
-
-        //other implementation of waiting
-        //            if(_delayedUntil > now)
-        //            {
-        //                //wait
-        //                return 0;
-        //            }
-
+        var pcmSpan = pcmBuffer.AsSpan(0, count);
+        pcmSpan.Clear();
         var read = 0;
-        lock (_lock)
+
+        while (read < count)
         {
-            //need to return read equal to count
+            var pcmSlice = pcmSpan.Slice(read);
+            read += Read(pcmSlice);
 
-            //do while loop
-            //break when read == count
-            //each time round increment read
-            //read becomes read + last Read
-
-            do
+            if (!Hydrate())
             {
-                read = read + _circularBuffer.Read(pcmBuffer, read, count - read);
-
-                if (read < count)
-                {
-                    if (_bufferedAudio.Count > 0)
-                    {
-                        //
-                        // zero the end of the buffer
-                        //      Array.Clear(buffer, offset + read, count - read);
-                        //     read = count;
-                        //  Console.WriteLine("Buffer Empty");
-                        var audio = _bufferedAudio.First.Value;
-                        //no Pop?
-                        _bufferedAudio.RemoveFirst();
-
-                        lastTransmission = new DeJitteredTransmission
-                        {
-                            Modulation = audio.Modulation,
-                            Frequency = audio.Frequency,
-                            Decryptable = audio.Decryptable,
-                            IsSecondary = audio.IsSecondary,
-                            ReceivedRadio = audio.ReceivedRadio,
-                            Volume = audio.Volume,
-                            NoAudioEffects = audio.NoAudioEffects,
-                            Guid = audio.Guid,
-                            OriginalClientGuid = audio.OriginalClientGuid,
-                            Encryption = audio.Encryption,
-                            ReceivingPower = audio.ReceivingPower,
-                            LineOfSightLoss = audio.LineOfSightLoss,
-                            Ambient = audio.Ambient,
-                        };
-
-                        if (_lastRead > 0)
-                        {
-                            //TODO deal with looping packet number
-                            if (_lastRead + 1 < audio.PacketNumber)
-                            {
-                                //fill with missing silence - will only add max of 5x Packet length but it could be a bunch of missing?
-                                var missing = audio.PacketNumber - (_lastRead + 1);
-
-                                // packet number is always discontinuous at the start of a transmission if you didnt receive a transmission for a while i.e different radio channel
-                                // if the gap is more than 4 assume its just a new transmission
-
-                                if (missing <= 4)
-                                {
-                                    var fill = Math.Min(missing, 4);
-
-                                    for (var i = 0; i < (int)fill; i++) _circularBuffer.Write(_silence, 0, _silence.Length);
-                                }
-                            }
-                        }
-
-                        _lastRead = audio.PacketNumber;
-                        _circularBuffer.Write(audio.Audio, 0, audio.Audio.Length);
-                        _lastPacketTicks = now;
-                    }
-                    else if (timeSinceLastDequeue < JITTER_MS)
-                    {
-                        // Starvation.
-                        // When that happens, allow for 400ms over,
-                        // giving some buffer for new packets to arrive.
-                        // Latency can be high, given the packets have to go first to the server
-                        // then to the clients.
-                        // If two clients have about 80ms ping to the server, there's already a 160ms
-                        // transmission delay between the two.
-                        _circularBuffer.Write(_silence, 0, Math.Min(count - read, _silence.Length));
-
-                    }
-                    else
-                    {
-                        // Full starvation, early out.
-                        break;
-                    }
-                    
-                }
-            } while (read < count);
-
-//                if (read == 0)
-//                {
-//                    _delayedUntil = Environment.TickCount + INITIAL_DELAY_MS;
-//                }
+                // Starved.
+                break;
+            }
         }
+
 
         lastTransmission.PCMAudioLength = read;
 
@@ -163,86 +169,27 @@ internal class JitterBufferProviderInterface
         {
             lastTransmission.PCMMonoAudio = pcmBuffer;
         }
-            
+
         else
         {
             lastTransmission.PCMMonoAudio = null;
             PCMPool.Return(pcmBuffer);
         }
-            
+
 
         return ref lastTransmission;
     }
 
     internal void AddSamples(JitterBufferAudio jitterBufferAudio)
     {
-        lock (_lock)
+        Debug.Assert(jitterBufferAudio.Audio.Length == Constants.OUTPUT_SEGMENT_FRAMES);
+        var timestamp = jitterBufferAudio.PacketNumber * (ulong)Constants.OUTPUT_SEGMENT_FRAMES;
+        Put(new()
         {
-            //re-order if we can or discard
-
-            //add to linked list
-            //add front to back
-            if (_bufferedAudio.Count == 0)
-            {
-                _bufferedAudio.AddFirst(jitterBufferAudio);
-            }
-            else if (jitterBufferAudio.PacketNumber > _lastRead)
-            {
-                //TODO CHECK THIS
-                var time = _bufferedAudio.Count *
-                           Constants
-                               .OUTPUT_AUDIO_LENGTH_MS; // this isnt quite true as there can be padding audio but good enough
-
-                var timeOverBudget = time - MAXIMUM_BUFFER_SIZE_MS;
-                if (timeOverBudget > 0)
-                {
-                    Logger.Warn($"Skipping Audio buffer - length was {time} ms, {timeOverBudget} ms will be skipped.");
-                    // Compute how many packet we can ditch.
-                    var toSkip = timeOverBudget / Constants.OUTPUT_AUDIO_LENGTH_MS;
-                    for (; toSkip > 0 && _bufferedAudio.Count > 0; --toSkip)
-                    {
-                        _bufferedAudio.RemoveFirst();
-                    }
-                        
-
-                    _lastRead = 0;
-                }
-
-                for (var it = _bufferedAudio.First; it != null;)
-                {
-                    //iterate list
-                    //if packetNumber == curentItem
-                    // discard
-                    //else if packetNumber < _currentItem
-                    //add before
-                    //else if packetNumber > _currentItem
-                    //add before
-
-                    //if not added - add to end?
-
-                    var next = it.Next;
-
-                    if (it.Value.PacketNumber == jitterBufferAudio.PacketNumber)
-                        //discard! Duplicate packet
-                        return;
-
-                    if (jitterBufferAudio.PacketNumber < it.Value.PacketNumber)
-                    {
-                        _bufferedAudio.AddBefore(it, jitterBufferAudio);
-                        return;
-                    }
-
-                    if (jitterBufferAudio.PacketNumber > it.Value.PacketNumber &&
-                        (next == null || jitterBufferAudio.PacketNumber < next.Value.PacketNumber))
-                    {
-                        _bufferedAudio.AddAfter(it, jitterBufferAudio);
-                        return;
-                    }
-
-                    it = next;
-                }
-            }
-        }
+            Data = jitterBufferAudio,
+            timestamp = (long)timestamp,
+            span = jitterBufferAudio.Audio.Length,
+        });
     }
 
     internal void Dispose(ref DeJitteredTransmission transmission)

@@ -7,8 +7,8 @@
         <AssemblyTitle>DCS-SR-CommonTests</AssemblyTitle>
         <Product>DCS-SimpleRadio Standalone</Product>
         <Copyright>Copyright © 2016</Copyright>
-        <AssemblyVersion>2.3.5.0</AssemblyVersion>
-        <FileVersion>2.3.5.0</FileVersion>
+        <AssemblyVersion>2.3.6.0</AssemblyVersion>
+        <FileVersion>2.3.6.0</FileVersion>
         <Company>DCS-SimpleRadio Standalone</Company>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">

@@ -1,9 +1,9 @@
--- Version 2.3.4.0
+-- Version 2.3.5.0
 -- Make sure you COPY this file to the same location as the Export.lua as well! 
 -- Otherwise the Overlay will not work
 
 
-log.write('SRS-OverlayGameGUI', log.INFO, "Loading - DCS-SRS Overlay GameGUI - Ciribob: 2.3.4.0 ")
+log.write('SRS-OverlayGameGUI', log.INFO, "Loading - DCS-SRS Overlay GameGUI - Ciribob: 2.3.5.0 ")
 
 local base = _G
 
@@ -874,4 +874,4 @@ end
 DCS.setUserCallbacks(srsOverlay)
 
 
-log.write('SRS-OverlayGameGUI', log.INFO, "Loaded - DCS-SRS Overlay GameGUI - Ciribob: 2.3.4.0 ")
+log.write('SRS-OverlayGameGUI', log.INFO, "Loaded - DCS-SRS Overlay GameGUI - Ciribob: 2.3.5.0 ")

@@ -15,7 +15,6 @@
         <PublishSingleFile>false</PublishSingleFile>
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-        <LangVersion>11</LangVersion>
         <Nullable>disable</Nullable>
         <IsPackable>false</IsPackable>
         <Company>Ciribob - GitHub.com/Ciribob</Company>

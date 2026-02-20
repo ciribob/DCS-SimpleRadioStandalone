@@ -55,6 +55,7 @@ internal class JitterBufferProviderInterface
         // #TODO: lock (_lock) with C# 13
         using (_lock.EnterScope())
         {
+            _jitter.RemainingSpan(_packet != null ? _packet.span : 0);
             _jitter.Tick();
         }
     }
@@ -101,7 +102,6 @@ internal class JitterBufferProviderInterface
             }
         }
 
-        Tick();
         return _packet != null;
     }
 
@@ -161,6 +161,8 @@ internal class JitterBufferProviderInterface
                 break;
             }
         }
+
+        Tick();
 
 
         lastTransmission.PCMAudioLength = read;

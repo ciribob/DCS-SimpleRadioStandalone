@@ -47,6 +47,7 @@ public class UpdaterChecker
 
     public async void CheckForUpdate(bool checkForBetaUpdates, UpdateCallback updateCallback)
     {
+#if !DEBUG
         var currentVersion = Version.Parse(VERSION);
 
 
@@ -54,9 +55,7 @@ public class UpdaterChecker
         {
             var githubClient = new GitHubClient(new ProductHeaderValue(GITHUB_USER_AGENT, VERSION));
 
-#if DEBUG
-            return;
-#endif
+
             var releases = await githubClient.Repository.Release.GetAll(GITHUB_USERNAME, GITHUB_REPOSITORY);
 
             var latestStableVersion = new Version();
@@ -166,6 +165,7 @@ public class UpdaterChecker
                 Error = true
             });
         }
+#endif
     }
 
     private bool IsDCSRunning()

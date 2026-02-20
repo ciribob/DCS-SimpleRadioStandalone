@@ -39,9 +39,7 @@
         <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Update="MyWebClient.cs">
-            <SubType>Component</SubType>
-        </Compile>
+        <Compile Update="MyWebClient.cs" />
     </ItemGroup>
     <ItemGroup>
         <Resource Include="system_software_update.ico" />

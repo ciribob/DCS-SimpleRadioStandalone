@@ -662,9 +662,7 @@ namespace Installer
         private void QuitSimpleRadio()
         {
             Logger.Info($"Closing SRS Client & Server");
-#if DEBUG
-            return;
-#endif
+#if !DEBUG
             foreach (var clsProcess in Process.GetProcesses())
             {
                 if (clsProcess.ProcessName.ToLower().Trim().StartsWith("sr-server") ||
@@ -678,6 +676,7 @@ namespace Installer
             }
 
             Logger.Info($"Closed SRS Client & Server");
+#endif
         }
 
         private bool IsDCSRunning()

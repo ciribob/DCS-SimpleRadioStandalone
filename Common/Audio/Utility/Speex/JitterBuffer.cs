@@ -409,7 +409,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility.Speex
             var i = 0;
 
             // Search for the buffer for a packet with the right timestamp and spanning the whole current chunk
-            for (; i < packets.Length; i++)
+            for (i = 0; i < packets.Length; i++)
             {
                 var packet = packets[i];
                 if (packet != null && packet.timestamp == pointer_timestamp && (packet.timestamp + packet.span) >= (pointer_timestamp + desired_span))
@@ -421,7 +421,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility.Speex
             // If no match, try for an 'older' packet that still spans (fully) the current chunk
             if (i == packets.Length)
             {
-                for (; i < packets.Length; i++)
+                for (i = 0; i < packets.Length; i++)
                 {
                     var packet = packets[i];
                     if (packet != null && packet.timestamp <= pointer_timestamp && (packet.timestamp + packet.span) >= (pointer_timestamp + desired_span))
@@ -434,10 +434,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility.Speex
             // If still no match, try for an 'older' packet that spans part of the current chunk
             if (i == packets.Length)
             {
-                for (; i < packets.Length; i++)
+                for (i = 0; i < packets.Length; i++)
                 {
                     var packet = packets[i];
-                    if (packet != null && packet.timestamp <= pointer_timestamp && (packet.timestamp + packet.span) >= pointer_timestamp)
+                    if (packet != null && packet.timestamp <= pointer_timestamp && (packet.timestamp + packet.span) > pointer_timestamp)
                     {
                         break;
                     }
@@ -449,12 +449,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility.Speex
             {
                 var besti = 0;
                 Packet bestCandidate = null;
-                for (; i < packets.Length; i++)
+                for (i = 0; i < packets.Length; i++)
                 {
                     var packet = packets[i];
                     if (packet != null && packet.timestamp < (pointer_timestamp + desired_span) && packet.timestamp >= pointer_timestamp)
                     {
-                        if (bestCandidate == null || packet.timestamp < bestCandidate.timestamp || (packet.timestamp == bestCandidate.timestamp && packet.span >= bestCandidate.span))
+                        if (bestCandidate == null || packet.timestamp < bestCandidate.timestamp || (packet.timestamp == bestCandidate.timestamp && packet.span > bestCandidate.span))
                         {
                             besti = i;
                             bestCandidate = packet;
@@ -469,7 +469,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility.Speex
                 }
             }
 
-            // If we foudn something
+            // If we found something
             if (i != packets.Length)
             {
                 // We (obviously) haven't lost this packet

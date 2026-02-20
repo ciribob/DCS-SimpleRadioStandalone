@@ -47,7 +47,6 @@
         <Resource Include="system_software_update.ico" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
         <PackageReference Include="Octokit" Version="14.0.0" />
     </ItemGroup>
     <ItemGroup>

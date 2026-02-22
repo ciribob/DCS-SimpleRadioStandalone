@@ -47,7 +47,7 @@ $commonParams = @(
 )
 
 # Define the path to signtool.exe
-$signToolPath = "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x86\signtool.exe"
+$signToolPath = "C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x86\signtool.exe"
 if (-not $NoSign -and -not (Test-Path $signToolPath)) {
     Write-Error "SignTool.exe not found at $signToolPath. Please verify the path."
     exit 1

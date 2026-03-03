@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
@@ -53,6 +53,15 @@ public class SRSClientSession : TcpSession
     protected override void OnConnected()
     {
         var clientIp = (IPEndPoint)Socket.RemoteEndPoint;
+
+        try
+        {
+            ((ServerSync)Server).ReloadBanListFromFile();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "Failed to reload banned.txt on client connect");
+        }
 
         EventBus.Instance.PublishOnBackgroundThreadAsync(new SRSClientStatus
         {

@@ -226,7 +226,10 @@ public enum InputBinding
     ModifierIntercomPTT = 236,
 
     AwacsOverlayToggle = 137,
-    ModifierAwacsOverlayToggle = 237
+    ModifierAwacsOverlayToggle = 237,
+
+    TransponderPowerToggle = 138,
+    ModifierTransponderPowerToggle = 238
 }
 
 public class GlobalSettingsStore

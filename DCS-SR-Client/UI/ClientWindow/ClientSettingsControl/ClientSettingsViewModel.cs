@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -187,6 +187,26 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         set
         {
             _globalSettings.SetClientSetting(GlobalSettingsKeys.AutoConnect, value);
+            NotifyPropertyChanged();
+        }
+    }
+
+    public bool StartupAutoConnect
+    {
+        get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.StartupAutoConnect);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.StartupAutoConnect, value);
+            NotifyPropertyChanged();
+        }
+    }
+
+    public bool StartupAutoEnableOverlay
+    {
+        get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.StartupAutoEnableOverlay);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.StartupAutoEnableOverlay, value);
             NotifyPropertyChanged();
         }
     }
@@ -1141,6 +1161,8 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         NotifyPropertyChanged(nameof(AutoConnectEnabled));
         NotifyPropertyChanged(nameof(AutoConnectPrompt));
         NotifyPropertyChanged(nameof(AutoConnectMismatchPrompt));
+        NotifyPropertyChanged(nameof(StartupAutoConnect));
+        NotifyPropertyChanged(nameof(StartupAutoEnableOverlay));
         //ResetOverlayCommand
         NotifyPropertyChanged(nameof(RadioOverlayTaskbarItem));
 

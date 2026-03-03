@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -147,6 +147,44 @@ public partial class MainWindow : MetroWindow
 
                 return;
             }
+
+        if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.StartupAutoConnect))
+        {
+            var context = (MainWindowViewModel)DataContext;
+
+            Application.Current.Dispatcher.InvokeAsync(async () =>
+            {
+                await Task.Delay(2000);
+
+                try
+                {
+                    Logger.Info($"Startup auto-connect enabled, connecting to last server {context.ServerAddress}");
+                    context.Connect();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Failed to auto-connect on startup");
+                }
+            });
+        }
+
+        if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.StartupAutoEnableOverlay))
+        {
+            var context = (MainWindowViewModel)DataContext;
+
+            Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                try
+                {
+                    Logger.Info("Startup auto-enable radio overlay is enabled, opening overlay window");
+                    context.SingleStackOverlayCommand?.Execute(null);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Failed to auto-enable radio overlay on startup");
+                }
+            });
+        }
     }
 
     private void CheckWindowVisibility()

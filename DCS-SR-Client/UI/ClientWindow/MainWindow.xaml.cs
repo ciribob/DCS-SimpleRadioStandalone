@@ -157,10 +157,6 @@ public partial class MainWindow : MetroWindow
             return;
         }
 
-        var mainWindowVisible = false;
-        var radioWindowVisible = false;
-        var awacsWindowVisible = false;
-
         var mainWindowX = (int)_globalSettings.GetPositionSetting(GlobalSettingsKeys.ClientX).DoubleValue;
         var mainWindowY = (int)_globalSettings.GetPositionSetting(GlobalSettingsKeys.ClientY).DoubleValue;
         var radioWindowX = (int)_globalSettings.GetPositionSetting(GlobalSettingsKeys.RadioX).DoubleValue;
@@ -172,32 +168,24 @@ public partial class MainWindow : MetroWindow
         Logger.Info($"Checking window visibility for radio overlay {{X={radioWindowX},Y={radioWindowY}}}");
         Logger.Info($"Checking window visibility for AWACS overlay {{X={awacsWindowX},Y={awacsWindowY}}}");
 
-        foreach (var screen in Screen.AllScreens)
-        {
-            Logger.Info(
-                $"Checking {(screen.Primary ? "primary " : "")}screen {screen.DeviceName} with bounds {screen.Bounds} for window visibility");
+        // Use WPF's virtual screen bounds so that the check runs in the same
+        // DPI-independent coordinate space as the stored window positions.
+        var virtualLeft = SystemParameters.VirtualScreenLeft;
+        var virtualTop = SystemParameters.VirtualScreenTop;
+        var virtualRight = virtualLeft + SystemParameters.VirtualScreenWidth;
+        var virtualBottom = virtualTop + SystemParameters.VirtualScreenHeight;
 
-            if (screen.Bounds.Contains(mainWindowX, mainWindowY))
-            {
-                Logger.Info(
-                    $"Main client window {{X={mainWindowX},Y={mainWindowY}}} is visible on {(screen.Primary ? "primary " : "")}screen {screen.DeviceName} with bounds {screen.Bounds}");
-                mainWindowVisible = true;
-            }
+        Logger.Info(
+            $"VirtualScreen bounds for visibility check: Left={virtualLeft}, Top={virtualTop}, Right={virtualRight}, Bottom={virtualBottom}");
 
-            if (screen.Bounds.Contains(radioWindowX, radioWindowY))
-            {
-                Logger.Info(
-                    $"Radio overlay {{X={radioWindowX},Y={radioWindowY}}} is visible on {(screen.Primary ? "primary " : "")}screen {screen.DeviceName} with bounds {screen.Bounds}");
-                radioWindowVisible = true;
-            }
+        bool mainWindowVisible = mainWindowX >= virtualLeft && mainWindowX <= virtualRight &&
+                                 mainWindowY >= virtualTop && mainWindowY <= virtualBottom;
 
-            if (screen.Bounds.Contains(awacsWindowX, awacsWindowY))
-            {
-                Logger.Info(
-                    $"AWACS overlay {{X={awacsWindowX},Y={awacsWindowY}}} is visible on {(screen.Primary ? "primary " : "")}screen {screen.DeviceName} with bounds {screen.Bounds}");
-                awacsWindowVisible = true;
-            }
-        }
+        bool radioWindowVisible = radioWindowX >= virtualLeft && radioWindowX <= virtualRight &&
+                                  radioWindowY >= virtualTop && radioWindowY <= virtualBottom;
+
+        bool awacsWindowVisible = awacsWindowX >= virtualLeft && awacsWindowX <= virtualRight &&
+                                  awacsWindowY >= virtualTop && awacsWindowY <= virtualBottom;
 
         if (!mainWindowVisible)
         {

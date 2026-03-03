@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,6 +47,34 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
         {
             _natHandler = new NatHandler(_serverSettings.GetServerPort());
             _natHandler.OpenNAT();
+        }
+    }
+
+    internal void ReloadBanListFromFile()
+    {
+        try
+        {
+            _bannedIps.Clear();
+
+            var path = Path.Combine(ServerState.GetCurrentDirectory(), "banned.txt");
+            if (!File.Exists(path))
+            {
+                Logger.Info($"'{path}' was not found or you don't have permission to read the file");
+                return;
+            }
+
+            foreach (var line in File.ReadAllLines(path))
+            {
+                if (IPAddress.TryParse(line.Trim(), out var ip))
+                {
+                    Logger.Info($"Loaded Banned IP: {line}");
+                    _bannedIps.Add(ip);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error(ex, "Unable to read banned.txt");
         }
     }
 

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -157,6 +157,12 @@
   </data>
   <data name="AutoConnectPrompt" xml:space="preserve">
     <value>Auto Connect Prompt</value>
+  </data>
+  <data name="StartupAutoConnect" xml:space="preserve">
+    <value>Auto connect on startup (last server)</value>
+  </data>
+  <data name="StartupAutoEnableOverlay" xml:space="preserve">
+    <value>Auto enable radio overlay on startup</value>
   </data>
   <data name="AutoSelectChannel" xml:space="preserve">
     <value>Auto Select First Channel Preset</value>

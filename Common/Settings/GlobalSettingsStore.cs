@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
@@ -92,7 +92,9 @@ public enum GlobalSettingsKeys
 
     IdleTimeOut,
     AutoConnect,
-
+    StartupAutoConnect,
+    StartupAutoEnableOverlay,
+    
     AllowRecording,
     RecordAudio,
     SingleFileMixdown,
@@ -253,6 +255,8 @@ public class GlobalSettingsStore
     {
         { GlobalSettingsKeys.Version.ToString(), "0" },
         { GlobalSettingsKeys.AutoConnect.ToString(), "true" },
+        { GlobalSettingsKeys.StartupAutoConnect.ToString(), "false" },
+        { GlobalSettingsKeys.StartupAutoEnableOverlay.ToString(), "false" },
         { GlobalSettingsKeys.AutoConnectPrompt.ToString(), "false" },
         { GlobalSettingsKeys.AutoConnectMismatchPrompt.ToString(), "true" },
         { GlobalSettingsKeys.RadioOverlayTaskbarHide.ToString(), "false" },

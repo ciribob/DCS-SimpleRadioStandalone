@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -87,7 +87,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
     }
 
 
-    private static string GetCurrentDirectory()
+    internal static string GetCurrentDirectory()
     {
         //To get the location the assembly normally resides on disk or the install directory
         var currentPath = AppContext.BaseDirectory;

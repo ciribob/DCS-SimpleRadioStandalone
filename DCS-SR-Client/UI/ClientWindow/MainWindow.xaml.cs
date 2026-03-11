@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -187,6 +187,12 @@ public partial class MainWindow : MetroWindow
         bool awacsWindowVisible = awacsWindowX >= virtualLeft && awacsWindowX <= virtualRight &&
                                   awacsWindowY >= virtualTop && awacsWindowY <= virtualBottom;
 
+        // Use DPI-independent default positions based on virtual screen origin (addresses gcask review)
+        var defaultMainX = (int)(virtualLeft + 50);
+        var defaultMainY = (int)(virtualTop + 50);
+        var defaultOverlayX = (int)(virtualLeft + 100);
+        var defaultOverlayY = (int)(virtualTop + 100);
+
         if (!mainWindowVisible)
         {
             MessageBox.Show(this,
@@ -198,11 +204,11 @@ public partial class MainWindow : MetroWindow
             Logger.Warn(
                 $"Main client window outside visible area of monitors, resetting position ({mainWindowX},{mainWindowY}) to defaults");
 
-            _globalSettings.SetPositionSetting(GlobalSettingsKeys.ClientX, 200);
-            _globalSettings.SetPositionSetting(GlobalSettingsKeys.ClientY, 200);
+            _globalSettings.SetPositionSetting(GlobalSettingsKeys.ClientX, defaultMainX);
+            _globalSettings.SetPositionSetting(GlobalSettingsKeys.ClientY, defaultMainY);
 
-            Left = 200;
-            Top = 200;
+            Left = defaultMainX;
+            Top = defaultMainY;
         }
 
         if (!radioWindowVisible)
@@ -218,8 +224,8 @@ public partial class MainWindow : MetroWindow
 
             EventBus.Instance.PublishOnUIThreadAsync(new CloseRadioOverlayMessage());
 
-            _globalSettings.SetPositionSetting(GlobalSettingsKeys.RadioX, 300);
-            _globalSettings.SetPositionSetting(GlobalSettingsKeys.RadioY, 300);
+            _globalSettings.SetPositionSetting(GlobalSettingsKeys.RadioX, defaultOverlayX);
+            _globalSettings.SetPositionSetting(GlobalSettingsKeys.RadioY, defaultOverlayY);
         }
 
         if (!awacsWindowVisible)
@@ -233,8 +239,8 @@ public partial class MainWindow : MetroWindow
             Logger.Warn(
                 $"AWACS overlay window outside visible area of monitors, resetting position ({awacsWindowX},{awacsWindowY}) to defaults");
 
-            _globalSettings.SetPositionSetting(GlobalSettingsKeys.AwacsX, 300);
-            _globalSettings.SetPositionSetting(GlobalSettingsKeys.AwacsY, 300);
+            _globalSettings.SetPositionSetting(GlobalSettingsKeys.AwacsX, defaultOverlayX);
+            _globalSettings.SetPositionSetting(GlobalSettingsKeys.AwacsY, defaultOverlayY);
         }
     }
 

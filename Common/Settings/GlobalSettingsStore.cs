@@ -107,7 +107,11 @@ public enum GlobalSettingsKeys
     AllowXInputController,
 
     LastPresetsFolder,
-    DISEntityID
+    DISEntityID,
+
+    // Star Citizen specific settings
+    StarCitizenMode,
+    ConnectOnStartup
 }
 
 public enum InputBinding
@@ -351,8 +355,12 @@ public class GlobalSettingsStore
 
         { GlobalSettingsKeys.AllowXInputController.ToString(), "false" },
         { GlobalSettingsKeys.LastPresetsFolder.ToString(), string.Empty },
-        
-        { GlobalSettingsKeys.DISEntityID.ToString(), "-1" }
+
+        { GlobalSettingsKeys.DISEntityID.ToString(), "-1" },
+
+        // Star Citizen defaults
+        { GlobalSettingsKeys.StarCitizenMode.ToString(), "true" },
+        { GlobalSettingsKeys.ConnectOnStartup.ToString(), "false" }
     };
 
     private readonly Logger Logger = LogManager.GetCurrentClassLogger();

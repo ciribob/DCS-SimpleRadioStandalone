@@ -55,7 +55,10 @@ public partial class MainWindow : MetroWindow
         Left = _globalSettings.GetPositionSetting(GlobalSettingsKeys.ClientX).DoubleValue;
         Top = _globalSettings.GetPositionSetting(GlobalSettingsKeys.ClientY).DoubleValue;
 
-        Title = Title + " - " + UpdaterChecker.VERSION;
+        // Update title for Star Citizen if mode is enabled
+        var starCitizenMode = _globalSettings.GetClientSettingBool(GlobalSettingsKeys.StarCitizenMode);
+        var titleSuffix = starCitizenMode ? " (Star Citizen)" : "";
+        Title = Title + " - " + UpdaterChecker.VERSION + titleSuffix;
 
         if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.StartMinimised))
         {
@@ -69,12 +72,21 @@ public partial class MainWindow : MetroWindow
             Logger.Info("Started DCS SRS Client " + UpdaterChecker.VERSION);
         }
 
-        DataContext = new MainWindowViewModel()
+        var viewModel = new MainWindowViewModel()
         {
             FavouriteServersViewModel = new FavouriteServersViewModel(new CsvFavouriteServerStore())
         };
 
-        FavouriteServersView.DataContext = ((MainWindowViewModel)DataContext).FavouriteServersViewModel;
+        DataContext = viewModel;
+
+        FavouriteServersView.DataContext = viewModel.FavouriteServersViewModel;
+
+        // Auto-select the default favorite server on startup
+        if (viewModel.FavouriteServersViewModel.DefaultServerAddress != null)
+        {
+            viewModel.SelectedServerAddress = viewModel.FavouriteServersViewModel.DefaultServerAddress;
+            Logger.Info($"Auto-selected default favorite server: {viewModel.FavouriteServersViewModel.DefaultServerAddress.Name} ({viewModel.FavouriteServersViewModel.DefaultServerAddress.Address})");
+        }
 
         //TODO make this a singleton with a callback to check for updates
         UpdaterChecker.Instance.CheckForUpdate(
@@ -147,6 +159,28 @@ public partial class MainWindow : MetroWindow
 
                 return;
             }
+
+        // Star Citizen auto-connect on startup using default favorite server
+        var connectOnStartup = _globalSettings.GetClientSettingBool(GlobalSettingsKeys.ConnectOnStartup);
+
+        if (starCitizenMode && connectOnStartup && viewModel.FavouriteServersViewModel.DefaultServerAddress != null)
+        {
+            Application.Current.Dispatcher.InvokeAsync(async () =>
+            {
+                await Task.Delay(2000);
+
+                try
+                {
+                    var defaultFavorite = viewModel.FavouriteServersViewModel.DefaultServerAddress;
+                    Logger.Info($"Star Citizen Mode: Auto-connecting to default favorite '{defaultFavorite.Name}' ({defaultFavorite.Address}) on startup");
+                    viewModel.Connect();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Failed to auto-connect on startup");
+                }
+            });
+        }
     }
 
     private void CheckWindowVisibility()

@@ -14,6 +14,41 @@
         <StackPanel>
             <GroupBox Header="{x:Static p:Resources.GlobalSettingsHeader}">
                 <StackPanel>
+                    <GroupBox Header="Star Citizen Settings">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <Label Grid.Row="0"
+                                   Grid.Column="0"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center"
+                                   Content="Enable Star Citizen Mode"
+                                   ToolTip="Enables Star Citizen-specific features like auto-connect using default favorite server" />
+                            <clientSettingsControl:SettingsToggleControl
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                ToggleValue="{Binding StarCitizenMode, Mode=TwoWay}" />
+
+                            <Label Grid.Row="1"
+                                   Grid.Column="0"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center"
+                                   Content="Auto-Connect on Startup"
+                                   ToolTip="Automatically connects to your default favorite server when the app starts" />
+                            <clientSettingsControl:SettingsToggleControl
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                ToggleValue="{Binding ConnectOnStartup, Mode=TwoWay}" />
+                        </Grid>
+                    </GroupBox>
+
                     <GroupBox Header="{x:Static p:Resources.AutoConnectHeader}">
                         <Grid>
                             <Grid.ColumnDefinitions>

@@ -211,6 +211,27 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         }
     }
 
+    // Star Citizen Settings
+    public bool StarCitizenMode
+    {
+        get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.StarCitizenMode);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.StarCitizenMode, value);
+            NotifyPropertyChanged();
+        }
+    }
+
+    public bool ConnectOnStartup
+    {
+        get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.ConnectOnStartup);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.ConnectOnStartup, value);
+            NotifyPropertyChanged();
+        }
+    }
+
     public bool RadioOverlayTaskbarItem
     {
         get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.RadioOverlayTaskbarHide);

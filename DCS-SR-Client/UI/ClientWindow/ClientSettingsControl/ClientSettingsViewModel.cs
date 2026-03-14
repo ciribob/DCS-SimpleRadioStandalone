@@ -211,6 +211,36 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         }
     }
 
+    public bool AutoConnectToServer
+    {
+        get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.AutoConnectToServer);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.AutoConnectToServer, value);
+            NotifyPropertyChanged();
+        }
+    }
+
+    public bool AutoConnectToEAM
+    {
+        get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.AutoConnectToEAM);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.AutoConnectToEAM, value);
+            NotifyPropertyChanged();
+        }
+    }
+
+    public bool AutoShowAwacsOverlay
+    {
+        get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.AutoShowAwacsOverlay);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.AutoShowAwacsOverlay, value);
+            NotifyPropertyChanged();
+        }
+    }
+
     public bool RadioOverlayTaskbarItem
     {
         get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.RadioOverlayTaskbarHide);

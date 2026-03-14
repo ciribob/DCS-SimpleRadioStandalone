@@ -76,6 +76,52 @@ public partial class MainWindow : MetroWindow
 
         FavouriteServersView.DataContext = ((MainWindowViewModel)DataContext).FavouriteServersViewModel;
 
+        // Set default server favorite on startup
+        var viewModel = (MainWindowViewModel)DataContext;
+        var defaultServer = viewModel.FavouriteServersViewModel.DefaultServerAddress;
+        if (defaultServer != null)
+        {
+            viewModel.SelectedServerAddress = defaultServer;
+            Logger.Info($"Set default server favorite: {defaultServer.Name} ({defaultServer.Address})");
+        }
+
+        // Auto-connect to server on startup if enabled
+        if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.AutoConnectToServer))
+        {
+            Application.Current.Dispatcher.InvokeAsync(async () =>
+            {
+                await Task.Delay(1000);
+                try
+                {
+                    Logger.Info($"Auto-connecting to server on startup: {viewModel.ServerAddress}");
+                    viewModel.Connect();
+
+                    // Auto-connect to EAM if enabled and after server connection
+                    if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.AutoConnectToEAM))
+                    {
+                        await Task.Delay(2000); // Wait for server connection to establish
+                        if (viewModel.IsConnected && viewModel.IsEAMAvailable)
+                        {
+                            Logger.Info("Auto-connecting to EAM on startup");
+                            viewModel.EAMConnectCommand.Execute(null);
+                        }
+                    }
+
+                    // Auto-show AWACS overlay if enabled
+                    if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.AutoShowAwacsOverlay))
+                    {
+                        await Task.Delay(500);
+                        Logger.Info("Auto-showing AWACS overlay on startup");
+                        viewModel.AwacsRadioOverlayCommand.Execute(null);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Error during auto-connect on startup");
+                }
+            });
+        }
+
         //TODO make this a singleton with a callback to check for updates
         UpdaterChecker.Instance.CheckForUpdate(
             _globalSettings.GetClientSettingBool(GlobalSettingsKeys.CheckForBetaUpdates),

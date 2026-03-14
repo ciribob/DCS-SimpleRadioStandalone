@@ -26,6 +26,9 @@
                                 <RowDefinition />
                                 <RowDefinition />
                                 <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
 
                             </Grid.RowDefinitions>
                             <Label Grid.Row="0"
@@ -61,6 +64,39 @@
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 ToggleValue="{Binding AutoConnectMismatchPrompt, Mode=TwoWay}" />
+
+                            <Label Grid.Row="3"
+                                   Grid.Column="0"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center"
+                                   Content="Auto-Connect to Server on Startup" />
+
+                            <clientSettingsControl:SettingsToggleControl
+                                Grid.Row="3"
+                                Grid.Column="1"
+                                ToggleValue="{Binding AutoConnectToServer, Mode=TwoWay}" />
+
+                            <Label Grid.Row="4"
+                                   Grid.Column="0"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center"
+                                   Content="Auto-Connect to EAM on Startup" />
+
+                            <clientSettingsControl:SettingsToggleControl
+                                Grid.Row="4"
+                                Grid.Column="1"
+                                ToggleValue="{Binding AutoConnectToEAM, Mode=TwoWay}" />
+
+                            <Label Grid.Row="5"
+                                   Grid.Column="0"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center"
+                                   Content="Auto-Show AWACS Overlay on Startup" />
+
+                            <clientSettingsControl:SettingsToggleControl
+                                Grid.Row="5"
+                                Grid.Column="1"
+                                ToggleValue="{Binding AutoShowAwacsOverlay, Mode=TwoWay}" />
                         </Grid>
                     </GroupBox>
                     <GroupBox Header="{x:Static p:Resources.SRSInterfaceHeader}">

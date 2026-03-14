@@ -92,6 +92,9 @@ public enum GlobalSettingsKeys
 
     IdleTimeOut,
     AutoConnect,
+    AutoConnectToServer,
+    AutoConnectToEAM,
+    AutoShowAwacsOverlay,
 
     AllowRecording,
     RecordAudio,
@@ -335,6 +338,9 @@ public class GlobalSettingsStore
         { GlobalSettingsKeys.ShowTransmitterName.ToString(), "true" },
 
         { GlobalSettingsKeys.IdleTimeOut.ToString(), "600" }, // 10 mins
+        { GlobalSettingsKeys.AutoConnectToServer.ToString(), "false" },
+        { GlobalSettingsKeys.AutoConnectToEAM.ToString(), "false" },
+        { GlobalSettingsKeys.AutoShowAwacsOverlay.ToString(), "false" },
 
         { GlobalSettingsKeys.AllowRecording.ToString(), "false" },
         { GlobalSettingsKeys.RecordAudio.ToString(), "false" },

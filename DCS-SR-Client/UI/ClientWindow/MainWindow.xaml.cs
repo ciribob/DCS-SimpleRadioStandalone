@@ -13,6 +13,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.ClientSettingsCo
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Client;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using MahApps.Metro.Controls;
@@ -162,6 +163,7 @@ public partial class MainWindow : MetroWindow
 
         // Star Citizen auto-connect on startup using default favorite server
         var connectOnStartup = _globalSettings.GetClientSettingBool(GlobalSettingsKeys.ConnectOnStartup);
+        var autoConnectEAM = _globalSettings.GetClientSettingBool(GlobalSettingsKeys.AutoConnectExternalAWACSMode);
 
         if (starCitizenMode && connectOnStartup && viewModel.FavouriteServersViewModel.DefaultServerAddress != null)
         {
@@ -174,6 +176,27 @@ public partial class MainWindow : MetroWindow
                     var defaultFavorite = viewModel.FavouriteServersViewModel.DefaultServerAddress;
                     Logger.Info($"Star Citizen Mode: Auto-connecting to default favorite '{defaultFavorite.Name}' ({defaultFavorite.Address}) on startup");
                     viewModel.Connect();
+
+                    // Auto-connect to External AWACS Mode if enabled
+                    if (autoConnectEAM)
+                    {
+                        await Task.Delay(3000); // Wait for main connection to establish
+
+                        Logger.Info("Star Citizen Mode: Auto-connecting to External AWACS Mode");
+                        
+                        // Set default EAM name if not already set
+                        if (string.IsNullOrWhiteSpace(viewModel.EAMName))
+                        {
+                            viewModel.EAMName = Environment.UserName;
+                        }
+
+                        // Trigger EAM connect
+                        EventBus.Instance.PublishOnBackgroundThreadAsync(new EAMConnectRequestMessage()
+                        {
+                            Password = viewModel.EAMPassword,
+                            Name = viewModel.EAMName
+                        });
+                    }
                 }
                 catch (Exception ex)
                 {

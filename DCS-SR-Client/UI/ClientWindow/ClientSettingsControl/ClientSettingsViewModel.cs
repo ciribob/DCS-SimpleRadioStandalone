@@ -232,6 +232,56 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         }
     }
 
+    public bool MinimizeToTrayOnConnect
+    {
+        get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.MinimizeToTrayOnConnect);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.MinimizeToTrayOnConnect, value);
+            NotifyPropertyChanged();
+        }
+    }
+
+    public bool AutoReconnectOnDisconnect
+    {
+        get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.AutoReconnectOnDisconnect);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.AutoReconnectOnDisconnect, value);
+            NotifyPropertyChanged();
+        }
+    }
+
+    public int AutoReconnectRetries
+    {
+        get => _globalSettings.GetClientSetting(GlobalSettingsKeys.AutoReconnectRetries).IntValue;
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.AutoReconnectRetries, value);
+            NotifyPropertyChanged();
+        }
+    }
+
+    public bool AutoConnectExternalAWACSMode
+    {
+        get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.AutoConnectExternalAWACSMode);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.AutoConnectExternalAWACSMode, value);
+            NotifyPropertyChanged();
+        }
+    }
+
+    public bool AutoShowAWACSOverlay
+    {
+        get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.AutoShowAWACSOverlay);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.AutoShowAWACSOverlay, value);
+            NotifyPropertyChanged();
+        }
+    }
+
     public bool RadioOverlayTaskbarItem
     {
         get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.RadioOverlayTaskbarHide);

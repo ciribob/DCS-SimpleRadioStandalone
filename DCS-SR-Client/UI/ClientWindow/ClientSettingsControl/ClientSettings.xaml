@@ -10,6 +10,9 @@
     <UserControl.DataContext>
         <clientSettingsControl:ClientSettingsViewModel />
     </UserControl.DataContext>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </UserControl.Resources>
     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Visible">
         <StackPanel>
             <GroupBox Header="{x:Static p:Resources.GlobalSettingsHeader}">
@@ -23,6 +26,11 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition />
                                 <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
                             </Grid.RowDefinitions>
 
                             <Label Grid.Row="0"
@@ -30,7 +38,7 @@
                                    HorizontalContentAlignment="Center"
                                    VerticalContentAlignment="Center"
                                    Content="Enable Star Citizen Mode"
-                                   ToolTip="Enables Star Citizen-specific features like auto-connect using default favorite server" />
+                                   ToolTip="Enables Star Citizen-specific features and hides DCS-specific options" />
                             <clientSettingsControl:SettingsToggleControl
                                 Grid.Row="0"
                                 Grid.Column="1"
@@ -46,6 +54,70 @@
                                 Grid.Row="1"
                                 Grid.Column="1"
                                 ToggleValue="{Binding ConnectOnStartup, Mode=TwoWay}" />
+
+                            <Label Grid.Row="2"
+                                   Grid.Column="0"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center"
+                                   Content="Minimize to Tray on Connect"
+                                   ToolTip="Automatically minimize to system tray after successfully connecting" />
+                            <clientSettingsControl:SettingsToggleControl
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                ToggleValue="{Binding MinimizeToTrayOnConnect, Mode=TwoWay}" />
+
+                            <Label Grid.Row="3"
+                                   Grid.Column="0"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center"
+                                   Content="Auto-Reconnect on Disconnect"
+                                   ToolTip="Automatically attempt to reconnect if connection is lost" />
+                            <clientSettingsControl:SettingsToggleControl
+                                Grid.Row="3"
+                                Grid.Column="1"
+                                ToggleValue="{Binding AutoReconnectOnDisconnect, Mode=TwoWay}" />
+
+                            <Label Grid.Row="4"
+                                   Grid.Column="0"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center"
+                                   Content="Reconnect Retry Attempts"
+                                   ToolTip="Number of times to retry reconnecting (1-10)" />
+                            <StackPanel Grid.Row="4"
+                                        Grid.Column="1"
+                                        Orientation="Horizontal"
+                                        HorizontalAlignment="Center">
+                                <Slider Width="150"
+                                        Minimum="1" Maximum="10"
+                                        Value="{Binding AutoReconnectRetries, Mode=TwoWay}"
+                                        TickFrequency="1"
+                                        IsSnapToTickEnabled="True" />
+                                <Label Content="{Binding AutoReconnectRetries}" 
+                                       Width="30"
+                                       HorizontalAlignment="Left"/>
+                            </StackPanel>
+
+                            <Label Grid.Row="5"
+                                   Grid.Column="0"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center"
+                                   Content="Auto-Connect External AWACS Mode"
+                                   ToolTip="Automatically connect to External AWACS Mode on startup (required for AWACS overlay)" />
+                            <clientSettingsControl:SettingsToggleControl
+                                Grid.Row="5"
+                                Grid.Column="1"
+                                ToggleValue="{Binding AutoConnectExternalAWACSMode, Mode=TwoWay}" />
+
+                            <Label Grid.Row="6"
+                                   Grid.Column="0"
+                                   HorizontalContentAlignment="Center"
+                                   VerticalContentAlignment="Center"
+                                   Content="Auto-Show AWACS Overlay"
+                                   ToolTip="Automatically show the AWACS overlay after connecting" />
+                            <clientSettingsControl:SettingsToggleControl
+                                Grid.Row="6"
+                                Grid.Column="1"
+                                ToggleValue="{Binding AutoShowAWACSOverlay, Mode=TwoWay}" />
                         </Grid>
                     </GroupBox>
 
@@ -143,12 +215,14 @@
                                    Grid.Column="0"
                                    HorizontalContentAlignment="Center"
                                    VerticalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.RefocusDCS}" />
+                                   Content="{x:Static p:Resources.RefocusDCS}"
+                                   Visibility="{Binding ShowDCSFeatures, Converter={StaticResource BoolToVisibilityConverter}}" />
 
                             <clientSettingsControl:SettingsToggleControl
                                 Grid.Row="2"
                                 Grid.Column="1"
-                                ToggleValue="{Binding RefocusDCS, Mode=TwoWay}" />
+                                ToggleValue="{Binding RefocusDCS, Mode=TwoWay}"
+                                Visibility="{Binding ShowDCSFeatures, Converter={StaticResource BoolToVisibilityConverter}}" />
 
                             <Label Grid.Row="3"
                                    Grid.Column="0"
@@ -441,7 +515,6 @@
                                 <ColumnDefinition Width="2*" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition />
                                 <RowDefinition />
                                 <RowDefinition />
                                 <RowDefinition />
@@ -773,7 +846,8 @@
                     <GroupBox Header="{x:Static p:Resources.IntegrationHeader}"
                               Grid.Row="0"
                               Grid.Column="0"
-                              Grid.ColumnSpan="2">
+                              Grid.ColumnSpan="2"
+                              Visibility="{Binding ShowDCSFeatures, Converter={StaticResource BoolToVisibilityConverter}}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2*" />

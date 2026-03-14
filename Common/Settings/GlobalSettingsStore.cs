@@ -111,7 +111,12 @@ public enum GlobalSettingsKeys
 
     // Star Citizen specific settings
     StarCitizenMode,
-    ConnectOnStartup
+    ConnectOnStartup,
+    MinimizeToTrayOnConnect,
+    AutoReconnectOnDisconnect,
+    AutoReconnectRetries,
+    AutoConnectExternalAWACSMode,
+    AutoShowAWACSOverlay
 }
 
 public enum InputBinding
@@ -360,7 +365,12 @@ public class GlobalSettingsStore
 
         // Star Citizen defaults
         { GlobalSettingsKeys.StarCitizenMode.ToString(), "true" },
-        { GlobalSettingsKeys.ConnectOnStartup.ToString(), "false" }
+        { GlobalSettingsKeys.ConnectOnStartup.ToString(), "true" },
+        { GlobalSettingsKeys.MinimizeToTrayOnConnect.ToString(), "false" },
+        { GlobalSettingsKeys.AutoReconnectOnDisconnect.ToString(), "true" },
+        { GlobalSettingsKeys.AutoReconnectRetries.ToString(), "3" },
+        { GlobalSettingsKeys.AutoConnectExternalAWACSMode.ToString(), "true" },
+        { GlobalSettingsKeys.AutoShowAWACSOverlay.ToString(), "true" }
     };
 
     private readonly Logger Logger = LogManager.GetCurrentClassLogger();

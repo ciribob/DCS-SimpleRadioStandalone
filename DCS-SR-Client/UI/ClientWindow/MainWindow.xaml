@@ -165,12 +165,19 @@
                                     Orientation="Horizontal">
                             <Button x:Name="StartStop"
                                     Width="125"
-                                    Margin="0,10,20,0"
+                                    Margin="0,10,5,0"
                                     HorizontalAlignment="Center"
                                     IsEnabled="{Binding ConnectIsEnabled}"
                                     Command="{Binding Path=ConnectCommand}"
                                     Content="{Binding Path=ConnectText}"
                                     ToolTip="{Binding Path=AudioInput.MicrophoneAvailable, Converter={StaticResource MicAvailabilityTooltipConverter}}" />
+                            <Button x:Name="Reconnect"
+                                    Width="80"
+                                    Margin="0,10,5,0"
+                                    HorizontalAlignment="Center"
+                                    Command="{Binding Path=ReconnectCommand}"
+                                    Content="Reconnect"
+                                    ToolTip="Quick reconnect to the same server" />
                             <Button x:Name="ToggleServerSettings"
                                     Width="125"
                                     Margin="0,10,0,0"

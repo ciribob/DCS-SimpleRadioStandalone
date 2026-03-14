@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -81,6 +82,8 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         PreviewCommand = new DelegateCommand(PreviewAudio);
 
         ConnectCommand = new DelegateCommand(Connect);
+
+        ReconnectCommand = new DelegateCommand(Reconnect);
 
         TrayIconCommand = new DelegateCommand(() =>
         {
@@ -167,6 +170,8 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
     public DelegateCommand TrayIconCommand { get; set; }
 
     public DelegateCommand ConnectCommand { get; set; }
+
+    public DelegateCommand ReconnectCommand { get; set; }
 
     public ICommand PreviewCommand { get; set; }
 
@@ -308,6 +313,8 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
     public bool ConnectIsEnabled { get; set; } = true;
     public FavouriteServersViewModel FavouriteServersViewModel { get; set; }
 
+    public bool ShowDCSFeatures => !_globalSettings.GetClientSettingBool(GlobalSettingsKeys.StarCitizenMode);
+
     public string CurrentUnit => ClientState.DcsPlayerRadioInfo.unit;
 
     public string LastKnownPosition =>
@@ -389,6 +396,33 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
             await Task.Delay(100);
 
             NotifyPropertyChanged(nameof(EAMConnectButtonText));
+
+            // Auto-show AWACS overlay if Star Citizen mode and setting enabled
+            var starCitizenMode = _globalSettings.GetClientSettingBool(GlobalSettingsKeys.StarCitizenMode);
+            var autoShowOverlay = _globalSettings.GetClientSettingBool(GlobalSettingsKeys.AutoShowAWACSOverlay);
+
+            if (starCitizenMode && autoShowOverlay)
+            {
+                await Task.Delay(500); // Small delay to ensure EAM is fully connected
+                
+                Logger.Info("Star Citizen Mode: Auto-showing AWACS overlay");
+                
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    try
+                    {
+                        // Trigger the AWACS overlay command
+                        if (AwacsRadioOverlayCommand.CanExecute(null))
+                        {
+                            AwacsRadioOverlayCommand.Execute(null);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Warn(ex, "Failed to auto-show AWACS overlay");
+                    }
+                });
+            }
         });
 
         return Task.CompletedTask;
@@ -443,6 +477,30 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
 
                 _dcsManager = new DCSRadioSyncManager(ClientStateSingleton.Instance.ShortGUID);
                 _dcsManager.Start();
+
+                // Reset reconnect attempts on successful connection
+                _reconnectAttempts = 0;
+
+                // Star Citizen features on successful connection
+                var starCitizenMode = _globalSettings.GetClientSettingBool(GlobalSettingsKeys.StarCitizenMode);
+                if (starCitizenMode)
+                {
+                    // Minimize to tray on connect
+                    if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.MinimizeToTrayOnConnect))
+                    {
+                        App.Current.Dispatcher.Invoke(() =>
+                        {
+                            App.Current.MainWindow.WindowState = WindowState.Minimized;
+                            if (_globalSettings.GetClientSettingBool(GlobalSettingsKeys.MinimiseToTray))
+                            {
+                                App.Current.MainWindow.Hide();
+                            }
+                        });
+                    }
+
+                    // Update window title with server info
+                    UpdateWindowTitle();
+                }
             }
             else
             {
@@ -452,6 +510,31 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
 
             NotifyPropertyChanged(nameof(IsEAMAvailable));
             NotifyPropertyChanged(nameof(EAMConnectButtonText));
+        });
+    }
+
+    private void UpdateWindowTitle()
+    {
+        App.Current.Dispatcher.Invoke(() =>
+        {
+            try
+            {
+                var mainWindow = App.Current.MainWindow as MainWindow;
+                if (mainWindow != null && IsConnected)
+                {
+                    var serverName = FavouriteServersViewModel?.DefaultServerAddress?.Name ?? ServerAddress;
+                    var currentTitle = mainWindow.Title;
+                    
+                    // Remove any existing server info
+                    var baseTitle = currentTitle.Split(new[] { " - Connected:" }, StringSplitOptions.None)[0];
+                    
+                    mainWindow.Title = $"{baseTitle} - Connected: {serverName}";
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex, "Failed to update window title");
+            }
         });
     }
 
@@ -541,6 +624,58 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         ConnectIsEnabled = true;
     }
 
+    public async void Reconnect()
+    {
+        if (!IsConnected)
+        {
+            Connect();
+            return;
+        }
+
+        Logger.Info("Reconnecting to server...");
+        ConnectIsEnabled = false;
+        
+        // Store current server address
+        var currentServer = ServerAddress;
+        
+        // Disconnect
+        Stop();
+        
+        // Wait a moment
+        await Task.Delay(1000);
+        
+        // Reconnect
+        ServerAddress = currentServer;
+        Connect();
+        
+        Logger.Info($"Reconnected to {currentServer}");
+    }
+
+    private int _reconnectAttempts = 0;
+
+    private async void AttemptAutoReconnect()
+    {
+        var autoReconnect = _globalSettings.GetClientSettingBool(GlobalSettingsKeys.AutoReconnectOnDisconnect);
+        var maxRetries = _globalSettings.GetClientSetting(GlobalSettingsKeys.AutoReconnectRetries).IntValue;
+        var starCitizenMode = _globalSettings.GetClientSettingBool(GlobalSettingsKeys.StarCitizenMode);
+
+        if (!starCitizenMode || !autoReconnect || _reconnectAttempts >= maxRetries)
+        {
+            _reconnectAttempts = 0;
+            return;
+        }
+
+        _reconnectAttempts++;
+        Logger.Info($"Auto-reconnect attempt {_reconnectAttempts}/{maxRetries}");
+
+        await Task.Delay(3000); // Wait 3 seconds before reconnecting
+
+        if (!IsConnected) // Double check we're still disconnected
+        {
+            Connect();
+        }
+    }
+
     private void Stop(TCPClientStatusMessage.ErrorCode connectionError = TCPClientStatusMessage.ErrorCode.TIMEOUT)
     {
         if (IsConnected && _globalSettings.GetClientSettingBool(GlobalSettingsKeys.PlayConnectionSounds))
@@ -574,6 +709,16 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         ClientState.DcsPlayerRadioInfo.Reset();
         ClientState.PlayerCoaltionLocationMetadata.Reset();
         ConnectIsEnabled = true;
+
+        // Attempt auto-reconnect if enabled
+        if (connectionError != TCPClientStatusMessage.ErrorCode.USER_DISCONNECTED)
+        {
+            AttemptAutoReconnect();
+        }
+        else
+        {
+            _reconnectAttempts = 0; // Reset attempts on manual disconnect
+        }
     }
 
     private string GetAddressFromTextBox()

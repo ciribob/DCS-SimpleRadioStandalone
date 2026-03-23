@@ -25,7 +25,7 @@ public class UDPCommandHandler
 
     private void StartUDPCommandListener()
     {
-        Task.Factory.StartNew(async () =>
+        Task.Run(async () =>
         {
             while (!_stop)
                 try

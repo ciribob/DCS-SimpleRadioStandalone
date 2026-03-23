@@ -33,6 +33,16 @@ public partial class App : Application
 
     public App()
     {
+        if (!ThreadPool.SetMinThreads(1, 1))
+        {
+            Debug.Assert(false, "Unable to set min threads!");
+        }
+
+        if (!ThreadPool.SetMaxThreads(1, 1))
+        {
+            Debug.Assert(false, "Unable to set max threads!");
+        }
+
         System.Windows.Forms.Application.EnableVisualStyles();
 
         // Common ones to use are -lang:en-us , -lang:zh , -lang:zh-cn , -lang:fr
@@ -145,7 +155,7 @@ public partial class App : Application
         {
             Logger.Info($"Attempting to elevate to admin");
 
-            Task.Factory.StartNew(() =>
+            Task.Run(async () =>
             {
                 var location = AppDomain.CurrentDomain.BaseDirectory;
 
@@ -163,7 +173,7 @@ public partial class App : Application
                     var p = Process.Start(startInfo);
 
                     //shutdown this process as another has started
-                    Dispatcher?.BeginInvoke(new Action(() =>
+                    await Dispatcher?.InvokeAsync(async () =>
                     {
                         if (_notifyIcon != null)
                             _notifyIcon.Visible = false;
@@ -178,14 +188,14 @@ public partial class App : Application
                         }
 
                         Environment.Exit(0);
-                    }));
+                    });
                 }
                 catch (Win32Exception)
                 {
-                    TaskDialog.ShowDialog(new TaskDialogPage
+                    await TaskDialog.ShowDialogAsync(new TaskDialogPage
                     {
                         Caption = "UAC Error",
-                        Heading = "SRS could not restart with elevated privilages.",
+                        Heading = "SRS could not restart with elevated privileges.",
                         Text = $"Unless you have a very specific need you should disable the Require Admin option in the settings.",
                         Icon = TaskDialogIcon.Warning,
                         Buttons = { TaskDialogButton.OK }

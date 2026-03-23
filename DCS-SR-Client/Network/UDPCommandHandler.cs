@@ -25,7 +25,7 @@ public class UDPCommandHandler
 
     private void StartUDPCommandListener()
     {
-        Task.Factory.StartNew(() =>
+        Task.Factory.StartNew(async () =>
         {
             while (!_stop)
                 try
@@ -39,14 +39,14 @@ public class UDPCommandHandler
                 {
                     Logger.Warn(ex,
                         $"Unable to bind to the UDP Command Listener Socket Port: {_globalSettings.GetNetworkSetting(GlobalSettingsKeys.CommandListenerUDP)}");
-                    Thread.Sleep(500);
+                    await Task.Delay(TimeSpan.FromMilliseconds(500));
                 }
 
             while (!_stop)
                 try
                 {
-                    var groupEp = new IPEndPoint(IPAddress.Any, 0);
-                    var bytes = _udpCommandListener.Receive(ref groupEp);
+                    var result = await _udpCommandListener.ReceiveAsync();
+                    var bytes = result.Buffer;
 
                     //Logger.Info("Recevied Message from UDP COMMAND INTERFACE: "+ Encoding.UTF8.GetString(
                     //          bytes, 0, bytes.Length));

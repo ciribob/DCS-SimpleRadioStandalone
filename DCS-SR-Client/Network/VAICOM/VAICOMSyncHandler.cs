@@ -29,7 +29,7 @@ public class VAICOMSyncHandler
 
     public void Start()
     {
-        Task.Factory.StartNew(() =>
+        Task.Run(async () =>
         {
             while (!_stop)
                 try
@@ -43,14 +43,14 @@ public class VAICOMSyncHandler
                 {
                     Logger.Warn(ex,
                         $"Unable to bind to the VAICOM Listener Socket Port: {_globalSettings.GetNetworkSetting(GlobalSettingsKeys.VAICOMIncomingUDP)}");
-                    Thread.Sleep(500);
+                    await Task.Delay(TimeSpan.FromMilliseconds(500));
                 }
 
             while (!_stop)
                 try
                 {
-                    var groupEp = new IPEndPoint(IPAddress.Any, 0);
-                    var bytes = _vaicomUDPListener.Receive(ref groupEp);
+                    var result = await _vaicomUDPListener.ReceiveAsync();
+                    var bytes = result.Buffer;
 
                     var vaicomMessageWrapper =
                         JsonSerializer.Deserialize<VAICOMMessageWrapper>(Encoding.UTF8.GetString(

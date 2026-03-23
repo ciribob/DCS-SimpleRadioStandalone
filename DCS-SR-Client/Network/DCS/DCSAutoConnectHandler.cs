@@ -31,7 +31,7 @@ public class DCSAutoConnectHandler
     private void StartDcsBroadcastListener()
     {
         var cancellationToken = _cts.Token;
-        Task.Factory.StartNew(async () =>
+        Task.Run(async () =>
         {
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -47,7 +47,7 @@ public class DCSAutoConnectHandler
                 {
                     Logger.Warn(ex,
                         $"Unable to bind to the AutoConnect Socket Port: {GlobalSettingsStore.Instance.GetNetworkSetting(GlobalSettingsKeys.DCSAutoConnectUDP)}");
-                    Thread.Sleep(500);
+                    await Task.Delay(TimeSpan.FromMilliseconds(500));
                 }
             }
                
@@ -89,7 +89,7 @@ public class DCSAutoConnectHandler
             {
                 Logger.Error(e, "Exception stoping DCS AutoConnect listener ");
             }
-        }, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+        }, cancellationToken);
     }
 
     private void HandleMessage(string message)

@@ -87,7 +87,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
         //reset last sent
         _clientStateSingleton.LastSent = 0;
 
-        Task.Factory.StartNew(() =>
+        Task.Run(async () =>
         {
             while (!_stop)
                 try
@@ -101,15 +101,15 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                 {
                     Logger.Warn(ex,
                         $"Unable to bind to the DCS Export Listener Socket Port: {_globalSettings.GetNetworkSetting(GlobalSettingsKeys.DCSIncomingUDP)}");
-                    Thread.Sleep(500);
+                    await Task.Delay(TimeSpan.FromMilliseconds(500));
                 }
 
             while (!_stop)
                 try
                 {
-                    var groupEp = new IPEndPoint(IPAddress.Any, 0);
-                    var bytes = _dcsUdpListener.Receive(ref groupEp);
-
+                    var result = await _dcsUdpListener.ReceiveAsync();
+                    var bytes = result.Buffer;
+                    var groupEp = result.RemoteEndPoint;
                     var str = Encoding.UTF8.GetString(
                         bytes, 0, bytes.Length).Trim();
 
@@ -154,10 +154,10 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
     }
 
 
-    public void ProcessRadioInfo(DCSPlayerRadioInfo message)
+    public async void ProcessRadioInfo(DCSPlayerRadioInfo message)
     {
         // determine if its changed by comparing old to new
-        var update = UpdateRadio(message);
+        var update = await UpdateRadioAsync(message);
 
         //send to DCS UI
         SendRadioUpdateToDCS();
@@ -175,7 +175,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
 
             //TODO do this through the singleton so its not a mess
             //Full Update send over TCP
-            EventBus.Instance.PublishOnCurrentThreadAsync(new UnitUpdateMessage()
+            await EventBus.Instance.PublishOnCurrentThreadAsync(new UnitUpdateMessage()
             {
                 FullUpdate = true,
                 UnitUpdate = new SRClientBase()
@@ -194,7 +194,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
     }
 
     //send updated radio info back to DCS for ingame GUI
-    private void SendRadioUpdateToDCS()
+    private async void SendRadioUpdateToDCS()
     {
         if (_dcsRadioUpdateSender == null) _dcsRadioUpdateSender = new UdpClient();
 
@@ -240,10 +240,10 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
 
             //Logger.Info("Sending Update over UDP 7080 DCS - 7082 Flight Panels: \n"+message);
 
-            _dcsRadioUpdateSender.Send(byteData, byteData.Length,
+            await _dcsRadioUpdateSender.SendAsync(byteData, byteData.Length,
                 new IPEndPoint(IPAddress.Parse("127.0.0.1"),
                     _globalSettings.GetNetworkSetting(GlobalSettingsKeys.OutgoingDCSUDPInfo))); //send to DCS
-            _dcsRadioUpdateSender.Send(byteData, byteData.Length,
+            await _dcsRadioUpdateSender.SendAsync(byteData, byteData.Length,
                 new IPEndPoint(IPAddress.Parse("127.0.0.1"),
                     _globalSettings.GetNetworkSetting(GlobalSettingsKeys
                         .OutgoingDCSUDPOther))); // send to Flight Control Panels
@@ -254,7 +254,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
         }
     }
 
-    private bool UpdateRadio(DCSPlayerRadioInfo message)
+    private async Task<bool> UpdateRadioAsync(DCSPlayerRadioInfo message)
     {
         var expansion = _serverSettings.GetSettingAsBool(ServerSettingsKeys.RADIO_EXPANSION);
 
@@ -318,7 +318,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                 //TODO handle profile selection when switching aircraft
                 //  _newAircraftCallback(message.unit, message.seat);
                 //send message to UI thread on event bus and switch the profile
-                EventBus.Instance.PublishOnUIThreadAsync(new NewUnitEnteredMessage()
+                await EventBus.Instance.PublishOnUIThreadAsync(new NewUnitEnteredMessage()
                 {
                     Unit = message.unit,
                     Seat = message.seat
@@ -660,7 +660,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
         // Force an immediate update of radio information
         _clientStateSingleton.LastSent = 0;
         _clientStateSingleton.DcsPlayerRadioInfo.LastUpdate = DateTime.Now.Ticks;
-        Task.Factory.StartNew(() =>
+        Task.Run(async () =>
         {
             _clientStateSingleton.ExternalAWACSModelSelected = true;
             Logger.Debug("Starting external AWACS mode loop");
@@ -691,7 +691,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                     inAircraft = false
                 });
 
-                Thread.Sleep(200);
+                await Task.Delay(TimeSpan.FromMilliseconds(200));
             }
 
             var radio = new DCSPlayerRadioInfo();
@@ -711,17 +711,16 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
 
 
 
-    private DCSRadio[] processClientCustomEAMRadio(string radioFile)
+    private async Task<DCSRadio[]> ProcessClientCustomEAMRadioAsync(string radioFile)
     {
         var awacsRadios = Array.Empty<DCSRadio>();
-        
-        string radioJson;
+  
         var awacsRadiosFile = Path.Combine(PresetsFolder, radioFile);
    
         if (File.Exists(awacsRadiosFile))
             try
             {
-                radioJson = File.ReadAllText(awacsRadiosFile);
+                var radioJson = await File.ReadAllTextAsync(awacsRadiosFile);
                 awacsRadios = JsonSerializer.Deserialize<DCSRadio[]>(radioJson, new JsonSerializerOptions()
                 {
                     AllowTrailingCommas = true,
@@ -833,7 +832,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
         return null;
     }
 
-    public Task HandleAsync(InstructorModeMessage message, CancellationToken cancellationToken)
+    public async Task HandleAsync(InstructorModeMessage message, CancellationToken cancellationToken)
     {
 
         if (_awacsRadios != null && _awacsRadios.Length > message.RadioId)
@@ -843,7 +842,5 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
             //make radio data stale to force resysnc
             ClientStateSingleton.Instance.LastSent = 0;
         }
-        
-        return Task.CompletedTask;
     }
 }

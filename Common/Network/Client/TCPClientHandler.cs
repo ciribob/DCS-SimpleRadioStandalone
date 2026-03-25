@@ -192,10 +192,16 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
                 {
                     _tcpClient.SendTimeout = 90000;
                     _tcpClient.NoDelay = true;
-
-                    // Wait for 10 seconds before aborting connection attempt - no SRS server running/port opened in that case
-                    _tcpClient.ConnectAsync(_serverEndpoint.Address, _serverEndpoint.Port, _cts.Token)
-                        .AsTask().Wait(TimeSpan.FromSeconds(10));
+                    using (var connectioncts = new CancellationTokenSource(TimeSpan.FromSeconds(10)))
+                    {
+                        using (var linkedcts = CancellationTokenSource.CreateLinkedTokenSource([_cts.Token, connectioncts.Token]))
+                        {
+                            // Wait for 10 seconds before aborting connection attempt - no SRS server running/port opened in that case
+                            // Also abort if the user decides to cancel.
+                            await _tcpClient.ConnectAsync(_serverEndpoint.Address, _serverEndpoint.Port, linkedcts.Token);
+                        }
+                    }
+                    
 
                     if (_tcpClient.Connected)
                     {

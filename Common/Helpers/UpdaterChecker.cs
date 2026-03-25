@@ -200,9 +200,12 @@ public class UpdaterChecker
         }
 
 
-        Task.Run(() =>
+        Task.Run(async () =>
         {
-            while (IsDCSRunning()) Thread.Sleep(5000);
+            while (IsDCSRunning())
+            {
+                await Task.Delay(TimeSpan.FromSeconds(5));
+            }
 
 #pragma warning disable CA1416
             var principal = new WindowsPrincipal(WindowsIdentity.GetCurrent());

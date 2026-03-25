@@ -248,6 +248,10 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                     _globalSettings.GetNetworkSetting(GlobalSettingsKeys
                         .OutgoingDCSUDPOther))); // send to Flight Control Panels
         }
+        catch (ObjectDisposedException) when (_stop)
+        {
+            // Eat, we're stopping.
+        }
         catch (Exception e) when (!_stop)
         {
             Logger.Error(e, "Exception Sending DCS Radio Update Message");
@@ -711,7 +715,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
 
 
 
-    private async Task<DCSRadio[]> ProcessClientCustomEAMRadioAsync(string radioFile)
+    private DCSRadio[] processClientCustomEAMRadio(string radioFile)
     {
         var awacsRadios = Array.Empty<DCSRadio>();
   
@@ -720,7 +724,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
         if (File.Exists(awacsRadiosFile))
             try
             {
-                var radioJson = await File.ReadAllTextAsync(awacsRadiosFile);
+                var radioJson = File.ReadAllText(awacsRadiosFile);
                 awacsRadios = JsonSerializer.Deserialize<DCSRadio[]>(radioJson, new JsonSerializerOptions()
                 {
                     AllowTrailingCommas = true,

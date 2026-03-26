@@ -187,7 +187,7 @@ public partial class MainWindow : MetroWindow
         bool awacsWindowVisible = awacsWindowX >= virtualLeft && awacsWindowX <= virtualRight &&
                                   awacsWindowY >= virtualTop && awacsWindowY <= virtualBottom;
 
-        // Use DPI-independent default positions based on virtual screen origin (addresses gcask review)
+        // Use DPI-independent default positions based on virtual screen origin
         var defaultMainX = (int)(virtualLeft + 50);
         var defaultMainY = (int)(virtualTop + 50);
         var defaultOverlayX = (int)(virtualLeft + 100);

@@ -29,7 +29,7 @@ public class VAICOMSyncHandler
 
     public void Start()
     {
-        Task.Run(async () =>
+        Task.Run(async Task () =>
         {
             while (!_stop)
                 try

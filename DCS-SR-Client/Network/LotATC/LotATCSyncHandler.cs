@@ -48,7 +48,7 @@ public class LotATCSyncHandler
 
     public void Start()
     {
-        Task.Run(async () =>
+        Task.Run(async Task () =>
         {
             while (!_stop)
                 try
@@ -81,7 +81,7 @@ public class LotATCSyncHandler
                         if (lotAtcPositionWrapper.los != null)
                             HandleLOSResponse(lotAtcPositionWrapper.los);
                         else if (lotAtcPositionWrapper.controller != null)
-                            HandleLotATCUpdate(lotAtcPositionWrapper.controller);
+                            await HandleLotATCUpdateAsync(lotAtcPositionWrapper.controller);
                     }
                 }
                 catch (SocketException e)
@@ -106,7 +106,7 @@ public class LotATCSyncHandler
         StartLotATCLOSSender();
     }
 
-    private async void HandleLotATCUpdate(LotATCMessageWrapper.LotATCPosition controller)
+    private async Task HandleLotATCUpdateAsync(LotATCMessageWrapper.LotATCPosition controller)
     {
         _clientStateSingleton.LotATCLastReceived = DateTime.Now.Ticks;
 
@@ -160,7 +160,7 @@ public class LotATCSyncHandler
             _globalSettings.GetNetworkSetting(GlobalSettingsKeys.LotATCOutgoingUDP));
 
 
-        Task.Run(async () =>
+        Task.Run(async Task () =>
         {
             using (_udpSocket)
             {

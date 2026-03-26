@@ -99,6 +99,7 @@ public class UDPVoiceHandler
     {
         using (_stopRequest = new CancellationTokenSource())
         {
+            var token = _stopRequest.Token;
             var listener = SetupListener();
 
             // Send a first ping to check connectivity.
@@ -107,27 +108,19 @@ public class UDPVoiceHandler
 
             // Initial states to avoid null checks and also avoid throwing before we enter the loop.
             var receiveTask = Task.FromException<UdpReceiveResult>(new Exception());
-            Task pingTask = Task.CompletedTask;
-            var timeoutTask = Task.Delay(UDP_VOIP_TIMEOUT, _stopRequest.Token);
-            var outgoingAvailableTask = _outgoingSemaphore.WaitAsync(_stopRequest.Token);
-            while (!_stopRequest.IsCancellationRequested)
+            var pingTask = Task.CompletedTask;
+            var timeoutTask = Task.Delay(UDP_VOIP_TIMEOUT, token);
+            var outgoingAvailableTask = _outgoingSemaphore.WaitAsync(token);
+            while (!token.IsCancellationRequested)
             {
+                token.ThrowIfCancellationRequested();
                 try
                 {
                     if (pingTask.IsCompletedSuccessfully)
                     {
                         // Send ping every 15s.
-                        pingTask = listener.SendAsync(_guidAsciiBytes, _stopRequest.Token).AsTask().ContinueWith(async ping =>
-                        {
-                            if (ping.IsCompletedSuccessfully)
-                            {
-                                await Task.Delay(pingInterval, _stopRequest.Token);
-                            }
-                            else if (ping.IsFaulted)
-                            {
-                                Logger.Error(ping.Exception, "Exception Sending Audio Ping! ");
-                            }
-                        }, _stopRequest.Token).Unwrap();
+                        await listener.SendAsync(_guidAsciiBytes, token);
+                        pingTask = Task.Delay(pingInterval, token);
                     }
 
                     if (receiveTask.IsCompleted)
@@ -150,10 +143,10 @@ public class UDPVoiceHandler
                             }
 
                             // Consider this a valid heartbeat. Reset the clock!
-                            timeoutTask = Task.Delay(UDP_VOIP_TIMEOUT, _stopRequest.Token);
+                            timeoutTask = Task.Delay(UDP_VOIP_TIMEOUT, token);
                         }
 
-                        receiveTask = listener.ReceiveAsync(_stopRequest.Token).AsTask();
+                        receiveTask = listener.ReceiveAsync(token).AsTask();
                     }
 
 
@@ -161,15 +154,12 @@ public class UDPVoiceHandler
                     if (Ready && outgoingAvailableTask.IsCompletedSuccessfully)
                     {
                         // Drain the queue.
-                        var sent = new List<Task>();
-                        while (_outgoing.TryTake(out var outgoing))
+                        if (_outgoing.TryTake(out var outgoing))
                         {
-                            sent.Add(listener.SendAsync(outgoing, _stopRequest.Token).AsTask());
+                            await listener.SendAsync(outgoing, token);
                         }
 
-                        await Task.WhenAll(sent);
-
-                        outgoingAvailableTask = _outgoingSemaphore.WaitAsync(_stopRequest.Token);
+                        outgoingAvailableTask = _outgoingSemaphore.WaitAsync(token);
                     }
 
                     // Reset the socket on a timeout.
@@ -181,11 +171,11 @@ public class UDPVoiceHandler
                         CloseListener(listener);
                         listener = SetupListener();
                         pingTask = Task.CompletedTask;
-                        timeoutTask = Task.Delay(UDP_VOIP_TIMEOUT, _stopRequest.Token);
-                        receiveTask = listener.ReceiveAsync(_stopRequest.Token).AsTask();
+                        timeoutTask = Task.Delay(UDP_VOIP_TIMEOUT, token);
+                        receiveTask = listener.ReceiveAsync(token).AsTask();
                     }
 
-                    await Task.WhenAny(new[] { timeoutTask, pingTask, receiveTask, outgoingAvailableTask });
+                    await Task.WhenAny([timeoutTask, pingTask, receiveTask, outgoingAvailableTask]);
                 }
                 catch (Exception ex)
                 {

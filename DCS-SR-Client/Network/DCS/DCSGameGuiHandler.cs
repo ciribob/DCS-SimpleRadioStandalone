@@ -32,7 +32,7 @@ public class DCSGameGuiHandler
     {
         _clientStateSingleton.LastPostionCoalitionSent = 0;
 
-        Task.Run(async () =>
+        Task.Run(async Task () =>
         {
             while (!_stop)
                 try

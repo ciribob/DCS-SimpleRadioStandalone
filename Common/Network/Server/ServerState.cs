@@ -171,7 +171,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
             }
         }
 
-        Task.Run(async () =>
+        Task.Run(async Task () =>
         {
             while (!_stop)
             {
@@ -201,7 +201,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
             }
         });
 
-        Task.Run(async () =>
+        Task.Run(async Task () =>
         {
             using (var udpSocket = new UdpClient())
             {

@@ -42,7 +42,7 @@ public class DCSLineOfSightHandler
     //used for the result
     private void StartDCSLOSBroadcastListener()
     {
-        Task.Run(async () =>
+        Task.Run(async Task () =>
         {
             while (!_stop)
                 try
@@ -108,7 +108,7 @@ public class DCSLineOfSightHandler
             _globalSettings.GetNetworkSetting(GlobalSettingsKeys.DCSLOSOutgoingUDP));
 
 
-        Task.Run(async () =>
+        Task.Run(async Task () =>
         {
             using (_udpSocket)
             {

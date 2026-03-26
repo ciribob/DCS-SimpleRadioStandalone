@@ -87,7 +87,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
         //reset last sent
         _clientStateSingleton.LastSent = 0;
 
-        Task.Run(async () =>
+        Task.Run(async Task () =>
         {
             while (!_stop)
                 try
@@ -129,7 +129,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                     {
                         //sync with others
                         //Radio info is marked as Stale for FC3 aircraft after every frequency change
-                        ProcessRadioInfo(message);
+                        await ProcessRadioInfoAsync(message);
                     }
                 }
                 catch (SocketException e)
@@ -154,13 +154,13 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
     }
 
 
-    public async void ProcessRadioInfo(DCSPlayerRadioInfo message)
+    public async Task ProcessRadioInfoAsync(DCSPlayerRadioInfo message)
     {
         // determine if its changed by comparing old to new
         var update = await UpdateRadioAsync(message);
 
         //send to DCS UI
-        SendRadioUpdateToDCS();
+        await SendRadioUpdateToDCSAsync();
 
         Logger.Debug("Update sent to DCS");
 
@@ -194,7 +194,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
     }
 
     //send updated radio info back to DCS for ingame GUI
-    private async void SendRadioUpdateToDCS()
+    private async Task SendRadioUpdateToDCSAsync()
     {
         if (_dcsRadioUpdateSender == null) _dcsRadioUpdateSender = new UdpClient();
 
@@ -664,7 +664,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
         // Force an immediate update of radio information
         _clientStateSingleton.LastSent = 0;
         _clientStateSingleton.DcsPlayerRadioInfo.LastUpdate = DateTime.Now.Ticks;
-        Task.Run(async () =>
+        Task.Run(async Task () =>
         {
             _clientStateSingleton.ExternalAWACSModelSelected = true;
             Logger.Debug("Starting external AWACS mode loop");
@@ -676,8 +676,10 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
 
                 _clientStateSingleton.PlayerCoaltionLocationMetadata.side = coalition;
 
+                // we want at most a 200ms delay between updates, make sure the delay task starts early.
+                var delayTask = Task.Delay(TimeSpan.FromMilliseconds(200));
                 //save
-                ProcessRadioInfo(new DCSPlayerRadioInfo
+                await ProcessRadioInfoAsync(new DCSPlayerRadioInfo
                 {
                     LastUpdate = 0,
                     control = DCSPlayerRadioInfo.RadioSwitchControls.HOTAS,
@@ -695,12 +697,12 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                     inAircraft = false
                 });
 
-                await Task.Delay(TimeSpan.FromMilliseconds(200));
+                await delayTask;
             }
 
             var radio = new DCSPlayerRadioInfo();
             radio.Reset();
-            ProcessRadioInfo(radio);
+            await ProcessRadioInfoAsync(radio);
             _clientStateSingleton.IntercomOffset = 1;
 
             Logger.Debug("Stopping external AWACS mode loop");

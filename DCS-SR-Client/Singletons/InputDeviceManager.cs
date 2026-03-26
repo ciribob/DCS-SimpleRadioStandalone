@@ -260,7 +260,7 @@ public class InputDeviceManager : IDisposable
     public void AssignButton(DetectButton callback)
     {
         //detect the state of all current buttons
-        Task.Run(async () =>
+        Task.Run(async Task () =>
         {
             var deviceList = _inputDevices.Values.ToList();
 

@@ -54,7 +54,7 @@ internal class Program : IHandle<SRSClientStatus>
         if (options.ConfigFile != null && options.ConfigFile.Trim().Length > 0)
             ServerSettingsStore.CFG_FILE_NAME = options.ConfigFile.Trim();
 
-        UpdaterChecker.Instance.CheckForUpdate(
+        UpdaterChecker.Instance.CheckForUpdateAsync(
             ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).BoolValue,
             result =>
             {

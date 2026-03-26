@@ -155,7 +155,7 @@ public partial class App : Application
         {
             Logger.Info($"Attempting to elevate to admin");
 
-            Task.Run(async () =>
+            Task.Run(async Task () =>
             {
                 var location = AppDomain.CurrentDomain.BaseDirectory;
 
@@ -173,7 +173,7 @@ public partial class App : Application
                     var p = Process.Start(startInfo);
 
                     //shutdown this process as another has started
-                    await Dispatcher?.InvokeAsync(async () =>
+                    await Dispatcher?.InvokeAsync(async Task () =>
                     {
                         if (_notifyIcon != null)
                             _notifyIcon.Visible = false;

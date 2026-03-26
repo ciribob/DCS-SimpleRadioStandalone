@@ -126,7 +126,7 @@ public class Bootstrapper : BootstrapperBase
 
         DisplayRootViewForAsync<MainViewModel>(settings);
         
-        UpdaterChecker.Instance.CheckForUpdate(ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).BoolValue,
+        UpdaterChecker.Instance.CheckForUpdateAsync(ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).BoolValue,
             result =>
             {
                 if (result.UpdateAvailable)

@@ -31,7 +31,7 @@ public class DCSAutoConnectHandler
     private void StartDcsBroadcastListener()
     {
         var cancellationToken = _cts.Token;
-        Task.Run(async () =>
+        Task.Run(async Task () =>
         {
             while (!cancellationToken.IsCancellationRequested)
             {

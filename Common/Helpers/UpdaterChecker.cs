@@ -45,7 +45,7 @@ public class UpdaterChecker
         }
     }
 
-    public async void CheckForUpdate(bool checkForBetaUpdates, UpdateCallback updateCallback)
+    public async Task CheckForUpdateAsync(bool checkForBetaUpdates, UpdateCallback updateCallback)
     {
 #if !DEBUG
         var currentVersion = Version.Parse(VERSION);
@@ -200,7 +200,7 @@ public class UpdaterChecker
         }
 
 
-        Task.Run(async () =>
+        Task.Run(async Task () =>
         {
             while (IsDCSRunning())
             {

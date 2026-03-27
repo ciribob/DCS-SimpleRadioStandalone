@@ -48,7 +48,7 @@ public partial class App : Application
         // Common ones to use are -lang:en-us , -lang:zh , -lang:zh-cn , -lang:fr
         try
         {
-            string lang = Environment.GetCommandLineArgs().FirstOrDefault(x => x.StartsWith("-lang:")).Substring(6);
+            string lang = Environment.GetCommandLineArgs().FirstOrDefault(x => x.StartsWith("-lang:"))?.Substring(6);
             if (!string.IsNullOrEmpty(lang))
             {
                 Logger.Warn($"Command Line Set Language Code : {lang}");

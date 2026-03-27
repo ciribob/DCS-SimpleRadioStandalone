@@ -4,7 +4,6 @@ using NAudio.Wave;
 using NLog;
 using System;
 using System.Buffers;
-using System.Diagnostics;
 using System.Threading;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Providers;
@@ -184,8 +183,10 @@ internal class JitterBufferProviderInterface
 
     internal void AddSamples(JitterBufferAudio jitterBufferAudio)
     {
-        Debug.Assert(jitterBufferAudio.Audio.Length == Constants.OUTPUT_SEGMENT_FRAMES);
-        var timestamp = jitterBufferAudio.PacketNumber * (ulong)Constants.OUTPUT_SEGMENT_FRAMES;
+        // External tools (like DCS radio) may send data at their own rhythm.
+        // Assuming it's constant (at least), we should be able to honor them just fine.
+        //Debug.Assert(jitterBufferAudio.Audio.Length == Constants.OUTPUT_SEGMENT_FRAMES);
+        var timestamp = jitterBufferAudio.PacketNumber * (ulong)jitterBufferAudio.Audio.Length;
         Put(new()
         {
             Data = jitterBufferAudio,

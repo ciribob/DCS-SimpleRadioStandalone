@@ -33,6 +33,8 @@ public partial class App : Application
 
     public App()
     {
+#if false
+        // Useful to track down threading issues.
         if (!ThreadPool.SetMinThreads(1, 1))
         {
             Debug.Assert(false, "Unable to set min threads!");
@@ -42,6 +44,7 @@ public partial class App : Application
         {
             Debug.Assert(false, "Unable to set max threads!");
         }
+#endif
 
         System.Windows.Forms.Application.EnableVisualStyles();
 

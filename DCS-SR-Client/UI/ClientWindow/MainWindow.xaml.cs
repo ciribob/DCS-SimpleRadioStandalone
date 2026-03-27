@@ -77,7 +77,7 @@ public partial class MainWindow : MetroWindow
         FavouriteServersView.DataContext = ((MainWindowViewModel)DataContext).FavouriteServersViewModel;
 
         //TODO make this a singleton with a callback to check for updates
-        UpdaterChecker.Instance.CheckForUpdateAsync(
+        _ = UpdaterChecker.Instance.CheckForUpdateAsync(
             _globalSettings.GetClientSettingBool(GlobalSettingsKeys.CheckForBetaUpdates),
             result =>
             {
@@ -110,7 +110,7 @@ public partial class MainWindow : MetroWindow
                             { UseShellExecute = true });
                     }
                 }
-            }).Wait();
+            });
 
 
         //TODO move this

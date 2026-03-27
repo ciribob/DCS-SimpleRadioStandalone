@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -643,6 +643,9 @@ public class InputDeviceManager : IDisposable
                                         break;
                                     case InputBinding.TransponderIDENT:
                                         TransponderHelper.ToggleIdent();
+                                        break;
+                                    case InputBinding.TransponderPowerToggle:
+                                        TransponderHelper.TogglePower();
                                         break;
                                     case InputBinding.RadioVolumeUp:
                                         RadioHelper.RadioVolumeUp(dcsPlayerRadioInfo.selected);

@@ -27,7 +27,7 @@ public class UDPVoicePacketTests
         var encodedUdpVoicePacket = udpVoicePacket.EncodePacket();
 
         Assert.AreEqual(79, udpVoicePacket.PacketLength);
-        Assert.AreEqual(79, encodedUdpVoicePacket.Length);
+        Assert.HasCount(79, encodedUdpVoicePacket);
 
         var expectedEncodedUdpVoicePacket = new byte[79]
         {
@@ -128,7 +128,7 @@ public class UDPVoicePacketTests
         var encodedUdpVoicePacket = udpVoicePacket.EncodePacket();
 
         Assert.AreEqual(99, udpVoicePacket.PacketLength);
-        Assert.AreEqual(99, encodedUdpVoicePacket.Length);
+        Assert.HasCount(99, encodedUdpVoicePacket);
 
         var expectedEncodedUdpVoicePacket = new byte[99]
         {

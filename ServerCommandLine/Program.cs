@@ -367,7 +367,7 @@ public class Options
     [Option("httpServerAddress",
        HelpText = "Sets the HTTP Server Address if Enabled. Default is localhost.",
        Required = false)]
-    public string? HttpServerAddress { get; set; }
+    public string HttpServerAddress { get; set; }
 
     [Option("radioEffectOverride",
         HelpText = "Disables Radio Effects on the global frequency (for Music etc). Default is false",

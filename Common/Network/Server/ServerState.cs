@@ -110,8 +110,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
             Task.Run(_serverListener.Listen);
 
             _serverSync = new ServerSync(_connectedClients, _bannedIps, _eventAggregator);
-            var serverSyncThread = new Thread(_serverSync.StartListening);
-            serverSyncThread.Start();
+            Task.Run(_serverSync.StartListeningAsync);
 
             StartExport();
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -32,6 +33,20 @@ public class Bootstrapper : BootstrapperBase
 
     public Bootstrapper()
     {
+#if false
+        // Useful to track down threading issues.
+        if (!ThreadPool.SetMinThreads(1, 1))
+        {
+            Debug.Assert(false, "Unable to set min threads!");
+        }
+
+        // NOTE: Needs at least two because of OpenNAT. DiscoverDeviceAsync() used in OpenNATAsync() isn't async through and through,
+        // and needs at least one spare thread in the pool to be able to run its tasks.
+        if (!ThreadPool.SetMaxThreads(2, 1))
+        {
+            Debug.Assert(false, "Unable to set max threads!");
+        }
+#endif
         InitCfgPath();
         
         SentrySdk.Init("https://0935ffeb7f9c46e28a420775a7f598f4@o414743.ingest.sentry.io/5315043");
@@ -126,7 +141,7 @@ public class Bootstrapper : BootstrapperBase
 
         DisplayRootViewForAsync<MainViewModel>(settings);
         
-        UpdaterChecker.Instance.CheckForUpdateAsync(ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).BoolValue,
+        _ = UpdaterChecker.Instance.CheckForUpdateAsync(ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).BoolValue,
             result =>
             {
                 if (result.UpdateAvailable)

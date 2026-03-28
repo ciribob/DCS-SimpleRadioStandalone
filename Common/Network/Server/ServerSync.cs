@@ -78,14 +78,23 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
         OptionKeepAlive = true;
         try
         {
-            await _natHandler?.OpenNATAsync();
+            var handler = _natHandler;
+            if (handler != null)
+            {
+                await handler.OpenNATAsync();
+            }
+            
             Start();
         }
         catch (Exception ex)
         {
             try
             {
-                await _natHandler?.CloseNATAsync();
+                var handler = _natHandler;
+                if (handler != null)
+                {
+                    await handler.CloseNATAsync();
+                }
             }
             catch
             {

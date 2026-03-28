@@ -174,24 +174,28 @@ public partial class App : Application
                 {
                     //TODO fix process start
                     var p = Process.Start(startInfo);
-
-                    //shutdown this process as another has started
-                    await Dispatcher?.InvokeAsync(async Task () =>
+                    var dispatcher = Dispatcher;
+                    if (dispatcher != null)
                     {
-                        if (_notifyIcon != null)
-                            _notifyIcon.Visible = false;
-
-                        try
+                        //shutdown this process as another has started
+                        await Dispatcher.InvokeAsync(async Task () =>
                         {
-                            ClientStateSingleton.Instance.Close();
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
+                            if (_notifyIcon != null)
+                                _notifyIcon.Visible = false;
 
-                        Environment.Exit(0);
-                    });
+                            try
+                            {
+                                ClientStateSingleton.Instance.Close();
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+
+                            Environment.Exit(0);
+                        });
+                    }
+                    
                 }
                 catch (Win32Exception)
                 {

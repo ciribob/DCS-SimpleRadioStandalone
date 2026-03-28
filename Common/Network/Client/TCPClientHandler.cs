@@ -555,7 +555,12 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
     //implement IDispose? To close stuff properly?
     public async Task RequestDisconnectAsync()
     {
-        await _cts?.CancelAsync();
+        var cts = _cts;
+        if (cts != null)
+        {
+            await cts.CancelAsync();
+        }
+        
     }
     private void Disconnect()
     {

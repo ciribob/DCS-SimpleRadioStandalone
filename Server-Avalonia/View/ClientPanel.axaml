@@ -1,0 +1,103 @@
+﻿<Panel xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.Properties"
+        xmlns:viewmodel="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.viewmodel"
+        xmlns:local="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Server.View"
+        MinHeight="250" MinWidth="420"
+        mc:Ignorable="d" d:DesignWidth="420" d:DesignHeight="600"
+        x:Class="Ciribob.DCS.SimpleRadio.Standalone.Server.View.ClientPanel"
+        x:DataType="viewmodel:MainViewModel">
+	
+	<Design.DataContext>
+		<viewmodel:DesignMainViewModel />
+	</Design.DataContext>
+
+	<ListBox x:Name="ListBoxTemp" ItemsSource="{Binding Server.ConnectedClients }">
+		<ListBox.ItemTemplate>
+			<DataTemplate>
+				<Border 
+					ZIndex="1"
+					BorderThickness="1"
+					Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+					CornerRadius="4">
+					<DockPanel>
+
+						<StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+							<ToggleButton Name="BanBtn"
+							              Tag="{Binding}"
+							              Click="BanBtn_OnClick"
+							              LostFocus="BanOrKickBtn_OnLostFocus"
+							              IsEnabled="{Binding #KickBtn.IsChecked, Converter={x:Static BoolConverters.Not}}">
+								<ToggleButton.Styles>
+									<Style Selector="ToggleButton">
+										<Style Selector="^:unchecked">
+											<Setter Property="Content" Value="{x:Static p:Resources.ButtonBan}" />
+											<Setter Property="Width" Value="50" />
+										</Style>
+										<Style Selector="^:checked">
+											<Setter Property="Content" Value="{x:Static p:Resources.ButtonConfirm}" />
+											<Setter Property="Width" Value="75" />
+										</Style>
+										<Style.Resources>
+											<SolidColorBrush x:Key="ToggleButtonBackgroundChecked" Color="#CF4825" />
+											<SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPointerOver" Color="#D75E3F" />
+											<SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPressed" Color="#BC3A1E" />
+										</Style.Resources>
+									</Style>
+								</ToggleButton.Styles>
+							</ToggleButton>
+							<ToggleButton Name="KickBtn" 
+							              Tag="{Binding}"
+							              Click="KickBtn_OnClick"
+							              LostFocus="BanOrKickBtn_OnLostFocus"
+							              IsEnabled="{Binding #BanBtn.IsChecked, Converter={x:Static BoolConverters.Not}}" >
+								<ToggleButton.Styles>
+									<Style Selector="ToggleButton">
+										<Style Selector="^:unchecked">
+											<Setter Property="Content" Value="{x:Static p:Resources.ButtonKick}" />
+											<Setter Property="Width" Value="50" />
+										</Style>
+										<Style Selector="^:checked">
+											<Setter Property="Content" Value="{x:Static p:Resources.ButtonConfirm}" />
+											<Setter Property="Width" Value="75" />
+										</Style>
+										<Style.Resources>
+											<SolidColorBrush x:Key="ToggleButtonBackgroundChecked" Color="#CF4825" />
+											<SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPointerOver" Color="#D75E3F" />
+											<SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPressed" Color="#BC3A1E" />
+										</Style.Resources>
+									</Style>
+								</ToggleButton.Styles>
+							</ToggleButton> 
+							
+							<!-- todo Verify that Muting works -->
+							<ToggleButton Name="MuteBtn" Width="50"
+							              IsChecked="{Binding Muted}"  
+							              Content="{x:Static p:Resources.ButtonMute}" />
+						</StackPanel>
+						
+						<Label Name="UserLabel" 
+						       Content="{Binding Name }" 
+						       Tag="{Binding Coalition}"
+						       FontWeight="Bold">
+							<Label.Styles>
+								<Style Selector="Label[Tag=1]">
+									<Setter Property="Foreground" Value="Red" />
+								</Style>
+								<Style Selector="Label[Tag=2]">
+									<Setter Property="Foreground" Value="Blue" />
+								</Style>
+							</Label.Styles>
+						</Label>
+					</DockPanel>
+					</Border>
+			</DataTemplate>
+		</ListBox.ItemTemplate>
+	</ListBox>
+	
+	<TextBlock IsVisible="{Binding !#ListBoxTemp.ItemCount}"
+	           Text="No Connected Clients" 
+	           HorizontalAlignment="Center" />
+</Panel>

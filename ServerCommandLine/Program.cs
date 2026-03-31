@@ -1,5 +1,4 @@
-﻿using System.Runtime;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Server;
@@ -11,7 +10,9 @@ using NLog;
 using NLog.Config;
 using NLog.Targets;
 using NLog.Targets.Wrappers;
-using Sentry;
+using System.Diagnostics;
+using System.Runtime;
+using System.Runtime.InteropServices;
 using LogManager = NLog.LogManager;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Server;
@@ -29,7 +30,7 @@ internal class Program : IHandle<SRSClientStatus>
 
     public bool ConsoleLogs { get; set; }
 
-    public Task HandleAsync(SRSClientStatus message, CancellationToken cancellationToken)
+    public async Task HandleAsync(SRSClientStatus message, CancellationToken cancellationToken)
     {
         if (ConsoleLogs)
         {
@@ -38,23 +39,36 @@ internal class Program : IHandle<SRSClientStatus>
             else
                 Console.WriteLine($"SRS Client Disconnected: {message.ClientIP} - {message.SRSGuid}");
         }
-
-        return Task.CompletedTask;
     }
 
-    private static void Main(string[] args)
+    private static async Task Main(string[] args)
     {
+#if false
+        // Useful to track down threading issues.
+        if (!ThreadPool.SetMinThreads(1, 1))
+        {
+            Debug.Assert(false, "Unable to set min threads!");
+        }
+
+        // NOTE: Needs at least two because of OpenNAT. DiscoverDeviceAsync() used in OpenNATAsync() isn't async through and through,
+        // and needs at least one spare thread in the pool to be able to run its tasks.
+        if (!ThreadPool.SetMaxThreads(2, 1))
+        {
+            Debug.Assert(false, "Unable to set max threads!");
+        }
+#endif
+        
         GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
-        Parser.Default.ParseArguments<Options>(args)
-            .WithParsed(ProcessArgs);
+        var parser = Parser.Default.ParseArguments<Options>(args);
+        await parser.WithParsedAsync(ProcessArgsAsync);
     }
 
-    private static void ProcessArgs(Options options)
+    private static async Task ProcessArgsAsync(Options options)
     {
         if (options.ConfigFile != null && options.ConfigFile.Trim().Length > 0)
             ServerSettingsStore.CFG_FILE_NAME = options.ConfigFile.Trim();
 
-        UpdaterChecker.Instance.CheckForUpdateAsync(
+        await UpdaterChecker.Instance.CheckForUpdateAsync(
             ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).BoolValue,
             result =>
             {
@@ -64,24 +78,30 @@ internal class Program : IHandle<SRSClientStatus>
         Console.WriteLine($"Settings From Command Line: \n{options}");
 
         var p = new Program();
-        new Thread(() => { p.StartServer(options); }).Start();
+        var serverThread = new Thread(() => { p.StartServer(options); });
+        serverThread.Start();
 
-        var waitForProcessShutdownStart = new ManualResetEventSlim();
-        var waitForMainExit = new ManualResetEventSlim();
+        var completionSource = new TaskCompletionSource();
+        using var waitForMainExit = new ManualResetEventSlim();
 
-        AppDomain.CurrentDomain.ProcessExit += (sender, e) =>
+        Console.CancelKeyPress += new((_, e) =>
         {
+            // Ignore the cancel here and there, allow the program to terminate.
+            e.Cancel = true;
+            completionSource.SetResult();
+            Console.WriteLine("Shutting down gracefully...");
+        });
+        using var termSignal = PosixSignalRegistration.Create(PosixSignal.SIGTERM, (_) => {
             // We got a SIGTERM, signal that graceful shutdown has started
-            waitForProcessShutdownStart.Set();
-
+            completionSource.SetResult();
             Console.WriteLine("Shutting down gracefully...");
             // Don't unwind until main exists
             waitForMainExit.Wait();
-        };
+        });
 
         Console.WriteLine("Waiting for shutdown SIGTERM");
         // Wait for shutdown to start
-        waitForProcessShutdownStart.Wait();
+        await completionSource.Task;
 
         // This is where the application performs graceful shutdown
         p.StopServer();
@@ -89,6 +109,7 @@ internal class Program : IHandle<SRSClientStatus>
         Console.WriteLine("Shutdown complete");
         // Now we're done with main, tell the shutdown handler
         waitForMainExit.Set();
+        serverThread.Join(TimeSpan.FromSeconds(5));
     }
 
     private void StopServer()

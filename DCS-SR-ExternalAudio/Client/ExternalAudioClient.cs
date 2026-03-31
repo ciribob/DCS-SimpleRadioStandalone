@@ -27,6 +27,7 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
 
     private readonly string Guid = ShortGuid.NewGuid();
 
+    private TaskCompletionSource completedTCS = new();
     private CancellationTokenSource finished;
     private UDPVoiceHandler udpVoiceHandler;
     private Program.Options opts;
@@ -54,17 +55,15 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
         EventBus.Instance.SubscribeOnUIThread(this);
     }
     
-    public Task HandleAsync(TCPClientStatusMessage message, CancellationToken cancellationToken)
+    public async Task HandleAsync(TCPClientStatusMessage message, CancellationToken cancellationToken)
     {
         if (message.Connected)
-            ReadyToSend();
+            await ReadyToSendAsync();
         else
             Disconnected();
-
-        return Task.CompletedTask;
     }
 
-    public void Start()
+    public async Task StartAsync()
     {
         var radioInfoBase = new PlayerRadioInfoBase();
         radioInfoBase.radios[1].modulation = modulation[0];
@@ -103,7 +102,7 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
             srsClientSyncHandler.TryConnect(endPoint);
 
             //wait for it to end
-            finished.Token.WaitHandle.WaitOne();
+            await completedTCS.Task;
         }
        
         Logger.Info("Finished - Closing");
@@ -112,23 +111,23 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
         srsClientSyncHandler?.RequestDisconnectAsync();
     }
 
-    private void ReadyToSend()
+    private async Task ReadyToSendAsync()
     {
         if (udpVoiceHandler == null)
         {
             Logger.Info($"Connecting UDP VoIP {endPoint}");
             udpVoiceHandler = new UDPVoiceHandler(Guid, endPoint);
             udpVoiceHandler.Connect();
-            Task.Run(SendAudio, finished.Token);
+            _ = Task.Run(SendAudioAsync);
         }
     }
 
     private void Disconnected()
     {
-        finished.Cancel();
+        completedTCS.SetResult();
     }
 
-    private async Task SendAudio()
+    private async Task SendAudioAsync()
     {
         Logger.Info("Sending Audio... Please Wait");
         var audioGenerator = new AudioGenerator(opts);
@@ -138,11 +137,11 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
         //Wait until voip is ready and we're not cancelled
         while(!udpVoiceHandler.Ready && !finished.IsCancellationRequested)
         {
+            finished.Token.ThrowIfCancellationRequested();
             await Task.Delay(TimeSpan.FromMilliseconds(100), finished.Token);
         }
 
-        using var tokenSource = new CancellationTokenSource();
-
+        var audioSentTCS = new TaskCompletionSource();
         uint _packetNumber = 1;
         //get all the audio as Opus frames of 40 ms
         //send on 40 ms timer 
@@ -176,22 +175,22 @@ public class ExternalAudioClient : IHandle<TCPClientStatusMessage>
                 }
                 else
                 {
-                    tokenSource.Cancel();
+                    audioSentTCS.SetResult();
                 }
             }
             else
             {
                 Logger.Error("Client Disconnected");
-                tokenSource.Cancel();
+                audioSentTCS.SetCanceled();
             }
         }, TimeSpan.FromMilliseconds(40));
         _timer.Start();
 
-        //wait for cancel
-        tokenSource.Token.WaitHandle.WaitOne();
+        await audioSentTCS.Task;
+
         _timer.Stop();
 
         Logger.Info("Finished Sending Audio");
-        finished.Cancel();
+        Disconnected();
     }
 }

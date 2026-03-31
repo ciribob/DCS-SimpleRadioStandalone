@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,8 +21,7 @@ public class UDPVoiceHandler
     private readonly byte[] _guidAsciiBytes;
     private CancellationTokenSource _stopRequest;
     private readonly IPEndPoint _serverEndpoint;
-    private volatile bool _ready;
-    private volatile bool _started;
+    private bool _started;
     private SemaphoreSlim _outgoingSemaphore = new SemaphoreSlim(0);
 
     public UDPVoiceHandler(string guid, IPEndPoint endPoint)
@@ -40,23 +36,20 @@ public class UDPVoiceHandler
 
     public bool Ready
     {
-        get => _ready;
+        get => field;
         private set
         {
-            if (_ready != value)
+            if (Interlocked.CompareExchange(ref field, value, !value) != value)
             {
-                _ready = value;
-                EventBus.Instance.PublishOnUIThreadAsync(new VOIPStatusMessage(_ready));
+                EventBus.Instance.PublishOnUIThreadAsync(new VOIPStatusMessage(field));
             }
         }
     }
 
-    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Connect()
     {
-        if (!_started)
+        if (!Interlocked.CompareExchange(ref _started, true, false))
         {
-            _started = true;
             new Thread(StartUDP).Start();
         }
     }
@@ -195,7 +188,7 @@ public class UDPVoiceHandler
             CloseListener(listener);
             _outgoing.Clear();
 
-            _started = false;
+            Interlocked.Exchange(ref _started, false);
 
             Logger.Info("UDP Voice Handler Thread Stop");
         }

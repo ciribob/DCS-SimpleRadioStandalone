@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Speech.Synthesis;
+using System.Threading;
+using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using CommandLine;
 using NLog;
@@ -188,15 +191,27 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.ExternalAudioClient.Client
                 Required = false, Default = 1000u)]
             public uint UnitId { get; set; }
         }
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            ConfigureLogging();
-
-            Parser.Default.ParseArguments<Options>(args)
-                .WithParsed<Options>(ProcessArgs).WithNotParsed(HandleParseError);
+#if false
+        // Useful to track down threading issues.
+        if (!ThreadPool.SetMinThreads(1, 1))
+        {
+            Debug.Assert(false, "Unable to set min threads!");
         }
 
-        private static void ProcessArgs(Options opts)
+        if (!ThreadPool.SetMaxThreads(1, 1))
+        {
+            Debug.Assert(false, "Unable to set max threads!");
+        }
+#endif
+            ConfigureLogging();
+            var parser = Parser.Default.ParseArguments<Options>(args);
+
+            await Task.WhenAll([parser.WithParsedAsync(ProcessArgsAsync), parser.WithNotParsedAsync(HandleParseErrorAsync)]);
+        }
+
+        private static async Task ProcessArgsAsync(Options opts)
         {
             if (opts.Minimise)
             {
@@ -232,10 +247,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.ExternalAudioClient.Client
             }
 
             ExternalAudioClient client = new ExternalAudioClient(freqDouble.ToArray(), modulation.ToArray(), opts);
-            client.Start();
+            await client.StartAsync();
         }
 
-        private static void HandleParseError(IEnumerable errs)
+        private static async Task HandleParseErrorAsync(IEnumerable errs)
         {
 
             Console.WriteLine("");

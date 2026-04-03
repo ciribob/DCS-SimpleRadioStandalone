@@ -45,7 +45,7 @@ public class UpdaterChecker
         }
     }
 
-    public async void CheckForUpdate(bool checkForBetaUpdates, UpdateCallback updateCallback)
+    public async Task CheckForUpdateAsync(bool checkForBetaUpdates, UpdateCallback updateCallback)
     {
 #if !DEBUG
         var currentVersion = Version.Parse(VERSION);
@@ -200,9 +200,12 @@ public class UpdaterChecker
         }
 
 
-        Task.Run(() =>
+        Task.Run(async Task () =>
         {
-            while (IsDCSRunning()) Thread.Sleep(5000);
+            while (IsDCSRunning())
+            {
+                await Task.Delay(TimeSpan.FromSeconds(5));
+            }
 
 #pragma warning disable CA1416
             var principal = new WindowsPrincipal(WindowsIdentity.GetCurrent());

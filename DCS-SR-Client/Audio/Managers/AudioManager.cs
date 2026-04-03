@@ -357,7 +357,7 @@ public class AudioManager : IHandle<SRClientUpdateMessage>
                         Buffer.BlockCopy(buff, 0, encoded, 0, len);
 
                         // Console.WriteLine("Sending: " + e.BytesRecorded);
-                        var clientAudio = _udpClientAudioProcessor.Send(encoded, len, voice);
+                        var clientAudio = _udpClientAudioProcessor?.Send(encoded, len, voice);
 
                         // _beforeWaveFile.Write(pcmBytes, 0, pcmBytes.Length);
                         

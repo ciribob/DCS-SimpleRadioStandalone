@@ -488,7 +488,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Audio.Utility.Speex
 
                 // Point to the end of the current packet
                 pointer_timestamp = outPacket.timestamp + outPacket.span;
-                buffered = outPacket.span - desired_span;
+                buffered = outPacket.span - Math.Min(desired_span, outPacket.span);
 
                 return Status.OK;
             }

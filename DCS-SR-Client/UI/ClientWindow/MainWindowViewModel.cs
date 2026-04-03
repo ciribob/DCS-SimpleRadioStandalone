@@ -384,7 +384,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         ClientStateSingleton.Instance.LastSeenName = EAMName;
 
         //Notify after it started - hack
-        Task.Run(async delegate
+        Task.Run(async Task () =>
         {
             await Task.Delay(100);
 
@@ -416,7 +416,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
 
     public async Task HandleAsync(TCPClientStatusMessage obj, CancellationToken cancellationToken)
     {
-        await Task.Run(() =>
+        await Task.Run(async Task () =>
         {
             if (obj.Connected)
             {
@@ -568,7 +568,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         _dcsManager?.Stop();
         _dcsManager = null;
 
-        _client?.RequestDisconnect();
+        _client?.RequestDisconnectAsync();
         _client = null;
 
         ClientState.DcsPlayerRadioInfo.Reset();
@@ -824,7 +824,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         //stop timer
         _updateTimer?.Stop();
 
-        _client?.RequestDisconnect();
+        _client?.RequestDisconnectAsync();
         _client = null;
 
         Stop();

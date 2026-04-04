@@ -6,6 +6,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS.Models.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using NLog;
@@ -101,6 +102,8 @@ public partial class AwaRadioOverlayWindow : Window
 
         intercom.RepaintRadioStatus();
 
+        HandleGlobalSimultaneousTransmissionButton();
+
         var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
         if (dcsPlayerRadioInfo != null)
         {
@@ -186,8 +189,6 @@ public partial class AwaRadioOverlayWindow : Window
         WindowState = WindowState.Normal;
     }
 
-//
-//
     private void CalculateScale()
     {
         var yScale = ActualHeight / RadioOverlayWin.MinWidth;
@@ -208,29 +209,20 @@ public partial class AwaRadioOverlayWindow : Window
         // Console.WriteLine(this.Height +" width:"+ this.Width);
     }
 
-    private void ToggleGlobalSimultaneousTransmissionButton_Click(object sender, RoutedEventArgs e)
+    private void HandleGlobalSimultaneousTransmissionButton()
     {
+        ToggleGlobalSimultaneousTransmissionButton.Content =
+            _clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmission
+                ? Properties.Resources.OverlaySimulTransON
+                : Properties.Resources.OverlaySimulTransOFF;
+        ToggleGlobalSimultaneousTransmissionButton.Foreground =
+            _clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmission
+                ? new SolidColorBrush(Colors.Orange)
+                : new SolidColorBrush(Colors.White);
+
         var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
         if (dcsPlayerRadioInfo != null)
         {
-            dcsPlayerRadioInfo.simultaneousTransmission = !dcsPlayerRadioInfo.simultaneousTransmission;
-
-            if (!dcsPlayerRadioInfo.simultaneousTransmission)
-                foreach (var radioBase in dcsPlayerRadioInfo.radios)
-                {
-                    var radio = radioBase;
-                    radio.simul = false;
-                }
-
-            ToggleGlobalSimultaneousTransmissionButton.Content =
-                _clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmission
-                    ? Properties.Resources.OverlaySimulTransON
-                    : Properties.Resources.OverlaySimulTransOFF;
-            ToggleGlobalSimultaneousTransmissionButton.Foreground =
-                _clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmission
-                    ? new SolidColorBrush(Colors.Orange)
-                    : new SolidColorBrush(Colors.White);
-
             foreach (var radio in radioControlGroup)
             {
                 if (!dcsPlayerRadioInfo.simultaneousTransmission)
@@ -239,6 +231,11 @@ public partial class AwaRadioOverlayWindow : Window
                 radio.RepaintRadioStatus();
             }
         }
+    }
+
+    private void ToggleGlobalSimultaneousTransmissionButton_Click(object sender, RoutedEventArgs e)
+    {
+        RadioHelper.ToggleGlobalSimultaneousTransmission();
     }
 
     #region ScaleValue Depdency Property //StackOverflow: http://stackoverflow.com/questions/3193339/tips-on-developing-resolution-independent-application/5000120#5000120

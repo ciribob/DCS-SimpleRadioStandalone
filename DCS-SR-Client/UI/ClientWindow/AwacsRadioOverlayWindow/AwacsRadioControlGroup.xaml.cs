@@ -319,6 +319,7 @@ public partial class RadioControlGroup : UserControl
         SetupEncryption();
         HandleRetransmitStatus();
         HandleInstructorMode();
+        HandleSimulStatus();
 
         var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
 
@@ -530,6 +531,24 @@ public partial class RadioControlGroup : UserControl
         }
     }
 
+    private void HandleSimulStatus()
+    {
+        if (_clientStateSingleton.DcsPlayerRadioInfo != null &&
+            _clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmission)
+        {
+            var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
+            var currentRadio = dcsPlayerRadioInfo.radios[RadioId];
+
+            if (currentRadio != null)
+            {
+                if (currentRadio.simul)
+                    ToggleSimultaneousTransmissionButton.Foreground = new SolidColorBrush(Colors.Orange);
+                else
+                    ToggleSimultaneousTransmissionButton.Foreground = new SolidColorBrush(Colors.White);
+            }
+        }
+    }
+
     private void SetupEncryption()
     {
         var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
@@ -676,21 +695,7 @@ public partial class RadioControlGroup : UserControl
 
     private void ToggleSimultaneousTransmissionButton_Click(object sender, RoutedEventArgs e)
     {
-        if (_clientStateSingleton.DcsPlayerRadioInfo != null &&
-            _clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmission)
-        {
-            var currentRadio = RadioHelper.GetRadio(RadioId);
-
-            if (currentRadio != null)
-            {
-                currentRadio.simul = !currentRadio.simul;
-
-                if (currentRadio.simul)
-                    ToggleSimultaneousTransmissionButton.Foreground = new SolidColorBrush(Colors.Orange);
-                else
-                    ToggleSimultaneousTransmissionButton.Foreground = new SolidColorBrush(Colors.White);
-            }
-        }
+        RadioHelper.ToggleSimul(RadioId);
     }
 
     private void RetransmitClick(object sender, RoutedEventArgs e)

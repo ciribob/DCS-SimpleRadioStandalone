@@ -17,7 +17,15 @@ public class UDPInterfaceCommand
         TRANSPONDER_IDENT = 10,
         GUARD = 11, // SET guard
         FREQUENCY_SET = 12,
-        TRANSPONDER_M2_CODE = 13
+        TRANSPONDER_M2_CODE = 13,
+        TOGGLE_RADIO_RETRANSMIT = 14,
+        RADIO_RETRANSMIT = 15,
+        TOGGLE_GLOBAL_SIMULTANEOUS_TRANSMISSION = 16,
+        GLOBAL_SIMULTANEOUS_TRANSMISSION = 17,
+        TOGGLE_RADIO_SIMUL = 18,
+        RADIO_SIMUL = 19,
+        INTERCOM_CHAN = 20
+        // INTERCOM_VOLUME = SET_VOLUME (5) RadioId = 0
     }
 
     public int RadioId { get; set; }

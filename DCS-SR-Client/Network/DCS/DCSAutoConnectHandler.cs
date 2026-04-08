@@ -15,8 +15,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS;
 
 public class DCSAutoConnectHandler
 {
-    private static readonly object _lock = new();
-
     private CancellationTokenSource _cts = new();
     private readonly Logger Logger = LogManager.GetCurrentClassLogger();
     private UdpClient _dcsUdpListener;
@@ -62,7 +60,7 @@ public class DCSAutoConnectHandler
                     var message = Encoding.UTF8.GetString(
                         bytes, 0, bytes.Length);
 
-                    HandleMessage(message);
+                    await HandleMessageAsync(message);
                 }
                 catch (SocketException e)
                 {
@@ -92,36 +90,31 @@ public class DCSAutoConnectHandler
         }, cancellationToken);
     }
 
-    private void HandleMessage(string message)
+    private async Task HandleMessageAsync(string message)
     {
         var address = message.Split(':');
-        Application.Current.Dispatcher.Invoke(DispatcherPriority.Background,
-            new ThreadStart(delegate
-            {
-                //ensure we only send one autoconnect at a time
-                lock (_lock)
+        await Application.Current.Dispatcher.InvokeAsync(async () =>
+        {
+            message = message.Trim();
+            if (message.Contains(':'))
+                try
                 {
-                    message = message.Trim();
-                    if (message.Contains(':'))
-                        try
-                        {
-                            EventBus.Instance.PublishOnUIThreadAsync(new AutoConnectMessage()
-                            {
-                                Address = $"{address[0].Trim()}:{address[1].Trim()}"
-                            });
-                            //_receivedAutoConnect(address[0].Trim(), int.Parse(address[1].Trim()));
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Error(ex, "Exception Parsing DCS AutoConnect Message");
-                        }
-                    else
-                        EventBus.Instance.PublishOnUIThreadAsync(new AutoConnectMessage()
-                        {
-                            Address = $"{address[0].Trim()}:5002"
-                        });
+                    await EventBus.Instance.PublishOnUIThreadAsync(new AutoConnectMessage()
+                    {
+                        Address = $"{address[0].Trim()}:{address[1].Trim()}"
+                    });
+                    //_receivedAutoConnect(address[0].Trim(), int.Parse(address[1].Trim()));
                 }
-            }));
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Exception Parsing DCS AutoConnect Message");
+                }
+            else
+                await EventBus.Instance.PublishOnUIThreadAsync(new AutoConnectMessage()
+                {
+                    Address = $"{address[0].Trim()}:5002"
+                });
+        });
     }
 
     public void Stop()

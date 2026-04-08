@@ -348,15 +348,16 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
                 if (showPrompt)
                 {
                     WindowHelper.BringProcessToFront(Process.GetCurrentProcess());
+                    var result = await TaskDialog.ShowDialogAsync(new TaskDialogPage
+                    {
+                        Caption = Resources.MsgBoxMismatch,
+                        Heading = $"{Resources.MsgBoxMismatchText1} {message.Address} {Resources.MsgBoxMismatchText2} {ServerAddress} {Resources.MsgBoxMismatchText3}",
+                        Text = $"{Resources.MsgBoxMismatchText4}",
+                        Icon = TaskDialogIcon.Warning,
+                        Buttons = [TaskDialogButton.Yes, TaskDialogButton.No]
+                    });
 
-                    var result = System.Windows.MessageBox.Show(App.Current.MainWindow,
-                        $"{Resources.MsgBoxMismatchText1} {message.Address} {Resources.MsgBoxMismatchText2} {ServerAddress} {Resources.MsgBoxMismatchText3}\n\n" +
-                        $"{Resources.MsgBoxMismatchText4}",
-                        Resources.MsgBoxMismatch,
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Warning);
-
-                    switchServer = result == MessageBoxResult.Yes;
+                    switchServer = result == TaskDialogButton.Yes;
                 }
 
                 if (switchServer)

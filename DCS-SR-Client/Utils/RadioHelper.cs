@@ -451,7 +451,7 @@ public static class RadioHelper
         }
     }
 
-    public static void ToggleSimul(int radioId)
+    public static void ToggleSimultaneous(int radioId)
     {
         var dcsPlayerRadioInfo = ClientStateSingleton.Instance.DcsPlayerRadioInfo;
         if (dcsPlayerRadioInfo != null)
@@ -471,7 +471,7 @@ public static class RadioHelper
         }
     }
 
-    public static void SetSimul(int radioId, bool enabled)
+    public static void SetSimultaneous(int radioId, bool enabled)
     {
         var dcsPlayerRadioInfo = ClientStateSingleton.Instance.DcsPlayerRadioInfo;
         if (dcsPlayerRadioInfo != null)

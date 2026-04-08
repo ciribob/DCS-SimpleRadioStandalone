@@ -211,18 +211,18 @@ public partial class AwaRadioOverlayWindow : Window
 
     private void HandleGlobalSimultaneousTransmissionButton()
     {
-        ToggleGlobalSimultaneousTransmissionButton.Content =
-            _clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmission
-                ? Properties.Resources.OverlaySimulTransON
-                : Properties.Resources.OverlaySimulTransOFF;
-        ToggleGlobalSimultaneousTransmissionButton.Foreground =
-            _clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmission
-                ? new SolidColorBrush(Colors.Orange)
-                : new SolidColorBrush(Colors.White);
-
         var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
         if (dcsPlayerRadioInfo != null)
         {
+            ToggleGlobalSimultaneousTransmissionButton.Content =
+                _clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmission
+                    ? Properties.Resources.OverlaySimulTransON
+                    : Properties.Resources.OverlaySimulTransOFF;
+            ToggleGlobalSimultaneousTransmissionButton.Foreground =
+                _clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmission
+                    ? new SolidColorBrush(Colors.Orange)
+                    : new SolidColorBrush(Colors.White);
+
             foreach (var radio in radioControlGroup)
             {
                 if (!dcsPlayerRadioInfo.simultaneousTransmission)

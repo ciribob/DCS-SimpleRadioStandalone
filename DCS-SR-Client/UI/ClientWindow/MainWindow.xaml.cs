@@ -137,7 +137,7 @@ public partial class MainWindow : MetroWindow
                     {
                         Logger.Info($"Received -host={address} argument, connecting to {address}");
                         context.ServerAddress = address;
-                        context.Connect();
+                        await context.ConnectAsync();
                     }
                     catch (Exception)
                     {

@@ -23,7 +23,7 @@ public class NatHandler
         try
         {
             using var cts = new CancellationTokenSource(10000);
-            _device = await OpenNat.Discoverer.DiscoverDeviceAsync(PortMapper.Upnp, cts.Token);
+           _device = await OpenNat.Discoverer.DiscoverDeviceAsync(PortMapper.Upnp | PortMapper.Pmp, cts.Token);
 
             await _device.CreatePortMapAsync(_udpMapping);
             await _device.CreatePortMapAsync(_tcpMapping);

@@ -14,6 +14,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Models;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Client;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Voice;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Input;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
@@ -541,11 +542,10 @@ public class UDPClientAudioProcessor : IDisposable
                                         RadioReceivingState state = null;
                                         bool decryptable;
 
-                                        //Check if Global
+                                        //Check if Global (display-only hint — see GlobalFrequencyPolicy)
                                         var globalFrequency = globalFrequencies.Contains(udpVoicePacket.Frequencies[i]);
 
-                                        if (globalFrequency)
-                                            //remove encryption for global
+                                        if (globalFrequency && GlobalFrequencyPolicy.ShouldStripReceiverEncryption())
                                             udpVoicePacket.Encryptions[i] = 0;
 
                                         var radio = _clientStateSingleton.DcsPlayerRadioInfo.CanHearTransmission(
@@ -567,7 +567,7 @@ public class UDPClientAudioProcessor : IDisposable
                                                     || radio.modulation ==
                                                     Modulation
                                                         .MIDS // IGNORE LOS and Distance for MIDS - we assume a Link16 Network is in place
-                                                    || globalFrequency
+                                                    || (globalFrequency && GlobalFrequencyPolicy.ShouldBypassRealismGates())
                                                     || (
                                                         HasLineOfSight(udpVoicePacket, out losLoss)
                                                         && InRange(udpVoicePacket.Guid, udpVoicePacket.Frequencies[i],

@@ -80,7 +80,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         });
         PreviewCommand = new DelegateCommand(PreviewAudio);
 
-        ConnectCommand = new DelegateCommand(Connect);
+        ConnectCommand = new DelegateCommand(async () => await ConnectAsync());
 
         TrayIconCommand = new DelegateCommand(() =>
         {
@@ -348,15 +348,22 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
                 if (showPrompt)
                 {
                     WindowHelper.BringProcessToFront(Process.GetCurrentProcess());
+                    var result = await await System.Windows.Application.Current.Dispatcher.InvokeAsync(async () =>
+                        await TaskDialog.ShowDialogAsync(WindowHelper.GetForegroundWindow(), new TaskDialogPage
+                        {
+                            Caption = Resources.MsgBoxMismatch,
+                            // Would you like to connect to the advertised server?
+                            Heading = $"{Resources.MsgBoxMismatchText4}",
+                            // Detailed of wants to connect to vs which we are currently connected to.
+                            Text = $"{Resources.MsgBoxMismatchText1} {message.Address}\n{Resources.MsgBoxMismatchText2} {ServerAddress}\n{Resources.MsgBoxMismatchText3}",
+                            Icon = TaskDialogIcon.Warning,
+                            Buttons = [TaskDialogButton.Yes, TaskDialogButton.No],
+                            SizeToContent = true,
 
-                    var result = System.Windows.MessageBox.Show(App.Current.MainWindow,
-                        $"{Resources.MsgBoxMismatchText1} {message.Address} {Resources.MsgBoxMismatchText2} {ServerAddress} {Resources.MsgBoxMismatchText3}\n\n" +
-                        $"{Resources.MsgBoxMismatchText4}",
-                        Resources.MsgBoxMismatch,
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Warning);
+                        })
+                    );
 
-                    switchServer = result == MessageBoxResult.Yes;
+                    switchServer = result == TaskDialogButton.Yes;
                 }
 
                 if (switchServer)
@@ -367,7 +374,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
                     Stop();
                     ConnectIsEnabled = false;
                     await Task.Delay(2000);
-                    Connect();
+                    await ConnectAsync();
                 }
             }
         }
@@ -375,43 +382,37 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         {
             Logger.Info($"Received auto connect message for {message.Address} - Connecting");
             ServerAddress = message.Address;
-            Connect();
+            await ConnectAsync();
         }
     }
 
-    public Task HandleAsync(EAMConnectedMessage message, CancellationToken cancellationToken)
+    public async Task HandleAsync(EAMConnectedMessage message, CancellationToken cancellationToken)
     {
         ClientStateSingleton.Instance.LastSeenName = EAMName;
 
         //Notify after it started - hack
-        Task.Run(async Task () =>
+        _ = Task.Run(async Task () =>
         {
             await Task.Delay(100);
 
             NotifyPropertyChanged(nameof(EAMConnectButtonText));
         });
-
-        return Task.CompletedTask;
     }
 
-    public Task HandleAsync(EAMDisconnectMessage message, CancellationToken cancellationToken)
+    public async Task HandleAsync(EAMDisconnectMessage message, CancellationToken cancellationToken)
     {
         ClientStateSingleton.Instance.ExternalAWACSModelSelected = false;
         NotifyPropertyChanged(nameof(EAMConnectButtonText));
-        return Task.CompletedTask;
     }
 
-    public Task HandleAsync(ProfileChangedMessage message, CancellationToken cancellationToken)
+    public async Task HandleAsync(ProfileChangedMessage message, CancellationToken cancellationToken)
     {
         NotifyPropertyChanged(nameof(CurrentProfile));
-        return Task.CompletedTask;
     }
 
-    public Task HandleAsync(ServerSettingsUpdatedMessage message, CancellationToken cancellationToken)
+    public async Task HandleAsync(ServerSettingsUpdatedMessage message, CancellationToken cancellationToken)
     {
         NotifyPropertyChanged(nameof(IsEAMAvailable));
-
-        return Task.CompletedTask;
     }
 
     public async Task HandleAsync(TCPClientStatusMessage obj, CancellationToken cancellationToken)
@@ -455,10 +456,9 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         });
     }
 
-    public Task HandleAsync(VOIPStatusMessage message, CancellationToken cancellationToken)
+    public async Task HandleAsync(VOIPStatusMessage message, CancellationToken cancellationToken)
     {
         IsVoIPConnected = message.Connected;
-        return Task.CompletedTask;
     }
 
     private void UpdatePlayerCountAndVUMeters(object sender, EventArgs e)
@@ -474,7 +474,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         ConnectedClientsSingleton.Instance.NotifyAll();
     }
 
-    public void Connect()
+    public async Task ConnectAsync()
     {
         if (IsConnected)
         {
@@ -523,14 +523,28 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
                 else
                 {
                     //invalid ID
-                    System.Windows.MessageBox.Show("Invalid IP or Host Name!", "Host Name Error", MessageBoxButton.OK,
-                        MessageBoxImage.Error);
+                    await TaskDialog.ShowDialogAsync(new TaskDialogPage
+                    {
+                        Caption = "Host Name Error",
+                        Heading = "Invalid IP or Host Name!",
+                        Text = "Please check the IP address or host name you entered and try again.",
+                        Icon = TaskDialogIcon.Error,
+                        Buttons = [TaskDialogButton.OK]
+                    });
 
                     IsConnected = false;
                 }
             }
             catch (Exception ex) when (ex is SocketException || ex is ArgumentException)
             {
+                await TaskDialog.ShowDialogAsync(new TaskDialogPage
+                {
+                    Caption = "Host Name Error",
+                    Heading = "Invalid IP or Host Name!",
+                    Text = "Please check the IP address or host name you entered and try again.",
+                    Icon = TaskDialogIcon.Error,
+                    Buttons = [TaskDialogButton.OK]
+                });
                 System.Windows.MessageBox.Show("Invalid IP or Host Name!", "Host Name Error", MessageBoxButton.OK,
                     MessageBoxImage.Error);
 

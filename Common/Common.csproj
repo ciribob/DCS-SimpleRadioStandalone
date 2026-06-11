@@ -11,8 +11,8 @@
         <ImportWindowsDesktopTargets>false</ImportWindowsDesktopTargets>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Company>Ciribob - GitHub.com/Ciribob</Company>
-        <AssemblyVersion>2.3.8.0</AssemblyVersion>
-        <FileVersion>2.3.8.0</FileVersion>
+        <AssemblyVersion>2.3.8.1</AssemblyVersion>
+        <FileVersion>2.3.8.1</FileVersion>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
         <OutputPath>bin\x64\Debug\</OutputPath>

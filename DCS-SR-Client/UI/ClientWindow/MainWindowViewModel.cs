@@ -28,17 +28,19 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Client;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
-using NAudio.CoreAudioApi;
 using NLog;
+using Application = System.Windows.Application;
 using AwaRadioOverlayWindow =
     Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.AwacsRadioOverlayWindow.AwaRadioOverlayWindow;
 using LogManager = NLog.LogManager;
+using MessageBox = System.Windows.MessageBox;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow;
 
 public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientStatusMessage>,
     IHandle<VOIPStatusMessage>, IHandle<ProfileChangedMessage>, IHandle<EAMConnectedMessage>,
-    IHandle<EAMDisconnectMessage>, IHandle<ServerSettingsUpdatedMessage>, IHandle<AutoConnectMessage>, IHandle<ToogleAwacsRadioOverlayMessage>, IHandle<ToggleSingleStackRadioOverlayMessage>
+    IHandle<EAMDisconnectMessage>, IHandle<ServerSettingsUpdatedMessage>, IHandle<AutoConnectMessage>,
+    IHandle<ToogleAwacsRadioOverlayMessage>, IHandle<ToggleSingleStackRadioOverlayMessage>
 {
     private static readonly long OVERLAY_DEBOUNCE = 500;
     private readonly AudioManager _audioManager;
@@ -59,6 +61,9 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
     private ServerSettingsWindow.ServerSettingsWindow _serverSettingsWindow;
 
     private RadioOverlayWindow.RadioOverlayWindow _singleRadioOverlay;
+
+    private long lastAwacsToggleTime;
+    private long lastRadioToggleTime;
 
     public MainWindowViewModel()
     {
@@ -348,18 +353,18 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
                 if (showPrompt)
                 {
                     WindowHelper.BringProcessToFront(Process.GetCurrentProcess());
-                    var result = await await System.Windows.Application.Current.Dispatcher.InvokeAsync(async () =>
+                    var result = await await Application.Current.Dispatcher.InvokeAsync(async () =>
                         await TaskDialog.ShowDialogAsync(WindowHelper.GetForegroundWindow(), new TaskDialogPage
                         {
                             Caption = Resources.MsgBoxMismatch,
                             // Would you like to connect to the advertised server?
                             Heading = $"{Resources.MsgBoxMismatchText4}",
                             // Detailed of wants to connect to vs which we are currently connected to.
-                            Text = $"{Resources.MsgBoxMismatchText1} {message.Address}\n{Resources.MsgBoxMismatchText2} {ServerAddress}\n{Resources.MsgBoxMismatchText3}",
+                            Text =
+                                $"{Resources.MsgBoxMismatchText1} {message.Address}\n{Resources.MsgBoxMismatchText2} {ServerAddress}\n{Resources.MsgBoxMismatchText3}",
                             Icon = TaskDialogIcon.Warning,
                             Buttons = [TaskDialogButton.Yes, TaskDialogButton.No],
                             SizeToContent = true,
-
                         })
                     );
 
@@ -456,6 +461,31 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         });
     }
 
+    public Task HandleAsync(ToggleSingleStackRadioOverlayMessage message, CancellationToken cancellationToken)
+    {
+        if (TimeSpan.FromTicks(DateTime.Now.Ticks - lastRadioToggleTime).TotalMilliseconds > OVERLAY_DEBOUNCE)
+        {
+            lastRadioToggleTime = DateTime.Now.Ticks;
+            // Even though it should be the UI thread - it wasnt working so this forces the UI / STA thread
+            App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(ToggleSingleRadioStack));
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public Task HandleAsync(ToogleAwacsRadioOverlayMessage message, CancellationToken cancellationToken)
+    {
+        if (TimeSpan.FromTicks(DateTime.Now.Ticks - lastAwacsToggleTime).TotalMilliseconds > OVERLAY_DEBOUNCE)
+        {
+            lastAwacsToggleTime = DateTime.Now.Ticks;
+            //Debounce
+            // Even though it should be the UI thread - it wasnt working so this forces the UI / STA thread
+            App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(MultiRadioOverlay));
+        }
+
+        return Task.CompletedTask;
+    }
+
     public async Task HandleAsync(VOIPStatusMessage message, CancellationToken cancellationToken)
     {
         IsVoIPConnected = message.Connected;
@@ -489,7 +519,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
             _audioPreview = null;
 
             IsConnected = true;
-            SaveSelectedInputAndOutput();
+            ShowMicPassthroughWarning();
 
             try
             {
@@ -545,7 +575,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
                     Icon = TaskDialogIcon.Error,
                     Buttons = [TaskDialogButton.OK]
                 });
-                System.Windows.MessageBox.Show("Invalid IP or Host Name!", "Host Name Error", MessageBoxButton.OK,
+                MessageBox.Show("Invalid IP or Host Name!", "Host Name Error", MessageBoxButton.OK,
                     MessageBoxImage.Error);
 
                 IsConnected = false;
@@ -615,52 +645,11 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
     }
 
 
-    private void SaveSelectedInputAndOutput()
-    {
-        //save app settings
-        // Only save selected microphone if one is actually available, resulting in a crash otherwise
-        if (AudioInput.MicrophoneAvailable)
-        {
-            if (AudioInput.SelectedAudioInput.Value == null)
-            {
-                _globalSettings.SetClientSetting(GlobalSettingsKeys.AudioInputDeviceId, "default");
-            }
-            else
-            {
-                var input = ((MMDevice)AudioInput.SelectedAudioInput.Value).ID;
-                _globalSettings.SetClientSetting(GlobalSettingsKeys.AudioInputDeviceId, input);
-            }
-        }
-
-        if (AudioOutput.SelectedAudioOutput.Value == null)
-        {
-            _globalSettings.SetClientSetting(GlobalSettingsKeys.AudioOutputDeviceId, "default");
-        }
-        else
-        {
-            var output = (MMDevice)AudioOutput.SelectedAudioOutput.Value;
-            _globalSettings.SetClientSetting(GlobalSettingsKeys.AudioOutputDeviceId, output.ID);
-        }
-
-        //check if we have optional output
-        if (AudioOutput.SelectedMicAudioOutput.Value != null)
-        {
-            var micOutput = (MMDevice)AudioOutput.SelectedMicAudioOutput.Value;
-            _globalSettings.SetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId, micOutput.ID);
-        }
-        else
-        {
-            _globalSettings.SetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId, "");
-        }
-
-        ShowMicPassthroughWarning();
-    }
-
     private void ShowMicPassthroughWarning()
     {
         if (_globalSettings.GetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId).RawValue
             .Equals(_globalSettings.GetClientSetting(GlobalSettingsKeys.AudioOutputDeviceId).RawValue))
-            System.Windows.MessageBox.Show(
+            MessageBox.Show(
                 "Mic Output and Speaker Output should not be set to the same device!\n\nMic Output is just for recording and not for use as a sidetone. You will hear yourself with a small delay!\n\nHit disconnect and change Mic Output / Passthrough",
                 "Warning", MessageBoxButton.OK,
                 MessageBoxImage.Warning);
@@ -679,7 +668,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
             //get device
             try
             {
-                SaveSelectedInputAndOutput();
+                ShowMicPassthroughWarning();
 
                 _audioPreview = new AudioPreview();
                 _audioPreview.SpeakerBoost = VolumeConversionHelper.ConvertVolumeSliderToScale((float)SpeakerBoost);
@@ -721,7 +710,8 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
                 {
                     Caption = "Audio Output Error",
                     Heading = "Problem initialising Audio Output!",
-                    Text = "Try a different Output device and check privacy settings\n\nIf the problem persists, disable ALL other outputs and restart DCS SRS",
+                    Text =
+                        "Try a different Output device and check privacy settings\n\nIf the problem persists, disable ALL other outputs and restart DCS SRS",
                     Icon = TaskDialogIcon.Error,
                     Buttons =
                     {
@@ -857,32 +847,5 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
 
         _serverSettingsWindow?.Close();
         _serverSettingsWindow = null;
-    }
-
-    private long lastAwacsToggleTime;
-    private long lastRadioToggleTime;
-    public Task HandleAsync(ToogleAwacsRadioOverlayMessage message, CancellationToken cancellationToken)
-    {
-        if (TimeSpan.FromTicks(DateTime.Now.Ticks - lastAwacsToggleTime).TotalMilliseconds > OVERLAY_DEBOUNCE)
-        {
-            lastAwacsToggleTime = DateTime.Now.Ticks;
-            //Debounce
-            // Even though it should be the UI thread - it wasnt working so this forces the UI / STA thread
-            App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(MultiRadioOverlay));
-        }
-     
-        return Task.CompletedTask;
-    }
-
-    public Task HandleAsync(ToggleSingleStackRadioOverlayMessage message, CancellationToken cancellationToken)
-    {
-        if (TimeSpan.FromTicks(DateTime.Now.Ticks - lastRadioToggleTime).TotalMilliseconds > OVERLAY_DEBOUNCE)
-        {
-            lastRadioToggleTime = DateTime.Now.Ticks;
-            // Even though it should be the UI thread - it wasnt working so this forces the UI / STA thread
-            App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(ToggleSingleRadioStack));
-        }
-
-        return Task.CompletedTask;
     }
 }

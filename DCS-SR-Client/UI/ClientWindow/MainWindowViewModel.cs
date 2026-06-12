@@ -518,7 +518,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
             _audioPreview = null;
 
             IsConnected = true;
-            ShowMicPassthroughWarning();
+            ShowMicPassthroughWarningAsync();
 
             try
             {
@@ -642,7 +642,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
     }
 
 
-    private async void ShowMicPassthroughWarning()
+    private async Task ShowMicPassthroughWarningAsync()
     {
         if (_globalSettings.GetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId).RawValue
             .Equals(_globalSettings.GetClientSetting(GlobalSettingsKeys.AudioOutputDeviceId).RawValue))
@@ -672,7 +672,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
             //get device
             try
             {
-                ShowMicPassthroughWarning();
+                ShowMicPassthroughWarningAsync();
 
                 _audioPreview = new AudioPreview();
                 _audioPreview.SpeakerBoost = VolumeConversionHelper.ConvertVolumeSliderToScale((float)SpeakerBoost);

@@ -518,7 +518,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
             _audioPreview = null;
 
             IsConnected = true;
-            ShowMicPassthroughWarningAsync();
+            await ShowMicPassthroughWarningAsync();
 
             try
             {

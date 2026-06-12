@@ -33,7 +33,6 @@ using Application = System.Windows.Application;
 using AwaRadioOverlayWindow =
     Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.AwacsRadioOverlayWindow.AwaRadioOverlayWindow;
 using LogManager = NLog.LogManager;
-using MessageBox = System.Windows.MessageBox;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow;
 
@@ -575,8 +574,6 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
                     Icon = TaskDialogIcon.Error,
                     Buttons = [TaskDialogButton.OK]
                 });
-                MessageBox.Show("Invalid IP or Host Name!", "Host Name Error", MessageBoxButton.OK,
-                    MessageBoxImage.Error);
 
                 IsConnected = false;
             }
@@ -645,14 +642,21 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
     }
 
 
-    private void ShowMicPassthroughWarning()
+    private async void ShowMicPassthroughWarning()
     {
         if (_globalSettings.GetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId).RawValue
             .Equals(_globalSettings.GetClientSetting(GlobalSettingsKeys.AudioOutputDeviceId).RawValue))
-            MessageBox.Show(
-                "Mic Output and Speaker Output should not be set to the same device!\n\nMic Output is just for recording and not for use as a sidetone. You will hear yourself with a small delay!\n\nHit disconnect and change Mic Output / Passthrough",
-                "Warning", MessageBoxButton.OK,
-                MessageBoxImage.Warning);
+        {
+            await TaskDialog.ShowDialogAsync(new TaskDialogPage
+            {
+                Caption = "Mic Output and Speaker Output Matching",
+                Heading = "Warning!",
+                Text =
+                    "Mic Output and Speaker Output should not be set to the same device!\n\nMic Output is just for recording and not for use as a sidetone. You will hear yourself with a small delay!\n\nHit disconnect and change Mic Output / Passthrough",
+                Icon = TaskDialogIcon.Warning,
+                Buttons = [TaskDialogButton.OK]
+            });
+        }
     }
 
     private void PreviewAudio()

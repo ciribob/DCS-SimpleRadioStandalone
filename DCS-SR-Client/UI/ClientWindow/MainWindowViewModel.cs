@@ -672,7 +672,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
             //get device
             try
             {
-                ShowMicPassthroughWarningAsync();
+                Task.Run(async () => await ShowMicPassthroughWarningAsync()).Wait();
 
                 _audioPreview = new AudioPreview();
                 _audioPreview.SpeakerBoost = VolumeConversionHelper.ConvertVolumeSliderToScale((float)SpeakerBoost);

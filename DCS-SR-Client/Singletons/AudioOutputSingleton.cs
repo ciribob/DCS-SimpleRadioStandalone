@@ -19,6 +19,7 @@ public class AudioOutputSingleton
     private static volatile AudioOutputSingleton _instance;
     private static readonly object _lock = new();
 
+
     public static AudioOutputSingleton Instance
     {
         get
@@ -38,11 +39,49 @@ public class AudioOutputSingleton
 
     #region Instance Definition
 
+    private GlobalSettingsStore _globalSettings = GlobalSettingsStore.Instance;
+
     public List<AudioDeviceListItem> OutputAudioDevices { get; }
-    public AudioDeviceListItem SelectedAudioOutput { get; set; }
+
+    public AudioDeviceListItem SelectedAudioOutput
+    {
+        get;
+        set
+        {
+            if (value == null || value.Value == null)
+            {
+                _globalSettings.SetClientSetting(GlobalSettingsKeys.AudioOutputDeviceId, "default");
+            }
+            else
+            {
+                var output = (MMDevice)value.Value;
+                _globalSettings.SetClientSetting(GlobalSettingsKeys.AudioOutputDeviceId, output.ID);
+            }
+
+            field = value;
+        }
+    }
 
     public List<AudioDeviceListItem> MicOutputAudioDevices { get; }
-    public AudioDeviceListItem SelectedMicAudioOutput { get; set; }
+
+    public AudioDeviceListItem SelectedMicAudioOutput
+    {
+        get;
+        set
+        {
+            if (value == null || value.Value == null)
+            {
+                _globalSettings.SetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId, "");
+            }
+            else
+            {
+                var micOutput = (MMDevice)value.Value;
+                _globalSettings.SetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId, micOutput.ID);
+            }
+
+            field = value;
+        }
+    }
 
 
     // Version of Windows without bundled multimedia stuff as part of European anti-trust settlement
@@ -136,13 +175,12 @@ public class AudioOutputSingleton
 
     private bool DetectWindowsN()
     {
-
         if (WineDetector.IsRunningUnderWine())
         {
             Logger.Warn("WINE / Linux Detected - using inbuilt resampler");
             return true;
         }
-        
+
         try
         {
             var dmoResampler = new DmoResampler();

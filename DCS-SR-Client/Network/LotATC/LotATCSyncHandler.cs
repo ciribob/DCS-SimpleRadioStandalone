@@ -48,7 +48,7 @@ public class LotATCSyncHandler
 
     public void Start()
     {
-        Task.Factory.StartNew(() =>
+        Task.Run(async Task () =>
         {
             while (!_stop)
                 try
@@ -62,14 +62,14 @@ public class LotATCSyncHandler
                 {
                     Logger.Warn(ex,
                         $"Unable to bind to the LotATC Export Listener Socket Port: {_globalSettings.GetNetworkSetting(GlobalSettingsKeys.LotATCIncomingUDP)}");
-                    Thread.Sleep(500);
+                    await Task.Delay(TimeSpan.FromMilliseconds(500));
                 }
 
             while (!_stop)
                 try
                 {
-                    var groupEp = new IPEndPoint(IPAddress.Any, 0);
-                    var bytes = _lotATCPositionListener.Receive(ref groupEp);
+                    var result = await _lotATCPositionListener.ReceiveAsync();
+                    var bytes = result.Buffer;
 
                     var lotAtcPositionWrapper = JsonSerializer.Deserialize<LotATCMessageWrapper>(
                         Encoding.UTF8.GetString(bytes, 0, bytes.Length),
@@ -81,7 +81,7 @@ public class LotATCSyncHandler
                         if (lotAtcPositionWrapper.los != null)
                             HandleLOSResponse(lotAtcPositionWrapper.los);
                         else if (lotAtcPositionWrapper.controller != null)
-                            HandleLotATCUpdate(lotAtcPositionWrapper.controller);
+                            await HandleLotATCUpdateAsync(lotAtcPositionWrapper.controller);
                     }
                 }
                 catch (SocketException e)
@@ -106,7 +106,7 @@ public class LotATCSyncHandler
         StartLotATCLOSSender();
     }
 
-    private void HandleLotATCUpdate(LotATCMessageWrapper.LotATCPosition controller)
+    private async Task HandleLotATCUpdateAsync(LotATCMessageWrapper.LotATCPosition controller)
     {
         _clientStateSingleton.LotATCLastReceived = DateTime.Now.Ticks;
 
@@ -125,7 +125,7 @@ public class LotATCSyncHandler
             {
                 _lastSent = DateTime.Now.Ticks;
               
-                EventBus.Instance.PublishOnCurrentThreadAsync(new UnitUpdateMessage()
+                await EventBus.Instance.PublishOnCurrentThreadAsync(new UnitUpdateMessage()
                 {
                     FullUpdate = false,
                     UnitUpdate = new SRClientBase()
@@ -160,7 +160,7 @@ public class LotATCSyncHandler
             _globalSettings.GetNetworkSetting(GlobalSettingsKeys.LotATCOutgoingUDP));
 
 
-        Task.Factory.StartNew(() =>
+        Task.Run(async Task () =>
         {
             using (_udpSocket)
             {
@@ -182,7 +182,7 @@ public class LotATCSyncHandler
                                     _udpSocket.Send(byteData, byteData.Length, _host);
 
                                     //every 50ms - Wait for the queue
-                                    Thread.Sleep(50);
+                                    await Task.Delay(TimeSpan.FromMilliseconds(50));
                                 }
                         }
                     }
@@ -191,8 +191,8 @@ public class LotATCSyncHandler
                         Logger.Error(e, "Exception Sending LotATC LOS Request Message");
                     }
 
-                    //every 2000 - Wait for the queue
-                    Thread.Sleep(2000);
+                    //every 2s - Wait for the queue
+                    await Task.Delay(TimeSpan.FromSeconds(2));
                 }
 
                 try

@@ -42,7 +42,7 @@ public class DCSLineOfSightHandler
     //used for the result
     private void StartDCSLOSBroadcastListener()
     {
-        Task.Factory.StartNew(() =>
+        Task.Run(async Task () =>
         {
             while (!_stop)
                 try
@@ -56,15 +56,15 @@ public class DCSLineOfSightHandler
                 {
                     Logger.Warn(ex,
                         $"Unable to bind to the DCS LOS Listner Socket Port: {_globalSettings.GetNetworkSetting(GlobalSettingsKeys.DCSLOSIncomingUDP)}");
-                    Thread.Sleep(500);
+                    await Task.Delay(TimeSpan.FromMilliseconds(500));
                 }
 
             //    var count = 0;
             while (!_stop)
                 try
                 {
-                    var groupEp = new IPEndPoint(IPAddress.Any, 0);
-                    var bytes = _dcsLOSListener.Receive(ref groupEp);
+                    var result = await _dcsLOSListener.ReceiveAsync();
+                    var bytes = result.Buffer;
 
                     /*   Logger.Debug(Encoding.UTF8.GetString(
                             bytes, 0, bytes.Length));*/
@@ -108,7 +108,7 @@ public class DCSLineOfSightHandler
             _globalSettings.GetNetworkSetting(GlobalSettingsKeys.DCSLOSOutgoingUDP));
 
 
-        Task.Factory.StartNew(() =>
+        Task.Run(async Task () =>
         {
             using (_udpSocket)
             {
@@ -131,10 +131,10 @@ public class DCSLineOfSightHandler
                                         IncludeFields = true,
                                     }) + "\n");
 
-                                _udpSocket.Send(byteData, byteData.Length, _host);
+                                await _udpSocket.SendAsync(byteData, byteData.Length, _host);
 
                                 //every 250 - Wait for the queue
-                                Thread.Sleep(250);
+                                await Task.Delay(TimeSpan.FromMilliseconds(250));
                             }
                         }
                     }
@@ -143,8 +143,8 @@ public class DCSLineOfSightHandler
                         Logger.Error(e, "Exception Sending DCS LOS Request Message");
                     }
 
-                    //every 300 - Wait for the queue
-                    Thread.Sleep(250);
+                    //every 250 - Wait for the queue
+                    await Task.Delay(TimeSpan.FromMilliseconds(250));
                 }
 
                 try

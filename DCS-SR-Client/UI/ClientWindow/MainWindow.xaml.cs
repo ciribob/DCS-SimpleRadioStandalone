@@ -77,7 +77,7 @@ public partial class MainWindow : MetroWindow
         FavouriteServersView.DataContext = ((MainWindowViewModel)DataContext).FavouriteServersViewModel;
 
         //TODO make this a singleton with a callback to check for updates
-        UpdaterChecker.Instance.CheckForUpdate(
+        _ = UpdaterChecker.Instance.CheckForUpdateAsync(
             _globalSettings.GetClientSettingBool(GlobalSettingsKeys.CheckForBetaUpdates),
             result =>
             {
@@ -129,7 +129,7 @@ public partial class MainWindow : MetroWindow
                 var address = arg.Replace("-host=", "");
                 var context = ((MainWindowViewModel)DataContext);
 
-                Application.Current.Dispatcher.InvokeAsync(async () =>
+                Application.Current.Dispatcher.InvokeAsync(async Task () =>
                 {
                     await Task.Delay(2000);
 
@@ -137,7 +137,7 @@ public partial class MainWindow : MetroWindow
                     {
                         Logger.Info($"Received -host={address} argument, connecting to {address}");
                         context.ServerAddress = address;
-                        context.Connect();
+                        await context.ConnectAsync();
                     }
                     catch (Exception)
                     {

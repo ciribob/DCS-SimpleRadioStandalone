@@ -106,7 +106,7 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
         _globalFrequencies = newList;
     }
 
-    public async void Listen()
+    public async Task Listen()
     {
         Logger.Info("UDP Voice Router starting...");
         _transmissionLoggingQueue = new TransmissionLoggingQueue();
@@ -202,7 +202,7 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
                                 client.VoipPort = receivedFromEP;
                             }
                             //send back ping UDP, don't care much about the result.
-                            var pong = Task.Run(async () => await listener.SendAsync(rawBytes, rawBytes.Length, receivedFromEP), _stopCancellationToken.Token);
+                            var pong = Task.Run(async Task () => await listener.SendAsync(rawBytes, rawBytes.Length, receivedFromEP), _stopCancellationToken.Token);
                            
                         }
                         catch (Exception e)
@@ -212,7 +212,7 @@ internal class UDPVoiceRouter : IHandle<ServerFrequenciesChanged>, IHandle<Serve
                     }
                     else if (rawBytes?.Length > 22)
                     {
-                        var forwarded = Task.Run(async () => await ProcessPendingPacketAsync(listener, new PendingPacket
+                        var forwarded = Task.Run(async Task () => await ProcessPendingPacketAsync(listener, new PendingPacket
                         {
                             RawBytes = rawBytes,
                             ReceivedFrom = receivedFromEP

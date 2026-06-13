@@ -420,16 +420,7 @@ public static class RadioHelper
         var dcsPlayerRadioInfo = ClientStateSingleton.Instance.DcsPlayerRadioInfo;
         if (dcsPlayerRadioInfo != null)
         {
-            dcsPlayerRadioInfo.simultaneousTransmission = !dcsPlayerRadioInfo.simultaneousTransmission;
-
-            if (!dcsPlayerRadioInfo.simultaneousTransmission)
-            {
-                foreach (var radioBase in dcsPlayerRadioInfo.radios)
-                {
-                    var radio = radioBase;
-                    radio.simul = false;
-                }
-            }
+            SetGlobalSimultaneousTransmission(!dcsPlayerRadioInfo.simultaneousTransmission);
         }
     }
 

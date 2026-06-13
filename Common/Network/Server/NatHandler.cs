@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using NLog;
 using SharpOpenNat;
 
@@ -18,15 +19,13 @@ public class NatHandler
         _udpMapping = new Mapping(Protocol.Udp, port, port, $"SRS Server UDP - {port}");
     }
 
-    public async void OpenNAT()
+    public async Task OpenNATAsync()
     {
         try
         {
-            using var cts = new CancellationTokenSource(10000);
-           _device = await OpenNat.Discoverer.DiscoverDeviceAsync(PortMapper.Upnp | PortMapper.Pmp, cts.Token);
-
-            await _device.CreatePortMapAsync(_udpMapping);
-            await _device.CreatePortMapAsync(_tcpMapping);
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+            _device = await OpenNat.Discoverer.DiscoverDeviceAsync(PortMapper.Upnp | PortMapper.Pmp, cts.Token);
+            await Task.WhenAll([_device.CreatePortMapAsync(_udpMapping, cts.Token), _device.CreatePortMapAsync(_tcpMapping, cts.Token)]);
         }
         catch (Exception ex)
         {
@@ -34,20 +33,22 @@ public class NatHandler
         }
     }
 
-    public void CloseNAT()
+    public async Task CloseNATAsync()
     {
         try
         {
-            var task = _device?.DeletePortMapAsync(_tcpMapping);
-            var task2 = _device?.DeletePortMapAsync(_udpMapping);
-            task?.Wait(3000);
-            task2?.Wait(3000);
+            if (_device != null)
+            {
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
+                await Task.WhenAll([_device.DeletePortMapAsync(_tcpMapping, cts.Token), _device.DeletePortMapAsync(_udpMapping, cts.Token)]);
+                //Doesnt clear mappings on Shutdown - not sure why? The async deletes also dont work on application close but DO work on start / stop button press.
+                //Maybe background threads are terminated?
+            }
 
-            //Doesnt clear mappings on Shutdown - not sure why? The async deletes also dont work on application close but DO work on start / stop button press.
-            //Maybe background threads are terminated?
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Logger.Warn(ex, "Error closing UPNP/NAT ports.");
         }
     }
 }

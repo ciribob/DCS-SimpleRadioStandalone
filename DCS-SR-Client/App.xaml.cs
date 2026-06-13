@@ -33,12 +33,25 @@ public partial class App : Application
 
     public App()
     {
+#if false
+        // Useful to track down threading issues.
+        if (!ThreadPool.SetMinThreads(1, 1))
+        {
+            Debug.Assert(false, "Unable to set min threads!");
+        }
+
+        if (!ThreadPool.SetMaxThreads(1, 1))
+        {
+            Debug.Assert(false, "Unable to set max threads!");
+        }
+#endif
+
         System.Windows.Forms.Application.EnableVisualStyles();
 
         // Common ones to use are -lang:en-us , -lang:zh , -lang:zh-cn , -lang:fr
         try
         {
-            string lang = Environment.GetCommandLineArgs().FirstOrDefault(x => x.StartsWith("-lang:")).Substring(6);
+            string lang = Environment.GetCommandLineArgs().FirstOrDefault(x => x.StartsWith("-lang:"))?.Substring(6);
             if (!string.IsNullOrEmpty(lang))
             {
                 Logger.Warn($"Command Line Set Language Code : {lang}");
@@ -145,7 +158,7 @@ public partial class App : Application
         {
             Logger.Info($"Attempting to elevate to admin");
 
-            Task.Factory.StartNew(() =>
+            Task.Run(async Task () =>
             {
                 var location = AppDomain.CurrentDomain.BaseDirectory;
 
@@ -161,31 +174,35 @@ public partial class App : Application
                 {
                     //TODO fix process start
                     var p = Process.Start(startInfo);
-
-                    //shutdown this process as another has started
-                    Dispatcher?.BeginInvoke(new Action(() =>
+                    var dispatcher = Dispatcher;
+                    if (dispatcher != null)
                     {
-                        if (_notifyIcon != null)
-                            _notifyIcon.Visible = false;
-
-                        try
+                        //shutdown this process as another has started
+                        await Dispatcher.InvokeAsync(async Task () =>
                         {
-                            ClientStateSingleton.Instance.Close();
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
+                            if (_notifyIcon != null)
+                                _notifyIcon.Visible = false;
 
-                        Environment.Exit(0);
-                    }));
+                            try
+                            {
+                                ClientStateSingleton.Instance.Close();
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+
+                            Environment.Exit(0);
+                        });
+                    }
+                    
                 }
                 catch (Win32Exception)
                 {
-                    TaskDialog.ShowDialog(new TaskDialogPage
+                    await TaskDialog.ShowDialogAsync(new TaskDialogPage
                     {
                         Caption = "UAC Error",
-                        Heading = "SRS could not restart with elevated privilages.",
+                        Heading = "SRS could not restart with elevated privileges.",
                         Text = $"Unless you have a very specific need you should disable the Require Admin option in the settings.",
                         Icon = TaskDialogIcon.Warning,
                         Buttons = { TaskDialogButton.OK }

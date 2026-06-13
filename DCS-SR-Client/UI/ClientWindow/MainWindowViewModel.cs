@@ -28,8 +28,8 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Client;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
-using NAudio.CoreAudioApi;
 using NLog;
+using Application = System.Windows.Application;
 using AwaRadioOverlayWindow =
     Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.AwacsRadioOverlayWindow.AwaRadioOverlayWindow;
 using LogManager = NLog.LogManager;
@@ -38,7 +38,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow;
 
 public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientStatusMessage>,
     IHandle<VOIPStatusMessage>, IHandle<ProfileChangedMessage>, IHandle<EAMConnectedMessage>,
-    IHandle<EAMDisconnectMessage>, IHandle<ServerSettingsUpdatedMessage>, IHandle<AutoConnectMessage>, IHandle<ToogleAwacsRadioOverlayMessage>, IHandle<ToggleSingleStackRadioOverlayMessage>
+    IHandle<EAMDisconnectMessage>, IHandle<ServerSettingsUpdatedMessage>, IHandle<AutoConnectMessage>,
+    IHandle<ToogleAwacsRadioOverlayMessage>, IHandle<ToggleSingleStackRadioOverlayMessage>
 {
     private static readonly long OVERLAY_DEBOUNCE = 500;
     private readonly AudioManager _audioManager;
@@ -60,6 +61,9 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
 
     private RadioOverlayWindow.RadioOverlayWindow _singleRadioOverlay;
 
+    private long lastAwacsToggleTime;
+    private long lastRadioToggleTime;
+
     public MainWindowViewModel()
     {
         _audioManager = new AudioManager(AudioOutput.WindowsN);
@@ -80,7 +84,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         });
         PreviewCommand = new DelegateCommand(PreviewAudio);
 
-        ConnectCommand = new DelegateCommand(Connect);
+        ConnectCommand = new DelegateCommand(async () => await ConnectAsync());
 
         TrayIconCommand = new DelegateCommand(() =>
         {
@@ -348,15 +352,22 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
                 if (showPrompt)
                 {
                     WindowHelper.BringProcessToFront(Process.GetCurrentProcess());
+                    var result = await await Application.Current.Dispatcher.InvokeAsync(async () =>
+                        await TaskDialog.ShowDialogAsync(WindowHelper.GetForegroundWindow(), new TaskDialogPage
+                        {
+                            Caption = Resources.MsgBoxMismatch,
+                            // Would you like to connect to the advertised server?
+                            Heading = $"{Resources.MsgBoxMismatchText4}",
+                            // Detailed of wants to connect to vs which we are currently connected to.
+                            Text =
+                                $"{Resources.MsgBoxMismatchText1} {message.Address}\n{Resources.MsgBoxMismatchText2} {ServerAddress}\n{Resources.MsgBoxMismatchText3}",
+                            Icon = TaskDialogIcon.Warning,
+                            Buttons = [TaskDialogButton.Yes, TaskDialogButton.No],
+                            SizeToContent = true,
+                        })
+                    );
 
-                    var result = System.Windows.MessageBox.Show(App.Current.MainWindow,
-                        $"{Resources.MsgBoxMismatchText1} {message.Address} {Resources.MsgBoxMismatchText2} {ServerAddress} {Resources.MsgBoxMismatchText3}\n\n" +
-                        $"{Resources.MsgBoxMismatchText4}",
-                        Resources.MsgBoxMismatch,
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Warning);
-
-                    switchServer = result == MessageBoxResult.Yes;
+                    switchServer = result == TaskDialogButton.Yes;
                 }
 
                 if (switchServer)
@@ -367,7 +378,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
                     Stop();
                     ConnectIsEnabled = false;
                     await Task.Delay(2000);
-                    Connect();
+                    await ConnectAsync();
                 }
             }
         }
@@ -375,48 +386,42 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         {
             Logger.Info($"Received auto connect message for {message.Address} - Connecting");
             ServerAddress = message.Address;
-            Connect();
+            await ConnectAsync();
         }
     }
 
-    public Task HandleAsync(EAMConnectedMessage message, CancellationToken cancellationToken)
+    public async Task HandleAsync(EAMConnectedMessage message, CancellationToken cancellationToken)
     {
         ClientStateSingleton.Instance.LastSeenName = EAMName;
 
         //Notify after it started - hack
-        Task.Run(async delegate
+        _ = Task.Run(async Task () =>
         {
             await Task.Delay(100);
 
             NotifyPropertyChanged(nameof(EAMConnectButtonText));
         });
-
-        return Task.CompletedTask;
     }
 
-    public Task HandleAsync(EAMDisconnectMessage message, CancellationToken cancellationToken)
+    public async Task HandleAsync(EAMDisconnectMessage message, CancellationToken cancellationToken)
     {
         ClientStateSingleton.Instance.ExternalAWACSModelSelected = false;
         NotifyPropertyChanged(nameof(EAMConnectButtonText));
-        return Task.CompletedTask;
     }
 
-    public Task HandleAsync(ProfileChangedMessage message, CancellationToken cancellationToken)
+    public async Task HandleAsync(ProfileChangedMessage message, CancellationToken cancellationToken)
     {
         NotifyPropertyChanged(nameof(CurrentProfile));
-        return Task.CompletedTask;
     }
 
-    public Task HandleAsync(ServerSettingsUpdatedMessage message, CancellationToken cancellationToken)
+    public async Task HandleAsync(ServerSettingsUpdatedMessage message, CancellationToken cancellationToken)
     {
         NotifyPropertyChanged(nameof(IsEAMAvailable));
-
-        return Task.CompletedTask;
     }
 
     public async Task HandleAsync(TCPClientStatusMessage obj, CancellationToken cancellationToken)
     {
-        await Task.Run(() =>
+        await Task.Run(async Task () =>
         {
             if (obj.Connected)
             {
@@ -455,10 +460,34 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         });
     }
 
-    public Task HandleAsync(VOIPStatusMessage message, CancellationToken cancellationToken)
+    public Task HandleAsync(ToggleSingleStackRadioOverlayMessage message, CancellationToken cancellationToken)
+    {
+        if (TimeSpan.FromTicks(DateTime.Now.Ticks - lastRadioToggleTime).TotalMilliseconds > OVERLAY_DEBOUNCE)
+        {
+            lastRadioToggleTime = DateTime.Now.Ticks;
+            // Even though it should be the UI thread - it wasnt working so this forces the UI / STA thread
+            App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(ToggleSingleRadioStack));
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public Task HandleAsync(ToogleAwacsRadioOverlayMessage message, CancellationToken cancellationToken)
+    {
+        if (TimeSpan.FromTicks(DateTime.Now.Ticks - lastAwacsToggleTime).TotalMilliseconds > OVERLAY_DEBOUNCE)
+        {
+            lastAwacsToggleTime = DateTime.Now.Ticks;
+            //Debounce
+            // Even though it should be the UI thread - it wasnt working so this forces the UI / STA thread
+            App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(MultiRadioOverlay));
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public async Task HandleAsync(VOIPStatusMessage message, CancellationToken cancellationToken)
     {
         IsVoIPConnected = message.Connected;
-        return Task.CompletedTask;
     }
 
     private void UpdatePlayerCountAndVUMeters(object sender, EventArgs e)
@@ -474,7 +503,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         ConnectedClientsSingleton.Instance.NotifyAll();
     }
 
-    public void Connect()
+    public async Task ConnectAsync()
     {
         if (IsConnected)
         {
@@ -489,7 +518,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
             _audioPreview = null;
 
             IsConnected = true;
-            SaveSelectedInputAndOutput();
+            await ShowMicPassthroughWarningAsync();
 
             try
             {
@@ -523,16 +552,28 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
                 else
                 {
                     //invalid ID
-                    System.Windows.MessageBox.Show("Invalid IP or Host Name!", "Host Name Error", MessageBoxButton.OK,
-                        MessageBoxImage.Error);
+                    await TaskDialog.ShowDialogAsync(new TaskDialogPage
+                    {
+                        Caption = "Host Name Error",
+                        Heading = "Invalid IP or Host Name!",
+                        Text = "Please check the IP address or host name you entered and try again.",
+                        Icon = TaskDialogIcon.Error,
+                        Buttons = [TaskDialogButton.OK]
+                    });
 
                     IsConnected = false;
                 }
             }
             catch (Exception ex) when (ex is SocketException || ex is ArgumentException)
             {
-                System.Windows.MessageBox.Show("Invalid IP or Host Name!", "Host Name Error", MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                await TaskDialog.ShowDialogAsync(new TaskDialogPage
+                {
+                    Caption = "Host Name Error",
+                    Heading = "Invalid IP or Host Name!",
+                    Text = "Please check the IP address or host name you entered and try again.",
+                    Icon = TaskDialogIcon.Error,
+                    Buttons = [TaskDialogButton.OK]
+                });
 
                 IsConnected = false;
             }
@@ -568,7 +609,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         _dcsManager?.Stop();
         _dcsManager = null;
 
-        _client?.RequestDisconnect();
+        _client?.RequestDisconnectAsync();
         _client = null;
 
         ClientState.DcsPlayerRadioInfo.Reset();
@@ -601,55 +642,21 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
     }
 
 
-    private void SaveSelectedInputAndOutput()
-    {
-        //save app settings
-        // Only save selected microphone if one is actually available, resulting in a crash otherwise
-        if (AudioInput.MicrophoneAvailable)
-        {
-            if (AudioInput.SelectedAudioInput.Value == null)
-            {
-                _globalSettings.SetClientSetting(GlobalSettingsKeys.AudioInputDeviceId, "default");
-            }
-            else
-            {
-                var input = ((MMDevice)AudioInput.SelectedAudioInput.Value).ID;
-                _globalSettings.SetClientSetting(GlobalSettingsKeys.AudioInputDeviceId, input);
-            }
-        }
-
-        if (AudioOutput.SelectedAudioOutput.Value == null)
-        {
-            _globalSettings.SetClientSetting(GlobalSettingsKeys.AudioOutputDeviceId, "default");
-        }
-        else
-        {
-            var output = (MMDevice)AudioOutput.SelectedAudioOutput.Value;
-            _globalSettings.SetClientSetting(GlobalSettingsKeys.AudioOutputDeviceId, output.ID);
-        }
-
-        //check if we have optional output
-        if (AudioOutput.SelectedMicAudioOutput.Value != null)
-        {
-            var micOutput = (MMDevice)AudioOutput.SelectedMicAudioOutput.Value;
-            _globalSettings.SetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId, micOutput.ID);
-        }
-        else
-        {
-            _globalSettings.SetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId, "");
-        }
-
-        ShowMicPassthroughWarning();
-    }
-
-    private void ShowMicPassthroughWarning()
+    private async Task ShowMicPassthroughWarningAsync()
     {
         if (_globalSettings.GetClientSetting(GlobalSettingsKeys.MicAudioOutputDeviceId).RawValue
             .Equals(_globalSettings.GetClientSetting(GlobalSettingsKeys.AudioOutputDeviceId).RawValue))
-            System.Windows.MessageBox.Show(
-                "Mic Output and Speaker Output should not be set to the same device!\n\nMic Output is just for recording and not for use as a sidetone. You will hear yourself with a small delay!\n\nHit disconnect and change Mic Output / Passthrough",
-                "Warning", MessageBoxButton.OK,
-                MessageBoxImage.Warning);
+        {
+            await TaskDialog.ShowDialogAsync(new TaskDialogPage
+            {
+                Caption = "Mic Output and Speaker Output Matching",
+                Heading = "Warning!",
+                Text =
+                    "Mic Output and Speaker Output should not be set to the same device!\n\nMic Output is just for recording and not for use as a sidetone. You will hear yourself with a small delay!\n\nHit disconnect and change Mic Output / Passthrough",
+                Icon = TaskDialogIcon.Warning,
+                Buttons = [TaskDialogButton.OK]
+            });
+        }
     }
 
     private void PreviewAudio()
@@ -665,7 +672,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
             //get device
             try
             {
-                SaveSelectedInputAndOutput();
+                Task.Run(async () => await ShowMicPassthroughWarningAsync()).Wait();
 
                 _audioPreview = new AudioPreview();
                 _audioPreview.SpeakerBoost = VolumeConversionHelper.ConvertVolumeSliderToScale((float)SpeakerBoost);
@@ -707,7 +714,8 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
                 {
                     Caption = "Audio Output Error",
                     Heading = "Problem initialising Audio Output!",
-                    Text = "Try a different Output device and check privacy settings\n\nIf the problem persists, disable ALL other outputs and restart DCS SRS",
+                    Text =
+                        "Try a different Output device and check privacy settings\n\nIf the problem persists, disable ALL other outputs and restart DCS SRS",
                     Icon = TaskDialogIcon.Error,
                     Buttons =
                     {
@@ -824,7 +832,7 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         //stop timer
         _updateTimer?.Stop();
 
-        _client?.RequestDisconnect();
+        _client?.RequestDisconnectAsync();
         _client = null;
 
         Stop();
@@ -843,32 +851,5 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
 
         _serverSettingsWindow?.Close();
         _serverSettingsWindow = null;
-    }
-
-    private long lastAwacsToggleTime;
-    private long lastRadioToggleTime;
-    public Task HandleAsync(ToogleAwacsRadioOverlayMessage message, CancellationToken cancellationToken)
-    {
-        if (TimeSpan.FromTicks(DateTime.Now.Ticks - lastAwacsToggleTime).TotalMilliseconds > OVERLAY_DEBOUNCE)
-        {
-            lastAwacsToggleTime = DateTime.Now.Ticks;
-            //Debounce
-            // Even though it should be the UI thread - it wasnt working so this forces the UI / STA thread
-            App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(MultiRadioOverlay));
-        }
-     
-        return Task.CompletedTask;
-    }
-
-    public Task HandleAsync(ToggleSingleStackRadioOverlayMessage message, CancellationToken cancellationToken)
-    {
-        if (TimeSpan.FromTicks(DateTime.Now.Ticks - lastRadioToggleTime).TotalMilliseconds > OVERLAY_DEBOUNCE)
-        {
-            lastRadioToggleTime = DateTime.Now.Ticks;
-            // Even though it should be the UI thread - it wasnt working so this forces the UI / STA thread
-            App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(ToggleSingleRadioStack));
-        }
-
-        return Task.CompletedTask;
     }
 }

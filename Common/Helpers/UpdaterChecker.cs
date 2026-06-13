@@ -28,7 +28,7 @@ public class UpdaterChecker
 
     public static readonly string MINIMUM_PROTOCOL_VERSION = "1.9.0.0";
 
-    public static readonly string VERSION = "2.3.6.0";
+    public static readonly string VERSION = "2.3.8.2";
 
     private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
@@ -45,8 +45,9 @@ public class UpdaterChecker
         }
     }
 
-    public async void CheckForUpdate(bool checkForBetaUpdates, UpdateCallback updateCallback)
+    public async Task CheckForUpdateAsync(bool checkForBetaUpdates, UpdateCallback updateCallback)
     {
+#if !DEBUG
         var currentVersion = Version.Parse(VERSION);
 
 
@@ -54,9 +55,7 @@ public class UpdaterChecker
         {
             var githubClient = new GitHubClient(new ProductHeaderValue(GITHUB_USER_AGENT, VERSION));
 
-#if DEBUG
-            return;
-#endif
+
             var releases = await githubClient.Repository.Release.GetAll(GITHUB_USERNAME, GITHUB_REPOSITORY);
 
             var latestStableVersion = new Version();
@@ -166,6 +165,7 @@ public class UpdaterChecker
                 Error = true
             });
         }
+#endif
     }
 
     private bool IsDCSRunning()
@@ -200,9 +200,12 @@ public class UpdaterChecker
         }
 
 
-        Task.Run(() =>
+        Task.Run(async Task () =>
         {
-            while (IsDCSRunning()) Thread.Sleep(5000);
+            while (IsDCSRunning())
+            {
+                await Task.Delay(TimeSpan.FromSeconds(5));
+            }
 
 #pragma warning disable CA1416
             var principal = new WindowsPrincipal(WindowsIdentity.GetCurrent());

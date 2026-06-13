@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -260,7 +260,7 @@ public class InputDeviceManager : IDisposable
     public void AssignButton(DetectButton callback)
     {
         //detect the state of all current buttons
-        Task.Run(() =>
+        Task.Run(async Task () =>
         {
             var deviceList = _inputDevices.Values.ToList();
 
@@ -321,7 +321,7 @@ public class InputDeviceManager : IDisposable
 
             while (!found)
             {
-                Thread.Sleep(100);
+                await Task.Delay(TimeSpan.FromMilliseconds(100));
 
                 for (var i = 0; i < _inputDevices.Count; i++)
                 {
@@ -396,7 +396,7 @@ public class InputDeviceManager : IDisposable
                                             ButtonValue = buttonState
                                         };
 
-                                        Application.Current.Dispatcher.Invoke(() => { callback(inputDevice); });
+                                        await Application.Current.Dispatcher.InvokeAsync(() => { callback(inputDevice); });
 
 
                                         return;
@@ -422,7 +422,7 @@ public class InputDeviceManager : IDisposable
                                         ButtonValue = 1
                                     };
 
-                                    Application.Current.Dispatcher.Invoke(() => { callback(inputDevice); });
+                                    await Application.Current.Dispatcher.InvokeAsync(() => { callback(inputDevice); });
 
 
                                     return;
@@ -455,7 +455,7 @@ public class InputDeviceManager : IDisposable
                                         ButtonValue = buttonState
                                     };
 
-                                    Application.Current.Dispatcher.Invoke(() => { callback(inputDevice); });
+                                    await Application.Current.Dispatcher.InvokeAsync(() => { callback(inputDevice); });
                                     return;
                                 }
                             }
@@ -643,6 +643,9 @@ public class InputDeviceManager : IDisposable
                                         break;
                                     case InputBinding.TransponderIDENT:
                                         TransponderHelper.ToggleIdent();
+                                        break;
+                                    case InputBinding.TransponderPowerToggle:
+                                        TransponderHelper.TogglePower();
                                         break;
                                     case InputBinding.RadioVolumeUp:
                                         RadioHelper.RadioVolumeUp(dcsPlayerRadioInfo.selected);

@@ -31,8 +31,6 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
     private readonly ConnectedClientsSingleton _clients = ConnectedClientsSingleton.Instance;
     private readonly string _guid;
 
-    private readonly Timer _idleTimeout;
-
     private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
 
     private long _lastSent = -1;
@@ -46,21 +44,14 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
         _clients.Clear();
         _guid = guid;
         _playerUnitState = playerUnitState;
-
-        _idleTimeout = new Timer();
-        _idleTimeout.Interval = TimeSpan.FromSeconds(30).TotalMilliseconds;
-        _idleTimeout.Elapsed += CheckIfIdleTimeOut;
-        _idleTimeout.AutoReset = true;
-        _idleTimeout.Enabled = false;
     }
 
-    public Task HandleAsync(DisconnectRequestMessage message, CancellationToken cancellationToken)
+    public async Task HandleAsync(DisconnectRequestMessage message, CancellationToken cancellationToken)
     {
-        RequestDisconnect();
-        return Task.CompletedTask;
+        await RequestDisconnectAsync();
     }
 
-    public Task HandleAsync(EAMConnectRequestMessage eamConnectRequestMessage, CancellationToken cancellationToken)
+    public async Task HandleAsync(EAMConnectRequestMessage eamConnectRequestMessage, CancellationToken cancellationToken)
     {
         _playerUnitState.Name = eamConnectRequestMessage.Name;
         var message = new NetworkMessage
@@ -70,12 +61,10 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
             MsgType = NetworkMessage.MessageType.EXTERNAL_AWACS_MODE_PASSWORD
         };
 
-        SendToServer(message);
-
-        return Task.CompletedTask;
+        await SendToServerAsync(message);
     }
 
-    public Task HandleAsync(GatewayUnitDisconnectedMessage message, CancellationToken cancellationToken)
+    public async Task HandleAsync(GatewayUnitDisconnectedMessage message, CancellationToken cancellationToken)
     {
         var clone = message.UnitUpdate.DeepClone();
         clone.GatewayClient = true;
@@ -87,12 +76,10 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
             MsgType = NetworkMessage.MessageType.GATEWAY_CLIENT_DISCONNECT
         };
 
-        SendToServer(updateMessage);
-
-        return Task.CompletedTask;
+        await SendToServerAsync(updateMessage);
     }
 
-    public Task HandleAsync(GatewayUnitUpdateMessage message, CancellationToken cancellationToken)
+    public async Task HandleAsync(GatewayUnitUpdateMessage message, CancellationToken cancellationToken)
     {
         if (message.FullUpdate)
         {
@@ -112,7 +99,7 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
                 updateMessage.Client.LatLngPosition = new LatLngPosition();
 
 
-            SendToServer(updateMessage);
+            await SendToServerAsync(updateMessage);
         }
         else
         {
@@ -134,29 +121,25 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
                 updateMessage.Client.LatLngPosition = new LatLngPosition();
 
             //update state
-            SendToServer(updateMessage);
+            await SendToServerAsync(updateMessage);
         }
-
-        return Task.CompletedTask;
     }
 
-    public Task HandleAsync(UnitUpdateMessage message, CancellationToken cancellationToken)
+    public async Task HandleAsync(UnitUpdateMessage message, CancellationToken cancellationToken)
     {
         if (message.FullUpdate)
-            ClientRadioUpdated(message.UnitUpdate);
+            await ClientRadioUpdatedAsync(message.UnitUpdate);
         else
-            ClientCoalitionUpdate(message.UnitUpdate);
-
-        return Task.CompletedTask;
+            await ClientCoalitionUpdateAsync(message.UnitUpdate);
     }
 
-    private void CheckIfIdleTimeOut(object state, ElapsedEventArgs elapsedEventArgs)
+    private async Task CheckIfIdleTimeOutAsync()
     {
         var timeout = GlobalSettingsStore.Instance.GetClientSetting(GlobalSettingsKeys.IdleTimeOut).IntValue;
         if (_lastSent > 1 && TimeSpan.FromTicks(DateTime.Now.Ticks - _lastSent).TotalSeconds > timeout)
         {
             Logger.Warn("Disconnecting - Idle Time out");
-            RequestDisconnect();
+            await RequestDisconnectAsync();
         }
     }
 
@@ -182,20 +165,25 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
     private async void Connect()
     {
         _lastSent = DateTime.Now.Ticks;
-        _idleTimeout.Enabled = true;
-        _idleTimeout.Start();
         using (_cts = new CancellationTokenSource())
         {
+            var token = _cts.Token;
             using (_tcpClient = new TcpClient())
             {
                 try
                 {
                     _tcpClient.SendTimeout = 90000;
                     _tcpClient.NoDelay = true;
-
-                    // Wait for 10 seconds before aborting connection attempt - no SRS server running/port opened in that case
-                    _tcpClient.ConnectAsync(_serverEndpoint.Address, _serverEndpoint.Port, _cts.Token)
-                        .AsTask().Wait(TimeSpan.FromSeconds(10));
+                    using (var connectioncts = new CancellationTokenSource(TimeSpan.FromSeconds(10)))
+                    {
+                        using (var linkedcts = CancellationTokenSource.CreateLinkedTokenSource([token, connectioncts.Token]))
+                        {
+                            // Wait for 10 seconds before aborting connection attempt - no SRS server running/port opened in that case
+                            // Also abort if the user decides to cancel.
+                            await _tcpClient.ConnectAsync(_serverEndpoint.Address, _serverEndpoint.Port, linkedcts.Token);
+                        }
+                    }
+                    
 
                     if (_tcpClient.Connected)
                     {
@@ -203,7 +191,22 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
 
                         _tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
-                        await ClientSyncLoop();
+                        using (var idleTimeout = new PeriodicTimer(TimeSpan.FromSeconds(30)))
+                        {
+                            _ = Task.Run(async Task () =>
+                            {
+                                Logger.Info("Idle timeout check - Starting.");
+                                while (await idleTimeout.WaitForNextTickAsync(token))
+                                {
+                                    await CheckIfIdleTimeOutAsync();
+                                }
+
+                                Logger.Info("Idle timeout check - Stopping.");
+                            }, token);
+
+                            await ClientSyncLoopAsync();
+                            // On Disposing the periodic timer, it will cancel the associated task.
+                        }
                     }
                     else
                     {
@@ -215,7 +218,7 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
                 catch (Exception ex)
                 {
                     Logger.Error(ex, "Could not connect to server");
-                    RequestDisconnect();
+                    await RequestDisconnectAsync();
                 }
 
                 Disconnect();
@@ -223,11 +226,9 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
         }
 
         _cts = null;
-        _idleTimeout.Enabled = false;
-        _idleTimeout.Stop();
     }
 
-    private void ClientRadioUpdated(SRClientBase updatedUnitState)
+    private async Task ClientRadioUpdatedAsync(SRClientBase updatedUnitState)
     {
         Logger.Debug(
             $"Sending Full Update to Server if there is a change or {Constants.CLIENT_UPDATE_INTERVAL_LIMIT} seconds have passed since last update");
@@ -252,11 +253,11 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
                 message.Client.LatLngPosition = new LatLngPosition();
 
 
-            SendToServer(message);
+            await SendToServerAsync(message);
         }
     }
 
-    private void ClientCoalitionUpdate(SRClientBase updatedMetadata)
+    private async Task ClientCoalitionUpdateAsync(SRClientBase updatedMetadata)
     {
         Logger.Debug(
             $"Sending Full Update to Server if there is a change or {Constants.CLIENT_UPDATE_INTERVAL_LIMIT} seconds have passed since last update");
@@ -288,11 +289,11 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
                 message.Client.LatLngPosition = new LatLngPosition();
 
             //update state
-            SendToServer(message);
+            await SendToServerAsync(message);
         }
     }
 
-    private async Task ClientSyncLoop()
+    private async Task ClientSyncLoopAsync()
     {
         EventBus.Instance.SubscribeOnBackgroundThread(this);
         //clear the clients list
@@ -308,7 +309,7 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
                 //then use broadcasts / events for the rest
 
                 //start the loop off by sending a SYNC Request
-                SendToServer(new NetworkMessage
+                await SendToServerAsync(new NetworkMessage
                 {
                     Client = _playerUnitState,
                     MsgType = NetworkMessage.MessageType.SYNC
@@ -375,7 +376,7 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
                                 if (serverMessage.Version == null)
                                 {
                                     Logger.Error("Disconnecting Unversioned Server");
-                                    RequestDisconnect();
+                                    await RequestDisconnectAsync();
                                     break;
                                 }
 
@@ -392,7 +393,7 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
                                     //TODO show warning
                                     ShowVersionMistmatchWarning(serverMessage.Version);
 
-                                    RequestDisconnect();
+                                    await RequestDisconnectAsync();
                                     break;
                                 }
 
@@ -439,7 +440,7 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
                                 //TODO handle this on the client
                                 ShowVersionMistmatchWarning(serverMessage.Version);
 
-                                RequestDisconnect();
+                                await RequestDisconnectAsync();
                                 break;
                             case NetworkMessage.MessageType.EXTERNAL_AWACS_MODE_PASSWORD:
 
@@ -471,7 +472,7 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
                         if (decodeErrors > MAX_DECODE_ERRORS)
                         {
                             ShowVersionMistmatchWarning("unknown");
-                            RequestDisconnect();
+                            await RequestDisconnectAsync();
                             break;
                         }
                     }
@@ -527,7 +528,7 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
         EventBus.Instance.PublishOnUIThreadAsync(new InvalidServerVersionMessage(serverVersion));
     }
 
-    private void SendToServer(NetworkMessage message)
+    private async Task SendToServerAsync(NetworkMessage message)
     {
         try
         {
@@ -540,21 +541,26 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
                 Logger.Debug("Sending Radio Update To Server: " + json);
 
             var bytes = Encoding.UTF8.GetBytes(json);
-            _tcpClient.GetStream().Write(bytes, 0, bytes.Length);
+            await _tcpClient.GetStream().WriteAsync(bytes);
             //Need to flush?
         }
         catch (Exception ex)
         {
             Logger.Error(ex, "Client exception sending to server");
 
-            RequestDisconnect();
+            await RequestDisconnectAsync();
         }
     }
 
     //implement IDispose? To close stuff properly?
-    public async void RequestDisconnect()
+    public async Task RequestDisconnectAsync()
     {
-        _cts?.CancelAsync();
+        var cts = _cts;
+        if (cts != null)
+        {
+            await cts.CancelAsync();
+        }
+        
     }
     private void Disconnect()
     {

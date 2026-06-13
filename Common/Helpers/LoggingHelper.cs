@@ -12,8 +12,8 @@ public static class LoggingHelper
         var transmissionFileTarget = new FileTarget
         {
             FileName = @"${date:format=yyyy-MM-dd}-transmissionlog.csv",
-            ArchiveFileName = @"${basedir}/TransmissionLogArchive/{#}-transmissionlog.old.csv",
-            ArchiveNumbering = "Date", // #TODO switch to ArchiveSuffixFormat.
+            ArchiveOldFileOnStartup = true,
+            ArchiveFileName = @"${basedir}/TransmissionLogArchive/transmissionlog.old.csv",
             MaxArchiveFiles = archiveFiles,
             ArchiveEvery = FileArchivePeriod.Day,
             Layout = @"${longdate}, ${message}"

@@ -40,11 +40,11 @@ public sealed class ClientAdminViewModel : Screen, IHandle<ServerStateMessage>
         return Task.CompletedTask;
     }
 
-    protected override Task OnActivateAsync(CancellationToken token)
+    protected override Task OnActivatedAsync(CancellationToken token)
     {
         _updateTimer?.Start();
 
-        base.OnActivateAsync(token);
+        base.OnActivatedAsync(token);
         
         return Task.CompletedTask;
     }

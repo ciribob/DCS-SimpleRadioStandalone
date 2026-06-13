@@ -6,7 +6,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Utility
 {
     internal class SpeexProcessor : IDisposable
     {
-        private readonly Preprocessor speex;
+        private Preprocessor speex;
         //every 40ms so 500
         private int count;
 
@@ -16,15 +16,29 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Utility
             RefreshSettings(true);
         }
 
-        ~SpeexProcessor()
-        {
-            speex?.Dispose();
-        }
+        #region Disposable
 
+        // https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/implementing-dispose#base-class-with-managed-resources
+        private bool _isDisposed;
         public void Dispose()
         {
-            speex?.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_isDisposed)
+            {
+                _isDisposed = true;
+                if (disposing)
+                {
+                    speex?.Dispose();
+                    speex = null;
+                }
+            }
+        }
+#endregion Disposable
 
         public void Process(ArraySegment<short> frame)
         {

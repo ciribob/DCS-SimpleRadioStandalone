@@ -15,12 +15,11 @@
         <PublishSingleFile>false</PublishSingleFile>
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-        <LangVersion>11</LangVersion>
         <Nullable>disable</Nullable>
         <IsPackable>false</IsPackable>
         <Company>Ciribob - GitHub.com/Ciribob</Company>
-        <AssemblyVersion>2.3.6.0</AssemblyVersion>
-        <FileVersion>2.3.6.0</FileVersion>
+        <AssemblyVersion>2.3.8.2</AssemblyVersion>
+        <FileVersion>2.3.8.2</FileVersion>
         <Product>DCS-SimpleRadio Standalone</Product>
     </PropertyGroup>
     <PropertyGroup>

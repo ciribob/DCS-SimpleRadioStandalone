@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DCS-SR-ExternalAudio": {
+      "commandName": "Project",
+      "commandLineArgs": "--file=\"C:/Users/grosc/Music/airbourne-runnin-wild.ogg\" --freqs=251.0 --modulations=AM --coalition=1 --port=5002 --name=\"ext-test\""
+    }
+  }
+}

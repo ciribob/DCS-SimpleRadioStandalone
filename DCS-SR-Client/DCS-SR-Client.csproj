@@ -25,10 +25,10 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Company>Ciribob - GitHub.com/Ciribob</Company>
         <Product>DCS-SimpleRadio Standalone</Product>
-        <ApplicationVersion>2.3.6.0</ApplicationVersion>
-        <AssemblyVersion>2.3.6.0</AssemblyVersion>
-        <FileVersion>2.3.6.0</FileVersion>
-        <Version>2.3.6.0</Version>
+        <ApplicationVersion>2.3.8.2</ApplicationVersion>
+        <AssemblyVersion>2.3.8.2</AssemblyVersion>
+        <FileVersion>2.3.8.2</FileVersion>
+        <Version>2.3.8.2</Version>
         <ApplicationIcon>audio-headset.ico</ApplicationIcon>
     </PropertyGroup>
     <PropertyGroup>
@@ -490,18 +490,18 @@
     </ItemGroup>
     <ItemGroup>
 
-        <PackageReference Include="Extended.Wpf.Toolkit" Version="5.0.0" />
+        <PackageReference Include="Extended.Wpf.Toolkit" Version="5.1.2" />
         <PackageReference Include="Fody" Version="6.9.3">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="MahApps.Metro" Version="2.4.11" />
-        <PackageReference Include="Microsoft.Windows.Compatibility" Version="9.0.11" />
-        <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
-        <PackageReference Include="NAudio.Wasapi" Version="2.2.1" />
+        <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.9" />
+        <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
+        <PackageReference Include="NAudio.Wasapi" Version="2.3.0" />
         <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
-        <PackageReference Include="Sentry" Version="5.16.2" />
-        <PackageReference Include="SharpConfig" Version="3.2.9.1" />
+        <PackageReference Include="Sentry" Version="6.6.0" />
+        <PackageReference Include="SharpConfig" Version="4.1.0" />
         <PackageReference Include="SharpDX" Version="4.2.0" />
         <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
         <PackageReference Include="SharpDX.XInput" Version="4.2.0" />

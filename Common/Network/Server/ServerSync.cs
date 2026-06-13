@@ -42,11 +42,9 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
         _serverSettings = ServerSettingsStore.Instance;
 
         OptionKeepAlive = true;
-
         if (_serverSettings.GetServerSetting(ServerSettingsKeys.UPNP_ENABLED).BoolValue)
         {
-            _natHandler = new NatHandler(_serverSettings.GetServerPort());
-            _natHandler.OpenNAT();
+            _natHandler = new(_serverSettings.GetServerPort());
         }
     }
 
@@ -75,18 +73,28 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
         Logger.Error($"TCP SERVER ERROR: {error} ");
     }
 
-    public void StartListening()
+    public async Task StartListeningAsync()
     {
         OptionKeepAlive = true;
         try
         {
+            var handler = _natHandler;
+            if (handler != null)
+            {
+                await handler.OpenNATAsync();
+            }
+            
             Start();
         }
         catch (Exception ex)
         {
             try
             {
-                _natHandler?.CloseNAT();
+                var handler = _natHandler;
+                if (handler != null)
+                {
+                    await handler.CloseNATAsync();
+                }
             }
             catch
             {
@@ -628,7 +636,7 @@ public class ServerSync : TcpServer, IHandle<ServerSettingsChangedMessage>
     {
         try
         {
-            _natHandler?.CloseNAT();
+            _natHandler?.CloseNATAsync();
         }
         catch
         {

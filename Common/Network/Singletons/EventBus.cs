@@ -88,7 +88,7 @@ public class EventBus
         {
             var taskCompletionSource = new TaskCompletionSource<bool>();
 
-            Execute.BeginOnUIThread(async () =>
+            Execute.OnUIThreadAsync(async Task () =>
             {
                 try
                 {
@@ -181,7 +181,7 @@ public class EventBus
         {
             var taskCompletionSource = new TaskCompletionSource<bool>();
 
-            Execute.BeginOnUIThread(async () =>
+            Execute.OnUIThreadAsync(async Task () =>
             {
                 try
                 {

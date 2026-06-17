@@ -37,9 +37,34 @@ public class AudioInputSingleton
 
     #region Instance Definition
 
+    private GlobalSettingsStore _globalSettings = GlobalSettingsStore.Instance;
+
     public List<AudioDeviceListItem> InputAudioDevices { get; }
 
-    public AudioDeviceListItem SelectedAudioInput { get; set; }
+    public AudioDeviceListItem SelectedAudioInput
+    {
+        get;
+        set
+        {
+            if (!MicrophoneAvailable)
+            {
+                field = value;
+                return;
+            }
+
+            if (value == null || value.Value == null)
+            {
+                _globalSettings.SetClientSetting(GlobalSettingsKeys.AudioInputDeviceId, "default");
+            }
+            else
+            {
+                var input = ((MMDevice)value.Value).ID;
+                _globalSettings.SetClientSetting(GlobalSettingsKeys.AudioInputDeviceId, input);
+            }
+
+            field = value;
+        }
+    }
 
     // Indicates whether a valid microphone is available - deactivating audio input controls and transmissions otherwise
     public bool MicrophoneAvailable { get; private set; }
@@ -66,8 +91,6 @@ public class AudioInputSingleton
             return inputs;
         }
 
-        MicrophoneAvailable = true;
-
         Logger.Info("Audio Input - " + devices.Count + " audio input devices available, configuring as usual");
 
         inputs.Add(new AudioDeviceListItem
@@ -75,7 +98,6 @@ public class AudioInputSingleton
             Text = Resources.DefaultMicrophone,
             Value = null
         });
-        SelectedAudioInput = inputs[0];
 
         foreach (var item in devices)
             try
@@ -103,6 +125,13 @@ public class AudioInputSingleton
             {
                 Logger.Error(ex, "Audio Input - " + item.DeviceFriendlyName);
             }
+
+        MicrophoneAvailable = true;
+
+        if (SelectedAudioInput == null)
+        {
+            SelectedAudioInput = inputs[0];
+        }
 
         return inputs;
     }

@@ -32,7 +32,7 @@ public class DCSGameGuiHandler
     {
         _clientStateSingleton.LastPostionCoalitionSent = 0;
 
-        Task.Factory.StartNew(() =>
+        Task.Run(async Task () =>
         {
             while (!_stop)
                 try
@@ -47,15 +47,15 @@ public class DCSGameGuiHandler
                 {
                     Logger.Warn(ex,
                         $"Unable to bind to the DCS GameGUI Socket Port: {_globalSettings.GetNetworkSetting(GlobalSettingsKeys.DCSIncomingGameGUIUDP)}");
-                    Thread.Sleep(500);
+                    await Task.Delay(TimeSpan.FromMilliseconds(500));
                 }
 
             //    var count = 0;
             while (!_stop)
                 try
                 {
-                    var groupEp = new IPEndPoint(IPAddress.Any, 0);
-                    var bytes = _dcsGameGuiUdpListener.Receive(ref groupEp);
+                    var result = await _dcsGameGuiUdpListener.ReceiveAsync();
+                    var bytes = result.Buffer;
 
                     var updatedPlayerInfo =
                         JsonSerializer.Deserialize<DCSPlayerSideInfo>(Encoding.UTF8.GetString(
@@ -82,7 +82,7 @@ public class DCSGameGuiHandler
                         _clientStateSingleton.ClearPositionsIfExpired();
 
                         //TCPClient will automatically not send if its not actually changed
-                        EventBus.Instance.PublishOnCurrentThreadAsync(new UnitUpdateMessage()
+                        await EventBus.Instance.PublishOnCurrentThreadAsync(new UnitUpdateMessage()
                         {
                             FullUpdate = false,
                             UnitUpdate = new SRClientBase()

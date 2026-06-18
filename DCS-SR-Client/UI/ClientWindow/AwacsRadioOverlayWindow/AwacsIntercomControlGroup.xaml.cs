@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS.Models.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.AwacsRadioOverlayWindow;
@@ -146,20 +147,6 @@ public partial class IntercomControlGroup : UserControl
             return;
         }
 
-        var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
-
-        if (dcsPlayerRadioInfo != null && dcsPlayerRadioInfo.IsCurrent() &&
-            dcsPlayerRadioInfo.unitId >= DCSPlayerRadioInfo.UnitIdOffset)
-            try
-            {
-                _clientStateSingleton.IntercomOffset = (int)IntercomNumberSpinner.Value;
-                dcsPlayerRadioInfo.unitId =
-                    (uint)(DCSPlayerRadioInfo.UnitIdOffset + _clientStateSingleton.IntercomOffset);
-                _clientStateSingleton.LastSent = 0; //force refresh
-            }
-            catch (Exception)
-            {
-                //ignore 
-            }
+        RadioHelper.SetIntercom((int)IntercomNumberSpinner.Value);
     }
 }

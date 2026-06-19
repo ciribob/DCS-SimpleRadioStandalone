@@ -319,7 +319,7 @@ public partial class RadioControlGroup : UserControl
         SetupEncryption();
         HandleRetransmitStatus();
         HandleInstructorMode();
-        HandleSimulStatus();
+        HandleSimultaneousStatus();
 
         var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
 
@@ -530,7 +530,7 @@ public partial class RadioControlGroup : UserControl
         }
     }
 
-    private void HandleSimulStatus()
+    private void HandleSimultaneousStatus()
     {
         if (_clientStateSingleton.DcsPlayerRadioInfo != null &&
             _clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmission)
@@ -694,7 +694,7 @@ public partial class RadioControlGroup : UserControl
 
     private void ToggleSimultaneousTransmissionButton_Click(object sender, RoutedEventArgs e)
     {
-        RadioHelper.ToggleSimul(RadioId);
+        RadioHelper.ToggleSimultaneous(RadioId);
     }
 
     private void RetransmitClick(object sender, RoutedEventArgs e)

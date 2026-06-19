@@ -6,6 +6,10 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS.Models.DCSState;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.AwacsRadioOverlayWindow;
 

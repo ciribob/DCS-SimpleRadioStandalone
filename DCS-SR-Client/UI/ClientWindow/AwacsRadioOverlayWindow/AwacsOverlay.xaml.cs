@@ -189,8 +189,6 @@ public partial class AwaRadioOverlayWindow : Window
         WindowState = WindowState.Normal;
     }
 
-//
-//
     private void CalculateScale()
     {
         var yScale = ActualHeight / RadioOverlayWin.MinWidth;
@@ -225,6 +223,15 @@ public partial class AwaRadioOverlayWindow : Window
         var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
         if (dcsPlayerRadioInfo != null)
         {
+            ToggleGlobalSimultaneousTransmissionButton.Content =
+                dcsPlayerRadioInfo.simultaneousTransmission
+                    ? Properties.Resources.OverlaySimulTransON
+                    : Properties.Resources.OverlaySimulTransOFF;
+            ToggleGlobalSimultaneousTransmissionButton.Foreground =
+                dcsPlayerRadioInfo.simultaneousTransmission
+                    ? new SolidColorBrush(Colors.Orange)
+                    : new SolidColorBrush(Colors.White);
+
             foreach (var radio in radioControlGroup)
             {
                 if (!dcsPlayerRadioInfo.simultaneousTransmission)

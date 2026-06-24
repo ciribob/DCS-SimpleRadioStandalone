@@ -30,6 +30,7 @@
         <FileVersion>2.3.8.2</FileVersion>
         <Version>2.3.8.2</Version>
         <ApplicationIcon>audio-headset.ico</ApplicationIcon>
+        <EnableWindowsTargeting>true</EnableWindowsTargeting>
     </PropertyGroup>
     <PropertyGroup>
         <StartupObject>Ciribob.DCS.SimpleRadio.Standalone.Client.App</StartupObject>

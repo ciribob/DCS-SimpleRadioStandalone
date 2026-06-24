@@ -1,5 +1,8 @@
 {
-	 description = "A Simple Radio Standalone Flake";
+	#
+	# Nuget Dependency lock file is updated with: `nix build .#<package name>.fetch-deps`
+	# 
+	description = "A Simple Radio Standalone Flake";
 
 	inputs = {
 		nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";

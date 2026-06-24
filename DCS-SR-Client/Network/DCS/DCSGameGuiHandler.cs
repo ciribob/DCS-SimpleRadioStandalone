@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -66,6 +68,7 @@ public class DCSGameGuiHandler
 
                     if (updatedPlayerInfo != null)
                     {
+                        Console.WriteLine(@"PlayerData was valid");
 
                         var currentInfo = _clientStateSingleton.PlayerCoaltionLocationMetadata;
 
@@ -77,7 +80,7 @@ public class DCSGameGuiHandler
                         currentInfo.seat = updatedPlayerInfo.seat;
 
                         _clientStateSingleton.LastSeenName = currentInfo.name;
-                        
+
                         //this will clear any stale positions if nothing is currently connected
                         _clientStateSingleton.ClearPositionsIfExpired();
 
@@ -96,8 +99,27 @@ public class DCSGameGuiHandler
                                 DISEntityId = _globalSettings.GetClientSettingInt(GlobalSettingsKeys.DISEntityID)
                             }
                         });
-                        
+
                         _clientStateSingleton.DcsGameGuiLastReceived = DateTime.Now.Ticks;
+                    }
+
+                    DCSTimeUpdate newTimeUpdate = JsonSerializer.Deserialize<DCSTimeUpdate>(Encoding.UTF8.GetString(
+                        bytes, 0, bytes.Length), new JsonSerializerOptions() { IncludeFields = true, });
+
+                    if (newTimeUpdate != null && !DCSTimeUpdate.IsZero(newTimeUpdate))
+                    {
+                        var currentMissionTime = DCSTimeUpdate.Iso8691Builder(newTimeUpdate);
+                        var startMissionTime = newTimeUpdate.GetStartMissionTime();
+
+                        Debug.WriteLine("Mission Start Time: " + startMissionTime?.ToString(CultureInfo.InvariantCulture));
+                        Debug.WriteLine("Mission Current Time: " + currentMissionTime?.ToString(CultureInfo.InvariantCulture));
+
+                        if (currentMissionTime.HasValue && startMissionTime.HasValue)
+                        {
+                            EventBus.Instance.PublishOnCurrentThreadAsync(
+                                new DCSMissionTimeUpdateMessage(currentMissionTime.Value, startMissionTime.Value)
+                            );
+                        }
                     }
                 }
                 catch (SocketException e)

@@ -1,0 +1,87 @@
+[
+  {
+    "pname": "Caliburn.Micro.Core",
+    "version": "5.0.258",
+    "hash": "sha256-yH8pKAx2EZ2q9T8hUSaJhTpTYMJbpVm+2708ftZBnv0="
+  },
+  {
+    "pname": "CommandLineParser",
+    "version": "2.9.1",
+    "hash": "sha256-ApU9y1yX60daSjPk3KYDBeJ7XZByKW8hse9NRZGcjeo="
+  },
+  {
+    "pname": "Concentus",
+    "version": "2.2.2",
+    "hash": "sha256-9If4kL72V1evHOz0IONX8ASIy/rAtAm6RhzLzu+BSB8="
+  },
+  {
+    "pname": "Concentus.Oggfile",
+    "version": "1.0.7",
+    "hash": "sha256-16exubiK2aYuz7UsdCGQpSLhS8vRJ1o20z6+TDZEwHw="
+  },
+  {
+    "pname": "Microsoft.Build.Tasks.Git",
+    "version": "10.0.300",
+    "hash": "sha256-cdvyK+XBEwx9906sUV6Rwd/VZuRSNpjOZbBVvMfzeVk="
+  },
+  {
+    "pname": "Microsoft.SourceLink.Common",
+    "version": "10.0.300",
+    "hash": "sha256-LGQ87vbHtPHngqOGhvhN5RBe2tTI622/NzkapkCWkfE="
+  },
+  {
+    "pname": "Microsoft.SourceLink.GitHub",
+    "version": "10.0.300",
+    "hash": "sha256-bqJJKa8igI0erZjUQSZJQ95LJHsc9XIMNxGZ3b20fF8="
+  },
+  {
+    "pname": "NAudio.Core",
+    "version": "2.3.0",
+    "hash": "sha256-KUDC2+q+dzZCRUkifePSfxAQCFi+VpIKsSDkYht/Mgw="
+  },
+  {
+    "pname": "NLog",
+    "version": "6.1.3",
+    "hash": "sha256-s0sxfQ1tiWRSFVh/m/eIzEe4+ZgT02e9GZiwDAi7xp4="
+  },
+  {
+    "pname": "Octokit",
+    "version": "14.0.0",
+    "hash": "sha256-pTSI7Tz5VFd4Ydx1laE+VkZfhsl7Rbgw42PBqhyVvyI="
+  },
+  {
+    "pname": "OggVorbisEncoder",
+    "version": "1.2.2",
+    "hash": "sha256-bT1OTDkotU1eN/AvNFzsP7jRm4y3GNGl7FjXChVhNB8="
+  },
+  {
+    "pname": "Sentry",
+    "version": "6.6.0",
+    "hash": "sha256-IDDBHUcJkxliwRtn+xjh6Dy4vpmfvyBdXF1VMeUh2pw="
+  },
+  {
+    "pname": "Sentry.PlatformAbstractions",
+    "version": "1.1.1",
+    "hash": "sha256-UrHNwHWri4iEu4ulMLgOIFgXz72lSDFj8CBf6Wv3vYI="
+  },
+  {
+    "pname": "Sentry.Protocol",
+    "version": "2.1.8",
+    "hash": "sha256-dJCQ5ULFwSrnULfr4VYKpwhRnvSNOT0QZYsW1j3hahE="
+  },
+  {
+    "pname": "SharpConfig",
+    "version": "4.1.0",
+    "hash": "sha256-xp6P5RB0oBMJ65M1JHr64TIZrfuvvGhCv/tP7JqH42I="
+  },
+  {
+    "pname": "SharpOpenNat",
+    "version": "4.0.17",
+    "hash": "sha256-K4VxjhqPAUbBDQ5Eo+DUEFf5JF43w7Gf4w0S9FtSB4I="
+  },
+  {
+    "pname": "System.IO.Hashing",
+    "version": "10.0.8",
+    "hash": "sha256-nsDMvCvAeKCyp566iEyp3JOWfQnTPgDU3dIFMg0iUL0="
+  }
+]

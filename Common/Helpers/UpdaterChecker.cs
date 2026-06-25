@@ -10,12 +10,9 @@ using Octokit;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 
-// UpdaterChecker now inherits from GitHubUpdaterBase for GitHub API and rate limit management
-public class UpdaterChecker : GitHubUpdaterBase
+public class UpdaterChecker
 {
     public delegate void UpdateCallback(UpdateCallbackResult result);
-
-    private static readonly UpdaterChecker _instance = new UpdaterChecker();
 
     public static readonly string MINIMUM_PROTOCOL_VERSION = "1.9.0.0";
 
@@ -23,10 +20,10 @@ public class UpdaterChecker : GitHubUpdaterBase
 
     private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
-    public static UpdaterChecker Instance => _instance;
+    public static UpdaterChecker Instance { get; } = new();
 
     // Constructor passes version to base for GitHubClient initialization
-    public UpdaterChecker() : base(VERSION) { }
+    private UpdaterChecker() { }
 
     public async Task CheckForUpdateAsync(bool checkForBetaUpdates, UpdateCallback updateCallback)
     {
@@ -35,9 +32,6 @@ public class UpdaterChecker : GitHubUpdaterBase
 
         try
         {
-#if DEBUG
-            return;
-#endif
             // Get all releases using the new static helper
             var releases = await GitHubUpdater.GetAllReleasesAsync(null, VERSION);
 

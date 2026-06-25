@@ -18,9 +18,6 @@ public static class GitHubUpdater
     private static readonly string DefaultVersion = "1.0.0.0";
     private static readonly int DefaultMaxRetries = 3;
 
-    // Semaphore to serialize all update checks
-    private static readonly SemaphoreSlim UpdateSemaphore = new(1, 1);
-
     public static async Task<T> ExecuteGitHubRequestWithRateLimitAsync<T>(
         Func<GitHubClient, Task<T>> githubCall,
         Action<TimeSpan, int, int>? onRateLimitWait = null,
@@ -32,8 +29,6 @@ public static class GitHubUpdater
         int attempt = 0;
         maxRetries = (maxRetries <= 0) ? DefaultMaxRetries : maxRetries; //if maxRetries is 0 or less use default
         version = (string.IsNullOrWhiteSpace(version)) ? DefaultVersion : version; //if version is empty use default
-        await UpdateSemaphore.WaitAsync();
-        Logger.Debug("Update semaphore acquired for GitHubUpdater.");
         try
         {
             var client = new GitHubClient(new ProductHeaderValue(GitHubUserAgent, version));
@@ -56,10 +51,11 @@ public static class GitHubUpdater
                     if (attempt >= maxRetries)
                         throw;
 
+                    // Start the delay before the user callback so the user callback doesn't add extra delay if it runs long.
+                    var backoffDelayTask = Task.Delay(waitFor, cancellationToken);
                     // Notify the caller about the wait
                     onRateLimitWait?.Invoke(waitFor, attempt, maxRetries);
-
-                    await Task.Delay(waitFor, cancellationToken);
+                    await backoffDelayTask;
                 }
             }
             throw new Exception($"Maximum retry attempts ({maxRetries}) reached for GitHub API call.");
@@ -67,7 +63,6 @@ public static class GitHubUpdater
         finally
         {
             Logger.Debug("Releasing update semaphore for GitHubUpdater.");
-            UpdateSemaphore.Release();
         }
     }
 

@@ -41,7 +41,7 @@
           in
           {
             server-cli = pkgs.buildDotnetModule {
-              pname = "DCS-SR-Server-CLI";
+              pname = "SRS-Server-Commandline";
               version = revision;
 
               src = lib.fileset.toSource {

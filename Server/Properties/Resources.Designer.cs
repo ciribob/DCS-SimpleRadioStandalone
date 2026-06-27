@@ -160,7 +160,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
         }
         
         /// <summary>
-        ///   Cerca una stringa localizzata simile a ATCAWACS Transponder Export.
+        ///   Cerca una stringa localizzata simile a ATC-AWACS Transponder Export.
         /// </summary>
         public static string LabelATCAWACSExport {
             get {

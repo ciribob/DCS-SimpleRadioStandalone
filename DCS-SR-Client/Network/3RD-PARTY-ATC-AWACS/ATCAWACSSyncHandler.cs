@@ -110,6 +110,12 @@ public class ATCAWACSSyncHandler
     {
         _clientStateSingleton.ATCAWACSLastReceived = DateTime.Now.Ticks;
 
+        // Check if the external tool provided a display name in the JSON payload
+        if (!string.IsNullOrEmpty(controller.displayName))
+        {
+            _clientStateSingleton.ATCAWACSToolName = controller.displayName;
+        }
+
         //only send update if position and line of sight are enabled
         var shouldUpdate = _serverSettings.GetSettingAsBool(ServerSettingsKeys.DISTANCE_ENABLED) ||
                            _serverSettings.GetSettingAsBool(ServerSettingsKeys.LOS_ENABLED);

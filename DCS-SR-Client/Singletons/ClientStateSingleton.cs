@@ -39,6 +39,12 @@ public sealed class ClientStateSingleton : PropertyChangedBaseClass, IHandle<TCP
 
     private bool isVoipConnected;
 
+    // The single, immutable default fallback name used across the application
+    private const string DEFAULT_ATC_AWACS_TOOL_NAME = "ATC-AWACS";
+
+    // Backing field to hold the dynamic tool name in real-time
+    private string currentAtcAwacsToolName = DEFAULT_ATC_AWACS_TOOL_NAME;
+
     private ClientStateSingleton()
     {
         RadioSendingState = new RadioSendingState();
@@ -58,6 +64,14 @@ public sealed class ClientStateSingleton : PropertyChangedBaseClass, IHandle<TCP
             NotifyPropertyChanged("IsGameConnected");
             NotifyPropertyChanged("IsATCAWACSConnected");
             NotifyPropertyChanged("ExternalAWACSModeConnected");
+
+            // Reset the tool display name to fallback default if the connection has timed out
+            if (!IsATCAWACSConnected && ATCAWACSToolName != DEFAULT_ATC_AWACS_TOOL_NAME)
+            {
+                // Revert the public property back to the single immutable default reference
+                ATCAWACSToolName = DEFAULT_ATC_AWACS_TOOL_NAME;
+                NotifyPropertyChanged("ATCAWACSToolName");
+            }
         };
         _timer.Start();
 
@@ -267,6 +281,22 @@ public sealed class ClientStateSingleton : PropertyChangedBaseClass, IHandle<TCP
                 }
 
         return count;
+    }
+
+    // Holds the dynamic display name of the connected tool (e.g., "LotATC", "DCS Airspace").
+    // Uses NotifyPropertyChanged with an explicit property name string to guarantee UI binding updates.
+    public string ATCAWACSToolName
+    {
+        get => currentAtcAwacsToolName;
+        set
+        {
+            if (currentAtcAwacsToolName != value)
+            {
+                currentAtcAwacsToolName = value;
+                // Explicitly pass the property name string to ensure the WPF UI refreshes instantly
+                NotifyPropertyChanged("ATCAWACSToolName");
+            }
+        }
     }
 
     public void Close()

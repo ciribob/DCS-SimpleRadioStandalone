@@ -178,7 +178,7 @@
     <value>地形遮挡检测</value>
   </data>
   <data name="LabelATCAWACSExport" xml:space="preserve">
-    <value>ATCAWACS应答机导出</value>
+    <value>ATC-AWACS应答机导出</value>
   </data>
   <data name="LabelOverrideEffectsOnGlobal" xml:space="preserve">
     <value>大厅无视无线电效果</value>

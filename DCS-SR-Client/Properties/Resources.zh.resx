@@ -568,7 +568,7 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
     <value>机内通讯开始音效</value>
   </data>
   <data name="ATCAWACSConnectionStatusLabel" xml:space="preserve">
-    <value>ATCAWACS</value>
+    <value>ATC-AWACS</value>
   </data>
   <data name="MicAGC" xml:space="preserve">
     <value>麦克风自动音量增益控制</value>

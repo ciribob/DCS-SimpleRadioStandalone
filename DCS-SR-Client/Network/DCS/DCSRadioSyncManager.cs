@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Threading;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.LotATC;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.ATCAWACS;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.VAICOM;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network.Singletons;
@@ -27,7 +27,7 @@ public class DCSRadioSyncManager
     private readonly DCSRadioSyncHandler _dcsRadioSyncHandler;
 
     private readonly DCSLineOfSightHandler _lineOfSightHandler;
-    private readonly LotATCSyncHandler _lotATCSyncHandler;
+    private readonly ATCAWACSSyncHandler _ATCAWACSSyncHandler;
     private readonly UDPCommandHandler _udpCommandHandler;
 
     private VAICOMSyncHandler _vaicomHandler;
@@ -40,7 +40,7 @@ public class DCSRadioSyncManager
         _dcsGameGuiHandler = new DCSGameGuiHandler();
         _dcsRadioSyncHandler = new DCSRadioSyncHandler();
         _vaicomHandler = new VAICOMSyncHandler();
-        _lotATCSyncHandler = new LotATCSyncHandler(guid);
+        _ATCAWACSSyncHandler = new ATCAWACSSyncHandler(guid);
 
         _clearRadio = new DispatcherTimer(DispatcherPriority.Background, Application.Current.Dispatcher)
             { Interval = TimeSpan.FromSeconds(1) };
@@ -81,7 +81,7 @@ public class DCSRadioSyncManager
         _udpCommandHandler.Start();
         _clearRadio.Start();
         _vaicomHandler.Start();
-        _lotATCSyncHandler.Start();
+        _ATCAWACSSyncHandler.Start();
     }
 
     public void Stop()
@@ -94,6 +94,6 @@ public class DCSRadioSyncManager
         _lineOfSightHandler.Stop();
         _udpCommandHandler.Stop();
         _vaicomHandler.Stop();
-        _lotATCSyncHandler.Stop();
+        _ATCAWACSSyncHandler.Stop();
     }
 }

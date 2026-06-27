@@ -6,7 +6,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
 public class Transponder
 {
     /**
-     * *  -- IFF_STATUS:  OFF = 0,  NORMAL = 1 , or IDENT = 2 (IDENT means Blink on LotATC)
+     * *  -- IFF_STATUS:  OFF = 0,  NORMAL = 1 , or IDENT = 2 (IDENT means Blink on ATCAWACS)
      * -- M1:-1 = off, any other number on
      * -- M2: -1 = OFF, any other number on
      * -- M3: -1 = OFF, any other number on

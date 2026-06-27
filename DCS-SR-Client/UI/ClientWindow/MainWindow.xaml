@@ -359,9 +359,9 @@
                                    Margin="0,0,5,0" />
                             <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                             <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center"
-                                   Content="{x:Static p:Resources.LotATCConnectionStatusLabel}" />
-                            <Image x:Name="LotATCConnectionStatus"
-                                   Source="{Binding Path=ClientState.IsLotATCConnected, Converter={StaticResource ConnectionStatusImageConverter}}"
+                                   Content="{x:Static p:Resources.ATCAWACSConnectionStatusLabel}" />
+                            <Image x:Name="ATCAWACSConnectionStatus"
+                                   Source="{Binding Path=ClientState.IsATCAWACSConnected, Converter={StaticResource ConnectionStatusImageConverter}}"
                                    Height="26"
                                    HorizontalAlignment="Center"
                                    Margin="0,0,0,0" />

@@ -328,7 +328,7 @@ function srsOverlay.updateRadio()
         
         local _radioInfo  =_radioState.RadioInfo
 
-        -- IFF_STATUS:  OFF = 0,  NORMAL = 1 , or IDENT = 2 (IDENT means Blink on LotATC) , 3 DISABLED
+        -- IFF_STATUS:  OFF = 0,  NORMAL = 1 , or IDENT = 2 (IDENT means Blink on ATCAWACS) , 3 DISABLED
         -- M1: -1 = OFF, any other number on
         -- M2: -1 = OFF, any other number on 
         -- M3: -1 = OFF, any other number on 

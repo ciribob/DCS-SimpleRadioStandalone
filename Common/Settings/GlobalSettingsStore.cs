@@ -75,9 +75,9 @@ public enum GlobalSettingsKeys
 
     RequireAdmin,
 
-    //LotATC
-    LotATCIncomingUDP, //10710
-    LotATCOutgoingUDP, //10711
+    //ATCAWACS
+    ATCAWACSIncomingUDP, //10710
+    ATCAWACSOutgoingUDP, //10711
 
     SettingsProfiles,
     AutoSelectSettingsProfile,
@@ -85,7 +85,7 @@ public enum GlobalSettingsKeys
     VAICOMIncomingUDP, //33501 
     VAICOMTXInhibitEnabled,
 
-    LotATCHeightOffset,
+    ATCAWACSHeightOffset,
 
     DCSAutoConnectUDP, // 5069
     ShowTransmitterName,
@@ -325,9 +325,9 @@ public class GlobalSettingsStore
 
         { GlobalSettingsKeys.AutoSelectSettingsProfile.ToString(), "false" },
 
-        { GlobalSettingsKeys.LotATCIncomingUDP.ToString(), "10710" },
-        { GlobalSettingsKeys.LotATCOutgoingUDP.ToString(), "10711" },
-        { GlobalSettingsKeys.LotATCHeightOffset.ToString(), "50" },
+        { GlobalSettingsKeys.ATCAWACSIncomingUDP.ToString(), "10710" },
+        { GlobalSettingsKeys.ATCAWACSOutgoingUDP.ToString(), "10711" },
+        { GlobalSettingsKeys.ATCAWACSHeightOffset.ToString(), "50" },
 
 
         { GlobalSettingsKeys.VAICOMIncomingUDP.ToString(), "33501" },

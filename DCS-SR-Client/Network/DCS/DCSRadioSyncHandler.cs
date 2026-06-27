@@ -298,7 +298,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
 
         playerRadioInfo.simultaneousTransmissionControl = message.simultaneousTransmissionControl;
 
-        if (!_clientStateSingleton.ShouldUseLotATCPosition())
+        if (!_clientStateSingleton.ShouldUseATCAWACSPosition())
             _clientStateSingleton.UpdatePlayerPosition(message.latLng);
 
         var overrideFreqAndVol = false;

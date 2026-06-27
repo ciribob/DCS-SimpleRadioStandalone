@@ -567,8 +567,8 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
   <data name="IntercomStartTransmitEffect" xml:space="preserve">
     <value>机内通讯开始音效</value>
   </data>
-  <data name="LotATCConnectionStatusLabel" xml:space="preserve">
-    <value>LotATC</value>
+  <data name="ATCAWACSConnectionStatusLabel" xml:space="preserve">
+    <value>ATCAWACS</value>
   </data>
   <data name="MicAGC" xml:space="preserve">
     <value>麦克风自动音量增益控制</value>

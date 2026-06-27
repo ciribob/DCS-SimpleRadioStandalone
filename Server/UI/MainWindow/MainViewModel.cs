@@ -214,8 +214,8 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
         public string TunedCountText
             => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.SHOW_TUNED_COUNT).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
-        public string LotATCExportText
-            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_ENABLED).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
+        public string ATCAWACSExportText
+            => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.ATCAWACS_EXPORT_ENABLED).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
 
         public string ShowTransmitterNameText
             => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.SHOW_TRANSMITTER_NAME).BoolValue ? $"{Properties.Resources.BtnOn}" : $"{Properties.Resources.BtnOff}";
@@ -441,11 +441,11 @@ public sealed class MainViewModel : Screen, IHandle<ServerStateMessage>
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
         }
 
-        public void LotATCExportToggle()
+        public void ATCAWACSExportToggle()
         {
-            var newSetting = LotATCExportText != $"{Properties.Resources.BtnOn}";
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_ENABLED, newSetting);
-            NotifyOfPropertyChange(() => LotATCExportText);
+            var newSetting = ATCAWACSExportText != $"{Properties.Resources.BtnOn}";
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.ATCAWACS_EXPORT_ENABLED, newSetting);
+            NotifyOfPropertyChange(() => ATCAWACSExportText);
 
             _eventAggregator.PublishOnBackgroundThreadAsync(new ServerSettingsChangedMessage());
         }

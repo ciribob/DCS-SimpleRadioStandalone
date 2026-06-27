@@ -177,8 +177,8 @@
   <data name="LabelLOS" xml:space="preserve">
     <value>地形遮挡检测</value>
   </data>
-  <data name="LabelLotATCExport" xml:space="preserve">
-    <value>LotATC应答机导出</value>
+  <data name="LabelATCAWACSExport" xml:space="preserve">
+    <value>ATCAWACS应答机导出</value>
   </data>
   <data name="LabelOverrideEffectsOnGlobal" xml:space="preserve">
     <value>大厅无视无线电效果</value>

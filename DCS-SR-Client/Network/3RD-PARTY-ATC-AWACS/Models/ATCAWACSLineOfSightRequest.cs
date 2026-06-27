@@ -1,6 +1,6 @@
-﻿namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.LotATC.Models;
+﻿namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.ATCAWACS.Models;
 
-public struct LotATCLineOfSightRequest
+public struct ATCAWACSLineOfSightRequest
 {
     //{ "long1": 39.00, "lat1": 42.00, "alt1": 10, "long2": 40.00, "lat2": 44.00, "alt2": 1600, "clientId":"SOME_ID" }
     public double long1;

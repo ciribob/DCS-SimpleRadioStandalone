@@ -56,7 +56,7 @@ public sealed class ClientStateSingleton : PropertyChangedBaseClass, IHandle<TCP
         _timer.Tick += (s, e) =>
         {
             NotifyPropertyChanged("IsGameConnected");
-            NotifyPropertyChanged("IsLotATCConnected");
+            NotifyPropertyChanged("IsATCAWACSConnected");
             NotifyPropertyChanged("ExternalAWACSModeConnected");
         };
         _timer.Start();
@@ -88,7 +88,7 @@ public sealed class ClientStateSingleton : PropertyChangedBaseClass, IHandle<TCP
     public long DcsExportLastReceived { get; set; }
 
     // Timestamp for the last time 
-    public long LotATCLastReceived { get; set; }
+    public long ATCAWACSLastReceived { get; set; }
 
     //store radio channels here?
     public PresetChannelsViewModel[] FixedChannels { get; }
@@ -146,7 +146,7 @@ public sealed class ClientStateSingleton : PropertyChangedBaseClass, IHandle<TCP
         }
     }
 
-    public bool IsLotATCConnected => LotATCLastReceived >= DateTime.Now.Ticks - 50000000;
+    public bool IsATCAWACSConnected => ATCAWACSLastReceived >= DateTime.Now.Ticks - 50000000;
 
     public bool IsGameGuiConnected => DcsGameGuiLastReceived >= DateTime.Now.Ticks - 100000000;
 
@@ -205,9 +205,9 @@ public sealed class ClientStateSingleton : PropertyChangedBaseClass, IHandle<TCP
         return Task.CompletedTask;
     }
 
-    public bool ShouldUseLotATCPosition()
+    public bool ShouldUseATCAWACSPosition()
     {
-        if (!IsLotATCConnected) return false;
+        if (!IsATCAWACSConnected) return false;
 
         if (IsGameExportConnected)
             if (DcsPlayerRadioInfo.inAircraft)
@@ -218,8 +218,8 @@ public sealed class ClientStateSingleton : PropertyChangedBaseClass, IHandle<TCP
 
     public void ClearPositionsIfExpired()
     {
-        //not game or Lotatc - clear it!
-        if (!IsLotATCConnected && !IsGameExportConnected)
+        //not game or ATCAWACS - clear it!
+        if (!IsATCAWACSConnected && !IsGameExportConnected)
             PlayerCoaltionLocationMetadata.LngLngPosition = new LatLngPosition();
     }
 

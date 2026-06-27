@@ -666,5 +666,41 @@ public class GlobalSettingsStore
             Save();
             loadedVersion = 1;
         }
+
+        if (loadedVersion == 1)
+        {
+            // Update to V2:
+            // * Migrate legacy LotATC ports to the generic ATCAWACS settings
+            // * Remove obsolete LotATC keys from the config file to prevent duplicates
+            if (_configuration.Contains("Network Settings"))
+            {
+                var networkSection = _configuration["Network Settings"];
+
+                // Migrate INCOMING port
+                if (networkSection.Contains("LotATCIncomingUDP"))
+                {
+                    var oldVal = networkSection["LotATCIncomingUDP"].StringValue;
+                    SetSetting("Network Settings", GlobalSettingsKeys.ATCAWACSIncomingUDP.ToString(), oldVal);
+
+                    // Remove the old obsolete key from the configuration
+                    networkSection.Remove("LotATCIncomingUDP");
+                }
+
+                // Migrate OUTGOING port
+                if (networkSection.Contains("LotATCOutgoingUDP"))
+                {
+                    var oldVal = networkSection["LotATCOutgoingUDP"].StringValue;
+                    SetSetting("Network Settings", GlobalSettingsKeys.ATCAWACSOutgoingUDP.ToString(), oldVal);
+
+                    // Remove the old obsolete key from the configuration
+                    networkSection.Remove("LotATCOutgoingUDP");
+                }
+            }
+            // Upgrade done, bump version to 2
+            SetClientSetting(GlobalSettingsKeys.Version, 2);
+
+            Save();
+            loadedVersion = 2;
+        }
     }
 }

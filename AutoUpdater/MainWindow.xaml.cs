@@ -14,6 +14,7 @@ using System.Windows.Threading;
 using Octokit;
 using MessageBox = System.Windows.MessageBox;
 using Path = System.IO.Path;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers; // Add this for GitHubUpdater
 
 namespace AutoUpdater;
 
@@ -22,12 +23,6 @@ namespace AutoUpdater;
 /// </summary>
 public partial class MainWindow : Window
 {
-    public static readonly string GITHUB_USERNAME = "ciribob";
-
-    public static readonly string GITHUB_REPOSITORY = "DCS-SimpleRadioStandalone";
-
-    // Required for all requests against the GitHub API, as per https://developer.github.com/v3/#user-agent-required
-    public static readonly string GITHUB_USER_AGENT = $"{GITHUB_USERNAME}_{GITHUB_REPOSITORY}";
     private bool _cancel;
     private string _directory;
     private string _file;
@@ -38,6 +33,10 @@ public partial class MainWindow : Window
     private Uri _uri;
 
     private string changelogURL = "";
+
+    private DispatcherTimer _rateLimitTimer;
+    private DateTime _rateLimitEndTime;
+    private CancellationTokenSource _rateLimitCts;
 
     public MainWindow()
     {
@@ -155,49 +154,80 @@ public partial class MainWindow : Window
     
     private async Task<Uri> GetPathToLatestVersion()
     {
-        Status.Content = "Finding Latest SRS Version";
-        var githubClient = new GitHubClient(new ProductHeaderValue(GITHUB_USER_AGENT, "1.0.0.0"));
+        Status.Content = "Fetching Latest SRS Version...";
+        _rateLimitCts = new CancellationTokenSource();
 
-        var releases = await githubClient.Repository.Release.GetAll(GITHUB_USERNAME, GITHUB_REPOSITORY);
+        IReadOnlyList<Release> releases = null;
+        try
+        {
+            releases = await GitHubUpdater.GetAllReleasesAsync(
+                version: "",
+                onRateLimitWait: (waitFor, attempt, maxRetries) =>
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        //Status.Content = $"Rate limit hit. Waiting {waitFor.TotalSeconds:N0} seconds (attempt {attempt}/{maxRetries})...";
+                        ShowRateLimitCountdown(waitFor, _rateLimitCts);
+                    });
+                },
+                cancellationToken: _rateLimitCts.Token
+            );
+        }
+        catch (OperationCanceledException)
+        {
+            Status.Content = "Update cancelled due to rate limit.";
+            return null;
+        }
+        finally
+        {
+            HideRateLimitCountdown();
+        }
 
         var release = FindRightRelease(releases);
-        var releaseAsset = release.Assets.First();
+        if (release == null)
+        {
+            Status.Content = "No suitable release found.";
+            return null;
+        }
 
-        foreach (var asset in release.Assets)
-            if (asset.Name.ToLower().StartsWith("dcs-simpleradiostandalone") &&
-                asset.Name.ToLower().Contains(".zip"))
+        var releaseAsset = release.Assets.FirstOrDefault(asset =>
+            asset.Name.ToLower().StartsWith("dcs-simpleradiostandalone") &&
+            asset.Name.ToLower().Contains(".zip"));
+
+        if (releaseAsset == null)
+        {
+            Status.Content = "No downloadable asset found for the release.";
+            return null;
+        }
+
+        changelogURL = release.HtmlUrl;
+        Status.Content = $"Downloading SRS Version {release.TagName}...";
+
+        if (ServerInstall())
+        {
+            //check the path and version
+            var path = ServerPath();
+
+            if (path.Length > 0)
             {
-                changelogURL = release.HtmlUrl;
-                Status.Content = "Downloading Version " + release.TagName;
-
-                if (ServerInstall())
+                var latestVersion = new Version(release.TagName.Replace("v", ""));
+                var serverExe = Path.Combine(path, "Server", "SRS-Server.exe");
+                var useThisVersion = true;
+                if (Path.Exists(serverExe))
                 {
-                    //check the path and version
-                    var path = ServerPath();
-
-                    if (path.Length > 0)
-                    {
-                        var latestVersion = new Version(release.TagName.Replace("v", ""));
-                        var serverExe = Path.Combine(path,"Server", "SRS-Server.exe");
-                        var useThisVersion = true;
-                        if (Path.Exists(serverExe))
-                        {
-                            var serverVersion = new Version(FileVersionInfo.GetVersionInfo(serverExe).FileVersion);
-                            useThisVersion = serverVersion < latestVersion;
-                        }
-                        
-
-                        if (useThisVersion) return new Uri(releaseAsset.BrowserDownloadUrl);
-
-                        //no update
-                        return null;
-                    }
+                    var serverVersion = new Version(FileVersionInfo.GetVersionInfo(serverExe).FileVersion);
+                    useThisVersion = serverVersion < latestVersion;
                 }
 
-                return new Uri(releaseAsset.BrowserDownloadUrl);
+                if (useThisVersion) return new Uri(releaseAsset.BrowserDownloadUrl);
+
+                //no update
+                Status.Content = $"No update required. Latest version ({latestVersion}) already installed.";
+                return null;
             }
-        
-        return null;
+        }
+
+        return new Uri(releaseAsset.BrowserDownloadUrl);
     }
 
     private bool AllowBeta()
@@ -248,6 +278,33 @@ public partial class MainWindow : Window
                 return true;
 
         return false;
+    }
+
+    private void ShowRateLimitCountdown(TimeSpan waitFor, CancellationTokenSource cts)
+    {
+        _rateLimitEndTime = DateTime.Now.Add(waitFor);
+
+        _rateLimitTimer?.Stop();
+        _rateLimitTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        _rateLimitTimer.Tick += (s, e) =>
+        {
+            var remaining = _rateLimitEndTime - DateTime.Now;
+            if (remaining <= TimeSpan.Zero)
+            {
+                Status.Content = "Retrying now...";
+                _rateLimitTimer.Stop();
+            }
+            else
+            {
+                Status.Content = $"GitHub rate limit hit. Waiting {remaining.Seconds} seconds before retry... (You can cancel the update)";
+            }
+        };
+        _rateLimitTimer.Start();
+    }
+
+    private void HideRateLimitCountdown()
+    {
+        _rateLimitTimer?.Stop();
     }
 
     public void ShowError()
@@ -389,12 +446,14 @@ public partial class MainWindow : Window
     private void CancelButtonClick(object sender, RoutedEventArgs e)
     {
         _cancel = true;
+        _rateLimitCts?.Cancel(); // Cancel any ongoing rate limit wait
         Close();
     }
 
     private void OnClosing(object sender, CancelEventArgs e)
     {
         _cancel = true;
+        HideRateLimitCountdown();
         _progressCheckTimer?.Stop();
     }
 }

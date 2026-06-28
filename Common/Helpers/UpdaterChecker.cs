@@ -10,53 +10,33 @@ using Octokit;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 
-//Quick and dirty update checker based on GitHub Published Versions
-//TODO make this a singleton
 public class UpdaterChecker
 {
-    public delegate void UpdateCallback(UpdateCallbackResult result);
-
-    private static UpdaterChecker _instance;
-    private static readonly object _lock = new();
-
-    public static readonly string GITHUB_USERNAME = "ciribob";
-
-    public static readonly string GITHUB_REPOSITORY = "DCS-SimpleRadioStandalone";
-
-    // Required for all requests against the GitHub API, as per https://developer.github.com/v3/#user-agent-required
-    public static readonly string GITHUB_USER_AGENT = $"{GITHUB_USERNAME}_{GITHUB_REPOSITORY}";
-
     public static readonly string MINIMUM_PROTOCOL_VERSION = "1.9.0.0";
 
     public static readonly string VERSION = "2.3.8.2";
 
     private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
-    public static UpdaterChecker Instance
-    {
-        get
-        {
-            lock (_lock)
-            {
-                if (_instance == null) _instance = new UpdaterChecker();
-            }
+    public static UpdaterChecker Instance { get; } = new();
 
-            return _instance;
-        }
-    }
+    // Constructor passes version to base for GitHubClient initialization
+    private UpdaterChecker() { }
 
-    public async Task CheckForUpdateAsync(bool checkForBetaUpdates, UpdateCallback updateCallback)
+    public async Task<UpdateResult> CheckForUpdateAsync(bool checkForBetaUpdates)
     {
-#if !DEBUG
         var currentVersion = Version.Parse(VERSION);
-
-
+#if DEBUG
+        return new()
+        {
+            Branch = "stable",
+            Version = currentVersion,
+        };
+#else
         try
         {
-            var githubClient = new GitHubClient(new ProductHeaderValue(GITHUB_USER_AGENT, VERSION));
-
-
-            var releases = await githubClient.Repository.Release.GetAll(GITHUB_USERNAME, GITHUB_REPOSITORY);
+            // Get all releases using the new static helper
+            var releases = await GitHubUpdater.GetAllReleasesAsync(null, VERSION);
 
             var latestStableVersion = new Version();
             Release latestStableRelease = null;
@@ -90,7 +70,7 @@ public class UpdaterChecker
             // Compare latest versions with currently running version depending on user branch choice
             if (checkForBetaUpdates && latestBetaVersion > currentVersion)
             {
-                updateCallback?.Invoke(new UpdateCallbackResult
+                return new()
                 {
                     Beta = true,
                     Branch = "beta",
@@ -98,11 +78,12 @@ public class UpdaterChecker
                     Version = latestBetaVersion,
                     Url = latestBetaRelease.HtmlUrl,
                     Error = false
-                });
+                };
             }
-            else if (latestStableVersion > currentVersion)
+
+            if (latestStableVersion > currentVersion)
             {
-                updateCallback?.Invoke(new UpdateCallbackResult
+                return new()
                 {
                     Beta = false,
                     Branch = "stable",
@@ -110,24 +91,28 @@ public class UpdaterChecker
                     Version = latestStableVersion,
                     Url = latestStableRelease.HtmlUrl,
                     Error = false
-                });
+                };
             }
-            else if (checkForBetaUpdates && latestBetaVersion == currentVersion)
+
+            if (checkForBetaUpdates && latestBetaVersion == currentVersion)
             {
-                updateCallback?.Invoke(new UpdateCallbackResult
-                {
-                    Beta = true,
-                    Branch = "beta",
-                    UpdateAvailable = false,
-                    Version = latestBetaVersion,
-                    Url = latestBetaRelease.HtmlUrl,
-                    Error = false
-                });
                 _logger.Warn($"Running latest beta version: {currentVersion}");
+                return new()
+                {
+                    Beta = true,
+                    Branch = "beta",
+                    UpdateAvailable = false,
+                    Version = latestBetaVersion,
+                    Url = latestBetaRelease.HtmlUrl,
+                    Error = false
+                };
+               
             }
-            else if (latestStableVersion == currentVersion)
+            
+            if (latestStableVersion == currentVersion)
             {
-                updateCallback?.Invoke(new UpdateCallbackResult
+                _logger.Warn($"Running latest stable version: {currentVersion}");
+                return new()
                 {
                     Beta = false,
                     Branch = "stable",
@@ -135,12 +120,13 @@ public class UpdaterChecker
                     Version = latestStableVersion,
                     Url = latestStableRelease.HtmlUrl,
                     Error = false
-                });
-                _logger.Warn($"Running latest stable version: {currentVersion}");
+                };
+                
             }
             else
             {
-                updateCallback?.Invoke(new UpdateCallbackResult
+                _logger.Warn($"Running development version: {currentVersion}");
+                return new()
                 {
                     Beta = false,
                     Branch = "stable",
@@ -148,14 +134,14 @@ public class UpdaterChecker
                     Version = latestStableVersion,
                     Url = latestStableRelease.HtmlUrl,
                     Error = false
-                });
-                _logger.Warn($"Running development version: {currentVersion}");
+                };
+               
             }
         }
         catch (Exception ex)
         {
             _logger.Error(ex, "Failed to check for updated version");
-            updateCallback?.Invoke(new UpdateCallbackResult
+            return new()
             {
                 Beta = false,
                 Branch = "unknown",
@@ -163,7 +149,7 @@ public class UpdaterChecker
                 Version = null,
                 Url = null,
                 Error = true
-            });
+            };
         }
 #endif
     }
@@ -253,7 +239,7 @@ public class UpdaterChecker
     }
 }
 
-public class UpdateCallbackResult
+public struct UpdateResult
 {
     public bool UpdateAvailable { get; set; }
     public string Branch { get; set; }

@@ -12,8 +12,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 
 public class UpdaterChecker
 {
-    public delegate void UpdateCallback(UpdateCallbackResult result);
-
     public static readonly string MINIMUM_PROTOCOL_VERSION = "1.9.0.0";
 
     public static readonly string VERSION = "2.3.8.2";
@@ -25,11 +23,16 @@ public class UpdaterChecker
     // Constructor passes version to base for GitHubClient initialization
     private UpdaterChecker() { }
 
-    public async Task CheckForUpdateAsync(bool checkForBetaUpdates, UpdateCallback updateCallback)
+    public async Task<UpdateResult> CheckForUpdateAsync(bool checkForBetaUpdates)
     {
-#if !DEBUG
         var currentVersion = Version.Parse(VERSION);
-
+#if DEBUG
+        return new()
+        {
+            Branch = "stable",
+            Version = currentVersion,
+        };
+#else
         try
         {
             // Get all releases using the new static helper
@@ -67,7 +70,7 @@ public class UpdaterChecker
             // Compare latest versions with currently running version depending on user branch choice
             if (checkForBetaUpdates && latestBetaVersion > currentVersion)
             {
-                updateCallback?.Invoke(new UpdateCallbackResult
+                return new()
                 {
                     Beta = true,
                     Branch = "beta",
@@ -75,11 +78,12 @@ public class UpdaterChecker
                     Version = latestBetaVersion,
                     Url = latestBetaRelease.HtmlUrl,
                     Error = false
-                });
+                };
             }
-            else if (latestStableVersion > currentVersion)
+
+            if (latestStableVersion > currentVersion)
             {
-                updateCallback?.Invoke(new UpdateCallbackResult
+                return new()
                 {
                     Beta = false,
                     Branch = "stable",
@@ -87,24 +91,28 @@ public class UpdaterChecker
                     Version = latestStableVersion,
                     Url = latestStableRelease.HtmlUrl,
                     Error = false
-                });
+                };
             }
-            else if (checkForBetaUpdates && latestBetaVersion == currentVersion)
+
+            if (checkForBetaUpdates && latestBetaVersion == currentVersion)
             {
-                updateCallback?.Invoke(new UpdateCallbackResult
-                {
-                    Beta = true,
-                    Branch = "beta",
-                    UpdateAvailable = false,
-                    Version = latestBetaVersion,
-                    Url = latestBetaRelease.HtmlUrl,
-                    Error = false
-                });
                 _logger.Warn($"Running latest beta version: {currentVersion}");
+                return new()
+                {
+                    Beta = true,
+                    Branch = "beta",
+                    UpdateAvailable = false,
+                    Version = latestBetaVersion,
+                    Url = latestBetaRelease.HtmlUrl,
+                    Error = false
+                };
+               
             }
-            else if (latestStableVersion == currentVersion)
+            
+            if (latestStableVersion == currentVersion)
             {
-                updateCallback?.Invoke(new UpdateCallbackResult
+                _logger.Warn($"Running latest stable version: {currentVersion}");
+                return new()
                 {
                     Beta = false,
                     Branch = "stable",
@@ -112,12 +120,13 @@ public class UpdaterChecker
                     Version = latestStableVersion,
                     Url = latestStableRelease.HtmlUrl,
                     Error = false
-                });
-                _logger.Warn($"Running latest stable version: {currentVersion}");
+                };
+                
             }
             else
             {
-                updateCallback?.Invoke(new UpdateCallbackResult
+                _logger.Warn($"Running development version: {currentVersion}");
+                return new()
                 {
                     Beta = false,
                     Branch = "stable",
@@ -125,14 +134,14 @@ public class UpdaterChecker
                     Version = latestStableVersion,
                     Url = latestStableRelease.HtmlUrl,
                     Error = false
-                });
-                _logger.Warn($"Running development version: {currentVersion}");
+                };
+               
             }
         }
         catch (Exception ex)
         {
             _logger.Error(ex, "Failed to check for updated version");
-            updateCallback?.Invoke(new UpdateCallbackResult
+            return new()
             {
                 Beta = false,
                 Branch = "unknown",
@@ -140,7 +149,7 @@ public class UpdaterChecker
                 Version = null,
                 Url = null,
                 Error = true
-            });
+            };
         }
 #endif
     }
@@ -230,7 +239,7 @@ public class UpdaterChecker
     }
 }
 
-public class UpdateCallbackResult
+public struct UpdateResult
 {
     public bool UpdateAvailable { get; set; }
     public string Branch { get; set; }

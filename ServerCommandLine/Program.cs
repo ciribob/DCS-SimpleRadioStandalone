@@ -68,13 +68,9 @@ internal class Program : IHandle<SRSClientStatus>
         if (options.ConfigFile != null && options.ConfigFile.Trim().Length > 0)
             ServerSettingsStore.CFG_FILE_NAME = options.ConfigFile.Trim();
 
-        await UpdaterChecker.Instance.CheckForUpdateAsync(
-            ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).BoolValue,
-            result =>
-            {
-                if (result.UpdateAvailable)
-                    Console.WriteLine($"Update Available! Version {result.Version}-{result.Branch} @ {result.Url}");
-            });
+        var result = await UpdaterChecker.Instance.CheckForUpdateAsync(ServerSettingsStore.Instance.GetServerSetting(ServerSettingsKeys.CHECK_FOR_BETA_UPDATES).BoolValue);
+        if (result.UpdateAvailable)
+            Console.WriteLine($"Update Available! Version {result.Version}-{result.Branch} @ {result.Url}");
         Console.WriteLine($"Settings From Command Line: \n{options}");
 
         var p = new Program();

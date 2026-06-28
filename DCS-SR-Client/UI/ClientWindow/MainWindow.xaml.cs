@@ -82,12 +82,16 @@ public partial class MainWindow : MetroWindow
         var result = updateStatus.Result;
         if (result.UpdateAvailable)
         {
-            var choice = MessageBox.Show(
-                $"{Common.Properties.Resources.MsgBoxUpdate1} {result.Branch} {Common.Properties.Resources.MsgBoxUpdate2} {result.Branch} {Common.Properties.Resources.MsgBoxUpdate3}\n\n{Common.Properties.Resources.MsgBoxUpdate4}",
-                Common.Properties.Resources.MsgBoxUpdateTitle, MessageBoxButton.YesNoCancel,
-                MessageBoxImage.Information);
+            var choice = TaskDialog.ShowDialog(new()
+            {
+                Caption = Common.Properties.Resources.MsgBoxUpdateTitle,
+                Heading = $"{Common.Properties.Resources.MsgBoxUpdate1} {result.Branch} {Common.Properties.Resources.MsgBoxUpdate2} {result.Branch} {Common.Properties.Resources.MsgBoxUpdate3}",
+                Text = $"{Common.Properties.Resources.MsgBoxUpdate4}",
+                Icon = TaskDialogIcon.Information,
+                Buttons = { TaskDialogButton.Yes, TaskDialogButton.No, TaskDialogButton.Cancel }
+            });
 
-            if (choice == MessageBoxResult.Yes)
+            if (choice == TaskDialogButton.Yes)
             {
                 try
                 {
@@ -95,15 +99,19 @@ public partial class MainWindow : MetroWindow
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show($"{Common.Properties.Resources.MsgBoxUpdateFailed}",
-                        Common.Properties.Resources.MsgBoxUpdateFailedTitle, MessageBoxButton.YesNoCancel,
-                        MessageBoxImage.Information);
+                    TaskDialog.ShowDialog(new()
+                    {
+                        Caption = Common.Properties.Resources.MsgBoxUpdateFailedTitle,
+                        Heading = Common.Properties.Resources.MsgBoxUpdateFailed,
+                        Icon = TaskDialogIcon.Warning,
+                        Buttons = { TaskDialogButton.OK }
+                    });
 
                     Process.Start(new ProcessStartInfo(result.Url)
                         { UseShellExecute = true });
                 }
             }
-            else if (choice == MessageBoxResult.No)
+            else if (choice == TaskDialogButton.No)
             {
                 Process.Start(new ProcessStartInfo(result.Url)
                     { UseShellExecute = true });

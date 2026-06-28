@@ -238,13 +238,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Properties {
                 return ResourceManager.GetString("LabelLOS", resourceCulture);
             }
         }
-        
+
         /// <summary>
-        ///   Looks up a localized string similar to LotATC应答机导出.
+        ///   Looks up a localized string similar to ATCAWACS应答机导出.
         /// </summary>
-        public static string LabelLotATCExport {
+        public static string LabelATCAWACSExport
+        {
             get {
-                return ResourceManager.GetString("LabelLotATCExport", resourceCulture);
+                return ResourceManager.GetString("LabelATCAWACSExport", resourceCulture);
             }
         }
         

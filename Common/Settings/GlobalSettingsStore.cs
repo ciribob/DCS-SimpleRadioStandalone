@@ -75,9 +75,9 @@ public enum GlobalSettingsKeys
 
     RequireAdmin,
 
-    //LotATC
-    LotATCIncomingUDP, //10710
-    LotATCOutgoingUDP, //10711
+    //ATCAWACS
+    ATCAWACSIncomingUDP, //10710
+    ATCAWACSOutgoingUDP, //10711
 
     SettingsProfiles,
     AutoSelectSettingsProfile,
@@ -85,7 +85,7 @@ public enum GlobalSettingsKeys
     VAICOMIncomingUDP, //33501 
     VAICOMTXInhibitEnabled,
 
-    LotATCHeightOffset,
+    ATCAWACSHeightOffset,
 
     DCSAutoConnectUDP, // 5069
     ShowTransmitterName,
@@ -325,9 +325,9 @@ public class GlobalSettingsStore
 
         { GlobalSettingsKeys.AutoSelectSettingsProfile.ToString(), "false" },
 
-        { GlobalSettingsKeys.LotATCIncomingUDP.ToString(), "10710" },
-        { GlobalSettingsKeys.LotATCOutgoingUDP.ToString(), "10711" },
-        { GlobalSettingsKeys.LotATCHeightOffset.ToString(), "50" },
+        { GlobalSettingsKeys.ATCAWACSIncomingUDP.ToString(), "10710" },
+        { GlobalSettingsKeys.ATCAWACSOutgoingUDP.ToString(), "10711" },
+        { GlobalSettingsKeys.ATCAWACSHeightOffset.ToString(), "50" },
 
 
         { GlobalSettingsKeys.VAICOMIncomingUDP.ToString(), "33501" },
@@ -665,6 +665,42 @@ public class GlobalSettingsStore
 
             Save();
             loadedVersion = 1;
+        }
+
+        if (loadedVersion == 1)
+        {
+            // Update to V2:
+            // * Migrate legacy LotATC ports to the generic ATCAWACS settings
+            // * Remove obsolete LotATC keys from the config file to prevent duplicates
+            if (_configuration.Contains("Network Settings"))
+            {
+                var networkSection = _configuration["Network Settings"];
+
+                // Migrate INCOMING port
+                if (networkSection.Contains("LotATCIncomingUDP"))
+                {
+                    var oldVal = networkSection["LotATCIncomingUDP"].StringValue;
+                    SetSetting("Network Settings", GlobalSettingsKeys.ATCAWACSIncomingUDP.ToString(), oldVal);
+
+                    // Remove the old obsolete key from the configuration
+                    networkSection.Remove("LotATCIncomingUDP");
+                }
+
+                // Migrate OUTGOING port
+                if (networkSection.Contains("LotATCOutgoingUDP"))
+                {
+                    var oldVal = networkSection["LotATCOutgoingUDP"].StringValue;
+                    SetSetting("Network Settings", GlobalSettingsKeys.ATCAWACSOutgoingUDP.ToString(), oldVal);
+
+                    // Remove the old obsolete key from the configuration
+                    networkSection.Remove("LotATCOutgoingUDP");
+                }
+            }
+            // Upgrade done, bump version to 2
+            SetClientSetting(GlobalSettingsKeys.Version, 2);
+
+            Save();
+            loadedVersion = 2;
         }
     }
 }

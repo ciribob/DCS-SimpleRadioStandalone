@@ -12,7 +12,7 @@ public class TransponderBase
     }
 
     /**
-     * *  -- IFF_STATUS:  OFF = 0,  NORMAL = 1 , or IDENT = 2 (IDENT means Blink on LotATC)
+     * *  -- IFF_STATUS:  OFF = 0,  NORMAL = 1 , or IDENT = 2 (IDENT means Blink on ATCAWACS)
      * -- M1:-1 = off, any other number on
      * -- M3: -1 = OFF, any other number on
      * -- M4: 1 = ON or 0 = OFF

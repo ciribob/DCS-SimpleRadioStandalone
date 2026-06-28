@@ -746,7 +746,7 @@ public class UDPClientAudioProcessor : IDisposable
 
             var myLatLng = _clientStateSingleton.PlayerCoaltionLocationMetadata.LngLngPosition;
             var clientLatLng = transmittingClient.LatLngPosition;
-            //No DCS Position - do we have LotATC Position?
+            //No DCS Position - do we have ATCAWACS Position?
             if (myLatLng == null || clientLatLng == null || !myLatLng.IsValid() || !clientLatLng.IsValid()) return true;
 
             //Calculate with Haversine (distance over ground) + Pythagoras (crow flies distance)

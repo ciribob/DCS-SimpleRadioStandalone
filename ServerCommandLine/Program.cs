@@ -167,14 +167,14 @@ internal class Program : IHandle<SRSClientStatus>
         if (options.ShowTransmitterName != null && options.ShowTransmitterName.HasValue)
             ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.SHOW_TRANSMITTER_NAME,
                 options.ShowTransmitterName.Value);
-        if (options.LOTATCExport != null && options.LOTATCExport.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_ENABLED,
-                options.LOTATCExport.Value);
-        if (options.LotATCExportPort != null && options.LotATCExportPort.HasValue)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_PORT,
-                options.LotATCExportPort.Value.ToString());
-        if (options.LotATCExportIP != null && options.LotATCExportIP.Trim().Length > 0)
-            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_IP, options.LotATCExportIP);
+        if (options.ATCAWACSExport != null && options.ATCAWACSExport.HasValue)
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.ATCAWACS_EXPORT_ENABLED,
+                options.ATCAWACSExport.Value);
+        if (options.ATCAWACSExportPort != null && options.ATCAWACSExportPort.HasValue)
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.ATCAWACS_EXPORT_PORT,
+                options.ATCAWACSExportPort.Value.ToString());
+        if (options.ATCAWACSExportIP != null && options.ATCAWACSExportIP.Trim().Length > 0)
+            ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.ATCAWACS_EXPORT_IP, options.ATCAWACSExportIP);
         if (options.TestFrequencies != null && options.TestFrequencies.Trim().Length > 0)
             ServerSettingsStore.Instance.SetGeneralSetting(ServerSettingsKeys.TEST_FREQUENCIES,
                 options.TestFrequencies);
@@ -343,20 +343,20 @@ public class Options
         Required = false)]
     public bool? ShowTransmitterName { get; set; }
 
-    [Option("lotATCExport",
-        HelpText = "Enables the export of Transponder data to LOTATC. Default is false.",
+    [Option("ATCAWACSExport",
+        HelpText = "Enables the export of Transponder data to ATCAWACS. Default is false.",
         Required = false)]
-    public bool? LOTATCExport { get; set; }
+    public bool? ATCAWACSExport { get; set; }
 
-    [Option("lotATCExportPort",
-        HelpText = "Sets the port to set the Transponder data to on LotATC",
+    [Option("ATCAWACSExportPort",
+        HelpText = "Sets the port to set the Transponder data to on ATCAWACS",
         Required = false)]
-    public int? LotATCExportPort { get; set; }
+    public int? ATCAWACSExportPort { get; set; }
 
-    [Option("lotATCExportIP",
-        HelpText = "Sets the IP to set the Transponder data to on LotATC",
+    [Option("ATCAWACSExportIP",
+        HelpText = "Sets the IP to set the Transponder data to on ATCAWACS",
         Required = false)]
-    public string LotATCExportIP { get; set; }
+    public string ATCAWACSExportIP { get; set; }
 
     [Option("retransmitNodeLimit",
         HelpText =
@@ -458,9 +458,9 @@ public class Options
             $"{nameof(TestFrequencies)}: {TestFrequencies}, \n" +
             $"{nameof(ShowTunedCount)}: {ShowTunedCount}, \n" +
             $"{nameof(ShowTransmitterName)}: {ShowTransmitterName}, \n" +
-            $"{nameof(LOTATCExport)}: {LOTATCExport}, \n" +
-            $"{nameof(LotATCExportPort)}: {LotATCExportPort}, \n" +
-            $"{nameof(LotATCExportIP)}: {LotATCExportIP}, \n" +
+            $"{nameof(ATCAWACSExport)}: {ATCAWACSExport}, \n" +
+            $"{nameof(ATCAWACSExportPort)}: {ATCAWACSExportPort}, \n" +
+            $"{nameof(ATCAWACSExportIP)}: {ATCAWACSExportIP}, \n" +
             $"{nameof(RetransmissionNodeLimit)}: {RetransmissionNodeLimit}, \n" +
             $"{nameof(StrictRadioEncryption)}: {StrictRadioEncryption}, \n" +
             $"{nameof(TransmissionLogEnabled)}: {TransmissionLogEnabled}, \n" +

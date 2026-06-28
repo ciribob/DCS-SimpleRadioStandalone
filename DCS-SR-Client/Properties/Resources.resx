@@ -567,8 +567,8 @@ DCS In-game SRS Overlay</value>
   <data name="IntercomStartTransmitEffect" xml:space="preserve">
     <value>Intercom Transmit Start Effect</value>
   </data>
-  <data name="LotATCConnectionStatusLabel" xml:space="preserve">
-    <value>LotATC</value>
+  <data name="ATCAWACSConnectionStatusLabel" xml:space="preserve">
+    <value>ATC-AWACS</value>
   </data>
   <data name="MicAGC" xml:space="preserve">
     <value>Microphone Automatic Gain Control</value>

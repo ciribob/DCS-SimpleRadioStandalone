@@ -208,13 +208,13 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
                 {
                     try
                     {
-                        if (ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_ENABLED)
+                        if (ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.ATCAWACS_EXPORT_ENABLED)
                             .BoolValue)
                         {
                             var host = new IPEndPoint(
                                 IPAddress.Parse(ServerSettingsStore.Instance
-                                    .GetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_IP).StringValue),
-                                ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.LOTATC_EXPORT_PORT)
+                                    .GetGeneralSetting(ServerSettingsKeys.ATCAWACS_EXPORT_IP).StringValue),
+                                ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.ATCAWACS_EXPORT_PORT)
                                     .IntValue);
 
                             var data = new ClientListExport
@@ -293,7 +293,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
                     }
                     catch (Exception e)
                     {
-                        Logger.Error(e, "Exception Sending LotATC Client Info");
+                        Logger.Error(e, "Exception Sending ATCAWACS Client Info");
                     }
 
                     //every 2s
@@ -306,7 +306,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
                 }
                 catch (Exception e)
                 {
-                    Logger.Error(e, "Exception stoping LotATC Client Info");
+                    Logger.Error(e, "Exception stoping ATCAWACS Client Info");
                 }
             }
         });

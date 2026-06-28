@@ -8,7 +8,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.LotATC.Models;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.ATCAWACS.Models;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.EventMessages;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
@@ -17,9 +17,9 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
 using NLog;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.LotATC;
+namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.ATCAWACS;
 
-public class LotATCSyncHandler
+public class ATCAWACSSyncHandler
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -35,15 +35,15 @@ public class LotATCSyncHandler
     private readonly double _heightOffset;
     private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
     private long _lastSent;
-    private UdpClient _lotATCPositionListener;
+    private UdpClient _ATCAWACSPositionListener;
     private volatile bool _stop;
 
-    public LotATCSyncHandler(string guid)
+    public ATCAWACSSyncHandler(string guid)
     {
         _guid = guid;
         _clientStateSingleton = ClientStateSingleton.Instance;
 
-        _heightOffset = _globalSettings.GetClientSetting(GlobalSettingsKeys.LotATCHeightOffset).DoubleValue;
+        _heightOffset = _globalSettings.GetClientSetting(GlobalSettingsKeys.ATCAWACSHeightOffset).DoubleValue;
     }
 
     public void Start()
@@ -54,67 +54,73 @@ public class LotATCSyncHandler
                 try
                 {
                     var localEp = new IPEndPoint(IPAddress.Any,
-                        _globalSettings.GetNetworkSetting(GlobalSettingsKeys.LotATCIncomingUDP));
-                    _lotATCPositionListener = new UdpClient(localEp);
+                        _globalSettings.GetNetworkSetting(GlobalSettingsKeys.ATCAWACSIncomingUDP));
+                    _ATCAWACSPositionListener = new UdpClient(localEp);
                     break;
                 }
                 catch (Exception ex)
                 {
                     Logger.Warn(ex,
-                        $"Unable to bind to the LotATC Export Listener Socket Port: {_globalSettings.GetNetworkSetting(GlobalSettingsKeys.LotATCIncomingUDP)}");
+                        $"Unable to bind to the ATCAWACS Export Listener Socket Port: {_globalSettings.GetNetworkSetting(GlobalSettingsKeys.ATCAWACSIncomingUDP)}");
                     await Task.Delay(TimeSpan.FromMilliseconds(500));
                 }
 
             while (!_stop)
                 try
                 {
-                    var result = await _lotATCPositionListener.ReceiveAsync();
+                    var result = await _ATCAWACSPositionListener.ReceiveAsync();
                     var bytes = result.Buffer;
 
-                    var lotAtcPositionWrapper = JsonSerializer.Deserialize<LotATCMessageWrapper>(
+                    var ATCAWACSPositionWrapper = JsonSerializer.Deserialize<ATCAWACSMessageWrapper>(
                         Encoding.UTF8.GetString(bytes, 0, bytes.Length),
                             new JsonSerializerOptions() { IncludeFields = true }
                         );
 
-                    if (lotAtcPositionWrapper != null)
+                    if (ATCAWACSPositionWrapper != null)
                     {
-                        if (lotAtcPositionWrapper.los != null)
-                            HandleLOSResponse(lotAtcPositionWrapper.los);
-                        else if (lotAtcPositionWrapper.controller != null)
-                            await HandleLotATCUpdateAsync(lotAtcPositionWrapper.controller);
+                        if (ATCAWACSPositionWrapper.los != null)
+                            HandleLOSResponse(ATCAWACSPositionWrapper.los);
+                        else if (ATCAWACSPositionWrapper.controller != null)
+                            await HandleATCAWACSUpdateAsync(ATCAWACSPositionWrapper.controller);
                     }
                 }
                 catch (SocketException e)
                 {
-                    if (!_stop) Logger.Error(e, "SocketException Handling LotATC UDP Message");
+                    if (!_stop) Logger.Error(e, "SocketException Handling ATCAWACS UDP Message");
                 }
                 catch (Exception e)
                 {
-                    Logger.Error(e, "Exception Handling LotATC UDP Message");
+                    Logger.Error(e, "Exception Handling ATCAWACS UDP Message");
                 }
 
             try
             {
-                _lotATCPositionListener.Close();
+                _ATCAWACSPositionListener.Close();
             }
             catch (Exception e)
             {
-                Logger.Error(e, "Exception stoping LotATC UDP listener");
+                Logger.Error(e, "Exception stoping ATCAWACS UDP listener");
             }
         });
 
-        StartLotATCLOSSender();
+        StartATCAWACSLOSSender();
     }
 
-    private async Task HandleLotATCUpdateAsync(LotATCMessageWrapper.LotATCPosition controller)
+    private async Task HandleATCAWACSUpdateAsync(ATCAWACSMessageWrapper.ATCAWACSPosition controller)
     {
-        _clientStateSingleton.LotATCLastReceived = DateTime.Now.Ticks;
+        _clientStateSingleton.ATCAWACSLastReceived = DateTime.Now.Ticks;
+
+        // Check if the external tool provided a display name in the JSON payload
+        if (!string.IsNullOrEmpty(controller.displayName))
+        {
+            _clientStateSingleton.ATCAWACSToolName = controller.displayName;
+        }
 
         //only send update if position and line of sight are enabled
         var shouldUpdate = _serverSettings.GetSettingAsBool(ServerSettingsKeys.DISTANCE_ENABLED) ||
                            _serverSettings.GetSettingAsBool(ServerSettingsKeys.LOS_ENABLED);
 
-        if (_clientStateSingleton.ShouldUseLotATCPosition())
+        if (_clientStateSingleton.ShouldUseATCAWACSPosition())
         {
             _clientStateSingleton.UpdatePlayerPosition(new LatLngPosition
                 { lat = controller.latitude, lng = controller.longitude, alt = controller.altitude + _heightOffset });
@@ -143,7 +149,7 @@ public class LotATCSyncHandler
         }
     }
 
-    private void HandleLOSResponse(LotATCMessageWrapper.LotATCLineOfSightResponse response)
+    private void HandleLOSResponse(ATCAWACSMessageWrapper.ATCAWACSLineOfSightResponse response)
     {
         SRClientBase client;
 
@@ -153,11 +159,11 @@ public class LotATCSyncHandler
             client.LineOfSightLoss = response.see ? 0 : 1;
     }
 
-    private void StartLotATCLOSSender()
+    private void StartATCAWACSLOSSender()
     {
         var _udpSocket = new UdpClient();
         var _host = new IPEndPoint(IPAddress.Loopback,
-            _globalSettings.GetNetworkSetting(GlobalSettingsKeys.LotATCOutgoingUDP));
+            _globalSettings.GetNetworkSetting(GlobalSettingsKeys.ATCAWACSOutgoingUDP));
 
 
         Task.Run(async Task () =>
@@ -168,7 +174,7 @@ public class LotATCSyncHandler
                 {
                     try
                     {
-                        if (_clientStateSingleton.IsLotATCConnected)
+                        if (_clientStateSingleton.IsATCAWACSConnected)
                         {
                             //Chunk client list into blocks of 10 to stay below 8000 ish UDP socket limit
                             var clientsList = GenerateDcsLosCheckRequests();
@@ -188,7 +194,7 @@ public class LotATCSyncHandler
                     }
                     catch (Exception e)
                     {
-                        Logger.Error(e, "Exception Sending LotATC LOS Request Message");
+                        Logger.Error(e, "Exception Sending ATCAWACS LOS Request Message");
                     }
 
                     //every 2s - Wait for the queue
@@ -201,21 +207,21 @@ public class LotATCSyncHandler
                 }
                 catch (Exception e)
                 {
-                    Logger.Error(e, "Exception stoping LotATC LOS Sender ");
+                    Logger.Error(e, "Exception stoping ATCAWACS LOS Sender ");
                 }
             }
         });
     }
 
-    private List<LotATCLineOfSightRequest> GenerateDcsLosCheckRequests()
+    private List<ATCAWACSLineOfSightRequest> GenerateDcsLosCheckRequests()
     {
         var clients = _clients.Values.ToList();
 
-        var requests = new List<LotATCLineOfSightRequest>();
+        var requests = new List<ATCAWACSLineOfSightRequest>();
 
         if (_clientStateSingleton.PlayerCoaltionLocationMetadata.LngLngPosition != null
             && _clientStateSingleton.PlayerCoaltionLocationMetadata.LngLngPosition.IsValid()
-            && _clientStateSingleton.ShouldUseLotATCPosition()
+            && _clientStateSingleton.ShouldUseATCAWACSPosition()
             && _serverSettings.GetSettingAsBool(ServerSettingsKeys.LOS_ENABLED))
             foreach (var client in clients)
                 //only check if its worth it
@@ -223,7 +229,7 @@ public class LotATCSyncHandler
                     && client.LatLngPosition.IsValid()
                     && client.ClientGuid != _guid
                    )
-                    requests.Add(new LotATCLineOfSightRequest
+                    requests.Add(new ATCAWACSLineOfSightRequest
                     {
                         lat1 = _clientStateSingleton.PlayerCoaltionLocationMetadata.LngLngPosition.lat,
                         long1 = _clientStateSingleton.PlayerCoaltionLocationMetadata.LngLngPosition.lng,
@@ -244,7 +250,7 @@ public class LotATCSyncHandler
         _stop = true;
         try
         {
-            _lotATCPositionListener?.Close();
+            _ATCAWACSPositionListener?.Close();
         }
         catch (Exception)
         {

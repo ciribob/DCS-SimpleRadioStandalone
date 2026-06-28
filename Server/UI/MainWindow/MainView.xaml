@@ -394,15 +394,15 @@
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"/>
 
-                <Label Content="{x:Static p:Resources.LabelLotATCExport}"
+                <Label Content="{x:Static p:Resources.LabelATCAWACSExport}"
                        Grid.Row="19"
                        Grid.Column="0" 
                        Grid.ColumnSpan="2"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Center"/>
 
-                <Button x:Name="LotATCExportToggle"
-                        Content="{Binding LotATCExportText}"
+                <Button x:Name="ATCAWACSExportToggle"
+                        Content="{Binding ATCAWACSExportText}"
                         Grid.Row="19"
                         Grid.Column="2"
                         Width="75"

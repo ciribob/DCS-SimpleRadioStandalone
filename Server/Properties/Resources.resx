@@ -177,8 +177,8 @@
   <data name="LabelLOS" xml:space="preserve">
     <value>Line of Sight</value>
   </data>
-  <data name="LabelLotATCExport" xml:space="preserve">
-    <value>LotATC Transponder Export</value>
+  <data name="LabelATCAWACSExport" xml:space="preserve">
+    <value>ATC-AWACS Transponder Export</value>
   </data>
   <data name="LabelOverrideEffectsOnGlobal" xml:space="preserve">
     <value>Ignore Radio Effect on Global Freq</value>

@@ -1416,13 +1416,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
                 return ResourceManager.GetString("IntercomStartTransmitEffect", resourceCulture);
             }
         }
-        
+
         /// <summary>
-        ///   Looks up a localized string similar to LotATC.
+        ///   Looks up a localized string similar to ATCAWACS.
         /// </summary>
-        public static string LotATCConnectionStatusLabel {
+        public static string ATCAWACSConnectionStatusLabel
+        {
             get {
-                return ResourceManager.GetString("LotATCConnectionStatusLabel", resourceCulture);
+                return ResourceManager.GetString("ATCAWACSConnectionStatusLabel", resourceCulture);
             }
         }
         

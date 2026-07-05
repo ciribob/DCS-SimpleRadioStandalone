@@ -14,7 +14,7 @@ function exportRadioF100D(_data, SR)
     _data.radios[2].model = SR.RadioModels.AN_ARC51BX
 
     -- get preset channel selector
-    local _channel = SR.getSelectorPosition(360, 0.05)
+    local _channel = SR.getSelectorPosition(360, 0.05) + 1
 
     if _channel >= 1 then
         _data.radios[2].channel = _channel

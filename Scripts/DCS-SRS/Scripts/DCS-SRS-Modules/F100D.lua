@@ -36,24 +36,24 @@ function exportRadioF100D(_data, SR)
         _data.ptt = false
     end
 
-    -- SEEKSILENCE encryption Not working
-    if SR.getButtonPosition(344, 0.1) > 0.5 then
+    -- SEEKSILENCE encryption
+    if SR.getButtonPosition(344) > 0.5 then
         zeroized = 1 --updates line 2
     end
-    local _SEEKSILENCEPower = SR.round(SR.getButtonPosition(340), 0.1)
 
+    -- 340 = Power switch SEEKSILENCE
     -- 341 = Mode switch CRAD1
-    if _SEEKSILENCEPower > 0.5 and SR.round(SR.getButtonPosition(341), 0.1) == 0.1 and zeroized == 0 then
-        _data.radios[2].encKey = 1 -- need a get_key() on deviceID 23 to read this. Also no options in missin editor to set this for F-100, so just defaulting to 1 for now
+    if SR.getButtonPosition(340) > 0.5 and SR.getButtonPosition(341) > 0.5 and zeroized == 0 then
+        _data.radios[2].encKey = 1 -- need a get_key() on deviceID 23 to read this. Also no options in mission editor to set this for F-100, so just defaulting to 1 and using encmode 3
         _data.radios[2].enc = true
     end
-
+    _data.radios[2].encMode = 3 -- using mode 3 until getters and setters are implemented
 
     -- IFF / Transponder (APX-72)
     _data.iff = {status=0,mode1=0,mode2=-1,mode3=0,mode4=false,control=0,expansion=false}
 
     local iffMaster = SR.getSelectorPosition(519, 0.1)
-    -- Master knob: 0=OFF, 1=STBY, 2=ON, 3=EMERG
+    -- Master knob: 0=OFF, 1=STBY, 2=LOW, 3=NORM, 4=EMERG
 
     if iffMaster >= 2 then
         _data.iff.status = 1 -- NORMAL
@@ -83,7 +83,7 @@ function exportRadioF100D(_data, SR)
     local m3w4 = 7 - SR.getSelectorPosition(532, 0.125)
     _data.iff.mode3 = m3w1 * 1000 + m3w2 * 100 + m3w3 * 10 + m3w4
 
-    if iffMaster == 3 then
+    if iffMaster == 4 then
         _data.iff.mode3 = 7700 -- EMERG
     end
 

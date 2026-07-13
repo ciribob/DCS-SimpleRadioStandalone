@@ -30,7 +30,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
 
     private readonly HashSet<IPAddress> _bannedIps = new();
 
-    private readonly ConcurrentDictionary<string, SRClientBase> _connectedClients =
+    protected readonly ConcurrentDictionary<string, SRClientBase> _connectedClients =
         new();
 
     private readonly IEventAggregator _eventAggregator;
@@ -39,12 +39,12 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
     private volatile bool _stop = true;
     private HttpServer _httpServer;
 
-    public ServerState(IEventAggregator eventAggregator)
+    public ServerState(IEventAggregator eventAggregator, bool autostart = true)
     {
         _eventAggregator = eventAggregator;
         _eventAggregator.SubscribeOnPublishedThread(this);
-
-        StartServer();
+        
+        if (autostart) StartServer();
     }
 
 
@@ -99,8 +99,8 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
 
         return currentDirectory;
     }
-
-    private void StartServer()
+    
+    protected void StartServer()
     {
         if (_serverListener == null)
         {

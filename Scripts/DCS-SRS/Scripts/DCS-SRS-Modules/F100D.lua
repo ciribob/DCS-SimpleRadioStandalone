@@ -34,9 +34,6 @@ function exportRadioF100D(_data, SR)
     end
 
     -- SEEKSILENCE encryption
-    if SR.getButtonPosition(344) > 0.5 then
-        _f100.zeroized = 1 --updates line 2
-    end
 
     -- 340 = Power switch SEEKSILENCE
     -- 341 = Mode switch CRAD1

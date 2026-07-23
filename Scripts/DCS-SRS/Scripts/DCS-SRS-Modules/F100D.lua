@@ -1,5 +1,6 @@
 -- SEEKSILENCE encryption keystate declared outside of function so its state isn't reset each tick
-local zeroized = 0
+local _f100 = {}
+_f100.zeroized = 0
 
 function exportRadioF100D(_data, SR)
 
@@ -38,12 +39,12 @@ function exportRadioF100D(_data, SR)
 
     -- SEEKSILENCE encryption
     if SR.getButtonPosition(344) > 0.5 then
-        zeroized = 1 --updates line 2
+        _f100.zeroized = 1 --updates line 2
     end
 
     -- 340 = Power switch SEEKSILENCE
     -- 341 = Mode switch CRAD1
-    if SR.getButtonPosition(340) > 0.5 and SR.getButtonPosition(341) > 0.5 and zeroized == 0 then
+    if SR.getButtonPosition(340) > 0.5 and SR.getButtonPosition(341) > 0.5 and _f100.zeroized == 0 then
         _data.radios[2].encKey = 1 -- need a get_key() on deviceID 23 to read this. Also no options in mission editor to set this for F-100, so just defaulting to 1 and using encmode 3
         _data.radios[2].enc = true
     end
@@ -108,20 +109,6 @@ function exportRadioF100D(_data, SR)
     _data.radios[3].expansion = true
     _data.radios[3].model = SR.RadioModels.AN_ARC186
 
-    -- Expansion Radio - Server Side Controlled
-    _data.radios[4].name = "AN/ARC-164 UHF"
-    _data.radios[4].freq = 251.0 * 1000000
-    _data.radios[4].modulation = 0
-    _data.radios[4].secFreq = 243.0 * 1000000
-    _data.radios[4].volume = 1.0
-    _data.radios[4].freqMin = 225 * 1000000
-    _data.radios[4].freqMax = 399.975 * 1000000
-    _data.radios[4].volMode = 1
-    _data.radios[4].freqMode = 1
-    _data.radios[4].expansion = true
-    _data.radios[4].encKey = 1
-    _data.radios[4].encMode = 1
-    _data.radios[4].model = SR.RadioModels.AN_ARC164
 
     _data.control = 0
 

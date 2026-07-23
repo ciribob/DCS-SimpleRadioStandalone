@@ -1,7 +1,3 @@
--- SEEKSILENCE encryption keystate declared outside of function so its state isn't reset each tick
-local _f100 = {}
-_f100.zeroized = 0
-
 function exportRadioF100D(_data, SR)
 
     _data.capabilities = { dcsPtt = true, dcsIFF = true, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
@@ -44,7 +40,7 @@ function exportRadioF100D(_data, SR)
 
     -- 340 = Power switch SEEKSILENCE
     -- 341 = Mode switch CRAD1
-    if SR.getButtonPosition(340) > 0.5 and SR.getButtonPosition(341) > 0.5 and _f100.zeroized == 0 then
+    if SR.getButtonPosition(340) > 0.5 and SR.getButtonPosition(341) > 0.5 then
         _data.radios[2].encKey = 1 -- need a get_key() on deviceID 23 to read this. Also no options in mission editor to set this for F-100, so just defaulting to 1 and using encmode 3
         _data.radios[2].enc = true
     end

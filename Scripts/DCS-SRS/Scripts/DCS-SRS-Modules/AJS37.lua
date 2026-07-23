@@ -2,17 +2,20 @@ function exportRadioAJS37(_data, SR)
 
     _data.capabilities = { dcsPtt = false, dcsIFF = false, dcsRadioSwitch = false, intercomHotMic = false, desc = "" }
 
+    local RadioVolume = SR.getRadioVolume(0, 385, {0.0, 1.0}, false)
+
     _data.radios[2].name = "FR 22"
     _data.radios[2].freq = SR.getRadioFrequency(30)
     _data.radios[2].modulation = SR.getRadioModulation(30)
-    _data.radios[2].volume =  SR.getRadioVolume(0, 385,{0.0, 1.0},false)
+    _data.radios[2].volume =  RadioVolume
     _data.radios[2].volMode = 0
 
     _data.radios[3].name = "FR 24"
     _data.radios[3].freq = SR.getRadioFrequency(31)
     _data.radios[3].modulation = SR.getRadioModulation(31)
-    _data.radios[3].volume = 1.0
-    _data.radios[3].volMode = 1
+    _data.radios[3].volume = RadioVolume
+    _data.radios[3].volMode = 0
+    _data.radios[3].rxOnly = SR.getButtonPosition(386) == 0.0 -- RX only in "NORM + LARM" (in "NORM" the FR24 is disabled)
 
     -- Expansion Radio - Server Side Controlled
     _data.radios[4].name = "AN/ARC-164 UHF"
@@ -32,7 +35,7 @@ function exportRadioAJS37(_data, SR)
     _data.control = 0;
     _data.selected = 1
 
-    if SR.getAmbientVolumeEngine()  > 10 then
+    if SR.getAmbientVolumeEngine() > 10 then
         -- engine on
 
         local _door = SR.getButtonPosition(10)

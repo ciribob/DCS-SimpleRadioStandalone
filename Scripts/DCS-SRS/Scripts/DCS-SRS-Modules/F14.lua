@@ -179,6 +179,7 @@ local result = {
         SR.exporters["F-14B"] = exportRadioF14
         SR.exporters["F-14A-135-GR"] = exportRadioF14
         SR.exporters["F-14A-135-GR-Early"] = exportRadioF14
+        SR.exporters["F-14A-95-GR"] = exportRadioF14
     end,
 }
 return result

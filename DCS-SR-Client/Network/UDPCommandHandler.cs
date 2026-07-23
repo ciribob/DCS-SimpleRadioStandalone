@@ -82,6 +82,20 @@ public class UDPCommandHandler
                         TransponderHelper.SetMode4(message.Enabled);
                     else if (message?.Command == UDPInterfaceCommand.UDPCommandType.TRANSPONDER_IDENT)
                         TransponderHelper.SetIdent(message.Enabled);
+                    else if (message?.Command == UDPInterfaceCommand.UDPCommandType.TOGGLE_RADIO_RETRANSMIT)
+                        RadioHelper.ToggleRetransmit(message.RadioId);
+                    else if (message?.Command == UDPInterfaceCommand.UDPCommandType.RADIO_RETRANSMIT)
+                        RadioHelper.SetRetransmit(message.RadioId, message.Enabled);
+                    else if (message?.Command == UDPInterfaceCommand.UDPCommandType.TOGGLE_GLOBAL_SIMULTANEOUS_TRANSMISSION)
+                        RadioHelper.ToggleGlobalSimultaneousTransmission();
+                    else if (message?.Command == UDPInterfaceCommand.UDPCommandType.GLOBAL_SIMULTANEOUS_TRANSMISSION)
+                        RadioHelper.SetGlobalSimultaneousTransmission(message.Enabled);
+                    else if (message?.Command == UDPInterfaceCommand.UDPCommandType.TOGGLE_SIMULTANEOUS_RADIO)
+                        RadioHelper.ToggleSimultaneous(message.RadioId);
+                    else if (message?.Command == UDPInterfaceCommand.UDPCommandType.SIMULTANEOUS_RADIO)
+                        RadioHelper.SetSimultaneous(message.RadioId, message.Enabled);
+                    else if (message?.Command == UDPInterfaceCommand.UDPCommandType.INTERCOM_CHANNEL)
+                        RadioHelper.SetIntercom(message.RadioId);
                     else
                         Logger.Error("Unknown UDP Command!");
                 }

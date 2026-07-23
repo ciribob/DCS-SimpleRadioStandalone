@@ -24,7 +24,7 @@ public class NatHandler
         try
         {
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-            _device = await OpenNat.Discoverer.DiscoverDeviceAsync(PortMapper.Upnp, cts.Token);
+            _device = await OpenNat.Discoverer.DiscoverDeviceAsync(PortMapper.Upnp | PortMapper.Pmp, cts.Token);
             await Task.WhenAll([_device.CreatePortMapAsync(_udpMapping, cts.Token), _device.CreatePortMapAsync(_tcpMapping, cts.Token)]);
         }
         catch (Exception ex)

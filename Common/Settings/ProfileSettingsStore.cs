@@ -149,10 +149,20 @@ public class ProfileSettingsStore
         {
             ProfileSettingsKeys.ServerPresetSelection.ToString(),
             nameof(ServerPresetConfiguration.USE_CLIENT_AND_SERVER_IF_SET)
-        },
+        },  
         { ProfileSettingsKeys.AllowServerEAMRadioPreset.ToString(), "true" },
         { ProfileSettingsKeys.InstructorMode.ToString(), "false" },
-    
+        { ProfileSettingsKeys.Radio1Channel.ToString(), "0" },
+        { ProfileSettingsKeys.Radio2Channel.ToString(), "0" },
+        { ProfileSettingsKeys.Radio3Channel.ToString(), "0" },
+        { ProfileSettingsKeys.Radio4Channel.ToString(), "0" },
+        { ProfileSettingsKeys.Radio5Channel.ToString(), "0" },
+        { ProfileSettingsKeys.Radio6Channel.ToString(), "0" },
+        { ProfileSettingsKeys.Radio7Channel.ToString(), "0" },
+        { ProfileSettingsKeys.Radio8Channel.ToString(), "0" },
+        { ProfileSettingsKeys.Radio9Channel.ToString(), "0" },
+        { ProfileSettingsKeys.Radio10Channel.ToString(), "0" },
+        { ProfileSettingsKeys.IntercomChannel.ToString(), "0" },
     };
 
     public static readonly List<string> ServerPresetSettings;
@@ -375,32 +385,22 @@ public class ProfileSettingsStore
     {
         var _configuration = GetCurrentProfile();
 
+
         if (!_configuration.Contains(section)) _configuration.Add(section);
 
         if (!_configuration[section].Contains(setting))
         {
-            if (DefaultSettingsProfileSettings.ContainsKey(setting))
+            var defaultValue = "";
+            if (!DefaultSettingsProfileSettings.TryGetValue(setting, out defaultValue))
             {
-                //save
-                _configuration[section]
-                    .Add(new SharpConfig.Setting(setting, DefaultSettingsProfileSettings[setting]));
+                Logger.Warn("Setting {0} not found in default settings, creating with empty value", setting);
+            }
 
-                Save();
-            }
-            else if (DefaultSettingsProfileSettings.ContainsKey(setting))
-            {
-                //save
-                _configuration[section]
-                    .Add(new SharpConfig.Setting(setting, DefaultSettingsProfileSettings[setting]));
+            //save
+            _configuration[section]
+                .Add(new SharpConfig.Setting(setting, defaultValue));
 
-                Save();
-            }
-            else
-            {
-                _configuration[section]
-                    .Add(new SharpConfig.Setting(setting, ""));
-                Save();
-            }
+            Save();
         }
 
         return _configuration[section][setting];
@@ -410,16 +410,10 @@ public class ProfileSettingsStore
     {
         if (_settingsCache.TryGetValue(key.ToString(), out var val)) return (bool)val;
 
-        var setting = GetSetting("Client Settings", key.ToString());
-        if (setting.RawValue.Length == 0)
-        {
-            _settingsCache[key.ToString()] = false;
-            return false;
-        }
+        var setting = GetSetting("Client Settings", key.ToString()).GetValueOrDefault(false);
+        _settingsCache[key.ToString()] = setting;
 
-        _settingsCache[key.ToString()] = setting.BoolValue;
-
-        return setting.BoolValue;
+        return setting;
     }
 
     public float GetClientSettingFloat(ProfileSettingsKeys key)
@@ -430,9 +424,9 @@ public class ProfileSettingsStore
             return (float)val;
         }
 
-        var setting = GetSetting("Client Settings", key.ToString()).FloatValue;
-
+        var setting = GetSetting("Client Settings", key.ToString()).GetValueOrDefault(0f);
         _settingsCache[key.ToString()] = setting;
+        
 
         return setting;
     }

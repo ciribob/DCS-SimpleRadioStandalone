@@ -255,6 +255,9 @@
   <data name="Donate_OnClick" xml:space="preserve">
     <value>请通过Patreon支持SRS</value>
   </data>
+  <data name="EAMExpanderHeader" xml:space="preserve">
+    <value>外部预警机模式（EAM）</value>
+  </data>
   <data name="EffectVolume0" xml:space="preserve">
     <value>0%</value>
   </data>
@@ -411,7 +414,7 @@ DCS游戏内SRS浮窗</value>
 这个文件会在你进入飞机时自动加载，你也可以在无线电浮窗的频道标签页中手动重新加载。</value>
   </data>
   <data name="HelpP5L8" xml:space="preserve">
-    <value />
+    <value>这里</value>
   </data>
   <data name="HelpP6" xml:space="preserve">
     <value>最新版本和更新</value>
@@ -573,14 +576,23 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
   <data name="MicAGC" xml:space="preserve">
     <value>麦克风自动音量增益控制</value>
   </data>
+  <data name="IncomingAudioAGC" xml:space="preserve">
+    <value>接收音频自动增益控制</value>
+  </data>
   <data name="MicDenoise" xml:space="preserve">
     <value>麦克风噪音消除</value>
+  </data>
+  <data name="IncomingAudioDenoise" xml:space="preserve">
+    <value>噪声消除</value>
   </data>
   <data name="MicLabel" xml:space="preserve">
     <value>麦克风</value>
   </data>
   <data name="MicrophoneHeader" xml:space="preserve">
     <value>麦克风</value>
+  </data>
+  <data name="IncomingAudioHeader" xml:space="preserve">
+    <value>接收音频</value>
   </data>
   <data name="Minimisetotray" xml:space="preserve">
     <value>最小化到任务栏</value>
@@ -793,6 +805,12 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
   </data>
   <data name="PlayConnectionSounds" xml:space="preserve">
     <value>播放连接提示音</value>
+  </data>
+  <data name="PresetsFolderBrowseButton" xml:space="preserve">
+    <value>浏览预设文件夹</value>
+  </data>
+  <data name="PresetsFolderResetButton" xml:space="preserve">
+    <value>重置</value>
   </data>
   <data name="PreviewAudio" xml:space="preserve">
     <value>音频测试</value>
@@ -1030,6 +1048,9 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
   <data name="SrvShowTransmitterName" xml:space="preserve">
     <value>显示发送者名称</value>
   </data>
+  <data name="SrvPresetsEnabled" xml:space="preserve">
+    <value>已启用服务器预设</value>
+  </data>
   <data name="SrvSpectatorAudio" xml:space="preserve">
     <value>旁观者语音</value>
   </data>
@@ -1087,6 +1108,9 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
   </data>
   <data name="ToolTipTransponder" xml:space="preserve">
     <value>开启/关闭应答机</value>
+  </data>
+  <data name="ToolTipTransponderMode2" xml:space="preserve">
+    <value>模式 2</value>
   </data>
   <data name="ToolTipTransponderMode4" xml:space="preserve">
     <value>模式 4</value>
@@ -1208,16 +1232,76 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
   <data name="DisableExpansionRadios" xml:space="preserve">
     <value>Disable Expansion Radios</value>
   </data>
+  <data name="RecordingFormat" xml:space="preserve">
+    <value>录音格式（需要重启）</value>
+  </data>
   <data name="NoiseGainDB" xml:space="preserve">
-    <value />
+    <value>噪音增益（dB）</value>
+  </data>
+  <data name="ServerPresetsConfiguration" xml:space="preserve">
+    <value>频道预设配置</value>
   </data>
   <data name="HFNoiseGainDB" xml:space="preserve">
-    <value />
+    <value>HF 噪音增益</value>
+  </data>
+  <data name="PerRadioModelEffects" xml:space="preserve">
+    <value>启用无线电型号特效</value>
+  </data>
+  <data name="SrvEAMRadioPresetEnabled" xml:space="preserve">
+    <value>已启用服务器外部预警机预设</value>
+  </data>
+  <data name="AllowServerEAMRadioPreset" xml:space="preserve">
+    <value>允许服务器配置外部预警机模式</value>
+  </data>
+  <data name="OverlayAM" xml:space="preserve">
+    <value>AM</value>
+  </data>
+  <data name="OverlayFM" xml:space="preserve">
+    <value>FM</value>
+  </data>
+  <data name="OverlaySG" xml:space="preserve">
+    <value>SG</value>
+  </data>
+  <data name="OverlayHQ" xml:space="preserve">
+    <value>HQ</value>
+  </data>
+  <data name="MicAGCMaxDB" xml:space="preserve">
+    <value>最大增益（dB）</value>
+  </data>
+  <data name="IncomingAudioAGCMaxDB" xml:space="preserve">
+    <value>最大增益（dB）</value>
+  </data>
+  <data name="MicAGCTargetLevel" xml:space="preserve">
+    <value>目标音量（响度）</value>
+  </data>
+  <data name="IncomingAudioAGCTargetLevel" xml:space="preserve">
+    <value>目标音量（响度）</value>
+  </data>
+  <data name="MicAGCMaxDBToolTip" xml:space="preserve">
+    <value>对你的声音的音量放大，推荐40dB</value>
+  </data>
+  <data name="IncomingAudioAGCMaxDBToolTip" xml:space="preserve">
+    <value>对接收音频的音量放大，推荐40dB</value>
+  </data>
+  <data name="MicAGCTargetLevelToolTip" xml:space="preserve">
+    <value>你的声音可占据的振幅，推荐15000</value>
+  </data>
+  <data name="IncomingAudioAGCTargetLevelToolTip" xml:space="preserve">
+    <value>接收音频可占据的振幅，推荐20000</value>
+  </data>
+  <data name="InstructorTab" xml:space="preserve">
+    <value>教练</value>
+  </data>
+  <data name="ReloadAircraft" xml:space="preserve">
+    <value>重新加载</value>
+  </data>
+  <data name="StopInstructorMode" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="InstructorMode" xml:space="preserve">
+    <value>教练模式</value>
   </data>
   <data name="ClientWindowTitile" xml:space="preserve">
     <value>已连接的客户端</value>
-  </data>
-  <data name="PerRadioModelEffects" xml:space="preserve">
-    <value />
   </data>
 </root>

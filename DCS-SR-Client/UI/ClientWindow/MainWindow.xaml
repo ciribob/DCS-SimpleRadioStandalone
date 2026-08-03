@@ -176,7 +176,7 @@
                                     Margin="0,10,0,0"
                                     HorizontalAlignment="Center"
                                     Command="{Binding Path=ServerSettingsCommand}"
-                                    Content="Show Server Settings"
+                                    Content="{x:Static p:Resources.ToggleServerSettings}"
                                     IsEnabled="{Binding IsConnected}" />
 
                         </StackPanel>

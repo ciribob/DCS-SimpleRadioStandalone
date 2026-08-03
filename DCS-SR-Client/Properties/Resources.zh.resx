@@ -540,6 +540,9 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
   <data name="InputTransponderIDENT" xml:space="preserve">
     <value>应答机识别开关</value>
   </data>
+  <data name="InputTransponderPower" xml:space="preserve">
+    <value>应答机电源开关</value>
+  </data>
   <data name="InputUp0001" xml:space="preserve">
     <value>上调 0.001MHz</value>
   </data>
@@ -1230,7 +1233,7 @@ https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest</value>
     <value>灵敏度越高，说话的声音越容易被检测到，但也更容易接收到噪音</value>
   </data>
   <data name="DisableExpansionRadios" xml:space="preserve">
-    <value>Disable Expansion Radios</value>
+    <value>禁用扩展无线电</value>
   </data>
   <data name="RecordingFormat" xml:space="preserve">
     <value>录音格式（需要重启）</value>

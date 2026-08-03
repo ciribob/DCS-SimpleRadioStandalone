@@ -67,39 +67,63 @@ function exportRadioJF17(_data, SR)
     end
 
     if displayedRadio then
+        -- Reset state since we are about to reparse from display.
+        displayedRadio.freq = nil
+        displayedRadio.guard = nil
+        displayedRadio.enc = false
+        displayedRadio.encKey = nil
+        displayedRadio.modulation = nil
+
         -- Line 1: encryption.
         -- Treat CMS as fixed frequency encryption only,
         -- TRS as HAVEQUICK (frequency hopping) + encryption.
         -- For encryption, use Line 3 MAST/SLAV to change encryption key.
         if string.match(ufcp[1], "^PLN") then
-            displayedRadio.enc = false
-            displayedRadio.encKey = nil
-            displayedRadio.modulation = nil
+            -- nothing to do, driven by the comm devices.
         elseif string.match(ufcp[1], "^CMS") then
             displayedRadio.enc = true
             displayedRadio.encKey = string.match(ufcp[3], "MAST$") and 2 or 1
-            displayedRadio.modulation = nil
         elseif string.match(ufcp[1], "^TRS") then
             displayedRadio.enc = true
             displayedRadio.encKey = string.match(ufcp[3], "MAST$") and 4 or 3
             -- treat as HAVEQUICK
             displayedRadio.modulation = 4
         elseif string.match(ufcp[1], "^DATA") then
-            displayedRadio.enc = false
-            displayedRadio.encKey = nil
-            -- Forcibly set to DISABLED - Datalink has the radio, can't talk on it!
-            displayedRadio.modulation = 3
+            displayedRadio.modulation = 6 -- MIDS.
         end
 
         -- Look at line 2 for RT+G.
         displayedRadio.guard = string.match(ufcp[2], "^RT%+G%s+") ~= nil
     end
 
+    do
+        -- check datalink status.
+        local comm2 = _jf17.radios[3]
+        if comm2.modulation == 6 then
+            local datalink = GetDevice(27)
+            if datalink:is_dl_grp_valid() then
+                local stncode = datalink:get_dl_stn_code()
+
+                -- channel 199 and 200 are different NETs.
+                -- separate by using different MIDS_FREQ range.
+                local midsBaseFreq = SR.MIDS_FREQ * (comm2Channel - 199 + 1)
+                comm2.freq = midsBaseFreq + (SR.MIDS_FREQ_SEPARATION * stncode)
+                comm2.channel = stncode
+            else
+                comm2.freq = 1
+                comm2.channel = -1
+            end
+        end
+    end
+
     for radioId=2,3 do
         local state = _jf17.radios[radioId]
         local dataRadio = _data.radios[radioId]
         dataRadio.name = "R&S M3AR COMM" .. (radioId - 1)
-        dataRadio.freq = SR.getRadioFrequency(state.deviceId)
+        if state.modulation == 6 then
+            dataRadio.name = dataRadio.name .. " [DL]"
+        end
+        dataRadio.freq = state.freq or SR.getRadioFrequency(state.deviceId)
         dataRadio.modulation = state.modulation or SR.getRadioModulation(state.deviceId)
         dataRadio.volume = SR.getRadioVolume(0, state.volumeKnobId, { 0.0, 1.0 }, false)
         dataRadio.encMode = 2 -- Controlled by aircraft.
@@ -113,20 +137,6 @@ function exportRadioJF17(_data, SR)
         dataRadio.enc = state.enc
         dataRadio.encKey = state.encKey
     end
-
-    -- Expansion Radio - Server Side Controlled
-    _data.radios[4].name = "VHF/UHF Expansion"
-    _data.radios[4].freq = 251.0 * 1000000 --225-399.975 MHZ
-    _data.radios[4].modulation = 0
-    _data.radios[4].secFreq = 243.0 * 1000000
-    _data.radios[4].volume = 1.0
-    _data.radios[4].freqMin = 115 * 1000000
-    _data.radios[4].freqMax = 399.975 * 1000000
-    _data.radios[4].volMode = 1
-    _data.radios[4].freqMode = 1
-    _data.radios[4].expansion = true
-    _data.radios[4].encKey = 1
-    _data.radios[4].encMode = 1 -- FC3 Gui Toggle + Gui Enc key setting
 
     _data.selected = 1
     _data.control = 0; -- partial radio, allows hotkeys

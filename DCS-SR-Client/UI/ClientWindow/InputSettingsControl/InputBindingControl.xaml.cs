@@ -68,7 +68,7 @@ public partial class InputBindingControl : UserControl, IHandle<ProfileChangedMe
     public void LoadInputSettings()
     {
         DeviceLabel.Content = InputName;
-        ModifierLabel.Content = InputName + " Modifier";
+        ModifierLabel.Content = InputName + " " + Properties.Resources.InputModifier;
         ModifierBinding = (InputBinding)(int)ControlInputBinding + 100; //add 100 gets the enum of the modifier
 
         var currentInputProfile = GlobalSettingsStore.Instance.ProfileSettingsStore.GetCurrentInputProfile();
@@ -85,8 +85,8 @@ public partial class InputBindingControl : UserControl, IHandle<ProfileChangedMe
             }
             else
             {
-                DeviceText.Text = "None";
-                Device.Text = "None";
+                DeviceText.Text = Properties.Resources.InputTextNone;
+                Device.Text = Properties.Resources.InputTextNone;
             }
 
             if (currentInputProfile.ContainsKey(ModifierBinding))
@@ -98,8 +98,8 @@ public partial class InputBindingControl : UserControl, IHandle<ProfileChangedMe
             }
             else
             {
-                ModifierText.Text = "None";
-                ModifierDevice.Text = "None";
+                ModifierText.Text = Properties.Resources.InputTextNone;
+                ModifierDevice.Text = Properties.Resources.InputTextNone;
             }
         }
     }
@@ -143,8 +143,8 @@ public partial class InputBindingControl : UserControl, IHandle<ProfileChangedMe
     {
         GlobalSettingsStore.Instance.ProfileSettingsStore.RemoveControlSetting(ControlInputBinding);
 
-        Device.Text = "None";
-        DeviceText.Text = "None";
+        Device.Text = Properties.Resources.InputTextNone;
+        DeviceText.Text = Properties.Resources.InputTextNone;
     }
 
     private void Modifier_Click(object sender, RoutedEventArgs e)
@@ -169,7 +169,7 @@ public partial class InputBindingControl : UserControl, IHandle<ProfileChangedMe
     private void ModifierClear_Click(object sender, RoutedEventArgs e)
     {
         GlobalSettingsStore.Instance.ProfileSettingsStore.RemoveControlSetting(ModifierBinding);
-        ModifierDevice.Text = "None";
-        ModifierText.Text = "None";
+        ModifierDevice.Text = Properties.Resources.InputTextNone;
+        ModifierText.Text = Properties.Resources.InputTextNone;
     }
 }

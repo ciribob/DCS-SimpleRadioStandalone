@@ -1,11 +1,12 @@
-﻿using System;
+﻿using NLog;
+using SharpConfig;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Threading;
-using NLog;
-using SharpConfig;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 
@@ -639,7 +640,7 @@ public class GlobalSettingsStore
         {
             try
             {
-                _configuration.SaveToFile(Path + ConfigFileName);
+                _configuration.SaveToFile(Path + ConfigFileName, new UTF8Encoding(false, true));
             }
             catch (Exception)
             {

@@ -215,7 +215,7 @@ public class ProfileSettingsStore
                     if (device != null) inputProfile[bind] = device;
                 }
 
-                _configuration.SaveToFile(Path + GetProfileCfgFileName(profile), Encoding.UTF8);
+                _configuration.SaveToFile(Path + GetProfileCfgFileName(profile), new UTF8Encoding(false, true));
             }
             catch (FileNotFoundException)
             {
@@ -234,7 +234,7 @@ public class ProfileSettingsStore
                 var inputProfile = new Dictionary<InputBinding, InputDevice>();
                 InputProfiles[GetProfileName(profile)] = inputProfile;
                 InputConfigs[GetProfileCfgFileName(profile)] = new Configuration();
-                _configuration.SaveToFile(Path + GetProfileCfgFileName(profile), Encoding.UTF8);
+                _configuration.SaveToFile(Path + GetProfileCfgFileName(profile), new UTF8Encoding(false, true));
             }
         }
 
@@ -246,7 +246,7 @@ public class ProfileSettingsStore
             var inputProfile = new Dictionary<InputBinding, InputDevice>();
             InputProfiles[GetProfileName("default")] = inputProfile;
 
-            InputConfigs[GetProfileCfgFileName("default")].SaveToFile(GetProfileCfgFileName("default"));
+            InputConfigs[GetProfileCfgFileName("default")].SaveToFile(GetProfileCfgFileName("default"), new UTF8Encoding(false, true));
         }
     }
 
@@ -574,6 +574,6 @@ public class ProfileSettingsStore
 
         CurrentProfileName = "default";
 
-        InputConfigs[GetProfileCfgFileName(profileName)].SaveToFile(Path + GetProfileCfgFileName(profileName));
+        InputConfigs[GetProfileCfgFileName(profileName)].SaveToFile(Path + GetProfileCfgFileName(profileName), new UTF8Encoding(false, true));
     }
 }

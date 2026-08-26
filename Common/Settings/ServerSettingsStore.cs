@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
+using NLog;
+using SharpConfig;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Text.Json;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Models.Player;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings.Setting;
-using NLog;
-using SharpConfig;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 
@@ -169,7 +170,7 @@ public class ServerSettingsStore
         {
             try
             {
-                _configuration.SaveToFile(CFG_FILE_NAME);
+                _configuration.SaveToFile(CFG_FILE_NAME, new UTF8Encoding(false, true));
             }
             catch (Exception ex)
             {

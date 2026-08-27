@@ -48,6 +48,9 @@
         <PackageReference Include="Octokit" Version="14.0.0" />
     </ItemGroup>
     <ItemGroup>
+      <ProjectReference Include="..\Common\Common.csproj" />
+    </ItemGroup>
+    <ItemGroup>
       <EmbeddedResource Update="Properties\Resources.resx">
         <Generator>PublicResXFileCodeGenerator</Generator>
       </EmbeddedResource>

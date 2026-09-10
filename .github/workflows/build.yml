@@ -1,6 +1,9 @@
 name: Build
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   build:
@@ -52,5 +55,57 @@ jobs:
         name: DCS-SimpleRadioStandalone-CI
         path: install-build/DCS-SimpleRadioStandalone-*.zip
         compression-level: 0 # Zipping a zip...
+  sign:
+    name: Sign
+    if: github.event_name == 'workflow_dispatch'
+    needs: publish
+    runs-on: ubuntu-latest
+    environment: signing
+    steps:
+    - name: Download
+      uses: actions/download-artifact@v4
+      with:
+        name: DCS-SimpleRadioStandalone-CI
+        path: signed
+    - name: Download ssign
+      run: |
+        curl -sSL -o ssign.tar.gz https://github.com/Le-Syl21/ssign/releases/download/v0.1.5/ssign-linux-x86_64.tar.gz
+        tar -xzf ssign.tar.gz
+        chmod +x ssign
+    - name: Extract
+      run: unzip -q signed/*.zip -d install-build
+    - name: Sign binaries
+      run: |
+        cd install-build
+        find . -type f \( -name '*.exe' -o -name 'srs.dll' \) ! -name 'VC_redist*' -print0 \
+          | xargs -0 -r "$GITHUB_WORKSPACE/ssign" --verbose
+      env:
+        CERTUM_EMAIL: ${{ secrets.CERTUM_EMAIL }}
+        CERTUM_OTP: ${{ secrets.CERTUM_OTP }}
+    - name: Verify signatures
+      run: |
+        sudo apt-get update -qq && sudo apt-get install -y -qq osslsigncode
+        cd install-build
+        FAILED=0
+        while IFS= read -r -d '' f; do
+          out=$(osslsigncode verify "$f" 2>&1)
+          echo "== $f"
+          echo "$out"
+          echo "$out" | grep -q "MISMATCH" && { echo "::error::$f digest mismatch"; FAILED=1; }
+          echo "$out" | grep -q "Timestamp is not available" && { echo "::error::$f no RFC3161 timestamp"; FAILED=1; }
+          echo "$out" | grep -q "Signature verification: ok" || { echo "::error::$f verification failed"; FAILED=1; }
+        done < <(find . -type f \( -name '*.exe' -o -name 'srs.dll' \) ! -name 'VC_redist*' -print0)
+        exit $FAILED
+    - name: Re-zip
+      run: |
+        ORIG_ZIP=$(ls signed/*.zip | head -n1)
+        SIGNED_NAME="$(basename "$ORIG_ZIP" .zip)-signed.zip"
+        (cd install-build && zip -rq "../signed/$SIGNED_NAME" .)
+        ls -la signed/
+    - name: Upload signed
+      uses: actions/upload-artifact@v4
+      with:
+        name: DCS-SimpleRadioStandalone-Signed
+        path: signed/DCS-SimpleRadioStandalone-*-signed.zip
 
 

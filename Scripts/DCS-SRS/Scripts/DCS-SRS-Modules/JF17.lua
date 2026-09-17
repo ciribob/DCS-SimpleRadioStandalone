@@ -20,6 +20,7 @@ function exportRadioJF17(_data, SR)
                     volumeKnobId = 938,
                     enc = false,
                     guard = false,
+                    datalinkNet = 0
                 },
             }
         }
@@ -90,6 +91,7 @@ function exportRadioJF17(_data, SR)
             displayedRadio.modulation = 4
         elseif string.match(ufcp[1], "^DATA") then
             displayedRadio.modulation = 6 -- MIDS.
+            displayedRadio.datalinkNet = displayedRadio.channel - 199 + 1
         end
 
         -- Look at line 2 for RT+G.
@@ -106,7 +108,7 @@ function exportRadioJF17(_data, SR)
 
                 -- channel 199 and 200 are different NETs.
                 -- separate by using different MIDS_FREQ range.
-                local midsBaseFreq = SR.MIDS_FREQ * (comm2Channel - 199 + 1)
+                local midsBaseFreq = SR.MIDS_FREQ * comm2.datalinkNet
                 comm2.freq = midsBaseFreq + (SR.MIDS_FREQ_SEPARATION * stncode)
                 comm2.channel = stncode
             else

@@ -1,4 +1,4 @@
-﻿using NLog;
+using NLog;
 using SharpConfig;
 using System;
 using System.Collections.Concurrent;
@@ -108,7 +108,8 @@ public enum GlobalSettingsKeys
     AllowXInputController,
 
     LastPresetsFolder,
-    DISEntityID
+    DISEntityID,
+    DarkMode
 }
 
 public enum InputBinding
@@ -353,7 +354,8 @@ public class GlobalSettingsStore
         { GlobalSettingsKeys.AllowXInputController.ToString(), "false" },
         { GlobalSettingsKeys.LastPresetsFolder.ToString(), string.Empty },
         
-        { GlobalSettingsKeys.DISEntityID.ToString(), "-1" }
+        { GlobalSettingsKeys.DISEntityID.ToString(), "-1" },
+        { GlobalSettingsKeys.DarkMode.ToString(), "false" }
     };
 
     private readonly Logger Logger = LogManager.GetCurrentClassLogger();

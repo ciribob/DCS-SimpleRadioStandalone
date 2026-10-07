@@ -1,4 +1,5 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Settings;
 using NLog;
 using NLog.Config;
@@ -320,6 +321,11 @@ public partial class App : Application
     private void NotifyIcon_Quit(object sender, EventArgs args)
     {
         MainWindow?.Close();
+    }
+    protected override void OnStartup(StartupEventArgs e)
+    {
+        ThemeHelper.ApplyTheme(GlobalSettingsStore.Instance.GetClientSettingBool(GlobalSettingsKeys.DarkMode));
+        base.OnStartup(e);
     }
 
     protected override void OnExit(ExitEventArgs e)

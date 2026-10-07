@@ -402,6 +402,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
                 return ResourceManager.GetString("CurrentUnitLabel", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to 深色模式.
+        /// </summary>
+        public static string DarkMode
+        {
+            get
+            {
+                return ResourceManager.GetString("DarkMode", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to 默认麦克风.

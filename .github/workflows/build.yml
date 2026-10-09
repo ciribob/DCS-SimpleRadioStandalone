@@ -62,28 +62,28 @@ jobs:
       with:
         name: DCS-SimpleRadioStandalone-${{ case(github.event_name == 'pull_request', github.head_ref, github.ref_name) }}-signed.zip
         path: signed
-    scan:
-      if: ${{ github.event_name != 'pull_request' && github.repository == 'ciribob/DCS-SimpleRadioStandalone' }}
-      needs: sign
-      name: virustotal-scan
-      runs-on: ubuntu-slim
-      steps:
-        - uses: actions/download-artifact@v8
-          with:
-            artifact-ids: ${{ needs.sign.outputs.srs-install-zip }}
-        - name: VirusTotal Scan
-          uses: crazy-max/ghaction-virustotal@v5
-          with:
-            vt_api_key: ${{ secrets.VIRUSTOTAL_API_KEY }}
-            request_rate: 4
-            files: |
-              Installer.exe$
-              SRS-AutoUpdater.exe$
-              Client/SR-ClientRadio.exe$
-              ExternalAudio/DCS-SR-ExternalAudio.exe$
-              Server/SRS-Server.exe$
-              ServerCommandLine-Windows/SRS-Server-Commandline.exe$
-              Scripts/DCS-SRS/bin/lua-srs.dll$
+  scan:
+    if: ${{ github.event_name != 'pull_request' && github.repository == 'ciribob/DCS-SimpleRadioStandalone' }}
+    needs: sign
+    name: virustotal-scan
+    runs-on: ubuntu-slim
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          artifact-ids: ${{ needs.sign.outputs.srs-install-zip }}
+      - name: VirusTotal Scan
+        uses: crazy-max/ghaction-virustotal@v5
+        with:
+          vt_api_key: ${{ secrets.VIRUSTOTAL_API_KEY }}
+          request_rate: 4
+          files: |
+            Installer.exe$
+            SRS-AutoUpdater.exe$
+            Client/SR-ClientRadio.exe$
+            ExternalAudio/DCS-SR-ExternalAudio.exe$
+            Server/SRS-Server.exe$
+            ServerCommandLine-Windows/SRS-Server-Commandline.exe$
+            Scripts/DCS-SRS/bin/lua-srs.dll$
 
 
 

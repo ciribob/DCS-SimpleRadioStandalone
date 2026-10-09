@@ -55,7 +55,7 @@ jobs:
       id: upload
       uses: actions/upload-artifact@v7
       with:
-        name: DCS-SimpleRadioStandalone-${{ github.ref_name }}-unsigned.zip
+        name: DCS-SimpleRadioStandalone-${{ github.ref_name }}-unsigned
         path: install-build/DCS-SimpleRadioStandalone-*.zip
         archive: false
   sign:
@@ -76,8 +76,10 @@ jobs:
         github-artifact-id: '${{ needs.publish.outputs.srs-install-zip }}'
         wait-for-completion: true
         output-artifact-directory: signed
+        skip-decompress: true
     - name: Upload (signed)
       uses: actions/upload-artifact@v7
       with:
-        name: DCS-SimpleRadioStandalone-${{ github.ref_name }}.zip
-        path: signed
+        name: DCS-SimpleRadioStandalone-${{ github.ref_name }}-signed
+        path: signed/DCS-SimpleRadioStandalone-*.zip
+        archive: false

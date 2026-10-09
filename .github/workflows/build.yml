@@ -49,14 +49,14 @@ jobs:
     - name: Restore NuGet packages
       run: nuget restore
     - name: Publish
-      run: ./publish.ps1 -NoSign -Zip
+      run: ./publish.ps1 -NoSign
+        
     - name: upload
       id: upload
       uses: actions/upload-artifact@v7
       with:
         name: DCS-SimpleRadioStandalone-${{ github.ref_name }}-unsigned
-        path: install-build/DCS-SimpleRadioStandalone-*.zip
-        archive: false
+        path: install-build
   sign:
     permissions:
       actions: read
@@ -78,6 +78,5 @@ jobs:
     - name: Upload (signed)
       uses: actions/upload-artifact@v7
       with:
-        name: DCS-SimpleRadioStandalone-${{ github.ref_name }}-signed
-        path: signed/DCS-SimpleRadioStandalone-*.zip
-        archive: false
+        name: DCS-SimpleRadioStandalone-${{ github.ref_name }}-signed.zip
+        path: signed

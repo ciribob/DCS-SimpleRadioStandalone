@@ -79,13 +79,13 @@ jobs:
           vt_api_key: ${{ secrets.VIRUSTOTAL_API_KEY }}
           request_rate: 4
           files: |
-            Installer.exe$
-            SRS-AutoUpdater.exe$
-            Client/SR-ClientRadio.exe$
-            ExternalAudio/DCS-SR-ExternalAudio.exe$
-            Server/SRS-Server.exe$
-            ServerCommandLine-Windows/SRS-Server-Commandline.exe$
-            Scripts/DCS-SRS/bin/lua-srs.dll$
+            ./Installer.exe
+            ./SRS-AutoUpdater.exe
+            ./Client/SR-ClientRadio.exe
+            ./ExternalAudio/DCS-SR-ExternalAudio.exe
+            ./Server/SRS-Server.exe
+            ./ServerCommandLine-Windows/SRS-Server-Commandline.exe
+            ./Scripts/DCS-SRS/bin/lua-srs.dll
 
 
 

@@ -3,28 +3,6 @@ param(
     [switch]$Zip
 )
 
-$MSBuildExe="msbuild"
-if ($null -eq (Get-Command $MSBuildExe -ErrorAction SilentlyContinue)) {
-    # 18 = VS 2026.
-    $VSVersionCandidates = @('18', '2022')
-    foreach ($VSVersion in $VSVersionCandidates) {
-        $MSBuildExe="C:\Program Files\Microsoft Visual Studio\$VSVersion\Community\MSBuild\Current\Bin\MSBuild.exe"
-        Write-Warning "MSBuild not in path, trying $MSBuildExe..."
-        if ($null -ne (Get-Command $MSBuildExe -ErrorAction SilentlyContinue)) {
-            # Found, proceed.
-            break
-        }
-        $MSBuildExe=$null
-    }
-
-    if ($null -eq $MSBuildExe) {
-        Writer-Error "Cannot find MSBuild (aborting)"
-        exit 1
-    }
-
-    Write-Host "Using MSBuild $MSBuildExe"
-}
-
 if ($NoSign) {
     Write-Warning "Signing has been disabled."
 }

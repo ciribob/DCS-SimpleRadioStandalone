@@ -6,21 +6,16 @@ on:
 jobs:
   publish:
     name: publish
-    runs-on: windows-2025-vs2026
+    runs-on: windows-2025
     outputs:
       srs-install-zip: ${{ steps.upload.outputs.artifact-id }}
     steps:
-    - name: Checkout
-      uses: actions/checkout@v7
+    - uses: actions/checkout@v7
     - uses: actions/setup-dotnet@v6
       with:
         dotnet-version: '10.0.x'
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v3
-    - name: Setup NuGet
-      uses: nuget/setup-nuget@v3
-    - name: Restore NuGet packages
-      run: nuget restore
+        cache: true
+    - run: dotnet restore --locked-mode
     - name: Publish
       run: ./publish.ps1 -NoSign
     - name: Upload
@@ -45,6 +40,7 @@ jobs:
         organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
         project-slug: 'DCS-SimpleRadioStandalone'
         signing-policy-slug: 'release-signing'
+        artifact-configuration-slug: 'dotnet-srs-dll'
         github-artifact-id: '${{ needs.publish.outputs.srs-install-zip }}'
         wait-for-completion: true
         output-artifact-directory: signed

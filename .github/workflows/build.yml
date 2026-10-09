@@ -36,7 +36,7 @@ jobs:
     name: publish
     runs-on: windows-2025-vs2026
     outputs:
-      srs-install-zip: ${{ steps.Upload.outputs.artifact-id }}
+      srs-install-zip: ${{ steps.upload.outputs.artifact-id }}
     steps:
     - name: Checkout
       uses: actions/checkout@v6
@@ -51,7 +51,8 @@ jobs:
       run: nuget restore
     - name: Publish
       run: ./publish.ps1 -NoSign -Zip
-    - name: Upload
+    - name: upload
+      id: upload
       uses: actions/upload-artifact@v7
       with:
         name: DCS-SimpleRadioStandalone-${{ github.ref_name }}-unsigned.zip

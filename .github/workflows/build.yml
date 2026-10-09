@@ -58,6 +58,7 @@ jobs:
         path: install-build/DCS-SimpleRadioStandalone-*.zip
         archive: false
   sign:
+    needs: publish
     name: Sign (Test)
     runs-on: ubuntu-latest
     steps:

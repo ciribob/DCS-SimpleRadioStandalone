@@ -3,28 +3,6 @@ param(
     [switch]$Zip
 )
 
-$MSBuildExe="msbuild"
-if ($null -eq (Get-Command $MSBuildExe -ErrorAction SilentlyContinue)) {
-    # 18 = VS 2026.
-    $VSVersionCandidates = @('18', '2022')
-    foreach ($VSVersion in $VSVersionCandidates) {
-        $MSBuildExe="C:\Program Files\Microsoft Visual Studio\$VSVersion\Community\MSBuild\Current\Bin\MSBuild.exe"
-        Write-Warning "MSBuild not in path, trying $MSBuildExe..."
-        if ($null -ne (Get-Command $MSBuildExe -ErrorAction SilentlyContinue)) {
-            # Found, proceed.
-            break
-        }
-        $MSBuildExe=$null
-    }
-
-    if ($null -eq $MSBuildExe) {
-        Writer-Error "Cannot find MSBuild (aborting)"
-        exit 1
-    }
-
-    Write-Host "Using MSBuild $MSBuildExe"
-}
-
 if ($NoSign) {
     Write-Warning "Signing has been disabled."
 }
@@ -136,22 +114,26 @@ dotnet publish "./AutoUpdater\AutoUpdater.csproj" `
     @commonParams
 
 
-
-# SRS Lua Wrapper
-Write-Host "Building SRS-Lua-Wrapper..." -ForegroundColor Green
+# Copy Scripts.
 Remove-Item "$outputPath\Scripts" -Recurse -ErrorAction SilentlyContinue
 Write-Host "Copy Scripts..." -ForegroundColor Green
 Copy-Item "./Scripts" -Destination "$outputPath\Scripts" -Recurse
-&  $MSBuildExe `
-    ".\SRS-Lua-Wrapper\SRS-Lua-Wrapper.vcxproj" `
-    /p:Configuration=Release `
-    /p:Platform=x64 `
-    /t:Rebuild
 
-# Create directory and copy the built DLL
-New-Item -ItemType Directory -Force -Path "$outputPath\Scripts\DCS-SRS\bin"
-Copy-Item ".\SRS-Lua-Wrapper\x64\Release\srs.dll" -Destination "$outputPath\Scripts\DCS-SRS\bin"
+# SRS Lua .NET
+Write-Host "Building lua-srs.dll..." -ForegroundColor Green
+Remove-Item "$outputPath/Scripts/DCS-SRS/bin" -Recurse -ErrorAction SilentlyContinue
+dotnet clean "./DCS-SR-Lua/DCS-SR-Lua.csproj"
+dotnet publish "./DCS-SR-Lua/DCS-SR-Lua.csproj" `
+    --runtime win-x64 `
+    --output "$outputPath/Scripts/DCS-SRS/bin" `
+    --configuration Release `
+    --no-self-contained `
+    /p:IncludeSourceRevisionInInformationalVersion=false # Dont add a git hash into the build version
 
+# Strip pdb if it was copied.
+Remove-Item -Path "$outputPath/Scripts/DCS-SRS/bin/lua-srs.pdb" -ErrorAction SilentlyContinue
+
+# Installer
 Write-Host "Publishing Installer..." -ForegroundColor Green
 Remove-Item "$outputPath\Installer" -Recurse -ErrorAction SilentlyContinue
 dotnet clean "./Installer\Installer.csproj"
@@ -193,7 +175,7 @@ if ($NoSign) {
     Write-Host "Searching for .dll and .exe files in '$searchPath' and its subdirectories..."
     # Get all .exe files recursively. -File ensures we only get files.
     try {
-        $filesToSign = Get-ChildItem -Path $searchPath -Recurse -Include "srs.dll", "*.exe" -File -ErrorAction Stop
+        $filesToSign = Get-ChildItem -Path $searchPath -Recurse -Include "lua-srs.dll", "*.exe" -File -ErrorAction Stop
     } catch {
         Write-Error "Error occurred while searching for files: $($_.Exception.Message)"
         exit 1

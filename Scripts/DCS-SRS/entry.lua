@@ -7,7 +7,7 @@ declare_plugin("DCS-SRS", {
 	version = "2.4.1.0",
 	state = "installed",
 	info = _("DCS-SimpleRadio Standalone\n\nBrings realistic VoIP comms to DCS with a cockpit integration with every aircraft\n\nCheck Special Settings for SRS integration settings\n\nSRS Discord for Support: https://discord.gg/baw7g3t"),
-	binaries = {"srs.dll"},
+	binaries = {"lua-srs.dll"},
     load_immediate = true,
 	Skins = {
 		{ name = "DCS-SRS", dir = "Theme" },

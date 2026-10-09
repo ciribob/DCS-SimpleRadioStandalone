@@ -1,63 +1,41 @@
 name: Build
 
-on:
-  push:
-  workflow_dispatch:
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
-    name: Build
-    runs-on: windows-2025-vs2026
+    name: Tests
+    runs-on: windows-2025
     steps:
-    - name: Checkout
-      uses: actions/checkout@v6
-
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v2
-
-    - name: Setup NuGet
-      uses: nuget/setup-nuget@v2
-
-    - name: Restore NuGet packages
-      run: nuget restore
-
-    - name: Build
-      run: msbuild /p:Configuration=Release /p:Platform=x64 /p:SourceLinkCreate=false
-
-    - name: Setup VSTest
-      uses: Malcolmnixon/Setup-VSTest@v3
-
-    - name: VSTest DCS-SR-CommonTests
-      run: VSTest.Console DCS-SR-CommonTests\bin\Release\net10.0-windows10.0.22621.0\DCS-SR-CommonTests.dll
+    - uses: actions/checkout@v6
+    - uses: actions/setup-dotnet@v6
+      with:
+        dotnet-version: '10.0.x'
+    - run: dotnet restore
+    - run: dotnet test --configuration Release --no-restore
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
   publish:
     name: publish
-    runs-on: windows-2025-vs2026
+    runs-on: windows-2025
     outputs:
       srs-install-zip: ${{ steps.upload.outputs.artifact-id }}
     steps:
-    - name: Checkout
-      uses: actions/checkout@v6
+    - uses: actions/checkout@v6
     - uses: actions/setup-dotnet@v5
       with:
         dotnet-version: '10.0.x'
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v2
-    - name: Setup NuGet
-      uses: nuget/setup-nuget@v2
-    - name: Restore NuGet packages
-      run: nuget restore
+    - run: dotnet restore
     - name: Publish
       run: ./publish.ps1 -NoSign
-        
     - name: upload
       id: upload
       uses: actions/upload-artifact@v7
       with:
-        name: DCS-SimpleRadioStandalone-${{ github.ref_name }}-unsigned
+        name: DCS-SimpleRadioStandalone-${{ case(github.event_name == 'pull_request', github.head_ref, github.ref_name) }}-unsigned
         path: install-build
   sign:
+    if: ${{ github.event_name != 'pull_request' }}
     permissions:
       actions: read
       contents: read
@@ -72,11 +50,12 @@ jobs:
         organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
         project-slug: 'DCS-SimpleRadioStandalone'
         signing-policy-slug: 'test-signing'
+        artifact-configuration-slug: 'dotnet-srs-dll'
         github-artifact-id: '${{ needs.publish.outputs.srs-install-zip }}'
         wait-for-completion: true
         output-artifact-directory: signed
     - name: Upload (signed)
       uses: actions/upload-artifact@v7
       with:
-        name: DCS-SimpleRadioStandalone-${{ github.ref_name }}-signed.zip
+        name: DCS-SimpleRadioStandalone-${{ case(github.event_name == 'pull_request', github.head_ref, github.ref_name) }}-signed.zip
         path: signed

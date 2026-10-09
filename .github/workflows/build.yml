@@ -71,6 +71,8 @@ jobs:
       - uses: actions/download-artifact@v8
         with:
           artifact-ids: ${{ needs.sign.outputs.srs-install-zip }}
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: VirusTotal Scan
         uses: crazy-max/ghaction-virustotal@v5
         with:

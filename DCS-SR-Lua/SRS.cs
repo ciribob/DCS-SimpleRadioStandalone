@@ -48,7 +48,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Lua
 
         static string GetSRSPath()
         {
-            return Registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\DCS-SR-Standalone", "SRPathStandalone", "")?.ToString();
+            var value = Registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\DCS-SR-Standalone", "SRPathStandalone", "")?.ToString();
+            if (value == null)
+            {
+                throw new Exception("Could not read registry key.");
+            }
+
+            return value;
         }
         static int Start_SRS(IntPtr state)
         {
@@ -73,6 +79,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Lua
                     FileName = Path.Combine([path, "SR-ClientRadio"]),
                     Arguments = $"-host={host}"
                 });
+
+                if (proc == null)
+                {
+                    throw new Exception("Unable to get proc object.");
+                }
 
                 lua.Push(proc.StartTime.Ticks > 0);
             }

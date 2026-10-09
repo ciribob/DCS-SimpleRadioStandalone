@@ -82,7 +82,7 @@ jobs:
     if: ${{ github.event_name != 'pull_request' && github.repository == 'ciribob/DCS-SimpleRadioStandalone' }}
     needs: sign
     name: virustotal-scan
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     steps:
       - name: Dependencies
         run: sudo apt-get install -y unzip

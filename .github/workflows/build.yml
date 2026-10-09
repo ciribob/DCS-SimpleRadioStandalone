@@ -58,11 +58,8 @@ jobs:
         path: install-build/DCS-SimpleRadioStandalone-*.zip
         archive: false
   sign:
-    name: Sign
-    if: github.event_name == 'workflow_dispatch'
-    needs: publish
+    name: Sign (Test)
     runs-on: ubuntu-latest
-    environment: signing
     steps:
     - name: submit signing request
       uses: signpath/github-action-submit-signing-request@v3

@@ -1,7 +1,4 @@
 name: Build
-permissions:
-  actions: read
-  contents: read
 
 on:
   push:
@@ -62,12 +59,15 @@ jobs:
         path: install-build/DCS-SimpleRadioStandalone-*.zip
         archive: false
   sign:
+    permissions:
+      actions: read
+      contents: read
     needs: publish
     name: Sign (Test)
     runs-on: ubuntu-latest
     steps:
     - name: submit signing request
-      uses: signpath/github-action-submit-signing-request@v3
+      uses: signpath/github-action-submit-signing-request@v2
       with:
         api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
         organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'

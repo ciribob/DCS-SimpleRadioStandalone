@@ -35,7 +35,7 @@ jobs:
         name: DCS-SimpleRadioStandalone-${{ case(github.event_name == 'pull_request', github.head_ref, github.ref_name) }}-unsigned
         path: install-build
   sign:
-    if: ${{ github.event_name != 'pull_request' }}
+    if: ${{ github.event_name != 'pull_request' && github.repository == 'ciribob/DCS-SimpleRadioStandalone' }}
     permissions:
       actions: read
       contents: read

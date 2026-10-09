@@ -127,7 +127,6 @@ dotnet publish "./DCS-SR-Lua/DCS-SR-Lua.csproj" `
     --runtime win-x64 `
     --output "$outputPath/Scripts/DCS-SRS/bin" `
     --configuration Release `
-    --no-self-contained `
     /p:IncludeSourceRevisionInInformationalVersion=false # Dont add a git hash into the build version
 
 # Strip pdb if it was copied.

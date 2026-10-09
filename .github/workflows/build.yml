@@ -62,6 +62,9 @@ jobs:
     needs: publish
     name: Sign (Test)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
     steps:
     - name: submit signing request
       uses: signpath/github-action-submit-signing-request@v3

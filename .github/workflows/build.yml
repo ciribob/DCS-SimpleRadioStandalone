@@ -34,6 +34,7 @@ jobs:
       with:
         name: DCS-SimpleRadioStandalone-${{ case(github.event_name == 'pull_request', github.head_ref, github.ref_name) }}-unsigned
         path: install-build
+        retention-days:: 1
   sign:
     if: ${{ github.event_name != 'pull_request' && github.repository == 'ciribob/DCS-SimpleRadioStandalone' }}
     permissions:
@@ -43,7 +44,7 @@ jobs:
     name: Sign (Test)
     runs-on: ubuntu-slim
     outputs:
-      srs-install-zip: ${{ steps.upload.outputs.artifact-id }}
+      srs-scan-zip: ${{ steps.upload-scan.outputs.artifact-id }}
     steps:
     - name: submit signing request
       uses: signpath/github-action-submit-signing-request@v2
@@ -62,30 +63,72 @@ jobs:
       with:
         name: DCS-SimpleRadioStandalone-${{ case(github.event_name == 'pull_request', github.head_ref, github.ref_name) }}-signed.zip
         path: signed
+    - name: Upload (scan)
+      id: upload-scan
+      uses: actions/upload-artifact@v7
+      with:
+        name: scan
+        path: |
+            signed/Installer.exe
+            signed/SRS-AutoUpdater.exe
+            signed/Client/SR-ClientRadio.exe
+            signed/ExternalAudio/DCS-SR-ExternalAudio.exe
+            signed/Server/SRS-Server.exe
+            signed/ServerCommandLine-Windows/SRS-Server-Commandline.exe
+            signed/Scripts/DCS-SRS/bin/lua-srs.dll
+        retention-days: 1
+
   scan:
     if: ${{ github.event_name != 'pull_request' && github.repository == 'ciribob/DCS-SimpleRadioStandalone' }}
     needs: sign
     name: virustotal-scan
     runs-on: ubuntu-slim
     steps:
+      - name: Dependencies
+        run: apt install -y unzip
+      - name: vt-cli
+        run: |
+          curl -LO https://github.com/VirusTotal/vt-cli/releases/latest/download/Linux64.zip
+          unzip Linux64.zip
+          chmod +x vt
+      - name: yq YAML parser
+        run: |
+          curl -LO https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64.tar.gz
+          tar xzf yq_linux_amd64.tar.gz
+          chmod +x yq_linux_amd64
       - uses: actions/download-artifact@v8
         with:
-          artifact-ids: ${{ needs.sign.outputs.srs-install-zip }}
+          artifact-ids: ${{ needs.sign.outputs.srs-scan-zip }}
       - name: Display structure of downloaded files
         run: ls -R
       - name: VirusTotal Scan
-        uses: crazy-max/ghaction-virustotal@v5
-        with:
-          vt_api_key: ${{ secrets.VIRUSTOTAL_API_KEY }}
-          request_rate: 4
-          files: |
-            ./Installer.exe
-            ./SRS-AutoUpdater.exe
-            ./Client/SR-ClientRadio.exe
-            ./ExternalAudio/DCS-SR-ExternalAudio.exe
-            ./Server/SRS-Server.exe
-            ./ServerCommandLine-Windows/SRS-Server-Commandline.exe
-            ./Scripts/DCS-SRS/bin/lua-srs.dll
+        env:
+          VTCLI_APIKEY: ${{ secrets.VIRUSTOTAL_API_KEY }}
+        run: |
+          FILES=(./Installer.exe \
+            ./SRS-AutoUpdater.exe \
+            ./Client/SR-ClientRadio.exe \
+            ./ExternalAudio/DCS-SR-ExternalAudio.exe \
+            ./Server/SRS-Server.exe \
+            ./ServerCommandLine-Windows/SRS-Server-Commandline.exe \
+            ./Scripts/DCS-SRS/bin/lua-srs.dll)
+          for file in "${FILES[@]}"; do
+            echo "Scanning $file..."
+            ./vt scan file $file --silent --wait > result.yaml
+            if [ "$(./yq_linux_amd64 ".[0].last_analysis_stats.malicious" result.yaml)" -gt "0" ]; then
+              echo "::error file=$file::Reported malicious!"
+            fi
+            if [ "$(./yq_linux_amd64 ".[0].last_analysis_stats.suspicious" result.yaml)" -gt "0" ]; then
+              echo "::warn file=$file::Reported suspicious."
+            fi
+          done
+          
+            
+            
+            
+            
+            
+            
 
 
 

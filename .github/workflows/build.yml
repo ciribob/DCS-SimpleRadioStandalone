@@ -75,7 +75,6 @@ jobs:
         github-artifact-id: '${{ needs.publish.outputs.srs-install-zip }}'
         wait-for-completion: true
         output-artifact-directory: signed
-        skip-decompress: true
     - name: Upload (signed)
       uses: actions/upload-artifact@v7
       with:

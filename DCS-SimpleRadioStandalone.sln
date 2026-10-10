@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.3.11505.172 d18.3
+VisualStudioVersion = 18.3.11505.172
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoUpdater", "AutoUpdater\AutoUpdater.csproj", "{B5956387-B0A8-085C-7A60-C58090962AF1}"
 EndProject
@@ -21,8 +21,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedAudio", "SharedAudio\SharedAudio.csproj", "{1BBCDA50-4C90-DA19-FDFA-9D35559A089F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SRS-Lua-Wrapper", "SRS-Lua-Wrapper\SRS-Lua-Wrapper.vcxproj", "{E1FF871E-F37A-4CB3-996C-91D9C6F6D7A4}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{089100B1-113F-4E66-888A-E83F3999EAFD}"
 	ProjectSection(SolutionItems) = preProject
 		Scripts\DCS-SRS\Scripts\DCS-Plugin-Example\SRS\autoload.lua = Scripts\DCS-SRS\Scripts\DCS-Plugin-Example\SRS\autoload.lua
@@ -40,6 +38,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		publish.ps1 = publish.ps1
 		Scripts\DCS-SRS\Scripts\DCS-Plugin-Example\Readme.txt = Scripts\DCS-SRS\Scripts\DCS-Plugin-Example\Readme.txt
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCS-SR-Lua", "DCS-SR-Lua\DCS-SR-Lua.csproj", "{2495278B-8A03-4018-9645-82545A3897A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,12 +83,15 @@ Global
 		{1BBCDA50-4C90-DA19-FDFA-9D35559A089F}.Debug|x64.Build.0 = Debug|Any CPU
 		{1BBCDA50-4C90-DA19-FDFA-9D35559A089F}.Release|x64.ActiveCfg = Release|Any CPU
 		{1BBCDA50-4C90-DA19-FDFA-9D35559A089F}.Release|x64.Build.0 = Release|Any CPU
-		{E1FF871E-F37A-4CB3-996C-91D9C6F6D7A4}.Debug|x64.ActiveCfg = Debug|x64
-		{E1FF871E-F37A-4CB3-996C-91D9C6F6D7A4}.Debug|x64.Build.0 = Debug|x64
-		{E1FF871E-F37A-4CB3-996C-91D9C6F6D7A4}.Release|x64.ActiveCfg = Release|x64
-		{E1FF871E-F37A-4CB3-996C-91D9C6F6D7A4}.Release|x64.Build.0 = Release|x64
+		{2495278B-8A03-4018-9645-82545A3897A9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2495278B-8A03-4018-9645-82545A3897A9}.Debug|x64.Build.0 = Debug|Any CPU
+		{2495278B-8A03-4018-9645-82545A3897A9}.Release|x64.ActiveCfg = Release|Any CPU
+		{2495278B-8A03-4018-9645-82545A3897A9}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A037BBCA-8427-406D-826A-DFF30CF51795}
 	EndGlobalSection
 EndGlobal

@@ -1,6 +1,7 @@
 <UserControl x:Class="Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.InputSettingsControl.InputSettings"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:p="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Properties"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:inputSettingsControl="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.InputSettingsControl"
@@ -9,178 +10,178 @@
              d:DesignHeight="450" d:DesignWidth="575">
     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Visible">
         <StackPanel Orientation="Vertical">
-            <Button Width="150px" Content="Rescan Input Devices" Click="Rescan_OnClick" />
+            <Button Width="150px" Content="{x:Static p:Resources.RescanInputDevices}" Click="Rescan_OnClick" />
 
             <StackPanel Orientation="Horizontal">
                 <Label
                     Margin="305,0,0,0"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
-                    Content="Device" />
+                    Content="{x:Static p:Resources.DeviceLabel}" />
 
                 <Label
                     Margin="70,0,0,0"
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
-                    Content="Button" />
+                    Content="{x:Static p:Resources.ButtonLabel}" />
             </StackPanel>
 
 
             <inputSettingsControl:InputBindingControl x:Name="Radio1"
                                                       ControlInputBinding="Switch1"
-                                                      InputName="Radio 1" />
+                                                      InputName="{x:Static p:Resources.InputRadio1}" />
             <inputSettingsControl:InputBindingControl x:Name="Radio2"
 
                                                       ControlInputBinding="Switch2"
-                                                      InputName="Radio 2" />
+                                                      InputName="{x:Static p:Resources.InputRadio2}" />
             <inputSettingsControl:InputBindingControl x:Name="Radio3"
                                                       ControlInputBinding="Switch3"
-                                                      InputName="Radio 3" />
+                                                      InputName="{x:Static p:Resources.InputRadio3}" />
 
 
             <inputSettingsControl:InputBindingControl x:Name="PTT"
                                                       ControlInputBinding="Ptt"
-                                                      InputName="Common PTT" />
+                                                      InputName="{x:Static p:Resources.InputPTT}" />
             <inputSettingsControl:InputBindingControl x:Name="Intercom"
                                                       ControlInputBinding="Intercom"
-                                                      InputName="Intercom Select" />
+                                                      InputName="{x:Static p:Resources.InputIntercom}" />
 
             <inputSettingsControl:InputBindingControl x:Name="IntercomPTT"
                                                       ControlInputBinding="IntercomPTT"
-                                                      InputName="Special Intercom Select &amp; PTT" />
+                                                      InputName="{x:Static p:Resources.InputIntercomPTT}" />
 
             <inputSettingsControl:InputBindingControl x:Name="RadioOverlay"
                                                       ControlInputBinding="OverlayToggle"
-                                                      InputName="Overlay Toggle" />
+                                                      InputName="{x:Static p:Resources.InputRadioOverlay}" />
 
             <inputSettingsControl:InputBindingControl x:Name="Radio4"
                                                       ControlInputBinding="Switch4"
-                                                      InputName="Radio 4" />
+                                                      InputName="{x:Static p:Resources.InputRadio4}" />
             <inputSettingsControl:InputBindingControl x:Name="Radio5"
                                                       ControlInputBinding="Switch5"
-                                                      InputName="Radio 5" />
+                                                      InputName="{x:Static p:Resources.InputRadio5}" />
             <inputSettingsControl:InputBindingControl x:Name="Radio6"
                                                       ControlInputBinding="Switch6"
-                                                      InputName="Radio 6" />
+                                                      InputName="{x:Static p:Resources.InputRadio6}" />
 
             <inputSettingsControl:InputBindingControl x:Name="Radio7"
                                                       ControlInputBinding="Switch7"
-                                                      InputName="Radio 7" />
+                                                      InputName="{x:Static p:Resources.InputRadio7}" />
 
             <inputSettingsControl:InputBindingControl x:Name="Radio8"
                                                       ControlInputBinding="Switch8"
-                                                      InputName="Radio 8" />
+                                                      InputName="{x:Static p:Resources.InputRadio8}" />
 
             <inputSettingsControl:InputBindingControl x:Name="Radio9"
                                                       ControlInputBinding="Switch9"
-                                                      InputName="Radio 9" />
+                                                      InputName="{x:Static p:Resources.InputRadio9}" />
 
             <inputSettingsControl:InputBindingControl x:Name="Radio10"
                                                       ControlInputBinding="Switch10"
-                                                      InputName="Radio 10" />
+                                                      InputName="{x:Static p:Resources.InputRadio10}" />
 
 
             <inputSettingsControl:InputBindingControl x:Name="Up100"
                                                       ControlInputBinding="Up100"
-                                                      InputName="Up 100MHz" />
+                                                      InputName="{x:Static p:Resources.InputUp100}" />
 
             <inputSettingsControl:InputBindingControl x:Name="Up10"
                                                       ControlInputBinding="Up10"
-                                                      InputName="Up 10MHz" />
+                                                      InputName="{x:Static p:Resources.InputUp10}" />
 
             <inputSettingsControl:InputBindingControl x:Name="Up1"
                                                       ControlInputBinding="Up1"
-                                                      InputName="Up 1MHz" />
+                                                      InputName="{x:Static p:Resources.InputUp1}" />
 
             <inputSettingsControl:InputBindingControl x:Name="Up01"
                                                       ControlInputBinding="Up01"
-                                                      InputName="Up 0.1MHz" />
+                                                      InputName="{x:Static p:Resources.InputUp01}" />
 
             <inputSettingsControl:InputBindingControl x:Name="Up001"
                                                       ControlInputBinding="Up001"
-                                                      InputName="Up 0.01MHz" />
+                                                      InputName="{x:Static p:Resources.InputUp001}" />
 
             <inputSettingsControl:InputBindingControl x:Name="Up0001"
                                                       ControlInputBinding="Up0001"
-                                                      InputName="Up 0.001MHz" />
+                                                      InputName="{x:Static p:Resources.InputUp0001}" />
 
 
             <inputSettingsControl:InputBindingControl x:Name="Down100"
                                                       ControlInputBinding="Down100"
-                                                      InputName="Down 100MHz" />
+                                                      InputName="{x:Static p:Resources.InputDown100}" />
 
             <inputSettingsControl:InputBindingControl x:Name="Down10"
                                                       ControlInputBinding="Down10"
-                                                      InputName="Down 10MHz" />
+                                                      InputName="{x:Static p:Resources.InputDown10}" />
 
             <inputSettingsControl:InputBindingControl x:Name="Down1"
                                                       ControlInputBinding="Down1"
-                                                      InputName="Down 1MHz" />
+                                                      InputName="{x:Static p:Resources.InputDown1}" />
 
             <inputSettingsControl:InputBindingControl x:Name="Down01"
                                                       ControlInputBinding="Down01"
-                                                      InputName="Down 0.1MHz" />
+                                                      InputName="{x:Static p:Resources.InputDown01}" />
 
             <inputSettingsControl:InputBindingControl x:Name="Down001"
                                                       ControlInputBinding="Down001"
-                                                      InputName="Down 0.01MHz" />
+                                                      InputName="{x:Static p:Resources.InputDown001}" />
 
             <inputSettingsControl:InputBindingControl x:Name="Down0001"
                                                       ControlInputBinding="Down0001"
-                                                      InputName="Down 0.001MHz" />
+                                                      InputName="{x:Static p:Resources.InputDown0001}" />
 
             <inputSettingsControl:InputBindingControl x:Name="ToggleGuard"
                                                       ControlInputBinding="ToggleGuard"
-                                                      InputName="Toggle Guard" />
+                                                      InputName="{x:Static p:Resources.InputToggleGuard}" />
 
             <inputSettingsControl:InputBindingControl x:Name="NextRadio"
                                                       ControlInputBinding="NextRadio"
-                                                      InputName="Next Radio" />
+                                                      InputName="{x:Static p:Resources.InputNextRadio}" />
 
 
             <inputSettingsControl:InputBindingControl x:Name="PreviousRadio"
                                                       ControlInputBinding="PreviousRadio"
-                                                      InputName="Previous Radio" />
+                                                      InputName="{x:Static p:Resources.InputPreviousRadio}" />
 
             <inputSettingsControl:InputBindingControl x:Name="ToggleEncryption"
                                                       ControlInputBinding="ToggleEncryption"
-                                                      InputName="Toggle Encryption" />
+                                                      InputName="{x:Static p:Resources.InputToggleEncryption}" />
 
             <inputSettingsControl:InputBindingControl x:Name="EncryptionKeyIncrease"
                                                       ControlInputBinding="EncryptionKeyIncrease"
-                                                      InputName="Encryption Key Increase" />
+                                                      InputName="{x:Static p:Resources.InputEncryptionIncrease}" />
 
             <inputSettingsControl:InputBindingControl x:Name="EncryptionKeyDecrease"
                                                       ControlInputBinding="EncryptionKeyDecrease"
-                                                      InputName="Encryption Key Decrease" />
+                                                      InputName="{x:Static p:Resources.InputEncryptionDecrease}" />
 
             <inputSettingsControl:InputBindingControl x:Name="RadioChannelUp"
                                                       ControlInputBinding="RadioChannelUp"
-                                                      InputName="Radio Channel Up" />
+                                                      InputName="{x:Static p:Resources.InputRadioChannelUp}" />
 
             <inputSettingsControl:InputBindingControl x:Name="RadioChannelDown"
                                                       ControlInputBinding="RadioChannelDown"
-                                                      InputName="Radio Channel Down" />
+                                                      InputName="{x:Static p:Resources.InputRadioChannelDown}" />
 
             <inputSettingsControl:InputBindingControl x:Name="TransponderIDENT"
                                                       ControlInputBinding="TransponderIDENT"
-                                                      InputName="Transponder IDENT" />
+                                                      InputName="{x:Static p:Resources.InputTransponderIDENT}" />
 
             <inputSettingsControl:InputBindingControl x:Name="TransponderPowerToggle"
                                                       ControlInputBinding="TransponderPowerToggle"
-                                                      InputName="Transponder Power Toggle" />
+                                                      InputName="{x:Static p:Resources.InputTransponderPower}" />
 
             <inputSettingsControl:InputBindingControl x:Name="RadioVolumeUp"
                                                       ControlInputBinding="RadioVolumeUp"
-                                                      InputName="Radio Volume Up" />
+                                                      InputName="{x:Static p:Resources.InputRadioVolumeUp}" />
 
             <inputSettingsControl:InputBindingControl x:Name="RadioVolumeDown"
                                                       ControlInputBinding="RadioVolumeDown"
-                                                      InputName="Radio Volume Down" />
+                                                      InputName="{x:Static p:Resources.InputRadioVolumeDown}" />
 
             <inputSettingsControl:InputBindingControl x:Name="AwacsOverlayToggle"
                                                       ControlInputBinding="AwacsOverlayToggle"
-                                                      InputName="AWACS Overlay Toggle" />
+                                                      InputName="{x:Static p:Resources.InputAwacsOverlay}" />
 
 
         </StackPanel>

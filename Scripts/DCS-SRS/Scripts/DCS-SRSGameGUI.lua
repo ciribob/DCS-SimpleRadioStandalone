@@ -1,8 +1,8 @@
--- Version 2.3.8.2
+-- Version 2.4.1.0
 -- Make sure you COPY this file to the same location as the Export.lua as well! 
 -- Otherwise the Radio Might not work
 
-log.write('SRS-GameGUI', log.INFO, "Loading - DCS-SRS GameGUI - Ciribob: 2.3.8.2")
+log.write('SRS-GameGUI', log.INFO, "Loading - DCS-SRS GameGUI - Ciribob: 2.4.1.0")
 
 local base = _G
 
@@ -27,7 +27,7 @@ end
 
 package.path  = package.path..";.\\LuaSocket\\?.lua;"
 package.cpath = package.cpath..";.\\LuaSocket\\?.dll;"
-package.cpath = package.cpath..";"..lfs.writedir().."Mods\\Services\\DCS-SRS\\bin\\?.dll;"
+package.cpath = package.cpath..";"..lfs.writedir().."Mods\\Services\\DCS-SRS\\bin\\lua-?.dll;"
 
 local socket = require("socket")
 
@@ -391,4 +391,4 @@ end
 
 DCS.setUserCallbacks(SRS)
 
-SRS.log("Loaded - DCS-SRS GameGUI - Ciribob: 2.3.8.2")
+SRS.log("Loaded - DCS-SRS GameGUI - Ciribob: 2.4.1.0")

@@ -219,6 +219,12 @@
   <data name="LabelTransmissionLog" xml:space="preserve">
     <value>记录收到的传输</value>
   </data>
+  <data name="ServerPresetsEnabled" xml:space="preserve">
+    <value>服务器频道预设</value>
+  </data>
+  <data name="ServerEAMRadioPresetEnabled" xml:space="preserve">
+    <value>服务器EAM无线电预设</value>
+  </data>
   <data name="LabelTunedCount" xml:space="preserve">
     <value>显示同频人数</value>
   </data>

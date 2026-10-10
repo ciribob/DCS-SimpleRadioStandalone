@@ -552,6 +552,14 @@ public class TCPClientHandler : IHandle<DisconnectRequestMessage>, IHandle<UnitU
         }
     }
 
+    public async Task SendPingAsync()
+    {
+        await SendToServerAsync(new NetworkMessage
+        {
+            MsgType = NetworkMessage.MessageType.PING
+        });
+    }
+
     //implement IDispose? To close stuff properly?
     public async Task RequestDisconnectAsync()
     {

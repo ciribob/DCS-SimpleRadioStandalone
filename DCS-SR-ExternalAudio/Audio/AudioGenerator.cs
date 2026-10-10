@@ -272,9 +272,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.ExternalAudioClient.Audio
             }
 
             int read = mp3Reader.Read(buffer, 0, (int)bytes);
-            BufferedWaveProvider bufferedWaveProvider = new BufferedWaveProvider(mp3Reader.WaveFormat)
+            var readDuration = TimeSpan.FromSeconds(read / (double)mp3Reader.WaveFormat.AverageBytesPerSecond);
+            BufferedWaveProvider bufferedWaveProvider = new BufferedWaveProvider(mp3Reader.WaveFormat, 2 * readDuration)
             {
-                BufferLength = read * 2, ReadFully = false, DiscardOnBufferOverflow = true
+                ReadFully = false, DiscardOnBufferOverflow = true
             };
 
             bufferedWaveProvider.AddSamples(buffer, 0, read);
@@ -447,9 +448,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.ExternalAudioClient.Audio
             }
 
             int read = oggReader.Read(buffer, 0, (int)bytes);
-            BufferedWaveProvider bufferedWaveProvider = new BufferedWaveProvider(oggReader.WaveFormat)
+            var readDuration = TimeSpan.FromSeconds(read / (double)oggReader.WaveFormat.AverageBytesPerSecond);
+            BufferedWaveProvider bufferedWaveProvider = new BufferedWaveProvider(oggReader.WaveFormat, 2 * readDuration)
             {
-                BufferLength = read * 2,
                 ReadFully = false,
                 DiscardOnBufferOverflow = true
             };

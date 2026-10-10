@@ -188,7 +188,7 @@ public class ServerState : IHandle<StartServerMessage>, IHandle<StopServerMessag
                     }) + "\n";
                     try
                     {
-                        await File.WriteAllTextAsync(exportFilePath, json);
+                        await File.WriteAllTextAsync(exportFilePath, json, new UTF8Encoding(false, true));
                     }
                     catch (IOException e)
                     {

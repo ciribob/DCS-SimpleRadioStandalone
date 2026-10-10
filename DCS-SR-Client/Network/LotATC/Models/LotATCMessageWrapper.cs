@@ -14,6 +14,9 @@ public class LotATCMessageWrapper
         public bool isFlying;
         public double latitude;
         public double longitude;
+
+        // Holds the standard display name of the connected tool (e.g., "LotATC", "DCS Airspace") passed via JSON
+        public string displayName;
     }
 
     public class LotATCLineOfSightResponse

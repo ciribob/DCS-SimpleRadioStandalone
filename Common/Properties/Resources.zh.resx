@@ -150,4 +150,7 @@ DCS结束运行后，SRS也会自动关闭进行以更新。
     <data name="MsgBoxUpdateTitle" xml:space="preserve">
     <value>更新可用</value>
   </data>
+    <data name="AllowInstructorMode" xml:space="preserve">
+    <value>允许教练模式</value>
+  </data>
 </root>

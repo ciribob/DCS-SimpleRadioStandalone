@@ -537,6 +537,9 @@ DCS In-game SRS Overlay</value>
   <data name="InputTransponderIDENT" xml:space="preserve">
     <value>Transponder IDENT Toggle</value>
   </data>
+  <data name="InputTransponderPower" xml:space="preserve">
+    <value>Transponder Power Toggle</value>
+  </data>
   <data name="InputUp0001" xml:space="preserve">
     <value>Up 0.001MHz</value>
   </data>

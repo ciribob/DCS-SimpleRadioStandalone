@@ -1398,6 +1398,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Transponder Power Toggle.
+        /// </summary>
+        public static string InputTransponderPower {
+            get {
+                return ResourceManager.GetString("InputTransponderPower", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Up 0.001MHz.
         /// </summary>
         public static string InputUp0001 {

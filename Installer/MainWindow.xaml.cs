@@ -596,7 +596,7 @@ namespace Installer
                         }
                     }
 
-                    File.WriteAllText(path + "\\Scripts\\Export.lua", sb.ToString());
+                    File.WriteAllText(path + "\\Scripts\\Export.lua", sb.ToString(), new UTF8Encoding(false, true));
                 }
             }
 
@@ -1043,7 +1043,7 @@ namespace Installer
                         }
                     }
 
-                    File.WriteAllText(path + "\\Scripts\\Export.lua", sb.ToString());
+                    File.WriteAllText(path + "\\Scripts\\Export.lua", sb.ToString(), new UTF8Encoding(false, true));
                 }
                 else
                 {

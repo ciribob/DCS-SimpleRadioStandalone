@@ -208,8 +208,8 @@ public class MainWindowViewModel : PropertyChangedBaseClass, IHandle<TCPClientSt
         get
         {
             if (_audioPreview == null || !_audioPreview.IsPreviewing || IsConnected)
-                return "preview audio";
-            return "stop preview";
+                return Resources.PreviewAudio;
+            return Resources.PreviewAudioStop;
         }
     }
 

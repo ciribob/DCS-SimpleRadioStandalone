@@ -49,7 +49,7 @@ public class CsvFavouriteServerStore : IFavouriteServerStore
             var sb = new StringBuilder();
             foreach (var address in addresses)
                 sb.AppendLine($"{address.Name},{address.Address},{address.IsDefault},{address.EAMCoalitionPassword}");
-            File.WriteAllText(_fileNameAndPath, sb.ToString());
+            File.WriteAllText(_fileNameAndPath, sb.ToString(), new UTF8Encoding(false, true));
 
             return true;
         }

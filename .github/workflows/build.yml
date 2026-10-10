@@ -1,56 +1,144 @@
 name: Build
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  build:
-    name: Build
-    runs-on: windows-2025-vs2026
+  tests:
+    name: Tests
+    runs-on: windows-2025
     steps:
-    - name: Checkout
-      uses: actions/checkout@v6
-
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v2
-
-    - name: Setup NuGet
-      uses: nuget/setup-nuget@v2
-
-    - name: Restore NuGet packages
-      run: nuget restore
-
-    - name: Build
-      run: msbuild /p:Configuration=Release /p:Platform=x64 /p:SourceLinkCreate=false
-
-    - name: Setup VSTest
-      uses: Malcolmnixon/Setup-VSTest@v3
-
-    - name: VSTest DCS-SR-CommonTests
-      run: VSTest.Console DCS-SR-CommonTests\bin\Release\net10.0-windows10.0.22621.0\DCS-SR-CommonTests.dll
-    env:
-      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+    - uses: actions/checkout@v6
+    - uses: actions/setup-dotnet@v6
+      with:
+        dotnet-version: '10.0.x'
+    - run: dotnet restore
+    - run: dotnet test --configuration Release --no-restore
   publish:
     name: publish
-    runs-on: windows-2025-vs2026
+    runs-on: windows-2025
+    outputs:
+      srs-install-zip: ${{ steps.upload.outputs.artifact-id }}
+      artifact-slug: ${{ steps.artifact-slug.outputs.slug }}
     steps:
-    - name: Checkout
-      uses: actions/checkout@v6
+    - uses: actions/checkout@v6
     - uses: actions/setup-dotnet@v5
       with:
         dotnet-version: '10.0.x'
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v2
-    - name: Setup NuGet
-      uses: nuget/setup-nuget@v2
-    - name: Restore NuGet packages
-      run: nuget restore
+    - run: dotnet restore
     - name: Publish
-      run: ./publish.ps1 -NoSign -Zip
-    - name: Upload
-      uses: actions/upload-artifact@v4
+      run: ./publish.ps1 -NoSign
+    - name: Artifact basename
+      id: artifact-slug
+      run: |
+        $stripped="${{ case(github.event_name == 'pull_request', github.head_ref, github.ref_name) }}".Replace('/', '-')
+        echo "slug=$stripped" >> "$env:GITHUB_OUTPUT"
+    - name: upload
+      id: upload
+      uses: actions/upload-artifact@v7
       with:
-        name: DCS-SimpleRadioStandalone-CI
-        path: install-build/DCS-SimpleRadioStandalone-*.zip
-        compression-level: 0 # Zipping a zip...
+        name: DCS-SimpleRadioStandalone-${{ steps.artifact-slug.outputs.slug }}-unsigned
+        path: install-build
+        retention-days:: 1
+  sign:
+    if: ${{ github.event_name != 'pull_request' && github.repository == 'ciribob/DCS-SimpleRadioStandalone' }}
+    permissions:
+      actions: read
+      contents: read
+    needs: publish
+    name: Sign (Test)
+    runs-on: ubuntu-slim
+    outputs:
+      srs-scan-zip: ${{ steps.upload-scan.outputs.artifact-id }}
+    steps:
+    - name: submit signing request
+      uses: signpath/github-action-submit-signing-request@v2
+      with:
+        api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
+        organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
+        project-slug: 'DCS-SimpleRadioStandalone'
+        signing-policy-slug: 'test-signing'
+        artifact-configuration-slug: 'dotnet-srs-dll'
+        github-artifact-id: '${{ needs.publish.outputs.srs-install-zip }}'
+        wait-for-completion: true
+        output-artifact-directory: signed
+    - name: Upload (signed)
+      id: upload
+      uses: actions/upload-artifact@v7
+      with:
+        name: DCS-SimpleRadioStandalone-${{ needs.publish.outputs.artifact-slug }}-signed.zip
+        path: signed
+    - name: Upload (scan)
+      id: upload-scan
+      uses: actions/upload-artifact@v7
+      with:
+        name: scan
+        path: |
+            signed/Installer.exe
+            signed/SRS-AutoUpdater.exe
+            signed/Client/SR-ClientRadio.exe
+            signed/ExternalAudio/DCS-SR-ExternalAudio.exe
+            signed/Server/SRS-Server.exe
+            signed/ServerCommandLine-Windows/SRS-Server-Commandline.exe
+            signed/Scripts/DCS-SRS/bin/lua-srs.dll
+        retention-days: 1
+
+  scan:
+    if: ${{ github.event_name != 'pull_request' && github.repository == 'ciribob/DCS-SimpleRadioStandalone' }}
+    needs: sign
+    name: virustotal-scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dependencies
+        run: sudo apt-get install -y unzip
+      - name: vt-cli
+        run: |
+          curl -LO https://github.com/VirusTotal/vt-cli/releases/latest/download/Linux64.zip
+          unzip Linux64.zip
+          chmod +x vt
+      - name: yq YAML parser
+        run: |
+          curl -LO https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64.tar.gz
+          tar xzf yq_linux_amd64.tar.gz
+          chmod +x yq_linux_amd64
+      - uses: actions/download-artifact@v8
+        with:
+          artifact-ids: ${{ needs.sign.outputs.srs-scan-zip }}
+      - name: Display structure of downloaded files
+        run: ls -R
+      - name: VirusTotal Scan
+        env:
+          VTCLI_APIKEY: ${{ secrets.VIRUSTOTAL_API_KEY }}
+        run: |
+          FILES=(./Installer.exe \
+            ./SRS-AutoUpdater.exe \
+            ./Client/SR-ClientRadio.exe \
+            ./ExternalAudio/DCS-SR-ExternalAudio.exe \
+            ./Server/SRS-Server.exe \
+            ./ServerCommandLine-Windows/SRS-Server-Commandline.exe \
+            ./Scripts/DCS-SRS/bin/lua-srs.dll)
+          for file in "${FILES[@]}"; do
+            echo "Scanning $file..."
+            ./vt scan file $file --silent --wait > result.yaml
+            result_id=$(./yq_linux_amd64 '.[0]._id' result.yaml)
+            malicious_count=$(./yq_linux_amd64 '.[0].last_analysis_stats.malicious' result.yaml)
+            suspicious_count=$(./yq_linux_amd64 '.[0].last_analysis_stats.suspicious' result.yaml)
+            echo "https://www.virustotal.com/gui/file/$result_id"
+            if [ "$malicious_count" -gt "0" ]; then
+              echo "::error file=$file::Reported malicious!"
+            fi
+            if [ "$suspicious_count" -gt "0" ]; then
+              echo "::warn file=$file::Reported suspicious."
+            fi
+            rm result.yaml
+          done
+          
+            
+            
+            
+            
+            
+            
+
+
 
 

@@ -115,11 +115,14 @@ jobs:
           for file in "${FILES[@]}"; do
             echo "Scanning $file..."
             ./vt scan file $file --silent --wait > result.yaml
-            echo "https://www.virustotal.com/gui/file/$(./yq_linux_amd64 '.[0]._id)')"
-            if [ "$(./yq_linux_amd64 '.[0].last_analysis_stats.malicious' result.yaml)" -gt "0" ]; then
+            result_id=$(./yq_linux_amd64 '.[0]._id' result.yaml)
+            malicious_count=$(./yq_linux_amd64 '.[0].last_analysis_stats.malicious' result.yaml)
+            suspicious_count=$(./yq_linux_amd64 '.[0].last_analysis_stats.suspicious' result.yaml)
+            echo "https://www.virustotal.com/gui/file/$result_id"
+            if [ "$malicious_count" -gt "0" ]; then
               echo "::error file=$file::Reported malicious!"
             fi
-            if [ "$(./yq_linux_amd64 '.[0].last_analysis_stats.suspicious' result.yaml)" -gt "0" ]; then
+            if [ "$suspicious_count" -gt "0" ]; then
               echo "::warn file=$file::Reported suspicious."
             fi
             rm result.yaml

@@ -1,0 +1,77 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using NLog;
+using Octokit;
+
+namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
+
+public static class GitHubUpdater
+{
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+    private static readonly string GitHubUsername = "ciribob";
+    private static readonly string GitHubRepository = "DCS-SimpleRadioStandalone";
+    private static readonly string GitHubUserAgent = $"{GitHubUsername}_{GitHubRepository}";
+
+    private static readonly string DefaultVersion = "2.4.1.0";
+    private static readonly int DefaultMaxRetries = 3;
+
+    public static async Task<T> ExecuteGitHubRequestWithRateLimitAsync<T>(
+        Func<GitHubClient, Task<T>> githubCall,
+        Action<TimeSpan, int, int>? onRateLimitWait = null,
+        string version = "",
+        int maxRetries = 0,
+        CancellationToken cancellationToken = default
+    )
+    {
+        
+        maxRetries = (maxRetries <= 0) ? DefaultMaxRetries : maxRetries; //if maxRetries is 0 or less use default
+        version = (string.IsNullOrWhiteSpace(version)) ? DefaultVersion : version; //if version is empty use default
+        try
+        {
+            var client = new GitHubClient(new ProductHeaderValue(GitHubUserAgent, version));
+            for (int attempt = 0; attempt < maxRetries; ++attempt)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                try
+                {
+                    return await githubCall(client);
+                }
+                catch (RateLimitExceededException ex)
+                {
+                    var waitFor = ex.GetRetryAfterTimeSpan();
+
+                    Logger.Warn($"GitHub API rate limit exceeded. Waiting {waitFor} before retrying (attempt {attempt}/{maxRetries})");
+                    // Start the delay before the user callback so the user callback doesn't add extra delay if it runs long.
+                    var backoffDelayTask = Task.Delay(waitFor, cancellationToken);
+                    // Notify the caller about the wait
+                    onRateLimitWait?.Invoke(waitFor, attempt, maxRetries);
+                    await backoffDelayTask;
+                }
+            }
+            throw new Exception($"Maximum retry attempts ({maxRetries}) reached for GitHub API call.");
+        }
+        finally
+        {
+            Logger.Debug("Releasing update semaphore for GitHubUpdater.");
+        }
+    }
+
+    public static async Task<IReadOnlyList<Release>> GetAllReleasesAsync(
+        Action<TimeSpan, int, int>? onRateLimitWait = null,
+        string version = "",
+        int maxRetries = 0,
+        CancellationToken cancellationToken = default
+    )
+    {
+        return await ExecuteGitHubRequestWithRateLimitAsync(
+            client => client.Repository.Release.GetAll(GitHubUsername, GitHubRepository),
+            onRateLimitWait,
+            version,
+            maxRetries,
+            cancellationToken
+        );
+    }
+}

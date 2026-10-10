@@ -15,7 +15,7 @@ public static class GitHubUpdater
     private static readonly string GitHubRepository = "DCS-SimpleRadioStandalone";
     private static readonly string GitHubUserAgent = $"{GitHubUsername}_{GitHubRepository}";
 
-    private static readonly string DefaultVersion = "1.0.0.0";
+    private static readonly string DefaultVersion = "2.4.1.0";
     private static readonly int DefaultMaxRetries = 3;
 
     public static async Task<T> ExecuteGitHubRequestWithRateLimitAsync<T>(

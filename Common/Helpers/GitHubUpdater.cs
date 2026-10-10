@@ -26,13 +26,13 @@ public static class GitHubUpdater
         CancellationToken cancellationToken = default
     )
     {
-        int attempt = 0;
+        
         maxRetries = (maxRetries <= 0) ? DefaultMaxRetries : maxRetries; //if maxRetries is 0 or less use default
         version = (string.IsNullOrWhiteSpace(version)) ? DefaultVersion : version; //if version is empty use default
         try
         {
             var client = new GitHubClient(new ProductHeaderValue(GitHubUserAgent, version));
-            while (attempt < maxRetries)
+            for (int attempt = 0; attempt < maxRetries; ++attempt)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 try
@@ -41,14 +41,9 @@ public static class GitHubUpdater
                 }
                 catch (RateLimitExceededException ex)
                 {
-                    attempt++;
                     var waitFor = ex.GetRetryAfterTimeSpan();
 
                     Logger.Warn($"GitHub API rate limit exceeded. Waiting {waitFor} before retrying (attempt {attempt}/{maxRetries})");
-
-                    if (attempt >= maxRetries)
-                        throw;
-
                     // Start the delay before the user callback so the user callback doesn't add extra delay if it runs long.
                     var backoffDelayTask = Task.Delay(waitFor, cancellationToken);
                     // Notify the caller about the wait

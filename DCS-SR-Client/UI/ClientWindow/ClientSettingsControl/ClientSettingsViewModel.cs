@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -262,7 +262,18 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
             NotifyPropertyChanged();
         }
     }
-    
+
+    public bool DarkModeEnabled
+    {
+        get => _globalSettings.GetClientSettingBool(GlobalSettingsKeys.DarkMode);
+        set
+        {
+            _globalSettings.SetClientSetting(GlobalSettingsKeys.DarkMode, value);
+            ThemeHelper.ApplyTheme(value);
+            NotifyPropertyChanged();
+        }
+    }
+
     public List<string> ServerPresetConfigurations => ProfileSettingsStore.ServerPresetSettings;
 
     public string SelectedServerPresetConfiguration
@@ -1170,6 +1181,8 @@ public class ClientSettingsViewModel : PropertyChangedBaseClass, IHandle<NewUnit
         NotifyPropertyChanged(nameof(AllowXInputController));
         NotifyPropertyChanged(nameof(PlayConnectionSounds));
         //TODO handle Profile list??
+
+        NotifyPropertyChanged(nameof(DarkModeEnabled));
 
         NotifyPropertyChanged(nameof(RadioSwitchIsPTT));
         NotifyPropertyChanged(nameof(AutoSelectChannel));

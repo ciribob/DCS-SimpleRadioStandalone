@@ -42,11 +42,9 @@ public static class GitHubUpdater
                 catch (RateLimitExceededException ex)
                 {
                     attempt++;
-                    var waitFor = ex.Reset - DateTimeOffset.UtcNow + TimeSpan.FromSeconds(1);
-                    if (waitFor < TimeSpan.Zero)
-                        waitFor = TimeSpan.FromSeconds(60); //wait at least 60 seconds if the reset time is in the past
+                    var waitFor = ex.GetRetryAfterTimeSpan();
 
-                    Logger.Warn($"GitHub API rate limit exceeded. Waiting {waitFor.TotalSeconds:N0} seconds before retrying (attempt {attempt}/{maxRetries})");
+                    Logger.Warn($"GitHub API rate limit exceeded. Waiting {waitFor} before retrying (attempt {attempt}/{maxRetries})");
 
                     if (attempt >= maxRetries)
                         throw;

@@ -32,6 +32,28 @@ function exportRadioC130J30(_data, SR)
     local HF2_devid = 11
     local SAT_devid = 91 -- ARC-210
 
+    local function getVHFModulation(radio)
+        if radio.freq >= 30000000 and radio.freq <= 87975000 then
+            return 1
+        elseif radio.freq >= 108000000 and radio.freq <= 115975000 then
+            return 0
+        elseif radio.freq >= 116000000 and radio.freq <= 151975000 then
+            return 0
+        elseif radio.freq >= 152000000 and radio.freq <= 173975000 then
+            return 1
+        else
+            return 0
+        end
+    end
+
+    local function isVHFRxOnly(radio)
+        if radio.freq >= 108000000 and radio.freq <= 115975000 then
+            return true
+        else
+            return false
+        end
+    end
+
     _data.radios[1].name = "Intercom"
     _data.radios[1].freq = 100.0
     _data.radios[1].modulation = 2 --Special intercom modulation
@@ -46,11 +68,13 @@ function exportRadioC130J30(_data, SR)
 
     _data.radios[4].name = "VHF1"
     _data.radios[4].freq = SR.getRadioFrequency(VHF1_devid) or 0
-    _data.radios[4].modulation = SR.getRadioModulation(VHF1_devid) or 3
+    _data.radios[4].modulation = getVHFModulation(_data.radios[4])
+    _data.radios[4].rxOnly = isVHFRxOnly(_data.radios[4])
 
     _data.radios[5].name = "VHF2"
     _data.radios[5].freq = SR.getRadioFrequency(VHF2_devid) or 0
-    _data.radios[5].modulation = SR.getRadioModulation(VHF2_devid) or 3
+    _data.radios[5].modulation = getVHFModulation(_data.radios[5])
+    _data.radios[5].rxOnly = isVHFRxOnly(_data.radios[5])
 
     _data.radios[6].name = "HF1"
     _data.radios[6].freq = SR.getRadioFrequency(HF1_devid) or 0

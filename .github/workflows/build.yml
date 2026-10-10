@@ -3,7 +3,7 @@ name: Build
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  build:
+  tests:
     name: Tests
     runs-on: windows-2025
     steps:
@@ -13,13 +13,12 @@ jobs:
         dotnet-version: '10.0.x'
     - run: dotnet restore
     - run: dotnet test --configuration Release --no-restore
-    env:
-      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
   publish:
     name: publish
     runs-on: windows-2025
     outputs:
       srs-install-zip: ${{ steps.upload.outputs.artifact-id }}
+      artifact-slug: ${{ steps.artifact-slug.outputs.slug }}
     steps:
     - uses: actions/checkout@v6
     - uses: actions/setup-dotnet@v5
@@ -28,11 +27,16 @@ jobs:
     - run: dotnet restore
     - name: Publish
       run: ./publish.ps1 -NoSign
+    - name: Artifact basename
+      id: artifact-slug
+      run: |
+        $stripped="${{ case(github.event_name == 'pull_request', github.head_ref, github.ref_name) }}".Replace('/', '-')
+        echo "slug=$stripped" >> "$env:GITHUB_OUTPUT"
     - name: upload
       id: upload
       uses: actions/upload-artifact@v7
       with:
-        name: DCS-SimpleRadioStandalone-${{ case(github.event_name == 'pull_request', github.head_ref, github.ref_name) }}-unsigned
+        name: DCS-SimpleRadioStandalone-${{ steps.artifact-slug.outputs.slug }}-unsigned
         path: install-build
         retention-days:: 1
   sign:
@@ -61,7 +65,7 @@ jobs:
       id: upload
       uses: actions/upload-artifact@v7
       with:
-        name: DCS-SimpleRadioStandalone-${{ case(github.event_name == 'pull_request', github.head_ref, github.ref_name) }}-signed.zip
+        name: DCS-SimpleRadioStandalone-${{ needs.publish.outputs.artifact-slug }}-signed.zip
         path: signed
     - name: Upload (scan)
       id: upload-scan

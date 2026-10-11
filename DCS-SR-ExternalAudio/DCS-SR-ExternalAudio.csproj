@@ -9,6 +9,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <Company>Ciribob - GitHub.com/Ciribob</Company>
     <Product>DCS-SimpleRadio Standalone</Product>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Ciribob.DCS.SimpleRadio.Standalone.ExternalAudioClient.Client.Program</StartupObject>

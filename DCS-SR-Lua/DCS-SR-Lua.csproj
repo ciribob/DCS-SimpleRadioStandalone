@@ -13,6 +13,7 @@
     <IsAotCompatible>true</IsAotCompatible>
     <IsTrimmable>true</IsTrimmable>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
   
   <ItemGroup>

@@ -17,6 +17,7 @@
         <IsPackable>false</IsPackable>
         <Company>Ciribob - GitHub.com/Ciribob</Company>
         <Product>DCS-SimpleRadio Standalone</Product>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     </PropertyGroup>
     <PropertyGroup>
         <ApplicationIcon>server-10.ico</ApplicationIcon>

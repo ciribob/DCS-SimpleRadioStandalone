@@ -18,11 +18,13 @@ if ($Zip) {
 $sharedParams = @(
      "--configuration", "Release",
      "-p:VersionPrefix=$VersionPrefix",
-     "-p:IncludeSourceRevisionInInformationalVersion=false" #Dont add a git hash into the build version
+     "-p:IncludeSourceRevisionInInformationalVersion=false", #Dont add a git hash into the build version
+     "--no-restore" # Don't restore packages (done as a root step)
 )
 
 
 # Publish script for SRS projects
+dotnet restore --locked-mode -p:publishReadyToRun=true
 
 # Common publish parameters
 $executableParams = $sharedParams + @(
@@ -62,6 +64,24 @@ if (Test-Path "$outputPath")
     # This means we would end up with a non-clean build tree.
 }
 
+New-Item -ItemType Directory -Name $outputPath
+
+# VC Redist
+Write-Host "Downloading VC redistributables..." -ForegroundColor Green
+$redistDownloadJob=$null
+if (-Not $NoRedist)
+{
+    $resolvedOutputPath = Resolve-Path -Path $outputPath
+    $redistDownloadJob = Start-Job -Name "download redist" -ScriptBlock {
+        $outputPath = $Using:resolvedOutputPath
+        Invoke-WebRequest -UseBasicParsing -Uri "https://aka.ms/vs/18/release/vc_redist.x64.exe" -OutFile "$outputPath/VC_redist.x64.exe"
+    }
+}
+else
+{
+    Write-Warning "Skipped."
+}
+
 # Copy Scripts.
 function Format-Script {
     param([string]$file)
@@ -82,6 +102,22 @@ Write-Host "Copy Readme.txt, Examples.txt..." -ForegroundColor Green
 Copy-Item "./docs/Readme.txt" -Destination "$outputPath"
 Copy-Item "./docs/Examples.txt" -Destination "$outputPath"
 
+Write-Host "Cleaning..."
+dotnet clean
+
+function Publish-Project
+{
+    param($project)
+
+    Write-Host "Publishing $($project.csproj) to '$outputPath$($project.outputSlug)'..." -ForegroundColor Green
+    $params = $project.publishParams
+    dotnet publish "$($project.csproj)" @params --output "$outputPath$($project.outputSlug)"
+    if ($LastExitCode -ne 0)
+    {
+        exit $LastExitCode
+    }
+}
+
 $projects = @(
     @{ csproj = "./DCS-SR-Client/DCS-SR-Client.csproj"; outputSlug = "/Client"; publishParams = $frameworkDependentExecutableParams }
     , @{ csproj = "./Server/Server.csproj"; outputSlug = "/Server"; publishParams = $frameworkDependentExecutableParams  }
@@ -95,14 +131,7 @@ $projects = @(
 
 foreach ($project in $projects)
 {
-    Write-Host "Publishing $($project.csproj) to '$outputPath$($project.outputSlug)'..." -ForegroundColor Green
-    dotnet clean "$($project.csproj)"
-    $params = $project.publishParams
-    dotnet publish "$($project.csproj)" @params --output "$outputPath$($project.outputSlug)"
-    if ($LastExitCode -ne 0)
-    {
-        exit $LastExitCode
-    }
+    Publish-Project $project
 }
 
 Write-Host "Cleaning up/moving artifacts..." -ForegroundColor Green
@@ -131,15 +160,10 @@ Remove-Item "$outputPath\ExternalAudio\*.so"  -Recurse -ErrorAction SilentlyCont
 # Strip pdb if it was copied.
 Remove-Item -Path "$outputPath/Scripts/DCS-SRS/bin/lua-srs.pdb" -ErrorAction SilentlyContinue
 
-# VC Redist
-Write-Host "Downloading VC redistributables..." -ForegroundColor Green
-if (-Not $NoRedist)
-{
-    Invoke-WebRequest -Uri "https://aka.ms/vs/18/release/vc_redist.x64.exe" -OutFile "$outputPath\VC_redist.x64.exe"
-}
-else
-{
-    Write-Warning "Skipped."
+if ($null -ne $redistDownloadJob) {
+    Write-Host "Waiting on redist download..."
+    Wait-Job -Job $redistDownloadJob
+    Receive-Job -Job $redistDownloadJob
 }
 
 Write-Host "Publishing complete! Check the $outputPath directory for the published files." -ForegroundColor Green

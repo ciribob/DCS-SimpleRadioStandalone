@@ -23,6 +23,7 @@
         <PlatformTarget>x64</PlatformTarget>
         <Company>Ciribob - GitHub.com/Ciribob</Company>
         <Product>DCS-SRS-AutoUpdater</Product>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     </PropertyGroup>
     <PropertyGroup>
         <ApplicationIcon>system_software_update.ico</ApplicationIcon>

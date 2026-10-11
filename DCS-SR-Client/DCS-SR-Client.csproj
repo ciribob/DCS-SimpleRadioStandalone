@@ -26,6 +26,7 @@
         <Company>Ciribob - GitHub.com/Ciribob</Company>
         <Product>DCS-SimpleRadio Standalone</Product>
         <ApplicationIcon>audio-headset.ico</ApplicationIcon>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     </PropertyGroup>
     <PropertyGroup>
         <StartupObject>Ciribob.DCS.SimpleRadio.Standalone.Client.App</StartupObject>

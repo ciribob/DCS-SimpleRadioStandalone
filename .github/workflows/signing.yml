@@ -1,0 +1,63 @@
+name: Signing (SignPath)
+on:
+  workflow_call:
+    inputs:
+      policy:
+        type: string
+        required: true
+      artifact-id:
+        type: number
+        required: true
+      artifact-slug:
+        type: string
+        required: true
+    outputs:
+      install-zip-id:
+        value: ${{ jobs.sign.outputs.install-zip-id }}
+      scan-zip-id:
+        value: ${{ jobs.sign.outputs.scan-zip-id }}
+    secrets:
+      organization-id:
+        required: true
+      api-token:
+        required: true
+
+jobs:
+  sign:
+    name: Sign (${{ inputs.policy }})
+    runs-on: ubuntu-slim
+    outputs:
+      scan-zip-id: ${{ steps.upload-scan.outputs.artifact-id }}
+      install-zip-id: ${{ steps.upload.outputs.artifact-id }}
+    steps:
+    - name: submit signing request
+      uses: signpath/github-action-submit-signing-request@v2
+      with:
+        api-token: '${{ secrets.api-token }}'
+        organization-id: '${{ secrets.organization-id }}'
+        project-slug: 'DCS-SimpleRadioStandalone'
+        signing-policy-slug: '${{ inputs.policy }}-signing'
+        artifact-configuration-slug: 'dotnet-srs-dll'
+        github-artifact-id: '${{ inputs.artifact-id }}'
+        wait-for-completion: true
+        output-artifact-directory: signed
+    - name: Upload (signed)
+      id: upload
+      uses: actions/upload-artifact@v7
+      with:
+        name: DCS-SimpleRadioStandalone-${{ inputs.artifact-slug }}.zip
+        path: signed
+    - name: Upload (scan)
+      id: upload-scan
+      uses: actions/upload-artifact@v7
+      with:
+        name: scan
+        path: |
+            signed/Installer.exe
+            signed/SRS-AutoUpdater.exe
+            signed/Client/SR-ClientRadio.exe
+            signed/ExternalAudio/DCS-SR-ExternalAudio.exe
+            signed/Server/SRS-Server.exe
+            signed/ServerCommandLine-Windows/SRS-Server-Commandline.exe
+            signed/Scripts/DCS-SRS/bin/lua-srs.dll
+        retention-days: 1

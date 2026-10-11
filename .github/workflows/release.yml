@@ -9,6 +9,7 @@ jobs:
     runs-on: windows-2025
     outputs:
       srs-install-zip: ${{ steps.upload.outputs.artifact-id }}
+      artifact-slug: ${{ github.ref_name }}
     steps:
     - uses: actions/checkout@v7
     - uses: actions/setup-dotnet@v6
@@ -16,7 +17,7 @@ jobs:
         dotnet-version: '10.0.x'
     - run: dotnet restore
     - name: Publish
-      run: ./publish.ps1 -NoSign
+      run: ./publish.ps1 -NoSign -VersionPrefix "${{ github.ref_name }}"
     - name: Upload
       uses: actions/upload-artifact@v7
       id: upload
@@ -24,27 +25,60 @@ jobs:
         name: DCS-SimpleRadioStandalone-${{ github.ref_name }}
         path: install-build
   sign:
-    name: Sign (Release)
     permissions:
       actions: read
       contents: read
     needs: publish
+    name: Sign (Release)
+    uses: $/.github/workflows/signing.yml
+    with:
+      policy: release
+      artifact-id: ${{ needs.publish.outputs.srs-install-zip }}
+      artifact-slug: ${{ needs.publish.outputs.artifact-slug }}
+    secrets:
+      organization-id: ${{ secrets.SIGNPATH_ORGANIZATION_ID }}
+      api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+  scan:
+    needs: sign
+    name: virustotal-scan
+    uses: $/.github/workflows/virustotal-scan.yml
+    with:
+      srs-zip-id: ${{ needs.sign.outputs.scan-zip-id }}
+    secrets:
+      vtcli-apikey: ${{ secrets.VIRUSTOTAL_API_KEY }}
+  release:
+    name: Create Release
+    needs: sign
     runs-on: ubuntu-slim
-    environment: signing
+    permissions:
+        contents: write
     steps:
-    - name: submit signing request
-      uses: signpath/github-action-submit-signing-request@v2
+    - name: Dependencies
+      run: apt-get install -y unzip
+    - uses: actions/checkout@v7
       with:
-        api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
-        organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
-        project-slug: 'DCS-SimpleRadioStandalone'
-        signing-policy-slug: 'release-signing'
-        artifact-configuration-slug: 'dotnet-srs-dll'
-        github-artifact-id: '${{ needs.publish.outputs.srs-install-zip }}'
-        wait-for-completion: true
-        output-artifact-directory: signed
-    - name: Upload (signed)
-      uses: actions/upload-artifact@v7
+        sparse-checkout: release-notes.template.md
+    - uses: actions/download-artifact@v8
       with:
-        name: DCS-SimpleRadioStandalone-${{ github.ref_name }}.zip
-        path: signed
+        artifact-ids: ${{ needs.sign.outputs.install-zip-id }}
+        skip-decompress: true
+    - name: Extract AutoUpdater, Linux Server.
+      run: |
+        unzip DCS-SimpleRadioStandalone-${{ github.ref_name }}.zip SRS-AutoUpdater.exe ServerCommandLine-Linux/SRS-Server-Commandline
+        mv ServerCommandLine-Linux/SRS-Server-Commandline SRS-Server-Commandline-Linux
+    - name: Creating Release ${{ github.ref_name }}
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # We need to figure out whether the tag was pushed standalone (from git client for instance),
+      # Or through the release page (creating a draft release with a new tag).
+      # From the docs, we don't get an event for draft releases being created, so handle both manually.
+      # For this, run gh release view. If it comes back with an error, it (most likely) means we need to create the release.
+      run: |
+        gh release view ${{ github.ref_name }} --json tagName
+        [ $? -eq 0 ] && action="edit" || action="create"
+
+        gh release $action "${{ github.ref_name }}" \
+            SRS-AutoUpdater.exe DCS-SimpleRadioStandalone-${{ github.ref_name }}.zip SRS-Server-Commandline-Linux \
+            --title "Release ${{ github.ref_name }}" \
+            --notes-file release-notes.template.md \
+            --verify-tag --draft

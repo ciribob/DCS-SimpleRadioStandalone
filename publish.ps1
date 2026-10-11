@@ -18,11 +18,13 @@ if ($Zip) {
 $sharedParams = @(
      "--configuration", "Release",
      "-p:VersionPrefix=$VersionPrefix",
-     "-p:IncludeSourceRevisionInInformationalVersion=false" #Dont add a git hash into the build version
+     "-p:IncludeSourceRevisionInInformationalVersion=false", #Dont add a git hash into the build version
+     "--no-restore" # Don't restore packages (done as a root step)
 )
 
 
 # Publish script for SRS projects
+dotnet restore -r win-x64 --locked-mode
 
 # Common publish parameters
 $executableParams = $sharedParams + @(
@@ -82,19 +84,10 @@ Write-Host "Copy Readme.txt, Examples.txt..." -ForegroundColor Green
 Copy-Item "./docs/Readme.txt" -Destination "$outputPath"
 Copy-Item "./docs/Examples.txt" -Destination "$outputPath"
 
-$projects = @(
-    @{ csproj = "./DCS-SR-Client/DCS-SR-Client.csproj"; outputSlug = "/Client"; publishParams = $frameworkDependentExecutableParams }
-    , @{ csproj = "./Server/Server.csproj"; outputSlug = "/Server"; publishParams = $frameworkDependentExecutableParams  }
-    , @{ csproj = "./ServerCommandLine\ServerCommandLine.csproj"; outputSlug = "/ServerCommandLine-Windows"; publishParams = $selfContainedExecutableParams }
-    , @{ csproj = "./ServerCommandLine\ServerCommandLine.csproj"; outputSlug = "/ServerCommandLine-Linux"; publishParams = $executableParams + @("--runtime", "linux-x64", "--self-contained") }
-    , @{ csproj = "./DCS-SR-ExternalAudio\DCS-SR-ExternalAudio.csproj"; outputSlug = "/ExternalAudio"; publishParams = $frameworkDependentExecutableParams }
-    , @{ csproj = "./AutoUpdater\AutoUpdater.csproj"; outputSlug = ""; publishParams = $frameworkDependentExecutableParams }
-    , @{ csproj = "./DCS-SR-Lua/DCS-SR-Lua.csproj"; outputSlug = "/Scripts/DCS-SRS/bin"; publishParams = $sharedParams + @("--runtime", "win-x64", "--self-contained") }
-    , @{ csproj = "./Installer\Installer.csproj"; outputSlug = ""; publishParams = $frameworkDependentExecutableParams }
-)
-
-foreach ($project in $projects)
+function Publish-Project
 {
+    param($project)
+
     Write-Host "Publishing $($project.csproj) to '$outputPath$($project.outputSlug)'..." -ForegroundColor Green
     dotnet clean "$($project.csproj)"
     $params = $project.publishParams
@@ -103,6 +96,32 @@ foreach ($project in $projects)
     {
         exit $LastExitCode
     }
+}
+
+$projects = @(
+    @{ csproj = "./DCS-SR-Client/DCS-SR-Client.csproj"; outputSlug = "/Client"; publishParams = $frameworkDependentExecutableParams }
+    , @{ csproj = "./Server/Server.csproj"; outputSlug = "/Server"; publishParams = $frameworkDependentExecutableParams  }
+    , @{ csproj = "./ServerCommandLine\ServerCommandLine.csproj"; outputSlug = "/ServerCommandLine-Windows"; publishParams = $selfContainedExecutableParams }
+    , @{ csproj = "./DCS-SR-ExternalAudio\DCS-SR-ExternalAudio.csproj"; outputSlug = "/ExternalAudio"; publishParams = $frameworkDependentExecutableParams }
+    , @{ csproj = "./AutoUpdater\AutoUpdater.csproj"; outputSlug = ""; publishParams = $frameworkDependentExecutableParams }
+    , @{ csproj = "./DCS-SR-Lua/DCS-SR-Lua.csproj"; outputSlug = "/Scripts/DCS-SRS/bin"; publishParams = $sharedParams + @("--runtime", "win-x64", "--self-contained") }
+    , @{ csproj = "./Installer\Installer.csproj"; outputSlug = ""; publishParams = $frameworkDependentExecutableParams }
+)
+
+foreach ($project in $projects)
+{
+    Publish-Project $project
+}
+
+# Linux projects (different restore)
+dotnet restore ./ServerCommandLine/ServerCommandLine.csproj -r linux-x64 --lock-file-path linux/packages.lock.json --locked-mode
+$linuxProjects = @(
+    @{ csproj = "./ServerCommandLine\ServerCommandLine.csproj"; outputSlug = "/ServerCommandLine-Linux"; publishParams = $executableParams + @("--runtime", "linux-x64", "--self-contained") }
+)
+
+foreach ($project in $linuxProjects)
+{
+    Publish-Project $project
 }
 
 Write-Host "Cleaning up/moving artifacts..." -ForegroundColor Green

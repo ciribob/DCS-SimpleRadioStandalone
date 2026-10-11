@@ -64,7 +64,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.ExternalAudioClient.Audio
             {
                 TextToSpeechClientBuilder builder = new TextToSpeechClientBuilder
                 {
-                    CredentialsPath = opts.GoogleCredentials
+                    GoogleCredential = CredentialFactory.FromFile<GoogleCredential>(opts.GoogleCredentials)
                 };
 
                 TextToSpeechClient client = builder.Build();

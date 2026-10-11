@@ -13,7 +13,7 @@ jobs:
         dotnet-version: '10.0.x'
         cache: true
         cache-dependency-path: "**/packages.lock.json"
-    - run: dotnet restore --runtime win-x64 --locked-mode
+    - run: dotnet restore --locked-mode
     - run: dotnet test --configuration Release --runtime win-x64 --no-restore
   publish:
     name: publish

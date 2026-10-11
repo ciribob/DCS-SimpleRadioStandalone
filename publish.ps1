@@ -149,6 +149,14 @@ foreach ($file in Get-ChildItem -Path "$outputPath\Scripts" -Filter *.lua -File 
     Format-Script $file.FullName
 }
 
+# Copy Examples.txt, Readme.txt
+Remove-Item "$outputPath\Readme.txt" -ErrorAction SilentlyContinue
+Remove-Item "$outputPath\Examples.txt" -ErrorAction SilentlyContinue
+
+Write-Host "Copy Readme.txt, Examples.txt..." -ForegroundColor Green
+Copy-Item "./docs/Readme.txt" -Destination "$outputPath"
+Copy-Item "./docs/Examples.txt" -Destination "$outputPath"
+
 # SRS Lua .NET
 Write-Host "Building lua-srs.dll..." -ForegroundColor Green
 Remove-Item "$outputPath/Scripts/DCS-SRS/bin" -Recurse -ErrorAction SilentlyContinue

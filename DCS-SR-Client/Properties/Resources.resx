@@ -1301,4 +1301,7 @@ Recommended: 20000</value>
   <data name="InstructorMode" xml:space="preserve">
     <value>Instructor Mode (Server setting needed + EAM Only)</value>
   </data>
+  <data name="DarkMode" xml:space="preserve">
+    <value>Dark Mode</value>
+  </data>
 </root>

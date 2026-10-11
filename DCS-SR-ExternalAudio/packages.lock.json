@@ -474,6 +474,37 @@
           "sharpconfig": "[4.1.0, )"
         }
       }
+    },
+    "net10.0-windows10.0.22621/win-x64": {
+      "Grpc.Core": {
+        "type": "Direct",
+        "requested": "[2.46.6, )",
+        "resolved": "2.46.6",
+        "contentHash": "ZoRg3KmOJ2urTF4+u3H0b1Yv10xzz2Y/flFWS2tnRmj8dbKLeiJaSRqu4LOBD3ova90evqLkVZ85kUkC4JT4lw==",
+        "dependencies": {
+          "Grpc.Core.Api": "2.46.6"
+        }
+      },
+      "Microsoft.CognitiveServices.Speech": {
+        "type": "Direct",
+        "requested": "[1.52.0, )",
+        "resolved": "1.52.0",
+        "contentHash": "7DeNULGitPuo0Kxosj2ug9oS3MA0kM0o7Bj+rTqer2LrWdGDouvYFHyXVPIBzV5UESx+QHFlgFeHF0q7aGcbJg==",
+        "dependencies": {
+          "Azure.Core": "1.44.1"
+        }
+      },
+      "System.Speech": {
+        "type": "Direct",
+        "requested": "[10.0.12, )",
+        "resolved": "10.0.12",
+        "contentHash": "IrIKdPfbeCtgDeKQvJE2EtS8sSLxxpBRzCCpkg/4jORLwmhSUrVZtIrnbbaWQxo3tjnXK6aHH6MNsvi3S3PuTg=="
+      },
+      "System.Management": {
+        "type": "Transitive",
+        "resolved": "7.0.2",
+        "contentHash": "/qEUN91mP/MUQmJnM5y5BdT7ZoPuVrtxnFlbJ8a3kBJGhe2wCzBfnPFtK2wTtEEcf3DMGR9J00GZZfg6HRI6yA=="
+      }
     }
   }
 }

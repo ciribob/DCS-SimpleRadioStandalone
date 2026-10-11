@@ -555,6 +555,7 @@
           "System.ServiceModel.Primitives": "10.0.652802"
         }
       }
-    }
+    },
+    "net10.0-windows10.0.22621/win-x64": {}
   }
 }

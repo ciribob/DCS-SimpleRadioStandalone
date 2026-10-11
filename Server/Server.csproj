@@ -4,8 +4,6 @@
         <OutputType>WinExe</OutputType>
         <RootNamespace>Ciribob.DCS.SimpleRadio.Standalone.Server</RootNamespace>
         <AssemblyName>SRS-Server</AssemblyName>
-        <ApplicationRevision>0</ApplicationRevision>
-        <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
         <UseApplicationTrust>false</UseApplicationTrust>
         <BootstrapperEnabled>true</BootstrapperEnabled>
         <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -18,8 +16,6 @@
         <Nullable>disable</Nullable>
         <IsPackable>false</IsPackable>
         <Company>Ciribob - GitHub.com/Ciribob</Company>
-        <AssemblyVersion>2.4.1.0</AssemblyVersion>
-        <FileVersion>2.4.1.0</FileVersion>
         <Product>DCS-SimpleRadio Standalone</Product>
     </PropertyGroup>
     <PropertyGroup>

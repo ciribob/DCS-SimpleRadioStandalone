@@ -1,12 +1,13 @@
-﻿using System;
+﻿using NLog;
+using Octokit;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
-using NLog;
-using Octokit;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 
@@ -14,7 +15,7 @@ public class UpdaterChecker
 {
     public static readonly string MINIMUM_PROTOCOL_VERSION = "1.9.0.0";
 
-    public static readonly string VERSION = "2.4.1.0";
+    public static readonly string VERSION = Assembly.GetEntryAssembly().GetName().Version.ToString();
 
     private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 

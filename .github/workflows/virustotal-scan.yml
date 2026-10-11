@@ -22,7 +22,7 @@ jobs:
         run: |
           gh release download --repo VirusTotal/vt-cli --pattern 'Linux64.zip'
           gh release download --repo mikefarah/yq --pattern 'yq_linux_amd64.tar.gz'
-      - name: 
+      - name: Setup vt-cli and yq
         run: |
           unzip Linux64.zip
           tar xzf yq_linux_amd64.tar.gz

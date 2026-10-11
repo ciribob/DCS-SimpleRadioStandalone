@@ -84,12 +84,14 @@ Write-Host "Copy Readme.txt, Examples.txt..." -ForegroundColor Green
 Copy-Item "./docs/Readme.txt" -Destination "$outputPath"
 Copy-Item "./docs/Examples.txt" -Destination "$outputPath"
 
+Write-Host "Cleaning..."
+dotnet clean
+
 function Publish-Project
 {
     param($project)
 
     Write-Host "Publishing $($project.csproj) to '$outputPath$($project.outputSlug)'..." -ForegroundColor Green
-    dotnet clean "$($project.csproj)"
     $params = $project.publishParams
     dotnet publish "$($project.csproj)" @params --output "$outputPath$($project.outputSlug)"
     if ($LastExitCode -ne 0)

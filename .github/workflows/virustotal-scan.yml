@@ -18,7 +18,7 @@ jobs:
         run: sudo apt-get install -y unzip
       - name: Download vt-cli and yq YAML parser from GitHub
         env:
-          GH_TOKEN: {{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release download --repo VirusTotal/vt-cli --pattern 'Linux64.zip'
           gh release download --repo mikefarah/yq --pattern 'yq_linux_amd64.tar.gz'

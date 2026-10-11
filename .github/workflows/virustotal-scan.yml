@@ -16,16 +16,18 @@ jobs:
     steps:
       - name: Dependencies
         run: sudo apt-get install -y unzip
-      - name: vt-cli
+      - name: Download vt-cli and yq YAML parser from GitHub
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release download --repo VirusTotal/vt-cli --pattern 'Linux64.zip'
-          unzip Linux64.zip
-          chmod +x vt
-      - name: yq YAML parser
-        run: |
           gh release download --repo mikefarah/yq --pattern 'yq_linux_amd64.tar.gz'
+      - name: Setup vt-cli and yq
+        run: |
+          unzip Linux64.zip
           tar xzf yq_linux_amd64.tar.gz
           chmod +x yq_linux_amd64
+          chmod +x vt
       - uses: actions/download-artifact@v8
         with:
           artifact-ids: ${{ inputs.srs-zip-id }}

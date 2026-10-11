@@ -43,12 +43,14 @@ jobs:
         output-artifact-directory: signed
     - name: Upload (signed)
       id: upload
+      background: true
       uses: actions/upload-artifact@v7
       with:
         name: DCS-SimpleRadioStandalone-${{ inputs.artifact-slug }}.zip
         path: signed
     - name: Upload (scan)
       id: upload-scan
+      background: true
       uses: actions/upload-artifact@v7
       with:
         name: scan
@@ -61,3 +63,5 @@ jobs:
             signed/ServerCommandLine-Windows/SRS-Server-Commandline.exe
             signed/Scripts/DCS-SRS/bin/lua-srs.dll
         retention-days: 1
+    - name: Wait uploads
+      wait: [upload, upload-scan]

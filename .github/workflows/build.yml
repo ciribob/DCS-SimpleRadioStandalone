@@ -38,7 +38,7 @@ jobs:
       with:
         name: DCS-SimpleRadioStandalone-${{ steps.artifact-slug.outputs.slug }}-unsigned
         path: install-build
-        retention-days:: 1
+        retention-days: 1
   sign:
     if: ${{ github.event_name != 'pull_request' && github.repository == 'ciribob/DCS-SimpleRadioStandalone' }}
     permissions:
@@ -49,7 +49,7 @@ jobs:
     uses: $/.github/workflows/signing.yml
     with:
       policy: test
-      artifact-id: ${{ needs.publish.outputs.srs-install-zip }}
+      artifact-id: ${{ fromJSON(needs.publish.outputs.srs-install-zip) }}
       artifact-slug: ${{ needs.publish.outputs.artifact-slug }}-signed
     secrets:
       organization-id: ${{ secrets.SIGNPATH_ORGANIZATION_ID }}
@@ -60,6 +60,6 @@ jobs:
     name: virustotal-scan
     uses: $/.github/workflows/virustotal-scan.yml
     with:
-      srs-zip-id: ${{ needs.sign.outputs.scan-zip-id }}
+      srs-zip-id: ${{ fromJSON(needs.sign.outputs.scan-zip-id) }}
     secrets:
       vtcli-apikey: ${{ secrets.VIRUSTOTAL_API_KEY }}

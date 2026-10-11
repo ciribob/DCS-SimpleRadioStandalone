@@ -24,7 +24,7 @@ $sharedParams = @(
 
 
 # Publish script for SRS projects
-dotnet restore -r win-x64 --locked-mode
+dotnet restore --locked-mode
 
 # Common publish parameters
 $executableParams = $sharedParams + @(
@@ -102,6 +102,7 @@ $projects = @(
     @{ csproj = "./DCS-SR-Client/DCS-SR-Client.csproj"; outputSlug = "/Client"; publishParams = $frameworkDependentExecutableParams }
     , @{ csproj = "./Server/Server.csproj"; outputSlug = "/Server"; publishParams = $frameworkDependentExecutableParams  }
     , @{ csproj = "./ServerCommandLine\ServerCommandLine.csproj"; outputSlug = "/ServerCommandLine-Windows"; publishParams = $selfContainedExecutableParams }
+    , @{ csproj = "./ServerCommandLine\ServerCommandLine.csproj"; outputSlug = "/ServerCommandLine-Linux"; publishParams = $executableParams + @("--runtime", "linux-x64", "--self-contained") }
     , @{ csproj = "./DCS-SR-ExternalAudio\DCS-SR-ExternalAudio.csproj"; outputSlug = "/ExternalAudio"; publishParams = $frameworkDependentExecutableParams }
     , @{ csproj = "./AutoUpdater\AutoUpdater.csproj"; outputSlug = ""; publishParams = $frameworkDependentExecutableParams }
     , @{ csproj = "./DCS-SR-Lua/DCS-SR-Lua.csproj"; outputSlug = "/Scripts/DCS-SRS/bin"; publishParams = $sharedParams + @("--runtime", "win-x64", "--self-contained") }
@@ -109,17 +110,6 @@ $projects = @(
 )
 
 foreach ($project in $projects)
-{
-    Publish-Project $project
-}
-
-# Linux projects (different restore)
-dotnet restore ./ServerCommandLine/ServerCommandLine.csproj -r linux-x64 --lock-file-path linux/packages.lock.json --locked-mode
-$linuxProjects = @(
-    @{ csproj = "./ServerCommandLine\ServerCommandLine.csproj"; outputSlug = "/ServerCommandLine-Linux"; publishParams = $executableParams + @("--runtime", "linux-x64", "--self-contained") }
-)
-
-foreach ($project in $linuxProjects)
 {
     Publish-Project $project
 }

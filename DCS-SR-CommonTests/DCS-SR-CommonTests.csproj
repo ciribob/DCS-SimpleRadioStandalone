@@ -8,6 +8,7 @@
         <Product>DCS-SimpleRadio Standalone</Product>
         <Copyright>Copyright © 2016</Copyright>
         <Company>DCS-SimpleRadio Standalone</Company>
+        <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
         <PlatformTarget>x64</PlatformTarget>

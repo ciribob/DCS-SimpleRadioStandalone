@@ -1,6 +1,9 @@
 param(
     [switch]$NoSign,
-    [switch]$Zip
+    [switch]$Zip,
+    [string]$outputPath=".\install-build",
+    [string]$VersionPrefix="2.4.1.1"
+
 )
 
 if ($NoSign) {
@@ -12,7 +15,6 @@ if ($Zip) {
 }
 
 # Publish script for SRS projects
-$outputPath = ".\install-build"
 
 # Common publish parameters
 $commonParams = @(
@@ -22,7 +24,7 @@ $commonParams = @(
     "/p:DebugType=None",
     "/p:DebugSymbols=false",
     "/p:IncludeSourceRevisionInInformationalVersion=false", #Dont add a git hash into the build version
-    "/p:VersionPrefix=2.4.1.0"
+    "/p:VersionPrefix=$VersionPrefix"
 )
 
 # Define the path to signtool.exe
@@ -115,10 +117,20 @@ dotnet publish "./AutoUpdater\AutoUpdater.csproj" `
     @commonParams
 
 
+function Format-Script {
+    param([string]$file)
+
+    # https://stackoverflow.com/a/30893960
+    $content = [System.IO.File]::ReadAllText($file).Replace("VersionPrefix","$VersionPrefix")
+    [System.IO.File]::WriteAllText($file, $content)
+}
 # Copy Scripts.
 Remove-Item "$outputPath\Scripts" -Recurse -ErrorAction SilentlyContinue
 Write-Host "Copy Scripts..." -ForegroundColor Green
 Copy-Item "./Scripts" -Destination "$outputPath\Scripts" -Recurse
+foreach ($file in Get-ChildItem -Path "$outputPath\Scripts" -Filter *.lua -File -Recurse) {
+    Format-Script $file.FullName
+}
 
 # SRS Lua .NET
 Write-Host "Building lua-srs.dll..." -ForegroundColor Green
@@ -128,7 +140,7 @@ dotnet publish "./DCS-SR-Lua/DCS-SR-Lua.csproj" `
     --runtime win-x64 `
     --output "$outputPath/Scripts/DCS-SRS/bin" `
     --configuration Release `
-    "/p:VersionPrefix=2.4.1.0" `
+    "/p:VersionPrefix=$VersionPrefix" `
     /p:IncludeSourceRevisionInInformationalVersion=false # Dont add a git hash into the build version
 
 # Strip pdb if it was copied.

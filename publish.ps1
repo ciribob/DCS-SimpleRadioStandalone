@@ -1,6 +1,7 @@
 param(
     [switch]$NoSign,
     [switch]$Zip,
+    [switch]$NoRedist,
     [string]$outputPath=".\install-build",
     [string]$VersionPrefix="2.4.1.1"
 
@@ -14,18 +15,27 @@ if ($Zip) {
     Write-Host "Zip archive will be created!" -ForegroundColor Green
 }
 
+$sharedParams = @(
+     "--configuration", "Release",
+     "-p:VersionPrefix=$VersionPrefix",
+     "-p:IncludeSourceRevisionInInformationalVersion=false" #Dont add a git hash into the build version
+)
+
+
 # Publish script for SRS projects
 
 # Common publish parameters
-$commonParams = @(
-    "--configuration", "Release",
+$executableParams = $sharedParams + @(
     "/p:PublishReadyToRun=true",
     "/p:PublishSingleFile=true",
     "/p:DebugType=None",
-    "/p:DebugSymbols=false",
-    "/p:IncludeSourceRevisionInInformationalVersion=false", #Dont add a git hash into the build version
-    "/p:VersionPrefix=$VersionPrefix"
+    "/p:DebugSymbols=false"
 )
+
+$windowsExecutableParams = $executableParams + @("--runtime", "win-x64")
+
+$selfContainedExecutableParams = $windowsExecutableParams + @("--self-contained")
+$frameworkDependentExecutableParams = $windowsExecutableParams + @("--no-self-contained")
 
 # Define the path to signtool.exe
 $signToolPath = "C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x86\signtool.exe"
@@ -35,7 +45,7 @@ if (-not $NoSign -and -not (Test-Path $signToolPath)) {
 }
 
 # Define common parameters for signtool
-$commonParameters = @(
+$signParameters = @(
     "sign",                                     # The sign command for signtool
     "/n", "`"Open Source Developer, Ciaran Fisher`"", # Subject Name of the certificate (explicitly quoted)
     "/a",                                       # Automatically select the best signing certificate
@@ -48,25 +58,27 @@ $commonParameters = @(
 Write-Host "Publishing DCS-SR-Client..." -ForegroundColor Green
 Remove-Item "$outputPath\Client" -Recurse -ErrorAction SilentlyContinue
 dotnet clean "./DCS-SR-Client/DCS-SR-Client.csproj"
-dotnet publish "./DCS-SR-Client/DCS-SR-Client.csproj" `
-    --runtime win-x64 `
-    --output "$outputPath\Client" `
-    --no-self-contained `
-    @commonParams
+dotnet publish "./DCS-SR-Client/DCS-SR-Client.csproj" @frameworkDependentExecutableParams --output "$outputPath\Client"
+if ($LastExitCode -ne 0)
+{
+    exit $LastExitCode
+}
+
 Remove-Item "$outputPath\Client\*.so" -Recurse -ErrorAction SilentlyContinue
 Remove-Item "$outputPath\Client\*.config"  -Recurse -ErrorAction SilentlyContinue
-Copy-Item "$outputPath\Client\runtimes\win-x64\native\*.dll" -Destination "./$outputPath/Client"
+Move-Item "$outputPath\Client\runtimes\win-x64\native\*.dll" -Destination "./$outputPath/Client"
 Remove-Item "$outputPath\Client\runtimes" -Recurse -ErrorAction SilentlyContinue
 
 # Server
 Write-Host "Publishing Server..." -ForegroundColor Green
 Remove-Item "$outputPath\Server" -Recurse -ErrorAction SilentlyContinue
 dotnet clean "./Server/Server.csproj"
-dotnet publish "./Server/Server.csproj" `
-    --runtime win-x64 `
-    --output "$outputPath\Server" `
-    --no-self-contained `
-    @commonParams
+dotnet publish "./Server/Server.csproj" @frameworkDependentExecutableParams --output "$outputPath\Server"
+if ($LastExitCode -ne 0)
+{
+    exit $LastExitCode
+}
+
 Remove-Item "$outputPath\Server\*.so"  -Recurse -ErrorAction SilentlyContinue
 Remove-Item "$outputPath\Server\*.config"  -Recurse -ErrorAction SilentlyContinue
 
@@ -75,22 +87,27 @@ Remove-Item "$outputPath\Server\*.config"  -Recurse -ErrorAction SilentlyContinu
 Write-Host "Publishing ServerCommandLine for Windows..." -ForegroundColor Green
 Remove-Item "$outputPath\ServerCommandLine-Windows" -Recurse -ErrorAction SilentlyContinue
 dotnet clean "./ServerCommandLine\ServerCommandLine.csproj"
-dotnet publish "./ServerCommandLine\ServerCommandLine.csproj" `
-    --runtime win-x64 `
-    --output "$outputPath\ServerCommandLine-Windows" `
-    --self-contained `
-    @commonParams
+dotnet publish "./ServerCommandLine\ServerCommandLine.csproj" @selfContainedExecutableParams --output "$outputPath\ServerCommandLine-Windows"
+if ($LastExitCode -ne 0)
+{
+    exit $LastExitCode
+}
+
 Remove-Item "$outputPath\ServerCommandLine-Windows\*.so"  -Recurse -ErrorAction SilentlyContinue
 
 # Server Command Line - Linux
 Write-Host "Publishing ServerCommandLine for Linux..." -ForegroundColor Green
 Remove-Item "$outputPath\ServerCommandLine-Linux" -Recurse -ErrorAction SilentlyContinue
 dotnet clean "./ServerCommandLine\ServerCommandLine.csproj"
-dotnet publish "./ServerCommandLine\ServerCommandLine.csproj" `
+dotnet publish "./ServerCommandLine\ServerCommandLine.csproj" @executableParams `
     --runtime linux-x64 `
     --output "$outputPath\ServerCommandLine-Linux" `
-    --self-contained `
-    @commonParams
+    --self-contained
+if ($LastExitCode -ne 0)
+{
+    exit $LastExitCode
+}
+
 Remove-Item "$outputPath\ServerCommandLine-Linux\*.dll"  -Recurse -ErrorAction SilentlyContinue
 
 
@@ -98,23 +115,23 @@ Remove-Item "$outputPath\ServerCommandLine-Linux\*.dll"  -Recurse -ErrorAction S
 Write-Host "Publishing DCS-SR-ExternalAudio..." -ForegroundColor Green
 Remove-Item "$outputPath\ExternalAudio" -Recurse -ErrorAction SilentlyContinue
 dotnet clean "./DCS-SR-ExternalAudio\DCS-SR-ExternalAudio.csproj"
-dotnet publish "./DCS-SR-ExternalAudio\DCS-SR-ExternalAudio.csproj" `
-    --runtime win-x64 `
-    --output "$outputPath\ExternalAudio" `
-    --no-self-contained `
-    @commonParams
-Remove-Item "$outputPath\ExternalAudio\*.so"  -Recurse -ErrorAction SilentlyContinue
+dotnet publish "./DCS-SR-ExternalAudio\DCS-SR-ExternalAudio.csproj" @frameworkDependentExecutableParams --output "$outputPath\ExternalAudio"
+if ($LastExitCode -ne 0)
+{
+    exit $LastExitCode
+}
 
+Remove-Item "$outputPath\ExternalAudio\*.so"  -Recurse -ErrorAction SilentlyContinue
 
 # Auto Updater
 Write-Host "Publishing AutoUpdater..." -ForegroundColor Green
-Remove-Item "$outputPath\AutoUpdater" -Recurse -ErrorAction SilentlyContinue
+Remove-Item "$outputPath\AutoUpdater.exe" -Recurse -ErrorAction SilentlyContinue
 dotnet clean "./AutoUpdater\AutoUpdater.csproj"
-dotnet publish "./AutoUpdater\AutoUpdater.csproj" `
-    --runtime win-x64 `
-    --output "$outputPath\AutoUpdater" `
-    --no-self-contained `
-    @commonParams
+dotnet publish "./AutoUpdater\AutoUpdater.csproj" @frameworkDependentExecutableParams --output "$outputPath"
+if ($LastExitCode -ne 0)
+{
+    exit $LastExitCode
+}
 
 
 function Format-Script {
@@ -136,37 +153,38 @@ foreach ($file in Get-ChildItem -Path "$outputPath\Scripts" -Filter *.lua -File 
 Write-Host "Building lua-srs.dll..." -ForegroundColor Green
 Remove-Item "$outputPath/Scripts/DCS-SRS/bin" -Recurse -ErrorAction SilentlyContinue
 dotnet clean "./DCS-SR-Lua/DCS-SR-Lua.csproj"
-dotnet publish "./DCS-SR-Lua/DCS-SR-Lua.csproj" `
+dotnet publish "./DCS-SR-Lua/DCS-SR-Lua.csproj" @sharedParams `
     --runtime win-x64 `
     --output "$outputPath/Scripts/DCS-SRS/bin" `
-    --configuration Release `
-    "/p:VersionPrefix=$VersionPrefix" `
-    /p:IncludeSourceRevisionInInformationalVersion=false # Dont add a git hash into the build version
+    --self-contained
+if ($LastExitCode -ne 0)
+{
+    exit $LastExitCode
+}
 
 # Strip pdb if it was copied.
 Remove-Item -Path "$outputPath/Scripts/DCS-SRS/bin/lua-srs.pdb" -ErrorAction SilentlyContinue
 
 # Installer
 Write-Host "Publishing Installer..." -ForegroundColor Green
-Remove-Item "$outputPath\Installer" -Recurse -ErrorAction SilentlyContinue
+Remove-Item "$outputPath\Installer.exe" -Recurse -ErrorAction SilentlyContinue
 dotnet clean "./Installer\Installer.csproj"
-dotnet publish "./Installer\Installer.csproj" `
-    --runtime win-x64 `
-    --output "$outputPath\Installer" `
-    --no-self-contained `
-    @commonParams
+dotnet publish "./Installer\Installer.csproj" @frameworkDependentExecutableParams --output "$outputPath"
+if ($LastExitCode -ne 0)
+{
+    exit $LastExitCode
+}
 
 # VC Redist
 Write-Host "Downloading VC redistributables..." -ForegroundColor Green
-Invoke-WebRequest -Uri "https://aka.ms/vs/18/release/vc_redist.x64.exe" -OutFile "$outputPath\VC_redist.x64.exe"
-
-
-##Prep Directory
-Write-Host "Clean up and prepare Installer and AutoUpdater .exe's in the root" -ForegroundColor Green
-Copy-Item "$outputPath\Installer\Installer.exe" -Destination "./$outputPath"
-Copy-Item "$outputPath\AutoUpdater\SRS-AutoUpdater.exe" -Destination "./$outputPath"
-Remove-Item "$outputPath\AutoUpdater" -Recurse -ErrorAction SilentlyContinue
-Remove-Item "$outputPath\Installer" -Recurse -ErrorAction SilentlyContinue
+if (-Not $NoRedist)
+{
+    Invoke-WebRequest -Uri "https://aka.ms/vs/18/release/vc_redist.x64.exe" -OutFile "$outputPath\VC_redist.x64.exe"
+}
+else
+{
+    Write-Warning "Skipped."
+}
 
 Write-Host "Publishing complete! Check the $outputPath directory for the published files." -ForegroundColor Green
 
@@ -174,7 +192,7 @@ Write-Host "Publishing complete! Check the $outputPath directory for the publish
 Write-Host "Signing files"
 
 if ($NoSign) {
-    Write-Host "Skipped"
+    Write-Warning "Skipped"
 } else {
     # Define the root path to search for files to be signed
     # The script will recursively find all .dll and .exe files in this path and its subdirectories.
@@ -217,7 +235,7 @@ if ($NoSign) {
 
             # Construct the arguments for the current file.
             # The explicitly quoted file path is added as the last argument.
-            $currentFileArgs = $commonParameters + $quotedFilePath
+            $currentFileArgs = $signParameters + $quotedFilePath
 
             # Start the signing process
             # Using Start-Process to call external executables is a robust way.

@@ -64,6 +64,24 @@ if (Test-Path "$outputPath")
     # This means we would end up with a non-clean build tree.
 }
 
+New-Item -ItemType Directory -Name $outputPath
+
+# VC Redist
+Write-Host "Downloading VC redistributables..." -ForegroundColor Green
+$redistDownloadJob=$null
+if (-Not $NoRedist)
+{
+    $resolvedOutputPath = Resolve-Path -Path $outputPath
+    $redistDownloadJob = Start-Job -Name "download redist" -ScriptBlock {
+        $outputPath = $Using:resolvedOutputPath
+        Invoke-WebRequest -UseBasicParsing -Uri "https://aka.ms/vs/18/release/vc_redist.x64.exe" -OutFile "$outputPath/VC_redist.x64.exe"
+    }
+}
+else
+{
+    Write-Warning "Skipped."
+}
+
 # Copy Scripts.
 function Format-Script {
     param([string]$file)
@@ -142,15 +160,10 @@ Remove-Item "$outputPath\ExternalAudio\*.so"  -Recurse -ErrorAction SilentlyCont
 # Strip pdb if it was copied.
 Remove-Item -Path "$outputPath/Scripts/DCS-SRS/bin/lua-srs.pdb" -ErrorAction SilentlyContinue
 
-# VC Redist
-Write-Host "Downloading VC redistributables..." -ForegroundColor Green
-if (-Not $NoRedist)
-{
-    Invoke-WebRequest -Uri "https://aka.ms/vs/18/release/vc_redist.x64.exe" -OutFile "$outputPath\VC_redist.x64.exe"
-}
-else
-{
-    Write-Warning "Skipped."
+if ($null -ne $redistDownloadJob) {
+    Write-Host "Waiting on redist download..."
+    Wait-Job -Job $redistDownloadJob
+    Receive-Job -Job $redistDownloadJob
 }
 
 Write-Host "Publishing complete! Check the $outputPath directory for the published files." -ForegroundColor Green

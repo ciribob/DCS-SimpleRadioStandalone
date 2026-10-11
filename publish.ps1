@@ -24,7 +24,7 @@ $sharedParams = @(
 
 
 # Publish script for SRS projects
-dotnet restore --locked-mode
+dotnet restore --locked-mode -p:publishReadyToRun=true
 
 # Common publish parameters
 $executableParams = $sharedParams + @(

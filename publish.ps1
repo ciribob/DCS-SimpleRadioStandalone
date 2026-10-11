@@ -84,18 +84,17 @@ Write-Host "Copy Readme.txt, Examples.txt..." -ForegroundColor Green
 Copy-Item "./docs/Readme.txt" -Destination "$outputPath"
 Copy-Item "./docs/Examples.txt" -Destination "$outputPath"
 
+# Build projects with similar
+Write-Host "Cleaning..."
+dotnet clean
+
 function Publish-Project
 {
     param($project)
 
     Write-Host "Publishing $($project.csproj) to '$outputPath$($project.outputSlug)'..." -ForegroundColor Green
-    dotnet clean "$($project.csproj)"
-    $params = $project.publishParams
-    dotnet publish "$($project.csproj)" @params --output "$outputPath$($project.outputSlug)"
-    if ($LastExitCode -ne 0)
-    {
-        exit $LastExitCode
-    }
+    $params = @('publish',"$($project.csproj)") + $project.publishParams + @('--output',"$outputPath$($project.outputSlug)")
+    return Start-Process -FilePath 'dotnet' -ArgumentList $params -NoNewWindow -PassThru
 }
 
 $projects = @(
@@ -109,9 +108,18 @@ $projects = @(
     , @{ csproj = "./Installer\Installer.csproj"; outputSlug = ""; publishParams = $frameworkDependentExecutableParams }
 )
 
+$processes = @()
 foreach ($project in $projects)
 {
-    Publish-Project $project
+    $processes += Publish-Project $project
+}
+
+$processes | % {
+    $_.WaitForExit()
+    if ($_.ExitCode -ne 0)
+    { 
+        exit $_.ExitCode
+    } 
 }
 
 Write-Host "Cleaning up/moving artifacts..." -ForegroundColor Green

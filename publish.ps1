@@ -3,7 +3,7 @@ param(
     [switch]$Zip,
     [switch]$NoRedist,
     [string]$outputPath=".\install-build",
-    [string]$VersionPrefix="2.4.1.1"
+    [string]$VersionPrefix="2.4.1.0"
 
 )
 
@@ -54,86 +54,15 @@ $signParameters = @(
     "/v"                                        # Verbose output
 )
 
-# Main Client
-Write-Host "Publishing DCS-SR-Client..." -ForegroundColor Green
-Remove-Item "$outputPath\Client" -Recurse -ErrorAction SilentlyContinue
-dotnet clean "./DCS-SR-Client/DCS-SR-Client.csproj"
-dotnet publish "./DCS-SR-Client/DCS-SR-Client.csproj" @frameworkDependentExecutableParams --output "$outputPath\Client"
-if ($LastExitCode -ne 0)
+if (Test-Path "$outputPath")
 {
-    exit $LastExitCode
+    Write-Host "Removing $outputPath..."
+    Remove-Item "$outputPath" -Recurse
+    # Bubble the error if we fail to remove.
+    # This means we would end up with a non-clean build tree.
 }
 
-Remove-Item "$outputPath\Client\*.so" -Recurse -ErrorAction SilentlyContinue
-Remove-Item "$outputPath\Client\*.config"  -Recurse -ErrorAction SilentlyContinue
-Move-Item "$outputPath\Client\runtimes\win-x64\native\*.dll" -Destination "./$outputPath/Client"
-Remove-Item "$outputPath\Client\runtimes" -Recurse -ErrorAction SilentlyContinue
-
-# Server
-Write-Host "Publishing Server..." -ForegroundColor Green
-Remove-Item "$outputPath\Server" -Recurse -ErrorAction SilentlyContinue
-dotnet clean "./Server/Server.csproj"
-dotnet publish "./Server/Server.csproj" @frameworkDependentExecutableParams --output "$outputPath\Server"
-if ($LastExitCode -ne 0)
-{
-    exit $LastExitCode
-}
-
-Remove-Item "$outputPath\Server\*.so"  -Recurse -ErrorAction SilentlyContinue
-Remove-Item "$outputPath\Server\*.config"  -Recurse -ErrorAction SilentlyContinue
-
-
-# Server Command Line - Windows
-Write-Host "Publishing ServerCommandLine for Windows..." -ForegroundColor Green
-Remove-Item "$outputPath\ServerCommandLine-Windows" -Recurse -ErrorAction SilentlyContinue
-dotnet clean "./ServerCommandLine\ServerCommandLine.csproj"
-dotnet publish "./ServerCommandLine\ServerCommandLine.csproj" @selfContainedExecutableParams --output "$outputPath\ServerCommandLine-Windows"
-if ($LastExitCode -ne 0)
-{
-    exit $LastExitCode
-}
-
-Remove-Item "$outputPath\ServerCommandLine-Windows\*.so"  -Recurse -ErrorAction SilentlyContinue
-
-# Server Command Line - Linux
-Write-Host "Publishing ServerCommandLine for Linux..." -ForegroundColor Green
-Remove-Item "$outputPath\ServerCommandLine-Linux" -Recurse -ErrorAction SilentlyContinue
-dotnet clean "./ServerCommandLine\ServerCommandLine.csproj"
-dotnet publish "./ServerCommandLine\ServerCommandLine.csproj" @executableParams `
-    --runtime linux-x64 `
-    --output "$outputPath\ServerCommandLine-Linux" `
-    --self-contained
-if ($LastExitCode -ne 0)
-{
-    exit $LastExitCode
-}
-
-Remove-Item "$outputPath\ServerCommandLine-Linux\*.dll"  -Recurse -ErrorAction SilentlyContinue
-
-
-# External Audio
-Write-Host "Publishing DCS-SR-ExternalAudio..." -ForegroundColor Green
-Remove-Item "$outputPath\ExternalAudio" -Recurse -ErrorAction SilentlyContinue
-dotnet clean "./DCS-SR-ExternalAudio\DCS-SR-ExternalAudio.csproj"
-dotnet publish "./DCS-SR-ExternalAudio\DCS-SR-ExternalAudio.csproj" @frameworkDependentExecutableParams --output "$outputPath\ExternalAudio"
-if ($LastExitCode -ne 0)
-{
-    exit $LastExitCode
-}
-
-Remove-Item "$outputPath\ExternalAudio\*.so"  -Recurse -ErrorAction SilentlyContinue
-
-# Auto Updater
-Write-Host "Publishing AutoUpdater..." -ForegroundColor Green
-Remove-Item "$outputPath\AutoUpdater.exe" -Recurse -ErrorAction SilentlyContinue
-dotnet clean "./AutoUpdater\AutoUpdater.csproj"
-dotnet publish "./AutoUpdater\AutoUpdater.csproj" @frameworkDependentExecutableParams --output "$outputPath"
-if ($LastExitCode -ne 0)
-{
-    exit $LastExitCode
-}
-
-
+# Copy Scripts.
 function Format-Script {
     param([string]$file)
 
@@ -141,47 +70,66 @@ function Format-Script {
     $content = [System.IO.File]::ReadAllText($file).Replace("VersionPrefix","$VersionPrefix")
     [System.IO.File]::WriteAllText($file, $content)
 }
-# Copy Scripts.
-Remove-Item "$outputPath\Scripts" -Recurse -ErrorAction SilentlyContinue
+
 Write-Host "Copy Scripts..." -ForegroundColor Green
-Copy-Item "./Scripts" -Destination "$outputPath\Scripts" -Recurse
+Copy-Item "./Scripts" -Destination "$outputPath/Scripts" -Recurse
 foreach ($file in Get-ChildItem -Path "$outputPath\Scripts" -Filter *.lua -File -Recurse) {
     Format-Script $file.FullName
 }
 
 # Copy Examples.txt, Readme.txt
-Remove-Item "$outputPath\Readme.txt" -ErrorAction SilentlyContinue
-Remove-Item "$outputPath\Examples.txt" -ErrorAction SilentlyContinue
-
 Write-Host "Copy Readme.txt, Examples.txt..." -ForegroundColor Green
 Copy-Item "./docs/Readme.txt" -Destination "$outputPath"
 Copy-Item "./docs/Examples.txt" -Destination "$outputPath"
 
-# SRS Lua .NET
-Write-Host "Building lua-srs.dll..." -ForegroundColor Green
-Remove-Item "$outputPath/Scripts/DCS-SRS/bin" -Recurse -ErrorAction SilentlyContinue
-dotnet clean "./DCS-SR-Lua/DCS-SR-Lua.csproj"
-dotnet publish "./DCS-SR-Lua/DCS-SR-Lua.csproj" @sharedParams `
-    --runtime win-x64 `
-    --output "$outputPath/Scripts/DCS-SRS/bin" `
-    --self-contained
-if ($LastExitCode -ne 0)
+$projects = @(
+    @{ csproj = "./DCS-SR-Client/DCS-SR-Client.csproj"; outputSlug = "/Client"; publishParams = $frameworkDependentExecutableParams }
+    , @{ csproj = "./Server/Server.csproj"; outputSlug = "/Server"; publishParams = $frameworkDependentExecutableParams  }
+    , @{ csproj = "./ServerCommandLine\ServerCommandLine.csproj"; outputSlug = "/ServerCommandLine-Windows"; publishParams = $selfContainedExecutableParams }
+    , @{ csproj = "./ServerCommandLine\ServerCommandLine.csproj"; outputSlug = "/ServerCommandLine-Linux"; publishParams = $executableParams + @("--runtime", "linux-x64", "--self-contained") }
+    , @{ csproj = "./DCS-SR-ExternalAudio\DCS-SR-ExternalAudio.csproj"; outputSlug = "/ExternalAudio"; publishParams = $frameworkDependentExecutableParams }
+    , @{ csproj = "./AutoUpdater\AutoUpdater.csproj"; outputSlug = ""; publishParams = $frameworkDependentExecutableParams }
+    , @{ csproj = "./DCS-SR-Lua/DCS-SR-Lua.csproj"; outputSlug = "/Scripts/DCS-SRS/bin"; publishParams = $sharedParams + @("--runtime", "win-x64", "--self-contained") }
+    , @{ csproj = "./Installer\Installer.csproj"; outputSlug = ""; publishParams = $frameworkDependentExecutableParams }
+)
+
+foreach ($project in $projects)
 {
-    exit $LastExitCode
+    Write-Host "Publishing $($project.csproj) to '$outputPath$($project.outputSlug)'..." -ForegroundColor Green
+    dotnet clean "$($project.csproj)"
+    $params = $project.publishParams
+    dotnet publish "$($project.csproj)" @params --output "$outputPath$($project.outputSlug)"
+    if ($LastExitCode -ne 0)
+    {
+        exit $LastExitCode
+    }
 }
 
+Write-Host "Cleaning up/moving artifacts..." -ForegroundColor Green
+
+# Main Client
+Remove-Item "$outputPath\Client\*.so" -Recurse -ErrorAction SilentlyContinue
+Remove-Item "$outputPath\Client\*.config"  -Recurse -ErrorAction SilentlyContinue
+Move-Item "$outputPath\Client\runtimes\win-x64\native\*.dll" -Destination "./$outputPath/Client"
+Remove-Item "$outputPath\Client\runtimes" -Recurse -ErrorAction SilentlyContinue
+
+# Server
+Remove-Item "$outputPath\Server\*.so"  -Recurse -ErrorAction SilentlyContinue
+Remove-Item "$outputPath\Server\*.config"  -Recurse -ErrorAction SilentlyContinue
+
+
+# Server Command Line - Windows
+Remove-Item "$outputPath\ServerCommandLine-Windows\*.so"  -Recurse -ErrorAction SilentlyContinue
+
+# Server Command Line - Linux
+Remove-Item "$outputPath\ServerCommandLine-Linux\*.dll"  -Recurse -ErrorAction SilentlyContinue
+
+# External Audio
+Remove-Item "$outputPath\ExternalAudio\*.so"  -Recurse -ErrorAction SilentlyContinue
+
+# SRS Lua .NET
 # Strip pdb if it was copied.
 Remove-Item -Path "$outputPath/Scripts/DCS-SRS/bin/lua-srs.pdb" -ErrorAction SilentlyContinue
-
-# Installer
-Write-Host "Publishing Installer..." -ForegroundColor Green
-Remove-Item "$outputPath\Installer.exe" -Recurse -ErrorAction SilentlyContinue
-dotnet clean "./Installer\Installer.csproj"
-dotnet publish "./Installer\Installer.csproj" @frameworkDependentExecutableParams --output "$outputPath"
-if ($LastExitCode -ne 0)
-{
-    exit $LastExitCode
-}
 
 # VC Redist
 Write-Host "Downloading VC redistributables..." -ForegroundColor Green

@@ -15,7 +15,8 @@ jobs:
     - uses: actions/setup-dotnet@v6
       with:
         dotnet-version: '10.0.x'
-    - run: dotnet restore
+        cache: true
+        cache-dependency-path: "**/packages.lock.json"
     - name: Publish
       run: ./publish.ps1 -NoSign -VersionPrefix "${{ github.ref_name }}"
     - name: Upload

@@ -14,8 +14,6 @@ on:
     outputs:
       install-zip-id:
         value: ${{ jobs.sign.outputs.install-zip-id }}
-      scan-zip-id:
-        value: ${{ jobs.sign.outputs.scan-zip-id }}
     secrets:
       organization-id:
         required: true
@@ -27,7 +25,6 @@ jobs:
     name: Sign (${{ inputs.policy }})
     runs-on: ubuntu-slim
     outputs:
-      scan-zip-id: ${{ steps.upload-scan.outputs.artifact-id }}
       install-zip-id: ${{ steps.upload.outputs.artifact-id }}
     steps:
     - name: submit signing request
@@ -41,27 +38,13 @@ jobs:
         github-artifact-id: '${{ inputs.artifact-id }}'
         wait-for-completion: true
         output-artifact-directory: signed
+        skip-decompress: true
+    - name: Rename artifact
+      run: mv signed/DCS-SimpleRadioStandalone-*-unsigned.zip signed/DCS-SimpleRadioStandalone-${{ inputs.artifact-slug }}.zip
     - name: Upload (signed)
       id: upload
-      background: true
       uses: actions/upload-artifact@v7
       with:
-        name: DCS-SimpleRadioStandalone-${{ inputs.artifact-slug }}.zip
-        path: signed
-    - name: Upload (scan)
-      id: upload-scan
-      background: true
-      uses: actions/upload-artifact@v7
-      with:
-        name: scan
-        path: |
-            signed/Installer.exe
-            signed/SRS-AutoUpdater.exe
-            signed/Client/SR-ClientRadio.exe
-            signed/ExternalAudio/DCS-SR-ExternalAudio.exe
-            signed/Server/SRS-Server.exe
-            signed/ServerCommandLine-Windows/SRS-Server-Commandline.exe
-            signed/Scripts/DCS-SRS/bin/lua-srs.dll
-        retention-days: 1
-    - name: Wait uploads
-      wait: [upload, upload-scan]
+        name: DCS-SimpleRadioStandalone-${{ inputs.artifact-slug }}
+        path: signed/DCS-SimpleRadioStandalone-${{ inputs.artifact-slug }}.zip
+        archive: false

@@ -44,7 +44,7 @@ jobs:
     name: virustotal-scan
     uses: $/.github/workflows/virustotal-scan.yml
     with:
-      srs-zip-id: ${{ fromJSON(needs.sign.outputs.scan-zip-id) }}
+      srs-zip-id: ${{ fromJSON(needs.sign.outputs.install-zip-id) }}
     secrets:
       vtcli-apikey: ${{ secrets.VIRUSTOTAL_API_KEY }}
   release:

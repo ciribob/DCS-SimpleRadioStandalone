@@ -47,3 +47,4 @@ jobs:
       with:
         name: DCS-SimpleRadioStandalone-${{ inputs.artifact-slug }}
         path: signed/DCS-SimpleRadioStandalone-${{ inputs.artifact-slug }}.zip
+        archive: false

@@ -19,10 +19,14 @@ jobs:
         background: true
         with:
           artifact-ids: ${{ inputs.srs-zip-id }}
-      - name: Dependencies
+      - name: Unzip
         id: unzip
         background: true
         run: sudo apt-get install -y unzip
+      - name: PyYAML
+        id: pyyaml
+        background: true
+        run: pip install --user pyyaml
       - name: Download vt-clifrom GitHub
         id: vt-cli
         background: true
@@ -49,7 +53,7 @@ jobs:
         env:
           VTCLI_APIKEY: ${{ secrets.vtcli-apikey }}
         run: |
-          cat <<EOF | ./vt scan file - --silent --wait --include='_id,meaningful_name,last_analysis_stats.*' --format json > results.json
+          cat <<EOF | ./vt scan file - --silent --wait --include='_id,meaningful_name,last_analysis_stats.*' > results.yml
           ./Installer.exe
           ./SRS-AutoUpdater.exe
           ./Client/SR-ClientRadio.exe
@@ -59,10 +63,10 @@ jobs:
           ./Scripts/DCS-SRS/bin/lua-srs.dll
           EOF
 
-          cat results.json
-      - name: Wait checkout
-        wait: checkout
+          cat results.yml
+      - name: Wait scan dependencies
+        wait: [checkout, pyyaml]
       - name: Check scan
         run: |
           chmod +x .github/scripts/virustotalresults.py
-          .github/scripts/virustotalresults.py results.json
+          .github/scripts/virustotalresults.py results.yml

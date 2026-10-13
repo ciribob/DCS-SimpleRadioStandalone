@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-import json
+import yaml
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('vt_json')
+parser.add_argument('vt_yml')
 
 args = parser.parse_args()
 
-results = json.load(open(args.vt_json, 'r'))
+results = yaml.load(open(args.vt_yml, 'r'))
 
 VIRUSTOTAL_URL_FORMAT = 'https://www.virustotal.com/gui/file/{}'
 for file in results:

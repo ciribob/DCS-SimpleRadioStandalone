@@ -14,48 +14,59 @@ jobs:
     name: virustotal-scan
     runs-on: ubuntu-latest
     steps:
-      - name: Dependencies
+      - uses: actions/download-artifact@v8
+        id: artifact
+        background: true
+        with:
+          artifact-ids: ${{ inputs.srs-zip-id }}
+      - name: Unzip
+        id: unzip
+        background: true
         run: sudo apt-get install -y unzip
-      - name: Download vt-cli and yq YAML parser from GitHub
+      - name: PyYAML
+        id: pyyaml
+        background: true
+        run: pip install --user pyyaml
+      - name: Download vt-clifrom GitHub
+        id: vt-cli
+        background: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release download --repo VirusTotal/vt-cli --pattern 'Linux64.zip'
-          gh release download --repo mikefarah/yq --pattern 'yq_linux_amd64.tar.gz'
-      - name: Setup vt-cli and yq
+      - uses: actions/checkout@v7
+        background: true
+        id: checkout
+        with:
+          sparse-checkout: .github/scripts/virustotalresults.py
+      - name: Wait vt-cli download
+        wait: [unzip, vt-cli]
+      - name: Setup vt-cli
         run: |
           unzip Linux64.zip
-          tar xzf yq_linux_amd64.tar.gz
-          chmod +x yq_linux_amd64
           chmod +x vt
-      - uses: actions/download-artifact@v8
-        with:
-          artifact-ids: ${{ inputs.srs-zip-id }}
+      - name: Wait artifact download
+        wait: artifact
       - name: Display structure of downloaded files
         run: ls -R
       - name: VirusTotal Scan
         env:
           VTCLI_APIKEY: ${{ secrets.vtcli-apikey }}
         run: |
-          FILES=(./Installer.exe \
-            ./SRS-AutoUpdater.exe \
-            ./Client/SR-ClientRadio.exe \
-            ./ExternalAudio/DCS-SR-ExternalAudio.exe \
-            ./Server/SRS-Server.exe \
-            ./ServerCommandLine-Windows/SRS-Server-Commandline.exe \
-            ./Scripts/DCS-SRS/bin/lua-srs.dll)
-          for file in "${FILES[@]}"; do
-            echo "Scanning $file..."
-            ./vt scan file $file --silent --wait > result.yaml
-            result_id=$(./yq_linux_amd64 '.[0]._id' result.yaml)
-            malicious_count=$(./yq_linux_amd64 '.[0].last_analysis_stats.malicious' result.yaml)
-            suspicious_count=$(./yq_linux_amd64 '.[0].last_analysis_stats.suspicious' result.yaml)
-            echo "https://www.virustotal.com/gui/file/$result_id"
-            if [ "$malicious_count" -gt "0" ]; then
-              echo "::error file=$file::Reported malicious!"
-            fi
-            if [ "$suspicious_count" -gt "0" ]; then
-              echo "::warn file=$file::Reported suspicious."
-            fi
-            rm result.yaml
-          done
+          cat <<EOF | ./vt scan file - --silent --wait --include='_id,meaningful_name,last_analysis_stats.*' > results.yml
+          ./Installer.exe
+          ./SRS-AutoUpdater.exe
+          ./Client/SR-ClientRadio.exe
+          ./ExternalAudio/DCS-SR-ExternalAudio.exe
+          ./Server/SRS-Server.exe
+          ./ServerCommandLine-Windows/SRS-Server-Commandline.exe
+          ./Scripts/DCS-SRS/bin/lua-srs.dll
+          EOF
+
+          cat results.yml
+      - name: Wait scan dependencies
+        wait: [checkout, pyyaml]
+      - name: Check scan
+        run: |
+          chmod +x .github/scripts/virustotalresults.py
+          .github/scripts/virustotalresults.py results.yml

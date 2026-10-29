@@ -186,6 +186,7 @@ public class LotATCSyncHandler
                                         Encoding.UTF8.GetBytes(JsonSerializer.Serialize(losRequest, new JsonSerializerOptions() { IncludeFields = true, PropertyNameCaseInsensitive = true }) + "\n");
 
                                     _udpSocket.Send(byteData, byteData.Length, _host);
+                                    await WebSocketCommandHandler.SendAsync(byteData);
 
                                     //every 50ms - Wait for the queue
                                     await Task.Delay(TimeSpan.FromMilliseconds(50));

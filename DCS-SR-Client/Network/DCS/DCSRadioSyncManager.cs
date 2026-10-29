@@ -29,6 +29,7 @@ public class DCSRadioSyncManager
     private readonly DCSLineOfSightHandler _lineOfSightHandler;
     private readonly LotATCSyncHandler _lotATCSyncHandler;
     private readonly UDPCommandHandler _udpCommandHandler;
+    private readonly WebSocketCommandHandler _webSocketCommandHandler;
 
     private VAICOMSyncHandler _vaicomHandler;
 
@@ -37,6 +38,7 @@ public class DCSRadioSyncManager
         IsListening = false;
         _lineOfSightHandler = new DCSLineOfSightHandler(guid);
         _udpCommandHandler = new UDPCommandHandler();
+        _webSocketCommandHandler = new WebSocketCommandHandler();
         _dcsGameGuiHandler = new DCSGameGuiHandler();
         _dcsRadioSyncHandler = new DCSRadioSyncHandler();
         _vaicomHandler = new VAICOMSyncHandler();
@@ -79,6 +81,7 @@ public class DCSRadioSyncManager
         _dcsGameGuiHandler.Start();
         _lineOfSightHandler.Start();
         _udpCommandHandler.Start();
+        _webSocketCommandHandler.Start();
         _clearRadio.Start();
         _vaicomHandler.Start();
         _lotATCSyncHandler.Start();
@@ -93,6 +96,7 @@ public class DCSRadioSyncManager
         _dcsGameGuiHandler.Stop();
         _lineOfSightHandler.Stop();
         _udpCommandHandler.Stop();
+        _webSocketCommandHandler.Stop();
         _vaicomHandler.Stop();
         _lotATCSyncHandler.Stop();
     }

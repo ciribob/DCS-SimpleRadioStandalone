@@ -247,6 +247,7 @@ public class DCSRadioSyncHandler : IHandle<EAMConnectedMessage>, IHandle<EAMDisc
                 new IPEndPoint(IPAddress.Parse("127.0.0.1"),
                     _globalSettings.GetNetworkSetting(GlobalSettingsKeys
                         .OutgoingDCSUDPOther))); // send to Flight Control Panels
+            await WebSocketCommandHandler.SendAsync(byteData);
         }
         catch (ObjectDisposedException) when (_stop)
         {
